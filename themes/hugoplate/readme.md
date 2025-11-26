@@ -81,7 +81,7 @@ We have included almost everything you need to start your Hugo project. Let's se
 
 ## 🚀 Getting Started
 
-First you need to [clone](https://github.com/zeon-studio/hugoplate) or [download](https://github.com/zeon-studio/hugoplate/archive/refs/heads/main.zip) the template repository, and then let's get started with the following process:
+First you need to [clone](https://github.com/zeon-studio/hugoplate) or [download](https://github.com/zeon-studio/hugoplate/archive/refs/heads/main.zip) the template repository and then let's get started with the following process:
 
 ### ⚙️ Prerequisites
 
@@ -127,19 +127,19 @@ This template has been designed with a lot of customization options in mind. You
 
 ### 👉 Site Config
 
-You can change the site title, base URL, language, theme, plugins, and more from the `hugo.toml` file.
+You can change the site title, base URL, language, theme, plugins and more from the `hugo.toml` file.
 
 ### 👉 Site Params
 
-You can customize all the parameters from the `config/_default/params.toml` file. This includes the logo, favicon, search, SEO metadata, and more.
+You can customize all the parameters from the `config/_default/params.toml` file. This includes the logo, favicon, search, SEO metadata and more.
 
 ### 👉 Colors and Fonts
 
-You can change the colors and fonts from the `data/theme.json` file. This includes the primary color, secondary color, font family, and font size.
+You can change the colors and fonts from the `data/theme.json` file. This includes the primary color, secondary color, font family and font size.
 
 ### 👉 Social Links
 
-You can change the social links from the `data/social.json` file. Add your social links here, and they will automatically be displayed on the site.
+You can change the social links from the `data/social.json` file. Add your social links here and they will automatically be displayed on the site.
 
 ---
 
@@ -173,7 +173,7 @@ If you want to remove dark mode from your project, you can use the following com
 npm run remove-darkmode
 ```
 
-> **Note:** This command will work before running the `project-setup` script. If you have already run the `project-setup` command, then you have to run `npm run theme-setup` first, and then you can run this command. Afterward, you can run `npm run project-setup` again.
+> **Note:** This command will work before running the `project-setup` script. If you have already run the `project-setup` command, then you have to run `npm run theme-setup` first and then you can run this command. Afterward, you can run `npm run project-setup` again.
 
 ---
 
@@ -199,7 +199,7 @@ We have provided 5 different deploy platform configurations with this template, 
 - [Gitlab Ci](https://docs.gitlab.com/ee/ci/)
 - [AWS Amplify](https://aws.amazon.com/amplify/)
 
-And if you want to host some other hosting platforms. Then you can build your project, and you will get a `public` folder. that you can copy and paste on your hosting platform.
+And if you want to host some other hosting platforms. Then you can build your project and you will get a `public` folder. that you can copy and paste on your hosting platform.
 
 > **Note:** You must change the `baseURL` in the `hugo.toml` file. Otherwise, your site will not work properly.
 

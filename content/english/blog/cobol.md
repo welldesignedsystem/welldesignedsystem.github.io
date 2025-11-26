@@ -3,13 +3,13 @@ date = '2025-01-30T10:00:00+00:00'
 draft = false
 title = 'COBOL Guide'
 tags = ['COBOL', 'Mainframe', 'Business Programming', 'Legacy Systems',]
-summary = "Practical COBOL reference covering program structure, copybooks, JCL, datasets, and migration tips for modern engineers."
+summary = "Practical COBOL reference covering program structure, copybooks, JCL, datasets and migration tips for modern engineers."
 +++
 
-COBOL (Common Business-Oriented Language) is a high-level programming language created for business data processing, especially on mainframes. It is known for its English-like syntax and is widely used in industries such as banking, insurance, and government for batch and transaction processing. This guide provides an overview of COBOL, its features, structure, and key concepts, helping developers understand and work with COBOL programs, especially in the context of mainframe systems.
+COBOL (Common Business-Oriented Language) is a high-level programming language created for business data processing, especially on mainframes. It is known for its English-like syntax and is widely used in industries such as banking, insurance and government for batch and transaction processing. This guide provides an overview of COBOL, its features, structure and key concepts, helping developers understand and work with COBOL programs, especially in the context of mainframe systems.
 
 ## What is COBOL?
-COBOL (Common Business-Oriented Language) is a high-level programming language designed for business data processing, especially on mainframes. It is widely used in banking, insurance, and government systems for batch and transaction processing.
+COBOL (Common Business-Oriented Language) is a high-level programming language designed for business data processing, especially on mainframes. It is widely used in banking, insurance and government systems for batch and transaction processing.
 
 ## Key Features
 - **English-like Syntax:** COBOL code is verbose and reads like English, making it easy to understand.
@@ -32,11 +32,11 @@ COBOL (Common Business-Oriented Language) is a high-level programming language d
 - **Copybooks**:
   - Reusable code or data structure snippets (`.cpy`), included in COBOL programs using the `COPY` statement. Analogous to Java imports or Python modules, often used for shared data definitions (e.g., record layouts).
 - **JCL Scripts**:
-  - Job Control Language files (`.jcl`) are Scripts used to run and schedule COBOL programs on mainframes. JCL is similar to shell scripts or Windows batch files, controlling program execution, input/output files, and job sequencing.
+  - Job Control Language files (`.jcl`) are Scripts used to run and schedule COBOL programs on mainframes. JCL is similar to shell scripts or Windows batch files, controlling program execution, input/output files and job sequencing.
 - **Datasets**: 
   - Files or databases on the mainframe, used to store input/output data. Datasets can be sequential files (like CSVs), VSAM files (indexed), or DB2 tables (relational). Analogous to files or SQL tables in Java applications.
 - **Utilities**: 
-  - System tools or programs for common tasks such as file copying, sorting, or data conversion. Examples include `IEBGENER` (copy files), `SORT` (sort data), and `IDCAMS` (manage VSAM datasets). These are similar to Unix command-line utilities like `cp`, `sort`, or `awk`.
+  - System tools or programs for common tasks such as file copying, sorting, or data conversion. Examples include `IEBGENER` (copy files), `SORT` (sort data) and `IDCAMS` (manage VSAM datasets). These are similar to Unix command-line utilities like `cp`, `sort`, or `awk`.
 
 ---
 
@@ -243,7 +243,7 @@ In COBOL, keywords (reserved words) are predefined words that have special meani
 |------------------------|-------------------------------------------------|
 | IDENTIFICATION DIVISION| Start of the program description.               |
 | ENVIRONMENT DIVISION   | Specifies hardware and I/O environment.         |
-| DATA DIVISION          | Defines variables, files, and data areas.       |
+| DATA DIVISION          | Defines variables, files and data areas.       |
 | PROCEDURE DIVISION     | Contains the actual program logic.              |
 | PROGRAM-ID             | Declares program name.                          |
 | SECTION                | Groups related paragraphs.                      |
@@ -439,7 +439,7 @@ In COBOL, keywords (reserved words) are predefined words that have special meani
 
 - **COBOL Compilers:** OpenCOBOL (GnuCOBOL), IBM COBOL.
 - **Try Online:** [Online COBOL Compiler](https://www.tutorialspoint.com/compile_cobol_online.php)
-- **Sample Project**: Start with a simple COBOL program, parse its structure, and try mapping it to Java/Python.
+- **Sample Project**: Start with a simple COBOL program, parse its structure and try mapping it to Java/Python.
 
 ---
 

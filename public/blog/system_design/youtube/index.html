@@ -615,10 +615,6 @@
                 
                 
                 
-              
-                
-                
-                
                inline-flex items-center">
               Pages
               <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
@@ -628,17 +624,6 @@
             </label>
             <ul
               class="nav-dropdown-list hidden peer-checked:block lg:invisible lg:absolute lg:block lg:opacity-0 lg:group-hover:visible lg:group-hover:opacity-100">
-              
-                
-                
-                <li class="nav-dropdown-item">
-                  <a
-                    class="nav-dropdown-link "
-                    
-                    href="/404">
-                    404 Page
-                  </a>
-                </li>
               
                 
                 
@@ -1158,8 +1143,8 @@
 
             <p>The goal is to demonstrate a practical, modern approach to building and scaling a global video platform, suitable for system design interviews.</p>
 <h2 id="technical--business-requirements">Technical &amp; Business Requirements</h2>
-<p>The <strong>platform</strong> must <em>enable</em> <strong>users</strong> to <em>upload</em>, <em>manage</em>, and <em>stream</em> <strong>video content</strong> at <strong>scale</strong>, <em>supporting</em> a seamless <strong>experience</strong> across <strong>devices</strong> and <strong>geographies</strong>. <strong>Users</strong> should <em>be able to create</em> personal or branded <strong>channels</strong>, <em>publish</em> <strong>videos</strong> with <strong>metadata</strong> (<strong>title</strong>, <strong>description</strong>, <strong>tags</strong>), and <em>interact</em> with <strong>content</strong> through <strong>likes</strong>, <strong>comments</strong>, and <strong>shares</strong>. The <strong>system</strong> must <em>support</em> <strong>user authentication</strong>, personalized <strong>recommendations</strong>, and real-time <strong>notifications</strong> for <strong>subscriptions</strong> and <strong>interactions</strong>. <strong>Search functionality</strong> should <em>allow</em> <strong>users</strong> to <em>discover</em> <strong>content</strong> based on <strong>relevance</strong>, <strong>popularity</strong>, and <strong>preferences</strong>.</p>
-<p>From a <strong>business perspective</strong>, the <strong>system</strong> must <em>ensure</em> high <strong>availability</strong>, <strong>scalability</strong>, and <strong>performance</strong> to <em>support</em> billions of daily <strong>interactions</strong>. It should <em>enable</em> <strong>content moderation workflows</strong> to <em>maintain</em> <strong>community standards</strong> and <em>comply</em> with legal <strong>regulations</strong>. <strong>Analytics capabilities</strong> must <em>provide</em> <strong>insights</strong> into <strong>user engagement</strong>, <strong>video performance</strong>, and <strong>platform health</strong>. The <strong>architecture</strong> should <em>support</em> modular <strong>growth</strong>, <em>allowing</em> <strong>teams</strong> to independently <em>develop</em> and <em>deploy</em> <strong>features</strong> aligned with <strong>business capabilities</strong> such as <strong>video management</strong>, <strong>user engagement</strong>, and <strong>content discovery</strong>.</p>
+<p>The <strong>platform</strong> must <em>enable</em> <strong>users</strong> to <em>upload</em>, <em>manage</em> and <em>stream</em> <strong>video content</strong> at <strong>scale</strong>, <em>supporting</em> a seamless <strong>experience</strong> across <strong>devices</strong> and <strong>geographies</strong>. <strong>Users</strong> should <em>be able to create</em> personal or branded <strong>channels</strong>, <em>publish</em> <strong>videos</strong> with <strong>metadata</strong> (<strong>title</strong>, <strong>description</strong>, <strong>tags</strong>) and <em>interact</em> with <strong>content</strong> through <strong>likes</strong>, <strong>comments</strong> and <strong>shares</strong>. The <strong>system</strong> must <em>support</em> <strong>user authentication</strong>, personalized <strong>recommendations</strong> and real-time <strong>notifications</strong> for <strong>subscriptions</strong> and <strong>interactions</strong>. <strong>Search functionality</strong> should <em>allow</em> <strong>users</strong> to <em>discover</em> <strong>content</strong> based on <strong>relevance</strong>, <strong>popularity</strong> and <strong>preferences</strong>.</p>
+<p>From a <strong>business perspective</strong>, the <strong>system</strong> must <em>ensure</em> high <strong>availability</strong>, <strong>scalability</strong> and <strong>performance</strong> to <em>support</em> billions of daily <strong>interactions</strong>. It should <em>enable</em> <strong>content moderation workflows</strong> to <em>maintain</em> <strong>community standards</strong> and <em>comply</em> with legal <strong>regulations</strong>. <strong>Analytics capabilities</strong> must <em>provide</em> <strong>insights</strong> into <strong>user engagement</strong>, <strong>video performance</strong> and <strong>platform health</strong>. The <strong>architecture</strong> should <em>support</em> modular <strong>growth</strong>, <em>allowing</em> <strong>teams</strong> to independently <em>develop</em> and <em>deploy</em> <strong>features</strong> aligned with <strong>business capabilities</strong> such as <strong>video management</strong>, <strong>user engagement</strong> and <strong>content discovery</strong>.</p>
 <h2 id="nouns-and-verbs-from-video-platform-requirements">Nouns and Verbs from Video Platform Requirements</h2>
 <table>
   <thead>
@@ -1612,7 +1597,7 @@ This DDD analysis provides a much stronger foundation for:</p>
 <ul>
 <li><strong>Data encryption:</strong> At rest and in transit</li>
 <li><strong>Access control:</strong> Role-based and region-aware</li>
-<li><strong>Compliance:</strong> GDPR, CCPA, and other regional regulations</li>
+<li><strong>Compliance:</strong> GDPR, CCPA and other regional regulations</li>
 </ul>
 <h3 id="scale-estimation">Scale Estimation</h3>
 <ul>
@@ -1791,7 +1776,7 @@ This DDD analysis provides a much stronger foundation for:</p>
 <h3 id="decomposition-strategies-from-microservices-patterns">Decomposition Strategies (from &ldquo;Microservices Patterns&rdquo;)</h3>
 <ul>
 <li><strong>By Business Capability</strong>: Decompose services around business domains (e.g., Video Management, User Management, Social Interactions, Analytics).</li>
-<li><strong>By Subdomain (DDD)</strong>: Identify core, supporting, and generic subdomains (e.g., Video Processing as core, Notification as supporting).</li>
+<li><strong>By Subdomain (DDD)</strong>: Identify core, supporting and generic subdomains (e.g., Video Processing as core, Notification as supporting).</li>
 <li><strong>By Transaction Boundary</strong>: Services should own their data and transactional boundaries (e.g., Video Upload and Processing as separate services).</li>
 <li><strong>By Team Ownership</strong>: Align services with team boundaries for independent delivery.</li>
 </ul>
@@ -1800,11 +1785,11 @@ This DDD analysis provides a much stronger foundation for:</p>
 <li><strong>Service Core</strong>: Business logic is isolated from external systems.</li>
 <li><strong>Ports</strong>: Define interfaces for driving (API, UI) and driven (DB, messaging, external APIs) adapters.</li>
 <li><strong>Adapters</strong>: Implement ports for REST, gRPC, Kafka, databases, etc.</li>
-<li><strong>Benefits</strong>: Improves testability, flexibility, and separation of concerns.</li>
+<li><strong>Benefits</strong>: Improves testability, flexibility and separation of concerns.</li>
 </ul>
 <h4 id="example-video-upload-service-hexagonal">Example: Video Upload Service (Hexagonal)</h4>
 <ul>
-<li><strong>Core</strong>: Handles upload validation, metadata extraction, and orchestration.</li>
+<li><strong>Core</strong>: Handles upload validation, metadata extraction and orchestration.</li>
 <li><strong>Inbound Adapter</strong>: REST API for receiving uploads.</li>
 <li><strong>Outbound Adapters</strong>: Kafka producer for events, S3 adapter for storage, DB adapter for metadata.</li>
 </ul>
@@ -1815,12 +1800,12 @@ This DDD analysis provides a much stronger foundation for:</p>
 <li><strong>Saga Pattern</strong>: Manage distributed transactions (e.g., video upload workflow).</li>
 <li><strong>CQRS</strong>: Separate read/write models for scalability.</li>
 <li><strong>Event Sourcing</strong>: Persist state changes as events for auditability.</li>
-<li><strong>Service Mesh</strong>: Use a service mesh (e.g., Istio, Linkerd) for managing service-to-service communication, observability, and security.</li>
+<li><strong>Service Mesh</strong>: Use a service mesh (e.g., Istio, Linkerd) for managing service-to-service communication, observability and security.</li>
 <li><strong>Externalized Configuration</strong>: Store configuration outside the service for flexibility and easier deployments.</li>
 <li><strong>Centralized Log Management</strong>: Aggregate logs for all services to enable monitoring and troubleshooting.</li>
 <li><strong>Health Check API</strong>: Each service exposes a health check endpoint for orchestration and monitoring.</li>
 <li><strong>Consumer-Driven Contracts</strong>: Ensure service integrations are reliable and changes do not break consumers.</li>
-<li><strong>Testing Strategies</strong>: Include contract testing, component testing, and end-to-end testing for microservices.</li>
+<li><strong>Testing Strategies</strong>: Include contract testing, component testing and end-to-end testing for microservices.</li>
 <li><strong>Distributed Tracing</strong>: Implement tracing to follow requests across service boundaries for observability.</li>
 <li><strong>Service Template/Boilerplate</strong>: Use standardized templates to accelerate new service development and enforce best practices.</li>
 </ul>
@@ -1829,7 +1814,7 @@ This DDD analysis provides a much stronger foundation for:</p>
 <ul>
 <li><strong>Load Balancers</strong>: Deploy multiple tiers (L4/L7) with auto-scaling</li>
 <li><strong>API Gateway Clusters</strong>: Regional deployment with intelligent routing</li>
-<li><strong>Microservice Replicas</strong>: Auto-scaling based on CPU, memory, and queue depth</li>
+<li><strong>Microservice Replicas</strong>: Auto-scaling based on CPU, memory and queue depth</li>
 <li><strong>Database Read Replicas</strong>: Multiple read-only instances per region</li>
 </ul>
 <h3 id="y-axis-scaling-functional-decomposition">Y-Axis Scaling (Functional Decomposition)</h3>
@@ -1956,7 +1941,7 @@ This DDD analysis provides a much stronger foundation for:</p>
 <h3 id="processing-stages">Processing Stages</h3>
 <ol>
 <li><strong>Ingestion</strong>: Upload validation, virus scanning, metadata extraction</li>
-<li><strong>Transcoding</strong>: Multiple resolutions, formats, and bitrates</li>
+<li><strong>Transcoding</strong>: Multiple resolutions, formats and bitrates</li>
 <li><strong>AI Processing</strong>: Content analysis, thumbnail generation, closed captions</li>
 <li><strong>Quality Check</strong>: Automated quality assessment and optimization</li>
 <li><strong>Distribution</strong>: CDN upload and cache warming</li>
@@ -2394,15 +2379,15 @@ This DDD analysis provides a much stronger foundation for:</p>
 </span></span></code></pre></div><h2 id="21-additional-considerations-and-patterns">21. Additional Considerations and Patterns</h2>
 <h3 id="service-governance--platform-engineering">Service Governance &amp; Platform Engineering</h3>
 <ul>
-<li><strong>API Gateway Governance</strong>: Centralized API management, versioning, and security policies.</li>
-<li><strong>Service Catalog</strong>: Maintain a registry of all services, their owners, and documentation.</li>
+<li><strong>API Gateway Governance</strong>: Centralized API management, versioning and security policies.</li>
+<li><strong>Service Catalog</strong>: Maintain a registry of all services, their owners and documentation.</li>
 <li><strong>Platform as a Service (PaaS)</strong>: Internal developer platforms for rapid service deployment and consistency.</li>
-<li><strong>Service Lifecycle Management</strong>: Automated onboarding, deprecation, and retirement of services.</li>
+<li><strong>Service Lifecycle Management</strong>: Automated onboarding, deprecation and retirement of services.</li>
 </ul>
 <h3 id="observability--operations">Observability &amp; Operations</h3>
 <ul>
 <li><strong>Distributed Tracing</strong>: End-to-end request tracing across all services.</li>
-<li><strong>Log Correlation</strong>: Correlate logs, traces, and metrics for faster root cause analysis.</li>
+<li><strong>Log Correlation</strong>: Correlate logs, traces and metrics for faster root cause analysis.</li>
 <li><strong>Proactive Anomaly Detection</strong>: ML-based monitoring for early detection of issues.</li>
 <li><strong>Feature Flags</strong>: Gradual rollout and rollback of features without redeployments.</li>
 </ul>
@@ -2422,7 +2407,7 @@ This DDD analysis provides a much stronger foundation for:</p>
 <ul>
 <li><strong>Real-Time Analytics</strong>: Stream processing for instant insights (e.g., Apache Flink).</li>
 <li><strong>A/B Testing Platform</strong>: Experiment with new features and recommendation algorithms.</li>
-<li><strong>Personalization Engine</strong>: ML-driven recommendations, thumbnails, and notifications.</li>
+<li><strong>Personalization Engine</strong>: ML-driven recommendations, thumbnails and notifications.</li>
 <li><strong>Content Fingerprinting</strong>: Detect duplicate or copyrighted content at scale.</li>
 </ul>
 <h3 id="reliability-engineering">Reliability Engineering</h3>
@@ -2434,8 +2419,8 @@ This DDD analysis provides a much stronger foundation for:</p>
 <h3 id="developer-experience">Developer Experience</h3>
 <ul>
 <li><strong>Local Development Environments</strong>: Simulate production-like environments for testing.</li>
-<li><strong>Automated Code Quality Checks</strong>: Linting, static analysis, and security scanning in CI/CD.</li>
-<li><strong>Comprehensive Documentation</strong>: Up-to-date API, architecture, and operational docs.</li>
+<li><strong>Automated Code Quality Checks</strong>: Linting, static analysis and security scanning in CI/CD.</li>
+<li><strong>Comprehensive Documentation</strong>: Up-to-date API, architecture and operational docs.</li>
 </ul>
 <h3 id="sustainability--cost-controls">Sustainability &amp; Cost Controls</h3>
 <ul>
@@ -2450,8 +2435,8 @@ This DDD analysis provides a much stronger foundation for:</p>
 <li><strong>Community Moderation Tools</strong>: Empower users to help maintain content quality.</li>
 </ul>
 <h2 id="conclusion">Conclusion</h2>
-<p>This comprehensive YouTube system design demonstrates how to architect a massive-scale video platform that can handle billions of users and petabytes of content. The design incorporates modern distributed systems principles, microservices architecture, event-driven patterns, and advanced scaling techniques.</p>
-<p>The 10x scaling strategy leverages the Scale Cube dimensions, applies CAP theorem principles strategically, and utilizes cutting-edge technologies to ensure the platform remains performant, reliable, and cost-effective as it grows. The architecture is designed to be resilient, observable, and maintainable while providing an excellent user experience globally.</p>
+<p>This comprehensive YouTube system design demonstrates how to architect a massive-scale video platform that can handle billions of users and petabytes of content. The design incorporates modern distributed systems principles, microservices architecture, event-driven patterns and advanced scaling techniques.</p>
+<p>The 10x scaling strategy leverages the Scale Cube dimensions, applies CAP theorem principles strategically and utilizes cutting-edge technologies to ensure the platform remains performant, reliable and cost-effective as it grows. The architecture is designed to be resilient, observable and maintainable while providing an excellent user experience globally.</p>
 
           </div>
           <div class="row items-start justify-between">
@@ -2748,28 +2733,8 @@ This DDD analysis provides a much stronger foundation for:</p>
   </h4>
   
   
-  <p class="mb-6">System design is a critical aspect of software engineering that involves creating scalable, reliable, and efficient systems.</p>
+  <p class="mb-6">System design is a critical aspect of software engineering that involves creating scalable, reliable and efficient systems.</p>
   <a class="btn btn-outline-primary btn-sm" href="/blog/system_design/system_design/">
-    Read More
-  </a>
-</div>
-
-              </div>
-            
-              <div class="lg:col-4 md:col-6 mb-14">
-                <div class="bg-body dark:bg-darkmode-body">
-  
-  
-  <h4 class="mb-3">
-    <a href="/blog/system_design/core_design_patterns/">
-      23 Core Design Patterns
-    </a>
-  </h4>
-  
-  
-  <p class="mb-6">Core design patterns are proven solutions to common software engineering problems. They help structure code for flexibility, scalability, and maintainability. Mastering these patterns is essential for interviews and for building robust, reusable, and understandable software systems.
-</p>
-  <a class="btn btn-outline-primary btn-sm" href="/blog/system_design/core_design_patterns/">
     Read More
   </a>
 </div>
@@ -2787,9 +2752,29 @@ This DDD analysis provides a much stronger foundation for:</p>
   </h4>
   
   
-  <p class="mb-6">JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability, and performance challenges in distributed systems, helping developers build robust, modular, and efficient enterprise-grade software.
+  <p class="mb-6">JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability and performance challenges in distributed systems, helping developers build robust, modular and efficient enterprise-grade software.
 </p>
   <a class="btn btn-outline-primary btn-sm" href="/blog/system_design/jee_design_patterns/">
+    Read More
+  </a>
+</div>
+
+              </div>
+            
+              <div class="lg:col-4 md:col-6 mb-14">
+                <div class="bg-body dark:bg-darkmode-body">
+  
+  
+  <h4 class="mb-3">
+    <a href="/blog/system_design/core_design_patterns/">
+      23 Core Design Patterns
+    </a>
+  </h4>
+  
+  
+  <p class="mb-6">Core design patterns are proven solutions to common software engineering problems. They help structure code for flexibility, scalability and maintainability. Mastering these patterns is essential for interviews and for building robust, reusable and understandable software systems.
+</p>
+  <a class="btn btn-outline-primary btn-sm" href="/blog/system_design/core_design_patterns/">
     Read More
   </a>
 </div>

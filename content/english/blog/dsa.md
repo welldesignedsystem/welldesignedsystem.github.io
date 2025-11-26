@@ -64,7 +64,7 @@ summary = "Curated list of classic data structure and algorithm problems commonl
 ## Stacks & Queues
 
 - **Valid Parentheses** (Check if a string containing just the characters '(', ')', '{', '}', '[' and ']' is valid. [Facebook, Amazon])
-- **Min Stack** (Design a stack that supports push, pop, top, and retrieving the minimum element in constant time. [Amazon])
+- **Min Stack** (Design a stack that supports push, pop, top and retrieving the minimum element in constant time. [Amazon])
 - **Evaluate Reverse Polish Notation** (Evaluate the value of an arithmetic expression in Reverse Polish Notation. [Google])
 - **Daily Temperatures** (Given a list of daily temperatures, return a list that tells how many days to wait until a warmer temperature. [Amazon])
 - **Implement Queue using Stacks** (Implement a queue using two stacks. [Microsoft])

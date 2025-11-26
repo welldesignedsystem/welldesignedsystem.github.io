@@ -616,10 +616,6 @@
                 
                 
                 
-              
-                
-                
-                
                inline-flex items-center">
               Pages
               <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
@@ -629,17 +625,6 @@
             </label>
             <ul
               class="nav-dropdown-list hidden peer-checked:block lg:invisible lg:absolute lg:block lg:opacity-0 lg:group-hover:visible lg:group-hover:opacity-100">
-              
-                
-                
-                <li class="nav-dropdown-item">
-                  <a
-                    class="nav-dropdown-link "
-                    
-                    href="/404">
-                    404 Page
-                  </a>
-                </li>
               
                 
                 
@@ -1044,7 +1029,7 @@
 </nav>
 </details>
 
-            <p>Natural Language Processing (NLP) is a foundational field in artificial intelligence that enables computers to understand, interpret, and generate human language. With the rapid evolution of large language models (LLMs) and generative AI, NLP has become central to applications such as chatbots, virtual assistants, sentiment analysis, and automated translation. This document provides a practical overview of NLP concepts, pipelines, and tools, including hands-on examples with libraries like NLTK and spaCy. It also explores the rise of LLMs, prompt engineering, and modern frameworks that are shaping the future of language-based AI systems.</p>
+            <p>Natural Language Processing (NLP) is a foundational field in artificial intelligence that enables computers to understand, interpret and generate human language. With the rapid evolution of large language models (LLMs) and generative AI, NLP has become central to applications such as chatbots, virtual assistants, sentiment analysis and automated translation. This document provides a practical overview of NLP concepts, pipelines and tools, including hands-on examples with libraries like NLTK and spaCy. It also explores the rise of LLMs, prompt engineering and modern frameworks that are shaping the future of language-based AI systems.</p>
 <h2 id="1-introduction">1. Introduction</h2>
 <hr>
 <h2 id="nlp-tasks">NLP Tasks</h2>
@@ -1201,9 +1186,9 @@
 Using the same word in different inflected forms in a text can lead to redundancy in natural language processing tasks. By reducing inflection, we decrease the number of unique words that machine learning models need to process.</p>
 <p><strong>Example 1</strong></p>
 <ul>
-<li>Without Inflection: Original sentence: &ldquo;She runs every day, and they are running in the park while he ran yesterday.&rdquo;
+<li>Without Inflection: Original sentence: &ldquo;She runs every day and they are running in the park while he ran yesterday.&rdquo;
 Inflected forms: runs, running, ran</li>
-<li>With Reduced Inflection:Simplified sentence: &ldquo;She run every day, and they run in the park while he run yesterday.&rdquo; In this simplified version, we use &ldquo;run&rdquo; for all forms.</li>
+<li>With Reduced Inflection:Simplified sentence: &ldquo;She run every day and they run in the park while he run yesterday.&rdquo; In this simplified version, we use &ldquo;run&rdquo; for all forms.</li>
 <li>Impact: Original sentence has three different inflected forms, which can create redundancy for a natural language processing model.
 Simplified sentence reduces the variety of words, making it easier for the model to analyze the core action (running) without getting bogged down by different forms.</li>
 </ul>
@@ -2059,7 +2044,7 @@ The generic response might not be of interest to you hence we have depend on a c
 <h2 id="chatgpt-vs-gpt30">ChatGPT v/s GPT3.0</h2>
 <p>ChatGPT is a finetuned model - easy to get useful responses, however with GPT 3.0 that isn&rsquo;t the case and more work is to be done on prompt engineering side - it just does work prediction.</p>
 <h2 id="langchain">LangChain</h2>
-<p>LangChain is a framework designed to help developers build applications that leverage language models (like GPT) more effectively by integrating them with other tools, data sources, and workflows. It simplifies the process of creating applications that combine various natural language processing tasks with external data, APIs, and user interactions.</p>
+<p>LangChain is a framework designed to help developers build applications that leverage language models (like GPT) more effectively by integrating them with other tools, data sources and workflows. It simplifies the process of creating applications that combine various natural language processing tasks with external data, APIs and user interactions.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>pip install langchain
 </span></span><span style="display:flex;"><span>pip install langchain-community langchain-core
 </span></span><span style="display:flex;"><span>pip install huggingface_hub
@@ -2073,7 +2058,7 @@ The generic response might not be of interest to you hence we have depend on a c
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>prompt_template <span style="color:#f92672">=</span> PromptTemplate(
 </span></span><span style="display:flex;"><span>    input_variables<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#34;question&#34;</span>],
-</span></span><span style="display:flex;"><span>    template<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;&#34;You are the teacher, and you are running a surprise test to see who are the attentive kids. 
+</span></span><span style="display:flex;"><span>    template<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;&#34;You are the teacher and you are running a surprise test to see who are the attentive kids. 
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    The questions will be in the form 
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">Question: </span><span style="color:#e6db74">{question}</span><span style="color:#e6db74">&#34;&#34;&#34;</span>
 </span></span><span style="display:flex;"><span>)
@@ -2361,7 +2346,7 @@ you can access it using</p>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>eval_texts <span style="color:#f92672">=</span> [
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;An absolutely stunning film! The visuals were breathtaking, and the storyline kept me engaged the entire time.&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;An absolutely stunning film! The visuals were breathtaking and the storyline kept me engaged the entire time.&#34;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;I was really disappointed with this film. The plot was weak and the characters were poorly developed.&#34;</span><span style="color:#f92672">....</span>
 </span></span><span style="display:flex;"><span>]
 </span></span><span style="display:flex;"><span>

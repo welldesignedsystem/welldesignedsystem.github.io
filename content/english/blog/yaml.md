@@ -3,11 +3,11 @@ date = '2025-01-30T10:00:00+00:00'
 draft = false
 title = 'YAML Guide'
 tags = ['YAML', 'Configuration', 'Data Serialization', 'DevOps', 'Tutorial']
-summary = "Comprehensive YAML reference covering syntax, types, multi-line strings, best practices, and common pitfalls for config and DevOps use."
+summary = "Comprehensive YAML reference covering syntax, types, multi-line strings, best practices and common pitfalls for config and DevOps use."
 +++
 
 YAML (YAML is not a Markup Language) is a human-readable data serialization standard that can be used in conjunction with all programming languages and is often used for configuration files and data exchange between languages with different data structures.
-A comprehensive guide to YAML (YAML Ain't Markup Language) - a human-readable data serialization language commonly used for configuration files, data exchange, and infrastructure as code.
+A comprehensive guide to YAML (YAML Ain't Markup Language) - a human-readable data serialization language commonly used for configuration files, data exchange and infrastructure as code.
 
 ---
 
@@ -914,7 +914,7 @@ doc2: second
 
 ## Conclusion
 
-YAML is a powerful and flexible data serialization format that balances human readability with machine parseability. By following the syntax rules and best practices outlined in this guide, you can effectively use YAML for configuration files, data exchange, and infrastructure as code.
+YAML is a powerful and flexible data serialization format that balances human readability with machine parseability. By following the syntax rules and best practices outlined in this guide, you can effectively use YAML for configuration files, data exchange and infrastructure as code.
 
 Key takeaways:
 - Always use spaces (never tabs) for indentation

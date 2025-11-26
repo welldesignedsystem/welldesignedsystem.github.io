@@ -13,7 +13,7 @@
       <link>http://localhost:1313/blog/ai/nlp/</link>
       <pubDate>Sat, 10 May 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/ai/nlp/</guid>
-      <description>Practical overview of NLP concepts, pipelines, and tools—covering tokenization, embeddings, model architectures, and production best practices.</description>
+      <description>Practical overview of NLP concepts, pipelines and tools—covering tokenization, embeddings, model architectures and production best practices.</description>
     </item>
   </channel>
 </rss>

@@ -13,14 +13,14 @@
       <link>http://localhost:1313/blog/kubernetes/</link>
       <pubDate>Sat, 03 May 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/kubernetes/</guid>
-      <description>Overview of Kubernetes architecture, core concepts (pods, nodes, volumes), and practical examples for deployment and storage patterns.</description>
+      <description>Overview of Kubernetes architecture, core concepts (pods, nodes, volumes) and practical examples for deployment and storage patterns.</description>
     </item>
     <item>
       <title>Python Quicky</title>
       <link>http://localhost:1313/blog/python/</link>
       <pubDate>Tue, 03 May 2022 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/python/</guid>
-      <description>Concise, interview-focused Python reference covering syntax, data structures, OOP, concurrency, and common pitfalls with examples.</description>
+      <description>Concise, interview-focused Python reference covering syntax, data structures, OOP, concurrency and common pitfalls with examples.</description>
     </item>
   </channel>
 </rss>

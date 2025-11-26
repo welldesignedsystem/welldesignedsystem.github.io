@@ -3,22 +3,22 @@ date = '2025-05-10T12:44:47+10:00'
 draft = false
 title = 'Gen AI Patterns'
 tags = ['LLM', 'AI', 'Design Patterns']
-summary = "Reusable design patterns and best practices for building robust, efficient, and scalable LLM applications, covering retrieval, memory, agents, RAG, and orchestration."
+summary = "Reusable design patterns and best practices for building robust, efficient and scalable LLM applications, covering retrieval, memory, agents, RAG and orchestration."
 +++
 
-LLM design patterns are reusable strategies for building robust, efficient, and scalable AI applications. They help developers structure retrieval, reading, rewriting, memory, agent, and orchestration workflows for large language models. These patterns improve performance, maintainability accuracy, cost and security.
+LLM design patterns are reusable strategies for building robust, efficient and scalable AI applications. They help developers structure retrieval, reading, rewriting, memory, agent and orchestration workflows for large language models. These patterns improve performance, maintainability accuracy, cost and security.
 
 ## Introduction
 
 Before we proceed setting the stage.
 ## Concepts 
 ### LLMs
-LLM an AI model trained on massive amounts of text. It is kind of able to understand, generate, and reason with natural language.
+LLM an AI model trained on massive amounts of text. It is kind of able to understand, generate and reason with natural language.
 - GPT-3: 175B Parameters, ~350B tokens. GPT-4:is 6x bigger. GPT-5 was supposed to be 20x bigger but is counter intuitive 300B Parameters.
 - Pre-trained on massive text corpora to learn language patterns.
 - parametric memory: knowledge stored in model weights.
 - Model hub: Repositories of pre-trained models for easy access and deployment e.g. Hugging Face, TensorFlow Hub, PyTorch Hub, Amazon SageMaker JumpStart, etc.
-- Model Card: documentation that provides details about a model's architecture, training data, performance metrics, intended use cases, and ethical considerations. Model cards help users understand the capabilities and limitations of a model before deploying it in real-world applications.
+- Model Card: documentation that provides details about a model's architecture, training data, performance metrics, intended use cases and ethical considerations. Model cards help users understand the capabilities and limitations of a model before deploying it in real-world applications.
 
 ---
 
@@ -46,7 +46,7 @@ Total training FLOPs scale approximately as:
   - GPT-5 leverages on many architectural innovations like:
     - Unified Intelligence System: integrates multiple reasoning and perception modules for more general intelligence.
     - Mixture-of-Experts: routes inputs to specialized sub-models for improved efficiency and accuracy.
-    - Multimodal Integration: processes and understands text, images, and other data types together.
+    - Multimodal Integration: processes and understands text, images and other data types together.
 
 ---
 
@@ -58,7 +58,7 @@ Total training FLOPs scale approximately as:
 ---
 - 
 ### Tokenizers: 
-  - convert text into tokens (subwords, words, or characters) for model input. Common types include Byte Pair Encoding (BPE), WordPiece, and SentencePiece. 
+  - convert text into tokens (subwords, words, or characters) for model input. Common types include Byte Pair Encoding (BPE), WordPiece and SentencePiece. 
   - vector id: unique identifier for each token in the tokenizer's vocabulary.
 ---
 
@@ -69,9 +69,9 @@ Total training FLOPs scale approximately as:
   - Three main techniques:
     - Predict next word (causal language modeling): Used by models like GPT; generates text by predicting the next token in a sequence.
     - Predict masked word: Used by models like BERT; predicts masked tokens within a sentence for better understanding of context.
-  - **GPT models - Decoder Focused : Focus on text generation, conversation, and completion tasks.**
-  - BERT models - Encoder Focused: Focus on understanding, classification, and extracting information from text.
-  - T5, BART - Encoder & decoder : Good for translation, summarization, and more complex tasks.
+  - **GPT models - Decoder Focused : Focus on text generation, conversation and completion tasks.**
+  - BERT models - Encoder Focused: Focus on understanding, classification and extracting information from text.
+  - T5, BART - Encoder & decoder : Good for translation, summarization and more complex tasks.
   - Many LLMs are specialized for tasks like code generation, multimodal input (text + images), or domain-specific knowledge.
 
 ---
@@ -184,7 +184,7 @@ If `k = 3`:
 
 ### Prompt Engineering and Patterns
 - Prompt engineering is the practice of designing and refining prompts to optimize LLM outputs.
-- Prompt engineers experiment with wording, structure, and context to achieve desired results.
+- Prompt engineers experiment with wording, structure and context to achieve desired results.
 - Common patterns:
 
 | **Type**                       | **Definition**                                                       | **Example**                                                                 |
@@ -246,7 +246,7 @@ Structured output model returns data in a **specific or predefined, machine-read
 | **Model Selection**         | Use smaller/faster models for simple tasks; larger models for complex reasoning or high-quality output. |
 | **Tooling Integration**     | Give it access to tools or RAG or vector databases                                            |
 | **Function call & Structured Output** | to reduce parsing and token overhead.                        |
-| support for **Imperative or Declarative Composition** | helps in controlling the sequence and flow of operations with LLMs, tools, and data        |
+| support for **Imperative or Declarative Composition** | helps in controlling the sequence and flow of operations with LLMs, tools and data        |
 | **templating** | use of frameworks that support templating - easier to perform batch operations                       |
 
 ---
@@ -523,7 +523,7 @@ for r in results:
   - Any **Irrelevant or redundant content** in that vector can lead to **wrong** or **hallucinated answers**.  
 
 **ColBERT Approach:**
-- uses **late interaction**, Late interaction means each token in **query** and **document** is **encoded independently first**, and **only after encoding**, their similarities are computed (using **MaxSim**).
+- uses **late interaction**, Late interaction means each token in **query** and **document** is **encoded independently first** and **only after encoding**, their similarities are computed (using **MaxSim**).
   1. **Token-level embeddings:** Instead of one vector per document, ColBERT creates an embedding for each token.  
   2. **Compare at token level:** For every token in **query**, it compute similarity with all tokens in the **document**.  
   3. **Aggregate smartly:** **Sum these matches** = **final document score** = **best match**.  
@@ -623,7 +623,7 @@ for r in results:
 ---
 
 ### 7. RAG-Fusion
-Sometimes **information space is large** and **spread out** or **diverse**, and a single query is **insufficient** to capture all relevant context.
+Sometimes **information space is large** and **spread out** or **diverse** and a single query is **insufficient** to capture all relevant context.
 RAG-Fusion (Retrieval-Augmented Generation with Fusion) is an **extension** of the **multi-query retrieval strategy**. It enhances the retrieval process by introducing a **final reranking step** using the **Reciprocal Rank Fusion (RRF)** algorithm.
 
 ### Steps
@@ -647,7 +647,7 @@ RAG-Fusion (Retrieval-Augmented Generation with Fusion) is an **extension** of t
 #### Use Cases
 
 1. **Legal or Compliance like ACMA or TCP or Security documenations:**  
-   - Searching across multiple regulations, rules, and previous incidents.  
+   - Searching across multiple regulations, rules and previous incidents.  
    - RRF helps surface the most relevant documents that are supported across different search formulations.
 
 2. **Enterprise Search:**  
@@ -714,7 +714,7 @@ HyDE effectively **bridges the gap between natural language queries and document
 <img width="460" height="300" alt="image" src="https://github.com/user-attachments/assets/564420f8-9bd2-4f97-9e68-0e0dbcfb02f4" />
 
 ## Query Routing
-Query routing is a strategy used in retrieval or search systems to **direct a user query to the most relevant subset of data or service**. The goal is to improve retrieval efficiency, relevance, and response time. There are two main strategies: **logical routing** and **semantic routing**.
+Query routing is a strategy used in retrieval or search systems to **direct a user query to the most relevant subset of data or service**. The goal is to improve retrieval efficiency, relevance and response time. There are two main strategies: **logical routing** and **semantic routing**.
 
 ### 9. Logical Routing
 Logical routing directs queries based on **predefined rules, categories, or metadata** associated with the documents or data sources.
@@ -767,7 +767,7 @@ def prompt_router(query):
 ---
 
 ## Query Construction
- **user's natural language query** into **a structured query** that can be executed against various data sources. This is essential for retrieval systems, vector stores, and relational databases.
+ **user's natural language query** into **a structured query** that can be executed against various data sources. This is essential for retrieval systems, vector stores and relational databases.
 
 ---
 
@@ -837,11 +837,11 @@ Relational databases require SQL queries, which are not naturally compatible wit
 #### 14. ReAct (Reason + Act)
 - Combines reasoning steps with tool or function calls.
 - Model alternates between generating thoughts and taking actions (API calls, tool invocation).
-- Useful for multi-step tasks, retrieval, and automation.
+- Useful for multi-step tasks, retrieval and automation.
 <img width="1400" height="686" alt="image" src="https://github.com/user-attachments/assets/67a2124c-9270-440b-b222-5b70ab293266" />
 
 #### 15. Reflexion
-- Model reviews its own outputs, critiques, and iteratively improves answers.
+- Model reviews its own outputs, critiques and iteratively improves answers.
 - Can be used for self-correction, debugging, or refining reasoning.
 <img width="2000" height="1322" alt="image" src="https://github.com/user-attachments/assets/e607b1f1-8b79-4ee6-99b2-596eea8d8693" />
 
@@ -862,7 +862,7 @@ Relational databases require SQL queries, which are not naturally compatible wit
 
 ## Agentic Patterns
 
-Spring AI or any other framework for that matter, inspired by Anthropic's research, implements five foundational agentic patterns for building effective LLM-based systems. These patterns balance simplicity, composability, and reliability, making them suitable for enterprise-grade AI applications.
+Spring AI or any other framework for that matter, inspired by Anthropic's research, implements five foundational agentic patterns for building effective LLM-based systems. These patterns balance simplicity, composability and reliability, making them suitable for enterprise-grade AI applications.
 
 ### 1. Chain Workflow
 - **Description:** Breaks down complex tasks into sequential, manageable steps. Each step's output becomes the input for the next.

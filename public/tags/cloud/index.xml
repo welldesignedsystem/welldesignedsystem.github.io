@@ -13,7 +13,7 @@
       <link>http://localhost:1313/blog/system_design/aws/</link>
       <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/system_design/aws/</guid>
-      <description>&lt;p&gt;System design is a critical aspect of software engineering that involves creating scalable, reliable, and efficient systems. This document explores key concepts and strategies required for designing robust systems, including networking, databases, scalability, caching, and modern architectural patterns. It serves as a comprehensive guide for understanding the foundational and advanced principles of system design.&lt;/p&gt;</description>
+      <description>&lt;p&gt;System design is a critical aspect of software engineering that involves creating scalable, reliable and efficient systems. This document explores key concepts and strategies required for designing robust systems, including networking, databases, scalability, caching and modern architectural patterns. It serves as a comprehensive guide for understanding the foundational and advanced principles of system design.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

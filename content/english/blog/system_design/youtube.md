@@ -9,9 +9,9 @@ The goal is to demonstrate a practical, modern approach to building and scaling 
 
 ## Technical & Business Requirements
 
-The **platform** must _enable_ **users** to _upload_, _manage_, and _stream_ **video content** at **scale**, _supporting_ a seamless **experience** across **devices** and **geographies**. **Users** should _be able to create_ personal or branded **channels**, _publish_ **videos** with **metadata** (**title**, **description**, **tags**), and _interact_ with **content** through **likes**, **comments**, and **shares**. The **system** must _support_ **user authentication**, personalized **recommendations**, and real-time **notifications** for **subscriptions** and **interactions**. **Search functionality** should _allow_ **users** to _discover_ **content** based on **relevance**, **popularity**, and **preferences**.
+The **platform** must _enable_ **users** to _upload_, _manage_ and _stream_ **video content** at **scale**, _supporting_ a seamless **experience** across **devices** and **geographies**. **Users** should _be able to create_ personal or branded **channels**, _publish_ **videos** with **metadata** (**title**, **description**, **tags**) and _interact_ with **content** through **likes**, **comments** and **shares**. The **system** must _support_ **user authentication**, personalized **recommendations** and real-time **notifications** for **subscriptions** and **interactions**. **Search functionality** should _allow_ **users** to _discover_ **content** based on **relevance**, **popularity** and **preferences**.
 
-From a **business perspective**, the **system** must _ensure_ high **availability**, **scalability**, and **performance** to _support_ billions of daily **interactions**. It should _enable_ **content moderation workflows** to _maintain_ **community standards** and _comply_ with legal **regulations**. **Analytics capabilities** must _provide_ **insights** into **user engagement**, **video performance**, and **platform health**. The **architecture** should _support_ modular **growth**, _allowing_ **teams** to independently _develop_ and _deploy_ **features** aligned with **business capabilities** such as **video management**, **user engagement**, and **content discovery**.
+From a **business perspective**, the **system** must _ensure_ high **availability**, **scalability** and **performance** to _support_ billions of daily **interactions**. It should _enable_ **content moderation workflows** to _maintain_ **community standards** and _comply_ with legal **regulations**. **Analytics capabilities** must _provide_ **insights** into **user engagement**, **video performance** and **platform health**. The **architecture** should _support_ modular **growth**, _allowing_ **teams** to independently _develop_ and _deploy_ **features** aligned with **business capabilities** such as **video management**, **user engagement** and **content discovery**.
 ## Nouns and Verbs from Video Platform Requirements
 
 | Noun | Category | Description |
@@ -172,7 +172,7 @@ Microservices architecture design
 #### Security & Compliance
 - **Data encryption:** At rest and in transit
 - **Access control:** Role-based and region-aware
-- **Compliance:** GDPR, CCPA, and other regional regulations
+- **Compliance:** GDPR, CCPA and other regional regulations
 
 ### Scale Estimation
 - **Users**: 2.7B monthly active users
@@ -340,7 +340,7 @@ Microservices architecture design
 
 ### Decomposition Strategies (from "Microservices Patterns")
 - **By Business Capability**: Decompose services around business domains (e.g., Video Management, User Management, Social Interactions, Analytics).
-- **By Subdomain (DDD)**: Identify core, supporting, and generic subdomains (e.g., Video Processing as core, Notification as supporting).
+- **By Subdomain (DDD)**: Identify core, supporting and generic subdomains (e.g., Video Processing as core, Notification as supporting).
 - **By Transaction Boundary**: Services should own their data and transactional boundaries (e.g., Video Upload and Processing as separate services).
 - **By Team Ownership**: Align services with team boundaries for independent delivery.
 
@@ -348,10 +348,10 @@ Microservices architecture design
 - **Service Core**: Business logic is isolated from external systems.
 - **Ports**: Define interfaces for driving (API, UI) and driven (DB, messaging, external APIs) adapters.
 - **Adapters**: Implement ports for REST, gRPC, Kafka, databases, etc.
-- **Benefits**: Improves testability, flexibility, and separation of concerns.
+- **Benefits**: Improves testability, flexibility and separation of concerns.
 
 #### Example: Video Upload Service (Hexagonal)
-- **Core**: Handles upload validation, metadata extraction, and orchestration.
+- **Core**: Handles upload validation, metadata extraction and orchestration.
 - **Inbound Adapter**: REST API for receiving uploads.
 - **Outbound Adapters**: Kafka producer for events, S3 adapter for storage, DB adapter for metadata.
 
@@ -361,12 +361,12 @@ Microservices architecture design
 - **Saga Pattern**: Manage distributed transactions (e.g., video upload workflow).
 - **CQRS**: Separate read/write models for scalability.
 - **Event Sourcing**: Persist state changes as events for auditability.
-- **Service Mesh**: Use a service mesh (e.g., Istio, Linkerd) for managing service-to-service communication, observability, and security.
+- **Service Mesh**: Use a service mesh (e.g., Istio, Linkerd) for managing service-to-service communication, observability and security.
 - **Externalized Configuration**: Store configuration outside the service for flexibility and easier deployments.
 - **Centralized Log Management**: Aggregate logs for all services to enable monitoring and troubleshooting.
 - **Health Check API**: Each service exposes a health check endpoint for orchestration and monitoring.
 - **Consumer-Driven Contracts**: Ensure service integrations are reliable and changes do not break consumers.
-- **Testing Strategies**: Include contract testing, component testing, and end-to-end testing for microservices.
+- **Testing Strategies**: Include contract testing, component testing and end-to-end testing for microservices.
 - **Distributed Tracing**: Implement tracing to follow requests across service boundaries for observability.
 - **Service Template/Boilerplate**: Use standardized templates to accelerate new service development and enforce best practices.
 
@@ -375,7 +375,7 @@ Microservices architecture design
 ### X-Axis Scaling (Horizontal Duplication)
 - **Load Balancers**: Deploy multiple tiers (L4/L7) with auto-scaling
 - **API Gateway Clusters**: Regional deployment with intelligent routing
-- **Microservice Replicas**: Auto-scaling based on CPU, memory, and queue depth
+- **Microservice Replicas**: Auto-scaling based on CPU, memory and queue depth
 - **Database Read Replicas**: Multiple read-only instances per region
 
 ### Y-Axis Scaling (Functional Decomposition)
@@ -476,7 +476,7 @@ Video Upload → [Event Producer] → [Kafka Topics] → [Event Consumers] → P
 
 ### Processing Stages
 1. **Ingestion**: Upload validation, virus scanning, metadata extraction
-2. **Transcoding**: Multiple resolutions, formats, and bitrates
+2. **Transcoding**: Multiple resolutions, formats and bitrates
 3. **AI Processing**: Content analysis, thumbnail generation, closed captions
 4. **Quality Check**: Automated quality assessment and optimization
 5. **Distribution**: CDN upload and cache warming
@@ -946,14 +946,14 @@ CDN Cache Hit Rate < 85%:
 ## 21. Additional Considerations and Patterns
 
 ### Service Governance & Platform Engineering
-- **API Gateway Governance**: Centralized API management, versioning, and security policies.
-- **Service Catalog**: Maintain a registry of all services, their owners, and documentation.
+- **API Gateway Governance**: Centralized API management, versioning and security policies.
+- **Service Catalog**: Maintain a registry of all services, their owners and documentation.
 - **Platform as a Service (PaaS)**: Internal developer platforms for rapid service deployment and consistency.
-- **Service Lifecycle Management**: Automated onboarding, deprecation, and retirement of services.
+- **Service Lifecycle Management**: Automated onboarding, deprecation and retirement of services.
 
 ### Observability & Operations
 - **Distributed Tracing**: End-to-end request tracing across all services.
-- **Log Correlation**: Correlate logs, traces, and metrics for faster root cause analysis.
+- **Log Correlation**: Correlate logs, traces and metrics for faster root cause analysis.
 - **Proactive Anomaly Detection**: ML-based monitoring for early detection of issues.
 - **Feature Flags**: Gradual rollout and rollback of features without redeployments.
 
@@ -970,7 +970,7 @@ CDN Cache Hit Rate < 85%:
 ### Advanced Data & ML
 - **Real-Time Analytics**: Stream processing for instant insights (e.g., Apache Flink).
 - **A/B Testing Platform**: Experiment with new features and recommendation algorithms.
-- **Personalization Engine**: ML-driven recommendations, thumbnails, and notifications.
+- **Personalization Engine**: ML-driven recommendations, thumbnails and notifications.
 - **Content Fingerprinting**: Detect duplicate or copyrighted content at scale.
 
 ### Reliability Engineering
@@ -980,8 +980,8 @@ CDN Cache Hit Rate < 85%:
 
 ### Developer Experience
 - **Local Development Environments**: Simulate production-like environments for testing.
-- **Automated Code Quality Checks**: Linting, static analysis, and security scanning in CI/CD.
-- **Comprehensive Documentation**: Up-to-date API, architecture, and operational docs.
+- **Automated Code Quality Checks**: Linting, static analysis and security scanning in CI/CD.
+- **Comprehensive Documentation**: Up-to-date API, architecture and operational docs.
 
 ### Sustainability & Cost Controls
 - **Green Computing Initiatives**: Optimize for energy efficiency and carbon footprint.
@@ -995,6 +995,6 @@ CDN Cache Hit Rate < 85%:
 
 ## Conclusion
 
-This comprehensive YouTube system design demonstrates how to architect a massive-scale video platform that can handle billions of users and petabytes of content. The design incorporates modern distributed systems principles, microservices architecture, event-driven patterns, and advanced scaling techniques.
+This comprehensive YouTube system design demonstrates how to architect a massive-scale video platform that can handle billions of users and petabytes of content. The design incorporates modern distributed systems principles, microservices architecture, event-driven patterns and advanced scaling techniques.
 
-The 10x scaling strategy leverages the Scale Cube dimensions, applies CAP theorem principles strategically, and utilizes cutting-edge technologies to ensure the platform remains performant, reliable, and cost-effective as it grows. The architecture is designed to be resilient, observable, and maintainable while providing an excellent user experience globally.
+The 10x scaling strategy leverages the Scale Cube dimensions, applies CAP theorem principles strategically and utilizes cutting-edge technologies to ensure the platform remains performant, reliable and cost-effective as it grows. The architecture is designed to be resilient, observable and maintainable while providing an excellent user experience globally.

@@ -5,7 +5,7 @@ title = 'JEE Design Patterns'
 tags = ['JEE Design Patterns', 'Interview']
 +++
 
-JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability, and performance challenges in distributed systems, helping developers build robust, modular, and efficient enterprise-grade software.
+JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability and performance challenges in distributed systems, helping developers build robust, modular and efficient enterprise-grade software.
 
 ---
 
@@ -306,4 +306,4 @@ public class WebServiceBroker {
 ## Summary
 
 JEE design patterns help solve common problems in enterprise Java applications.  
-They improve scalability, maintainability, and modularity, and are essential knowledge for interviews and building robust distributed systems.
+They improve scalability, maintainability and modularity and are essential knowledge for interviews and building robust distributed systems.

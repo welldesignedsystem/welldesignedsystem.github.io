@@ -20,21 +20,21 @@
       <link>http://localhost:1313/blog/system_design/core_design_patterns/</link>
       <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/system_design/core_design_patterns/</guid>
-      <description>&lt;p&gt;Core design patterns are proven solutions to common software engineering problems. They help structure code for flexibility, scalability, and maintainability. Mastering these patterns is essential for interviews and for building robust, reusable, and understandable software systems.&lt;/p&gt;</description>
+      <description>&lt;p&gt;Core design patterns are proven solutions to common software engineering problems. They help structure code for flexibility, scalability and maintainability. Mastering these patterns is essential for interviews and for building robust, reusable and understandable software systems.&lt;/p&gt;</description>
     </item>
     <item>
       <title>JEE Design Patterns</title>
       <link>http://localhost:1313/blog/system_design/jee_design_patterns/</link>
       <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/system_design/jee_design_patterns/</guid>
-      <description>&lt;p&gt;JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability, and performance challenges in distributed systems, helping developers build robust, modular, and efficient enterprise-grade software.&lt;/p&gt;</description>
+      <description>&lt;p&gt;JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability and performance challenges in distributed systems, helping developers build robust, modular and efficient enterprise-grade software.&lt;/p&gt;</description>
     </item>
     <item>
       <title>System Design Concepts</title>
       <link>http://localhost:1313/blog/system_design/system_design/</link>
       <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/system_design/system_design/</guid>
-      <description>System design is a critical aspect of software engineering that involves creating scalable, reliable, and efficient systems.</description>
+      <description>System design is a critical aspect of software engineering that involves creating scalable, reliable and efficient systems.</description>
     </item>
     <item>
       <title>Youtube System Design</title>

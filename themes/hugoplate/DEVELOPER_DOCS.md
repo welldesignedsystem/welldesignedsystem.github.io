@@ -1,6 +1,6 @@
 # Documentation
 
-Explains how to change colors, fonts, configuration, content, and layouts. Provide this to an AI agent as context when asking it to modify the project.
+Explains how to change colors, fonts, configuration, content and layouts. Provide this to an AI agent as context when asking it to modify the project.
 
 ---
 
@@ -94,7 +94,7 @@ File: `exampleSite/data/theme.json`
 
 ### 2.4 Example AI Prompt (Theme Change)
 
-"Update primary color to #0F62FE (light) and #FFFFFF (dark mode), change primary font to `Inter:wght@400;600;700`, base font size to 17, scale to 1.22, and expose a new `accent` color #FF9900 in Tailwind classes."
+"Update primary color to #0F62FE (light) and #FFFFFF (dark mode), change primary font to `Inter:wght@400;600;700`, base font size to 17, scale to 1.22 and expose a new `accent` color #FF9900 in Tailwind classes."
 
 ---
 
@@ -275,7 +275,7 @@ Font scale or base changes propagate automatically if the plugin consumes `font_
 ## 9. Images & Media
 
 - Prefer `partial "image"` to leverage Hugo image processing & responsive sizes.
-- Provide `Src`, `Alt`, and optional size keys (`DisplayXL`, `DisplayLG`, etc.).
+- Provide `Src`, `Alt` and optional size keys (`DisplayXL`, `DisplayLG`, etc.).
 - Logos & favicon paths configured in `params.toml`.
 - WebP generation for logos depends on `logo_webp` flag.
 

@@ -3,9 +3,9 @@ date = '2024-01-01T12:44:47+10:00'
 draft = false
 title = 'Laws and Principles'
 tags = ['Laws']
-summary = "A curated reference of scientific, engineering, and organizational laws and principles that shape software, systems, and team behavior."
+summary = "A curated reference of scientific, engineering and organizational laws and principles that shape software, systems and team behavior."
 +++
-This collection serves as a reference for understanding the diverse human and technical factors that shape software development and system design. It highlights how natural laws, engineering principles, organizational dynamics, and cognitive limits influence outcomes, reminding us that building effective systems requires balancing complexity, resilience, people, and technology.
+This collection serves as a reference for understanding the diverse human and technical factors that shape software development and system design. It highlights how natural laws, engineering principles, organizational dynamics and cognitive limits influence outcomes, reminding us that building effective systems requires balancing complexity, resilience, people and technology.
 
 ---
 
@@ -14,7 +14,7 @@ This collection serves as a reference for understanding the diverse human and te
 ### Physics & Natural Science Laws Applied to Software
 * **Second Law of Thermodynamics (Entropy)** – In isolated systems, entropy always increases over time; software systems naturally tend toward disorder and complexity without deliberate maintenance.
 * **First Law of Thermodynamics (Conservation of Energy)** – Energy cannot be created or destroyed, only transformed; computational resources are finite and must be allocated efficiently.
-* **Newton's First Law (Inertia)** – Objects at rest stay at rest; established codebases resist change, and changing systems require sustained effort.
+* **Newton's First Law (Inertia)** – Objects at rest stay at rest; established codebases resist change and changing systems require sustained effort.
 * **Newton's Third Law** – For every action, there is an equal and opposite reaction; every feature addition has consequences elsewhere in the system.
 * **Conservation of Mass** – Matter cannot be created or destroyed; technical debt accumulates and must eventually be addressed somewhere in the system.
 * **Chaos Theory/Butterfly Effect** – Small changes in initial conditions can lead to vastly different outcomes; minor code changes can have unexpected system-wide effects.
@@ -59,20 +59,20 @@ This collection serves as a reference for understanding the diverse human and te
 
 ---
 
-### Time, Effort, and Estimation
+### Time, Effort and Estimation
 * **Hofstadter's Law** – "It always takes longer than you expect, even when you take into account Hofstadter's Law."
 * **Parkinson's Law** – "Work expands to fill the time available for its completion."
 * **Brooks's Law** – "Adding manpower to a late software project makes it later." (From *The Mythical Man-Month*)
 * **Ninety-Ninety Rule** – The first 90% of the code accounts for the first 90% of the development time; the remaining 10% accounts for the other 90%.
 * **Pareto Principle (80/20 Rule)** – 80% of the effects come from 20% of the causes.
 * **Student Syndrome** – Work on a task will not begin in earnest until just before the deadline.
-* **Planning Fallacy** – People underestimate time, cost, and risk while overestimating benefits.
+* **Planning Fallacy** – People underestimate time, cost and risk while overestimating benefits.
 * **Law of Diminishing Returns** – Each additional unit of effort provides less benefit than the previous one.
 * **Streetlight Effect** – People search where it’s easiest, not where the truth is.
 
 ---
 
-### People, Teams, and Communication
+### People, Teams and Communication
 * **Conway's Law** – System design mirrors the communication structure of the organization.
 * **Peter Principle** – People rise to their level of incompetence.
 * **Linus's Law** – "Given enough eyeballs, all bugs are shallow." (Open-source development insight)
@@ -149,7 +149,7 @@ This collection serves as a reference for understanding the diverse human and te
 
 ---
 
-### Reliability, Risk, and Physics/Entropy
+### Reliability, Risk and Physics/Entropy
 * **Second Law of Thermodynamics (Entropy Law)** – Systems naturally move toward disorder; maintaining order in software requires constant work.
 * **Law of Entropy in Software** – Software tends to become more complex and chaotic unless actively refactored.
 * **Sod's Law** – A variant of Murphy’s Law, emphasizing bad timing.
@@ -163,7 +163,7 @@ This collection serves as a reference for understanding the diverse human and te
 ### Organizational & Process Laws
 * **Goodhart's Law** – "When a measure becomes a target, it ceases to be a good measure."
 * **Campbell's Law** – Indicators used for decision-making are prone to corruption.
-* **Putt's Law** – Tech is dominated by those who understand but can’t manage, and those who manage but don’t understand.
+* **Putt's Law** – Tech is dominated by those who understand but can’t manage and those who manage but don’t understand.
 * **Dilbert Principle** – Companies promote incompetent employees to management to remove them from the workflow.
 * **Sturgeon’s Law** – "90% of everything is crap."
 
@@ -198,7 +198,7 @@ This collection serves as a reference for understanding the diverse human and te
 * **Principle 3:** As soon as the fear approaches near, attack and destroy it.
 * **Principle 4:** The world's biggest power is the youth and beauty of a woman.
 * **Principle 5:** Learn from the mistakes of others... you can't live long enough to make them all yourselves.
-* **Principle 6:** A person's test is done at the time of money, crisis, woman, and power.
+* **Principle 6:** A person's test is done at the time of money, crisis, woman and power.
 * **Principle 7:** Education is the best friend. An educated person is respected everywhere. Education beats the beauty and the youth.
 * **Principle 8:** Books are as useful to a stupid person as a mirror is useful to a blind person.
 * **Principle 9:** Treat your kid like a darling for the first five years. For the next five years, scold them. By the time they turn sixteen, treat them like a friend. Your grown up children are your best friends.
@@ -215,7 +215,7 @@ This collection serves as a reference for understanding the diverse human and te
 * **Principle 20**: Time perfects all living beings as well as kills them; it alone is awake when all others are asleep. Time is insurmountable.
 * **Principle 21**: The life of an uneducated man is as useless as the tail of a dog which neither covers its rear end, nor protects it from the bites of insects.
 * **Principle 22**: Skills are called hidden treasure as they save like a mother in foreign country, give fame like a king and happiness like a wife.
-* **Principle 23**: There are three gems upon this earth; food, water, and pleasing words. Fools consider pieces of rocks as gems.
+* **Principle 23**: There are three gems upon this earth; food, water and pleasing words. Fools consider pieces of rocks as gems.
 * **Principle 24**: Do not be very upright in your dealings as you would see by going to the forest that straight trees are cut down while crooked ones are left standing.
 * **Principle 25**: Whoever imposes severe punishment becomes repulsive to the people; whoever awards mild punishment becomes contemptible. But whoever imposes punishment as deserved becomes respectable.
 
@@ -266,7 +266,7 @@ This collection serves as a reference for understanding the diverse human and te
   > "This will never succeed under your leadership."  
   You respond:  
   > "We’ll judge success by outcomes, not speculation. I suggest we focus on measurable goals rather than personal opinions."  
-  *Effect:* Establishes authority, exposes the undermining behavior, and commands respect without aggression.
+  *Effect:* Establishes authority, exposes the undermining behavior and commands respect without aggression.
 
 - **Silence and Composure**  
   *Example:* During a presentation, someone whispers:  
@@ -294,5 +294,5 @@ This collection serves as a reference for understanding the diverse human and te
 | **Leverage Intelligence & Data**             | S. Jaishankar & Chanakya | Use precise information and analysis to guide decisions.                         | Respond to criticism with evidence; decisions backed by data make attacks irrelevant.                 |
 | **Strategic Silence**                        | Amit Shah / Chanakya     | Speak sparingly; let others reveal their intentions first.                       | In meetings, avoid over-explaining; listen more, act decisively when needed.                          |
 | **Misdirection & Unpredictability**          | Chanakya                 | Keep opponents uncertain about next moves.                                       | Change tactics subtly; don’t always respond the same way to provocation.                              |
-| **Soft Power & Influence**                   | S. Jaishankar            | Build relationships and credibility over time to shape outcomes.                 | Influence colleagues through mentorship, support, and strategic visibility rather than confrontation. |
+| **Soft Power & Influence**                   | S. Jaishankar            | Build relationships and credibility over time to shape outcomes.                 | Influence colleagues through mentorship, support and strategic visibility rather than confrontation. |
 | **Hard Decisions Decisively**                | Amit Shah                | When stakes are high, act firmly and quickly to consolidate position.            | Address repeated undermining or sabotage decisively, signaling limits clearly.                        |

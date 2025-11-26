@@ -13,7 +13,7 @@
       <link>http://localhost:1313/blog/mainframe/</link>
       <pubDate>Wed, 01 Jan 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/mainframe/</guid>
-      <description>Step-by-step guide to migrating COBOL mainframe systems to modern Java services using AI-assisted tooling, graph-based analysis, and migration best practices.</description>
+      <description>Step-by-step guide to migrating COBOL mainframe systems to modern Java services using AI-assisted tooling, graph-based analysis and migration best practices.</description>
     </item>
   </channel>
 </rss>

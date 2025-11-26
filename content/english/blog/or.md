@@ -52,7 +52,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Excel Solver | Using Excel for LP problems, solver setup | Follow Excel tutorial, solve provided problems | 3 problems solved in Excel |
 | 5 | Advanced Excel | Sensitivity analysis, solver reports, scenario manager | Explore Excel features with practice data | Comprehensive report on a solved problem |
 | 6 | Real-world LPs | Case studies: diet, finance, operations | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem | Formulate, solve, and analyze | Custom LP problem + Excel report |
+| 7 | Mini-project | Your own real-world problem | Formulate, solve and analyze | Custom LP problem + Excel report |
 
 #### Week 5: Simplex Method (Conceptual)
 
@@ -76,7 +76,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Advanced MIP techniques | Heuristics, metaheuristics, approximation algorithms | Apply techniques to challenging MIPs | Report on approach and solution quality |
 | 5 | Simulation & OR | Monte Carlo simulation, risk analysis | Perform simulation on a given model | Simulation report with insights |
 | 6 | Optimization software | Overview of CPLEX, Gurobi, other solvers | Install and run examples on chosen software | Solver output and analysis |
-| 7 | Mini-project | Your own real-world problem using MIP | Formulate, solve, and analyze | Custom MIP problem + software report |
+| 7 | Mini-project | Your own real-world problem using MIP | Formulate, solve and analyze | Custom MIP problem + software report |
 
 **Phase 1 Checkpoint:** Can you formulate and solve any basic LP problem? Can you explain what the solution means?
 
@@ -94,7 +94,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Solving IPs | Branch-and-bound, cutting planes, heuristics | Solve provided IP problems | Solutions and methods used |
 | 5 | Advanced IP techniques | Metaheuristics, approximation algorithms | Apply techniques to challenging IPs | Report on approach and solution quality |
 | 6 | IP in the real world | Case studies: capital budgeting, facility location | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using IP | Formulate, solve, and analyze | Custom IP problem + report |
+| 7 | Mini-project | Your own real-world problem using IP | Formulate, solve and analyze | Custom IP problem + report |
 
 #### Week 8: Network Flows
 
@@ -106,7 +106,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Network simplex method | Specialized simplex for network problems | Solve network problems using network simplex | Solutions and methods used |
 | 5 | Advanced network techniques | Multi-commodity flows, network design | Apply techniques to complex network problems | Report on approach and solution quality |
 | 6 | Network flows in the real world | Case studies: transportation, telecommunications | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using network flows | Formulate, solve, and analyze | Custom network flow problem + report |
+| 7 | Mini-project | Your own real-world problem using network flows | Formulate, solve and analyze | Custom network flow problem + report |
 
 #### Week 9: Dynamic Programming
 
@@ -118,7 +118,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Advanced DP techniques | Bitmasking, DP with trees, DP with graphs | Apply techniques to complex DP problems | Report on approach and solution quality |
 | 5 | DP in the real world | Case studies: resource allocation, scheduling | Read and analyze provided case studies | 1-page summary of insights gained |
 | 6 | Heuristics and metaheuristics | Genetic algorithms, simulated annealing, tabu search | Apply heuristics to NP-hard problems | Report on approach and solution quality |
-| 7 | Mini-project | Your own real-world problem using DP or heuristics | Formulate, solve, and analyze | Custom DP problem + report |
+| 7 | Mini-project | Your own real-world problem using DP or heuristics | Formulate, solve and analyze | Custom DP problem + report |
 
 #### Week 10: Constraint Programming
 
@@ -129,8 +129,8 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 3 | Constraint propagation | Arc consistency, path consistency | Apply propagation techniques to CSPs | Report on consistency techniques used |
 | 4 | Advanced CP techniques | Global constraints, decomposition, symmetry breaking | Apply techniques to complex CSPs | Report on approach and solution quality |
 | 5 | CP in the real world | Case studies: scheduling, planning, resource allocation | Read and analyze provided case studies | 1-page summary of insights gained |
-| 6 | Building a CP model | Identifying variables, constraints, and objectives | Model a real-world problem as a CSP | Complete CP model for a given problem |
-| 7 | Mini-project | Your own real-world problem using CP | Formulate, solve, and analyze | Custom CP problem + report |
+| 6 | Building a CP model | Identifying variables, constraints and objectives | Model a real-world problem as a CSP | Complete CP model for a given problem |
+| 7 | Mini-project | Your own real-world problem using CP | Formulate, solve and analyze | Custom CP problem + report |
 
 #### Week 11: Introduction to Stochastic Optimization
 
@@ -142,7 +142,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Solving stochastic programs | Sample average approximation, stochastic gradient descent | Solve provided stochastic problems | Solutions and methods used |
 | 5 | Advanced stochastic techniques | Dynamic programming for stochastic problems, Benders decomposition | Apply techniques to complex stochastic problems | Report on approach and solution quality |
 | 6 | Stochastic optimization in the real world | Case studies: finance, supply chain, energy | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using stochastic optimization | Formulate, solve, and analyze | Custom stochastic problem + report |
+| 7 | Mini-project | Your own real-world problem using stochastic optimization | Formulate, solve and analyze | Custom stochastic problem + report |
 
 #### Week 12: Introduction to Simulation Optimization
 
@@ -154,7 +154,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Solving simulation optimization problems | Ranking and selection, response surface methodology | Solve provided simulation optimization problems | Solutions and methods used |
 | 5 | Advanced simulation techniques | Antithetic variates, control variates, importance sampling | Apply techniques to complex simulation problems | Report on approach and solution quality |
 | 6 | Simulation optimization in the real world | Case studies: logistics, manufacturing, healthcare | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using simulation optimization | Formulate, solve, and analyze | Custom simulation problem + report |
+| 7 | Mini-project | Your own real-world problem using simulation optimization | Formulate, solve and analyze | Custom simulation problem + report |
 
 **Phase 2 Checkpoint:** Can you model complex discrete decisions? Can you choose the right technique for different problems?
 
@@ -172,7 +172,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Global constraints | Common global constraints in CP (e.g., all-different) | Implement problems using global constraints | Solutions and methods used |
 | 5 | Decomposition in CP | Breaking problems into smaller sub-problems | Apply decomposition to a complex CSP | Report on decomposition approach |
 | 6 | Symmetry breaking | Identifying and breaking symmetries in CSPs | Apply symmetry breaking to a CSP | Report on symmetry breaking techniques |
-| 7 | Mini-project | Your own real-world problem using CP | Formulate, solve, and analyze | Custom CP problem + report |
+| 7 | Mini-project | Your own real-world problem using CP | Formulate, solve and analyze | Custom CP problem + report |
 
 #### Week 14: Mixed-Integer Programming
 
@@ -184,7 +184,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Solving MIPs | Branch-and-bound, cutting planes, heuristics | Solve provided MIP problems | Solutions and methods used |
 | 5 | Advanced MIP techniques | Metaheuristics, approximation algorithms | Apply techniques to challenging MIPs | Report on approach and solution quality |
 | 6 | MIP in the real world | Case studies: capital budgeting, facility location | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using MIP | Formulate, solve, and analyze | Custom MIP problem + report |
+| 7 | Mini-project | Your own real-world problem using MIP | Formulate, solve and analyze | Custom MIP problem + report |
 
 #### Week 15: Dynamic Programming
 
@@ -196,7 +196,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | DP with trees | Representing and solving problems with trees | Solve tree-based problems using DP | Solutions and methods used |
 | 5 | DP with graphs | Representing and solving problems with graphs | Solve graph-based problems using DP | Solutions and methods used |
 | 6 | Advanced DP techniques | Bitmasking, DP with trees, DP with graphs | Apply techniques to complex DP problems | Report on approach and solution quality |
-| 7 | Mini-project | Your own real-world problem using DP | Formulate, solve, and analyze | Custom DP problem + report |
+| 7 | Mini-project | Your own real-world problem using DP | Formulate, solve and analyze | Custom DP problem + report |
 
 #### Week 16: Simulation Optimization
 
@@ -208,7 +208,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Solving simulation optimization problems | Ranking and selection, response surface methodology | Solve provided simulation optimization problems | Solutions and methods used |
 | 5 | Advanced simulation techniques | Antithetic variates, control variates, importance sampling | Apply techniques to complex simulation problems | Report on approach and solution quality |
 | 6 | Simulation optimization in the real world | Case studies: logistics, manufacturing, healthcare | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using simulation optimization | Formulate, solve, and analyze | Custom simulation problem + report |
+| 7 | Mini-project | Your own real-world problem using simulation optimization | Formulate, solve and analyze | Custom simulation problem + report |
 
 #### Week 17: Introduction to Metaheuristics
 
@@ -220,7 +220,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Tabu search | Tabu list, aspiration criteria | Implement tabu search for a scheduling problem | Working code for tabu search |
 | 5 | Advanced metaheuristics | Ant colony optimization, particle swarm optimization | Implement advanced metaheuristics for comparison | Working code for 2 advanced metaheuristics |
 | 6 | Metaheuristics in the real world | Case studies: routing, scheduling, design | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using metaheuristics | Formulate, solve, and analyze | Custom metaheuristic problem + report |
+| 7 | Mini-project | Your own real-world problem using metaheuristics | Formulate, solve and analyze | Custom metaheuristic problem + report |
 
 #### Week 18: Introduction to Machine Learning for OR
 
@@ -232,7 +232,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Reinforcement learning | RL basics, Markov decision processes | Implement a simple RL problem | Working code for a reinforcement learning problem |
 | 5 | Neural networks | Basics of neural networks, backpropagation | Implement a simple neural network from scratch | Working code for a neural network |
 | 6 | ML in the real world | Case studies: predictive maintenance, demand forecasting | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using ML | Formulate, solve, and analyze | Custom ML problem + report |
+| 7 | Mini-project | Your own real-world problem using ML | Formulate, solve and analyze | Custom ML problem + report |
 
 #### Week 19: Advanced Topics in OR
 
@@ -244,14 +244,14 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Global optimization | Challenges in global optimization, techniques | Apply global optimization techniques to problems | Report on approach and solution quality |
 | 5 | OR in healthcare | Applications of OR in healthcare, case studies | Read and analyze provided case studies | 1-page summary of insights gained |
 | 6 | OR in finance | Applications of OR in finance, case studies | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using advanced OR topics | Formulate, solve, and analyze | Custom problem + report |
+| 7 | Mini-project | Your own real-world problem using advanced OR topics | Formulate, solve and analyze | Custom problem + report |
 
 #### Week 20: Capstone Project
 
 | Day | Concept | Theory (10min) | Practice (50min) | Deliverable |
 |-----|---------|----------------|------------------|-------------|
 | 1 | Capstone intro | Choosing a capstone project, defining scope | Identify potential capstone projects | List of 3 potential capstone projects |
-| 2 | Project planning | Setting milestones, deliverables, and timelines | Create a project plan for your capstone | Detailed project plan |
+| 2 | Project planning | Setting milestones, deliverables and timelines | Create a project plan for your capstone | Detailed project plan |
 | 3 | Literature review | Reviewing relevant literature, identifying gaps | Conduct a literature review for your project | Literature review summary |
 | 4 | Methodology | Choosing appropriate methods and techniques | Define the methodology for your project | Methodology section of your report |
 | 5 | Implementation | Implementing the chosen methods and techniques | Work on the implementation of your project | Progress on project implementation |
@@ -273,7 +273,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 3 | Sparse LP | Exploiting sparsity in LP problems | Solve sparse LP problems | Solutions and methods used |
 | 4 | Structured LP | Exploiting problem structure in LP | Solve structured LP problems | Solutions and methods used |
 | 5 | LP in the real world | Case studies: energy, transportation, finance | Read and analyze provided case studies | 1-page summary of insights gained |
-| 6 | Mini-project | Your own real-world problem using advanced LP | Formulate, solve, and analyze | Custom LP problem + report |
+| 6 | Mini-project | Your own real-world problem using advanced LP | Formulate, solve and analyze | Custom LP problem + report |
 | 7 | Review and catch-up | Review key concepts, catch up on any missed work | Revise and consolidate your learning | Revised notes and summaries |
 
 #### Week 22: Advanced Integer Programming
@@ -285,7 +285,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 3 | Stochastic IP | Integer programming with stochastic elements | Solve stochastic IP problems | Solutions and methods used |
 | 4 | Robust IP | Integer programming with robustness considerations | Solve robust IP problems | Solutions and methods used |
 | 5 | IP in the real world | Case studies: logistics, finance, telecommunications | Read and analyze provided case studies | 1-page summary of insights gained |
-| 6 | Mini-project | Your own real-world problem using advanced IP | Formulate, solve, and analyze | Custom IP problem + report |
+| 6 | Mini-project | Your own real-world problem using advanced IP | Formulate, solve and analyze | Custom IP problem + report |
 | 7 | Review and catch-up | Review key concepts, catch up on any missed work | Revise and consolidate your learning | Revised notes and summaries |
 
 #### Week 23: Advanced Network Optimization
@@ -297,7 +297,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 3 | Dynamic network optimization | Network optimization with dynamic elements | Solve dynamic network problems | Solutions and methods used |
 | 4 | Robust network optimization | Network optimization with robustness considerations | Solve robust network problems | Solutions and methods used |
 | 5 | Network optimization in the real world | Case studies: transportation, telecommunications, supply chain | Read and analyze provided case studies | 1-page summary of insights gained |
-| 6 | Mini-project | Your own real-world problem using advanced network optimization | Formulate, solve, and analyze | Custom network problem + report |
+| 6 | Mini-project | Your own real-world problem using advanced network optimization | Formulate, solve and analyze | Custom network problem + report |
 | 7 | Review and catch-up | Review key concepts, catch up on any missed work | Revise and consolidate your learning | Revised notes and summaries |
 
 #### Week 24: Advanced Dynamic Programming
@@ -309,7 +309,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 3 | Approximate DP | Approximation algorithms for dynamic programming | Solve problems using approximate DP | Solutions and methods used |
 | 4 | Online DP | Dynamic programming with online algorithms | Solve online DP problems | Solutions and methods used |
 | 5 | DP in the real world | Case studies: resource allocation, scheduling, finance | Read and analyze provided case studies | 1-page summary of insights gained |
-| 6 | Mini-project | Your own real-world problem using advanced DP | Formulate, solve, and analyze | Custom DP problem + report |
+| 6 | Mini-project | Your own real-world problem using advanced DP | Formulate, solve and analyze | Custom DP problem + report |
 | 7 | Review and catch-up | Review key concepts, catch up on any missed work | Revise and consolidate your learning | Revised notes and summaries |
 
 #### Week 25: Advanced Simulation Techniques
@@ -321,7 +321,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 3 | Parallel and distributed simulation | Techniques for parallel and distributed simulation | Implement parallel simulation for a given problem | Working code for parallel simulation |
 | 4 | Simulation optimization | Combining simulation and optimization techniques | Solve simulation optimization problems | Solutions and methods used |
 | 5 | Simulation in the real world | Case studies: logistics, manufacturing, healthcare | Read and analyze provided case studies | 1-page summary of insights gained |
-| 6 | Mini-project | Your own real-world problem using advanced simulation techniques | Formulate, solve, and analyze | Custom simulation problem + report |
+| 6 | Mini-project | Your own real-world problem using advanced simulation techniques | Formulate, solve and analyze | Custom simulation problem + report |
 | 7 | Review and catch-up | Review key concepts, catch up on any missed work | Revise and consolidate your learning | Revised notes and summaries |
 
 #### Week 26: Introduction to Machine Learning for OR
@@ -334,7 +334,7 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Reinforcement learning | RL basics, Markov decision processes | Implement a simple RL problem | Working code for a reinforcement learning problem |
 | 5 | Neural networks | Basics of neural networks, backpropagation | Implement a simple neural network from scratch | Working code for a neural network |
 | 6 | ML in the real world | Case studies: predictive maintenance, demand forecasting | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using ML | Formulate, solve, and analyze | Custom ML problem + report |
+| 7 | Mini-project | Your own real-world problem using ML | Formulate, solve and analyze | Custom ML problem + report |
 
 #### Week 27: Advanced Topics in OR
 
@@ -346,21 +346,21 @@ summary = "Comprehensive, step-by-step roadmap to mastering Operational Research
 | 4 | Global optimization | Challenges in global optimization, techniques | Apply global optimization techniques to problems | Report on approach and solution quality |
 | 5 | OR in healthcare | Applications of OR in healthcare, case studies | Read and analyze provided case studies | 1-page summary of insights gained |
 | 6 | OR in finance | Applications of OR in finance, case studies | Read and analyze provided case studies | 1-page summary of insights gained |
-| 7 | Mini-project | Your own real-world problem using advanced OR topics | Formulate, solve, and analyze | Custom problem + report |
+| 7 | Mini-project | Your own real-world problem using advanced OR topics | Formulate, solve and analyze | Custom problem + report |
 
 #### Week 28: Capstone Project
 
 | Day | Concept | Theory (15min) | Practice (45min) | Deliverable |
 |-----|---------|----------------|------------------|-------------|
 | 1 | Capstone intro | Choosing a capstone project, defining scope | Identify potential capstone projects | List of 3 potential capstone projects |
-| 2 | Project planning | Setting milestones, deliverables, and timelines | Create a project plan for your capstone | Detailed project plan |
+| 2 | Project planning | Setting milestones, deliverables and timelines | Create a project plan for your capstone | Detailed project plan |
 | 3 | Literature review | Reviewing relevant literature, identifying gaps | Conduct a literature review for your project | Literature review summary |
 | 4 | Methodology | Choosing appropriate methods and techniques | Define the methodology for your project | Methodology section of your report |
 | 5 | Implementation | Implementing the chosen methods and techniques | Work on the implementation of your project | Progress on project implementation |
 | 6 | Testing and validation | Testing the solution, validating results | Test and validate your project solution | Testing and validation report |
 | 7 | Final presentation | Preparing and delivering the final presentation | Present your capstone project | Final presentation slides and recording |
 
-**Phase 4 Checkpoint:** Can you handle uncertainty, nonlinearity, and massive scale? Can you research and implement advanced methods?
+**Phase 4 Checkpoint:** Can you handle uncertainty, nonlinearity and massive scale? Can you research and implement advanced methods?
 
 ---
 
@@ -444,7 +444,7 @@ Optimization is the process of finding the **best solution** from all feasible s
 Problem: A factory makes chairs and tables
 
 Chairs sell for $50, tables for $80
-Limited wood, labor, and machine time
+Limited wood, labor and machine time
 Question: How many of each to make to maximize profit?
 
 Components:

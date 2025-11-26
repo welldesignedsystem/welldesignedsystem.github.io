@@ -5,7 +5,7 @@ title = '23 Core Design Patterns'
 tags = ['Core Design Patterns', 'Interview']
 +++
 
-Core design patterns are proven solutions to common software engineering problems. They help structure code for flexibility, scalability, and maintainability. Mastering these patterns is essential for interviews and for building robust, reusable, and understandable software systems.
+Core design patterns are proven solutions to common software engineering problems. They help structure code for flexibility, scalability and maintainability. Mastering these patterns is essential for interviews and for building robust, reusable and understandable software systems.
 
 ## Creational Patterns
 
@@ -770,5 +770,5 @@ public class ConcreteElement implements Element {
 ## Summary
 
 The 23 core design patterns (Gang of Four) are essential tools for software engineers.  
-They provide proven solutions to common problems in software design, improve code maintainability, and are frequently discussed in interviews.  
-Understanding these patterns helps you write flexible, scalable, and robust code.
+They provide proven solutions to common problems in software design, improve code maintainability and are frequently discussed in interviews.  
+Understanding these patterns helps you write flexible, scalable and robust code.

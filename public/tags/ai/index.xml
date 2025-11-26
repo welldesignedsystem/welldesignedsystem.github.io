@@ -13,14 +13,14 @@
       <link>http://localhost:1313/blog/ai/roadmap/</link>
       <pubDate>Sat, 10 May 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/ai/roadmap/</guid>
-      <description>Practical AI roadmap outlining architectures, deployment, security, tooling, and specialization paths for building production AI systems.</description>
+      <description>Practical AI roadmap outlining architectures, deployment, security, tooling and specialization paths for building production AI systems.</description>
     </item>
     <item>
       <title>Gen AI Patterns</title>
       <link>http://localhost:1313/blog/ai/gen_ai/</link>
       <pubDate>Sat, 10 May 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/ai/gen_ai/</guid>
-      <description>Reusable design patterns and best practices for building robust, efficient, and scalable LLM applications, covering retrieval, memory, agents, RAG, and orchestration.</description>
+      <description>Reusable design patterns and best practices for building robust, efficient and scalable LLM applications, covering retrieval, memory, agents, RAG and orchestration.</description>
     </item>
   </channel>
 </rss>

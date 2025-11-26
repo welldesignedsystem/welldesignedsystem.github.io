@@ -3,10 +3,10 @@ title:  "Natural Language Processing"
 date: '2025-05-10T12:44:47+10:00'
 tags: ["Chatbots", "RASA", "ChatGPT", "BERT", "Transformers", "Prompt Engineering"]
 Description  : "Generative AI with NLP LLM: "
-summary: "Practical overview of NLP concepts, pipelines, and tools—covering tokenization, embeddings, model architectures, and production best practices."
+summary: "Practical overview of NLP concepts, pipelines and tools—covering tokenization, embeddings, model architectures and production best practices."
 ---
 
-Natural Language Processing (NLP) is a foundational field in artificial intelligence that enables computers to understand, interpret, and generate human language. With the rapid evolution of large language models (LLMs) and generative AI, NLP has become central to applications such as chatbots, virtual assistants, sentiment analysis, and automated translation. This document provides a practical overview of NLP concepts, pipelines, and tools, including hands-on examples with libraries like NLTK and spaCy. It also explores the rise of LLMs, prompt engineering, and modern frameworks that are shaping the future of language-based AI systems.
+Natural Language Processing (NLP) is a foundational field in artificial intelligence that enables computers to understand, interpret and generate human language. With the rapid evolution of large language models (LLMs) and generative AI, NLP has become central to applications such as chatbots, virtual assistants, sentiment analysis and automated translation. This document provides a practical overview of NLP concepts, pipelines and tools, including hands-on examples with libraries like NLTK and spaCy. It also explores the rise of LLMs, prompt engineering and modern frameworks that are shaping the future of language-based AI systems.
 
 ## 1. Introduction
 ---
@@ -140,9 +140,9 @@ Reducing a word or part of a word to its stem or root form. It lowers the inflec
 Using the same word in different inflected forms in a text can lead to redundancy in natural language processing tasks. By reducing inflection, we decrease the number of unique words that machine learning models need to process.
 
 **Example 1**
-* Without Inflection: Original sentence: "She runs every day, and they are running in the park while he ran yesterday."
+* Without Inflection: Original sentence: "She runs every day and they are running in the park while he ran yesterday."
 Inflected forms: runs, running, ran
-* With Reduced Inflection:Simplified sentence: "She run every day, and they run in the park while he run yesterday." In this simplified version, we use "run" for all forms.
+* With Reduced Inflection:Simplified sentence: "She run every day and they run in the park while he run yesterday." In this simplified version, we use "run" for all forms.
 * Impact: Original sentence has three different inflected forms, which can create redundancy for a natural language processing model.
 Simplified sentence reduces the variety of words, making it easier for the model to analyze the core action (running) without getting bogged down by different forms.
 
@@ -944,7 +944,7 @@ You are an intelligent system that processes natural language queries and select
 ChatGPT is a finetuned model - easy to get useful responses, however with GPT 3.0 that isn't the case and more work is to be done on prompt engineering side - it just does work prediction. 
 
 ## LangChain
-LangChain is a framework designed to help developers build applications that leverage language models (like GPT) more effectively by integrating them with other tools, data sources, and workflows. It simplifies the process of creating applications that combine various natural language processing tasks with external data, APIs, and user interactions.
+LangChain is a framework designed to help developers build applications that leverage language models (like GPT) more effectively by integrating them with other tools, data sources and workflows. It simplifies the process of creating applications that combine various natural language processing tasks with external data, APIs and user interactions.
 ```shell
 pip install langchain
 pip install langchain-community langchain-core
@@ -962,7 +962,7 @@ hugging_face_llm = HuggingFaceHub(repo_id="google/flan-t5-base", model_kwargs={"
 
 prompt_template = PromptTemplate(
     input_variables=["question"],
-    template="""You are the teacher, and you are running a surprise test to see who are the attentive kids. 
+    template="""You are the teacher and you are running a surprise test to see who are the attentive kids. 
     The questions will be in the form 
     :\nQuestion: {question}"""
 )
@@ -1148,7 +1148,7 @@ trainer.save_model("./lora_finetuned_model")
 
 
 eval_texts = [
-    "An absolutely stunning film! The visuals were breathtaking, and the storyline kept me engaged the entire time.",
+    "An absolutely stunning film! The visuals were breathtaking and the storyline kept me engaged the entire time.",
     "I was really disappointed with this film. The plot was weak and the characters were poorly developed."....
 ]
 

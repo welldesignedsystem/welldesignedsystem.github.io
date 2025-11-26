@@ -615,10 +615,6 @@
                 
                 
                 
-              
-                
-                
-                
                inline-flex items-center">
               Pages
               <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
@@ -628,17 +624,6 @@
             </label>
             <ul
               class="nav-dropdown-list hidden peer-checked:block lg:invisible lg:absolute lg:block lg:opacity-0 lg:group-hover:visible lg:group-hover:opacity-100">
-              
-                
-                
-                <li class="nav-dropdown-item">
-                  <a
-                    class="nav-dropdown-link "
-                    
-                    href="/404">
-                    404 Page
-                  </a>
-                </li>
               
                 
                 
@@ -978,14 +963,14 @@
 </details>
 
             <h2 id="introduction">Introduction</h2>
-<p>This document provides a <strong>detailed, step-by-step plan</strong> for migrating a large Mainframe (COBOL) project to Java using AI, specifically leveraging the Bedrock Claude 4.5 Sonnet model. It is tailored for developers familiar with Python, Java, and JavaScript, but new to COBOL.</p>
+<p>This document provides a <strong>detailed, step-by-step plan</strong> for migrating a large Mainframe (COBOL) project to Java using AI, specifically leveraging the Bedrock Claude 4.5 Sonnet model. It is tailored for developers familiar with Python, Java and JavaScript, but new to COBOL.</p>
 <hr>
 <h2 id="1-assessment--preparation">1. Assessment &amp; Preparation</h2>
 <ul>
 <li>
 <p><strong>Inventory Mainframe Assets</strong></p>
 <ul>
-<li>List all COBOL programs, JCL scripts, copybooks, datasets, and utilities.</li>
+<li>List all COBOL programs, JCL scripts, copybooks, datasets and utilities.</li>
 <li>Identify external dependencies (databases, files, batch jobs, CICS transactions).</li>
 <li>Gather all available documentation and business process flows.</li>
 </ul>
@@ -993,8 +978,8 @@
 <li>
 <p><strong>Set Up Your Environment</strong></p>
 <ul>
-<li>Provision a Linux server or cloud VM with Python, Java, Node.js, and Docker.</li>
-<li>Install tools: <code>git</code>, <code>python3</code>, <code>pip</code>, <code>open-cobol</code> (GnuCOBOL), and a code editor (VS Code recommended).</li>
+<li>Provision a Linux server or cloud VM with Python, Java, Node.js and Docker.</li>
+<li>Install tools: <code>git</code>, <code>python3</code>, <code>pip</code>, <code>open-cobol</code> (GnuCOBOL) and a code editor (VS Code recommended).</li>
 </ul>
 </li>
 </ul>
@@ -1079,7 +1064,7 @@
 <li>
 <p><strong>Semantic Enrichment</strong></p>
 <ul>
-<li>Use NLP (with Bedrock Claude 4.5 Sonnet) to summarize code sections, extract business logic, and generate human-readable descriptions.</li>
+<li>Use NLP (with Bedrock Claude 4.5 Sonnet) to summarize code sections, extract business logic and generate human-readable descriptions.</li>
 <li>Example prompt for Claude:
 <pre tabindex="0"><code>&#34;Summarize the business logic of this COBOL program:\n{COBOL_CODE}&#34;
 </code></pre></li>
@@ -1097,7 +1082,7 @@
  
 
 
->Elasticsearch</a> to index code, comments, and documentation for fast search.</li>
+>Elasticsearch</a> to index code, comments and documentation for fast search.</li>
 </ul>
 </li>
 </ul>
@@ -1107,7 +1092,7 @@
 <li>
 <p><strong>Translation Workflow</strong></p>
 <ol>
-<li><strong>Extract</strong>: For each COBOL program, extract logic, data structures, and I/O.</li>
+<li><strong>Extract</strong>: For each COBOL program, extract logic, data structures and I/O.</li>
 <li><strong>Prompt Engineering</strong>: Feed code and context to Claude 4.5 Sonnet with clear instructions, e.g.:
 <pre tabindex="0"><code>&#34;Convert this COBOL program to idiomatic Java. Explain any mainframe-specific logic in comments.&#34;
 </code></pre></li>
@@ -1154,14 +1139,14 @@
 <li>
 <p><strong>Start Small</strong></p>
 <ul>
-<li>Select a simple COBOL program, migrate, and validate.</li>
-<li>Use feedback to improve parsing, translation prompts, and chatbot answers.</li>
+<li>Select a simple COBOL program, migrate and validate.</li>
+<li>Use feedback to improve parsing, translation prompts and chatbot answers.</li>
 </ul>
 </li>
 <li>
 <p><strong>Scale Gradually</strong></p>
 <ul>
-<li>Migrate more complex programs, update the knowledge graph, and expand chatbot capabilities.</li>
+<li>Migrate more complex programs, update the knowledge graph and expand chatbot capabilities.</li>
 </ul>
 </li>
 </ul>
@@ -1171,7 +1156,7 @@
 <li>
 <p><strong>Track Progress</strong></p>
 <ul>
-<li>Use dashboards to monitor migration status, code quality, and chatbot usage.</li>
+<li>Use dashboards to monitor migration status, code quality and chatbot usage.</li>
 </ul>
 </li>
 <li>

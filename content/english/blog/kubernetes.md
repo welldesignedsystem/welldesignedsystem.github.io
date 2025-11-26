@@ -3,9 +3,9 @@ date = '2025-05-03T12:44:47+10:00'
 draft = false
 title = 'Kubernetes'
 tags = ['Python']
-summary = "Overview of Kubernetes architecture, core concepts (pods, nodes, volumes), and practical examples for deployment and storage patterns."
+summary = "Overview of Kubernetes architecture, core concepts (pods, nodes, volumes) and practical examples for deployment and storage patterns."
 +++
-Kubernetes (K8s) is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications. It was originally developed by Google and is now maintained by the Cloud Native Computing Foundation (CNCF). Kubernetes provides a robust framework for running distributed systems resiliently, with features such as service discovery, load balancing, storage orchestration, automated rollouts and rollbacks, self-healing, and secret and configuration management.
+Kubernetes (K8s) is an open-source container orchestration platform that automates the deployment, scaling and management of containerized applications. It was originally developed by Google and is now maintained by the Cloud Native Computing Foundation (CNCF). Kubernetes provides a robust framework for running distributed systems resiliently, with features such as service discovery, load balancing, storage orchestration, automated rollouts and rollbacks, self-healing and secret and configuration management.
 
 ## Table of Contents
 
@@ -33,7 +33,7 @@ Kubernetes (K8s) is an open-source container orchestration platform that automat
 A Kubernetes cluster is composed of two main types of nodes:
 
 ### 1. Control Plane Nodes
-Control plane nodes are responsible for managing the overall state of the cluster. They make global decisions about the cluster (such as scheduling), maintain cluster state, and handle cluster events. Key components running on control plane nodes include:
+Control plane nodes are responsible for managing the overall state of the cluster. They make global decisions about the cluster (such as scheduling), maintain cluster state and handle cluster events. Key components running on control plane nodes include:
 - **kube-apiserver:** Serves the Kubernetes API and is the entry point for all administrative tasks.
 - **etcd:** A distributed key-value store that holds all cluster data.
 - **kube-scheduler:** Assigns workloads (pods) to worker nodes based on resource availability and policies.
@@ -47,7 +47,7 @@ Worker nodes (sometimes called minions) are where the actual application workloa
 - **Container runtime:** Software responsible for running containers (e.g., containerd, Docker).
 
 ### Node Summary
-- **Control Plane Nodes:** Manage the cluster, maintain desired state, and orchestrate workloads.
+- **Control Plane Nodes:** Manage the cluster, maintain desired state and orchestrate workloads.
 - **Worker Nodes:** Run application containers and report status to the control plane.
 
 Both node types are essential for a functioning Kubernetes cluster. In production, control plane and worker nodes are often separated for security and scalability.

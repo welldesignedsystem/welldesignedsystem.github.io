@@ -13,7 +13,7 @@
       <link>http://localhost:1313/blog/system_design/jee_design_patterns/</link>
       <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/system_design/jee_design_patterns/</guid>
-      <description>&lt;p&gt;JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability, and performance challenges in distributed systems, helping developers build robust, modular, and efficient enterprise-grade software.&lt;/p&gt;</description>
+      <description>&lt;p&gt;JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability and performance challenges in distributed systems, helping developers build robust, modular and efficient enterprise-grade software.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

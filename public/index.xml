@@ -20,56 +20,56 @@
       <link>http://localhost:1313/blog/ai/roadmap/</link>
       <pubDate>Sat, 10 May 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/ai/roadmap/</guid>
-      <description>Practical AI roadmap outlining architectures, deployment, security, tooling, and specialization paths for building production AI systems.</description>
+      <description>Practical AI roadmap outlining architectures, deployment, security, tooling and specialization paths for building production AI systems.</description>
     </item>
     <item>
       <title>Gen AI Patterns</title>
       <link>http://localhost:1313/blog/ai/gen_ai/</link>
       <pubDate>Sat, 10 May 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/ai/gen_ai/</guid>
-      <description>Reusable design patterns and best practices for building robust, efficient, and scalable LLM applications, covering retrieval, memory, agents, RAG, and orchestration.</description>
+      <description>Reusable design patterns and best practices for building robust, efficient and scalable LLM applications, covering retrieval, memory, agents, RAG and orchestration.</description>
     </item>
     <item>
       <title>GenAI Tools comparison</title>
       <link>http://localhost:1313/blog/ai/gen_ai_tools/</link>
       <pubDate>Sat, 10 May 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/ai/gen_ai_tools/</guid>
-      <description>Detailed comparison and analysis of GenAI frameworks, tools, and infrastructure to help select the right stack for production and research.</description>
+      <description>Detailed comparison and analysis of GenAI frameworks, tools and infrastructure to help select the right stack for production and research.</description>
     </item>
     <item>
       <title>Natural Language Processing</title>
       <link>http://localhost:1313/blog/ai/nlp/</link>
       <pubDate>Sat, 10 May 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/ai/nlp/</guid>
-      <description>Practical overview of NLP concepts, pipelines, and tools—covering tokenization, embeddings, model architectures, and production best practices.</description>
+      <description>Practical overview of NLP concepts, pipelines and tools—covering tokenization, embeddings, model architectures and production best practices.</description>
     </item>
     <item>
       <title>Kubernetes</title>
       <link>http://localhost:1313/blog/kubernetes/</link>
       <pubDate>Sat, 03 May 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/kubernetes/</guid>
-      <description>Overview of Kubernetes architecture, core concepts (pods, nodes, volumes), and practical examples for deployment and storage patterns.</description>
+      <description>Overview of Kubernetes architecture, core concepts (pods, nodes, volumes) and practical examples for deployment and storage patterns.</description>
     </item>
     <item>
       <title>COBOL Guide</title>
       <link>http://localhost:1313/blog/cobol/</link>
       <pubDate>Thu, 30 Jan 2025 10:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/cobol/</guid>
-      <description>Practical COBOL reference covering program structure, copybooks, JCL, datasets, and migration tips for modern engineers.</description>
+      <description>Practical COBOL reference covering program structure, copybooks, JCL, datasets and migration tips for modern engineers.</description>
     </item>
     <item>
       <title>YAML Guide</title>
       <link>http://localhost:1313/blog/yaml/</link>
       <pubDate>Thu, 30 Jan 2025 10:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/yaml/</guid>
-      <description>Comprehensive YAML reference covering syntax, types, multi-line strings, best practices, and common pitfalls for config and DevOps use.</description>
+      <description>Comprehensive YAML reference covering syntax, types, multi-line strings, best practices and common pitfalls for config and DevOps use.</description>
     </item>
     <item>
       <title>Mainframe Retirement using Gen-AI</title>
       <link>http://localhost:1313/blog/mainframe/</link>
       <pubDate>Wed, 01 Jan 2025 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/mainframe/</guid>
-      <description>Step-by-step guide to migrating COBOL mainframe systems to modern Java services using AI-assisted tooling, graph-based analysis, and migration best practices.</description>
+      <description>Step-by-step guide to migrating COBOL mainframe systems to modern Java services using AI-assisted tooling, graph-based analysis and migration best practices.</description>
     </item>
     <item>
       <title>Behavioral Interview</title>
@@ -83,7 +83,7 @@
       <link>http://localhost:1313/blog/system_design/core_design_patterns/</link>
       <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/system_design/core_design_patterns/</guid>
-      <description>&lt;p&gt;Core design patterns are proven solutions to common software engineering problems. They help structure code for flexibility, scalability, and maintainability. Mastering these patterns is essential for interviews and for building robust, reusable, and understandable software systems.&lt;/p&gt;</description>
+      <description>&lt;p&gt;Core design patterns are proven solutions to common software engineering problems. They help structure code for flexibility, scalability and maintainability. Mastering these patterns is essential for interviews and for building robust, reusable and understandable software systems.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Data Structure Algorithms</title>
@@ -97,21 +97,21 @@
       <link>http://localhost:1313/blog/system_design/jee_design_patterns/</link>
       <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/system_design/jee_design_patterns/</guid>
-      <description>&lt;p&gt;JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability, and performance challenges in distributed systems, helping developers build robust, modular, and efficient enterprise-grade software.&lt;/p&gt;</description>
+      <description>&lt;p&gt;JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability and performance challenges in distributed systems, helping developers build robust, modular and efficient enterprise-grade software.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Laws and Principles</title>
       <link>http://localhost:1313/blog/laws/</link>
       <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/laws/</guid>
-      <description>A curated reference of scientific, engineering, and organizational laws and principles that shape software, systems, and team behavior.</description>
+      <description>A curated reference of scientific, engineering and organizational laws and principles that shape software, systems and team behavior.</description>
     </item>
     <item>
       <title>System Design Concepts</title>
       <link>http://localhost:1313/blog/system_design/system_design/</link>
       <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/system_design/system_design/</guid>
-      <description>System design is a critical aspect of software engineering that involves creating scalable, reliable, and efficient systems.</description>
+      <description>System design is a critical aspect of software engineering that involves creating scalable, reliable and efficient systems.</description>
     </item>
     <item>
       <title>Youtube System Design</title>
@@ -125,7 +125,7 @@
       <link>http://localhost:1313/blog/python/</link>
       <pubDate>Tue, 03 May 2022 12:44:47 +1000</pubDate>
       <guid>http://localhost:1313/blog/python/</guid>
-      <description>Concise, interview-focused Python reference covering syntax, data structures, OOP, concurrency, and common pitfalls with examples.</description>
+      <description>Concise, interview-focused Python reference covering syntax, data structures, OOP, concurrency and common pitfalls with examples.</description>
     </item>
     <item>
       <title>How to build an Application with modern Technology</title>
@@ -156,6 +156,13 @@
       <description>&lt;p&gt;Nemo vel ad consectetur namut rutrum ex, venenatis sollicitudin urna. Aliquam erat volutpat. Integer eu ipsum sem. Ut bibendum lacus vestibulum maximus suscipit. Quisque vitae nibh iaculis neque blandit euismod.&lt;/p&gt;</description>
     </item>
     <item>
+      <title>A-I</title>
+      <link>http://localhost:1313/authors/i-a/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/authors/i-a/</guid>
+      <description>&lt;p&gt;I’m an entrepreneur and seasoned technology leader who has held roles from CTO to Enterprise Architect, combining deep expertise in software engineering, system design and algorithms to build robust, high-performance solutions. I thrive at the intersection of technology and business designing scalable, maintainable, future-proof architectures, leading teams, defining technical strategy and coding hands-on to solve complex problems and drive innovation.&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>Elements</title>
       <link>http://localhost:1313/elements/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -163,11 +170,11 @@
       <description>&lt;details class=&#34;table-of-content &#34;&gt;&#xA;  &lt;summary&gt;&#xA;    &#xA;      Table of Contents&#xA;    &#xA;  &lt;/summary&gt;&#xA;  &lt;nav id=&#34;TableOfContents&#34;&gt;&#xA;  &lt;ol&gt;&#xA;    &lt;li&gt;&lt;a href=&#34;#heading-2&#34;&gt;Heading 2&lt;/a&gt;&#xA;      &lt;ol&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#heading-3&#34;&gt;Heading 3&lt;/a&gt;&#xA;          &lt;ol&gt;&#xA;            &lt;li&gt;&lt;a href=&#34;#heading-4&#34;&gt;Heading 4&lt;/a&gt;&#xA;              &lt;ol&gt;&#xA;                &lt;li&gt;&lt;a href=&#34;#heading-5&#34;&gt;Heading 5&lt;/a&gt;&lt;/li&gt;&#xA;              &lt;/ol&gt;&#xA;            &lt;/li&gt;&#xA;          &lt;/ol&gt;&#xA;        &lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#emphasis&#34;&gt;Emphasis&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#button&#34;&gt;Button&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#link&#34;&gt;Link&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#paragraph&#34;&gt;Paragraph&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#ordered-list&#34;&gt;Ordered List&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#unordered-list&#34;&gt;Unordered List&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#notice&#34;&gt;Notice&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#tab&#34;&gt;Tab&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#accordions&#34;&gt;Accordions&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#code-and-syntax-highlighting&#34;&gt;Code and Syntax Highlighting&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#blockquote&#34;&gt;Blockquote&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#tables&#34;&gt;Tables&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#image&#34;&gt;Image&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#gallery&#34;&gt;Gallery&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#slider&#34;&gt;Slider&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#youtube-video&#34;&gt;Youtube video&lt;/a&gt;&lt;/li&gt;&#xA;        &lt;li&gt;&lt;a href=&#34;#custom-video&#34;&gt;Custom video&lt;/a&gt;&lt;/li&gt;&#xA;      &lt;/ol&gt;&#xA;    &lt;/li&gt;&#xA;  &lt;/ol&gt;&#xA;&lt;/nav&gt;&#xA;&lt;/details&gt;&#xA;&#xA;&lt;p&gt;Here is an example of headings. You can use this heading by the following markdown rules. For example: use &lt;code&gt;#&lt;/code&gt; for heading 1 and use &lt;code&gt;######&lt;/code&gt; for heading 6.&lt;/p&gt;</description>
     </item>
     <item>
-      <title>John Doe</title>
-      <link>http://localhost:1313/authors/john-doe/</link>
+      <title>L-S</title>
+      <link>http://localhost:1313/authors/l-s/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/authors/john-doe/</guid>
-      <description>&lt;p&gt;lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostr navigation et dolore magna aliqua.&lt;/p&gt;</description>
+      <guid>http://localhost:1313/authors/l-s/</guid>
+      <description>&lt;p&gt;I lead engineering teams and shape technical vision while staying deeply involved in solving complex challenges through code. My focus spans system architecture and software development, where I design solutions built for performance, reliability, and long-term growth. I thrive at connecting business objectives with technical execution, building systems that are both practical today and designed to scale for tomorrow.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Privacy</title>
@@ -184,25 +191,11 @@
       <description></description>
     </item>
     <item>
-      <title>Sam Wilson</title>
-      <link>http://localhost:1313/authors/sam-wilson/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/authors/sam-wilson/</guid>
-      <description>&lt;p&gt;lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostr navigation et dolore magna aliqua.&lt;/p&gt;</description>
-    </item>
-    <item>
       <title>What Users Are Saying About Hugoplate</title>
       <link></link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid></guid>
       <description></description>
-    </item>
-    <item>
-      <title>William Jacob</title>
-      <link>http://localhost:1313/authors/william-jacob/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/authors/william-jacob/</guid>
-      <description>&lt;p&gt;lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostr navigation et dolore magna aliqua.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

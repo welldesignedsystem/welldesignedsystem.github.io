@@ -1,7 +1,7 @@
 ---
-title: Lak Som
+title: L-S
 email: johndoe@email.com
-image: "/images/avatar.png"
+image: "/images/girl.png"
 description: this is meta description
 social:
   - name: github
@@ -17,4 +17,4 @@ social:
     link: https://linkedin.com
 ---
 
-lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostr navigation et dolore magna aliqua.
+I lead engineering teams and shape technical vision while staying deeply involved in solving complex challenges through code. My focus spans system architecture and software development, where I design solutions built for performance, reliability, and long-term growth. I thrive at connecting business objectives with technical execution, building systems that are both practical today and designed to scale for tomorrow.

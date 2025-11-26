@@ -615,10 +615,6 @@
                 
                 
                 
-              
-                
-                
-                
                inline-flex items-center">
               Pages
               <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
@@ -628,17 +624,6 @@
             </label>
             <ul
               class="nav-dropdown-list hidden peer-checked:block lg:invisible lg:absolute lg:block lg:opacity-0 lg:group-hover:visible lg:group-hover:opacity-100">
-              
-                
-                
-                <li class="nav-dropdown-item">
-                  <a
-                    class="nav-dropdown-link "
-                    
-                    href="/404">
-                    404 Page
-                  </a>
-                </li>
               
                 
                 
@@ -1071,18 +1056,18 @@
 </nav>
 </details>
 
-            <p>LLM design patterns are reusable strategies for building robust, efficient, and scalable AI applications. They help developers structure retrieval, reading, rewriting, memory, agent, and orchestration workflows for large language models. These patterns improve performance, maintainability accuracy, cost and security.</p>
+            <p>LLM design patterns are reusable strategies for building robust, efficient and scalable AI applications. They help developers structure retrieval, reading, rewriting, memory, agent and orchestration workflows for large language models. These patterns improve performance, maintainability accuracy, cost and security.</p>
 <h2 id="introduction">Introduction</h2>
 <p>Before we proceed setting the stage.</p>
 <h2 id="concepts">Concepts</h2>
 <h3 id="llms">LLMs</h3>
-<p>LLM an AI model trained on massive amounts of text. It is kind of able to understand, generate, and reason with natural language.</p>
+<p>LLM an AI model trained on massive amounts of text. It is kind of able to understand, generate and reason with natural language.</p>
 <ul>
 <li>GPT-3: 175B Parameters, ~350B tokens. GPT-4:is 6x bigger. GPT-5 was supposed to be 20x bigger but is counter intuitive 300B Parameters.</li>
 <li>Pre-trained on massive text corpora to learn language patterns.</li>
 <li>parametric memory: knowledge stored in model weights.</li>
 <li>Model hub: Repositories of pre-trained models for easy access and deployment e.g. Hugging Face, TensorFlow Hub, PyTorch Hub, Amazon SageMaker JumpStart, etc.</li>
-<li>Model Card: documentation that provides details about a model&rsquo;s architecture, training data, performance metrics, intended use cases, and ethical considerations. Model cards help users understand the capabilities and limitations of a model before deploying it in real-world applications.</li>
+<li>Model Card: documentation that provides details about a model&rsquo;s architecture, training data, performance metrics, intended use cases and ethical considerations. Model cards help users understand the capabilities and limitations of a model before deploying it in real-world applications.</li>
 </ul>
 <hr>
 <h3 id="chinchilla-scaling-laws">Chinchilla scaling laws</h3>
@@ -1112,7 +1097,7 @@ Total training FLOPs scale approximately as:
 <ul>
 <li>Unified Intelligence System: integrates multiple reasoning and perception modules for more general intelligence.</li>
 <li>Mixture-of-Experts: routes inputs to specialized sub-models for improved efficiency and accuracy.</li>
-<li>Multimodal Integration: processes and understands text, images, and other data types together.</li>
+<li>Multimodal Integration: processes and understands text, images and other data types together.</li>
 </ul>
 </li>
 </ul>
@@ -1129,7 +1114,7 @@ Total training FLOPs scale approximately as:
 </ul>
 <h3 id="tokenizers">Tokenizers:</h3>
 <ul>
-<li>convert text into tokens (subwords, words, or characters) for model input. Common types include Byte Pair Encoding (BPE), WordPiece, and SentencePiece.</li>
+<li>convert text into tokens (subwords, words, or characters) for model input. Common types include Byte Pair Encoding (BPE), WordPiece and SentencePiece.</li>
 <li>vector id: unique identifier for each token in the tokenizer&rsquo;s vocabulary.</li>
 </ul>
 <hr>
@@ -1144,9 +1129,9 @@ Total training FLOPs scale approximately as:
 <li>Predict masked word: Used by models like BERT; predicts masked tokens within a sentence for better understanding of context.</li>
 </ul>
 </li>
-<li><strong>GPT models - Decoder Focused : Focus on text generation, conversation, and completion tasks.</strong></li>
-<li>BERT models - Encoder Focused: Focus on understanding, classification, and extracting information from text.</li>
-<li>T5, BART - Encoder &amp; decoder : Good for translation, summarization, and more complex tasks.</li>
+<li><strong>GPT models - Decoder Focused : Focus on text generation, conversation and completion tasks.</strong></li>
+<li>BERT models - Encoder Focused: Focus on understanding, classification and extracting information from text.</li>
+<li>T5, BART - Encoder &amp; decoder : Good for translation, summarization and more complex tasks.</li>
 <li>Many LLMs are specialized for tasks like code generation, multimodal input (text + images), or domain-specific knowledge.</li>
 </ul>
 <hr>
@@ -1473,7 +1458,7 @@ Total training FLOPs scale approximately as:
 <h3 id="prompt-engineering-and-patterns">Prompt Engineering and Patterns</h3>
 <ul>
 <li>Prompt engineering is the practice of designing and refining prompts to optimize LLM outputs.</li>
-<li>Prompt engineers experiment with wording, structure, and context to achieve desired results.</li>
+<li>Prompt engineers experiment with wording, structure and context to achieve desired results.</li>
 <li>Common patterns:</li>
 </ul>
 <table>
@@ -1670,7 +1655,7 @@ Total training FLOPs scale approximately as:
       </tr>
       <tr>
           <td>support for <strong>Imperative or Declarative Composition</strong></td>
-          <td>helps in controlling the sequence and flow of operations with LLMs, tools, and data</td>
+          <td>helps in controlling the sequence and flow of operations with LLMs, tools and data</td>
       </tr>
       <tr>
           <td><strong>templating</strong></td>
@@ -1999,7 +1984,7 @@ Total training FLOPs scale approximately as:
 <p><strong>ColBERT Approach:</strong></p>
 <ul>
 <li>
-<p>uses <strong>late interaction</strong>, Late interaction means each token in <strong>query</strong> and <strong>document</strong> is <strong>encoded independently first</strong>, and <strong>only after encoding</strong>, their similarities are computed (using <strong>MaxSim</strong>).</p>
+<p>uses <strong>late interaction</strong>, Late interaction means each token in <strong>query</strong> and <strong>document</strong> is <strong>encoded independently first</strong> and <strong>only after encoding</strong>, their similarities are computed (using <strong>MaxSim</strong>).</p>
 <ol>
 <li><strong>Token-level embeddings:</strong> Instead of one vector per document, ColBERT creates an embedding for each token.</li>
 <li><strong>Compare at token level:</strong> For every token in <strong>query</strong>, it compute similarity with all tokens in the <strong>document</strong>.</li>
@@ -2130,7 +2115,7 @@ Total training FLOPs scale approximately as:
 <img width="1676" height="596" alt="image" src="https://github.com/user-attachments/assets/595030dc-1a2b-4fa4-8a82-4ec58822a72d" />
 <hr>
 <h3 id="7-rag-fusion">7. RAG-Fusion</h3>
-<p>Sometimes <strong>information space is large</strong> and <strong>spread out</strong> or <strong>diverse</strong>, and a single query is <strong>insufficient</strong> to capture all relevant context.
+<p>Sometimes <strong>information space is large</strong> and <strong>spread out</strong> or <strong>diverse</strong> and a single query is <strong>insufficient</strong> to capture all relevant context.
 RAG-Fusion (Retrieval-Augmented Generation with Fusion) is an <strong>extension</strong> of the <strong>multi-query retrieval strategy</strong>. It enhances the retrieval process by introducing a <strong>final reranking step</strong> using the <strong>Reciprocal Rank Fusion (RRF)</strong> algorithm.</p>
 <h3 id="steps">Steps</h3>
 <ol>
@@ -2158,7 +2143,7 @@ RAG-Fusion (Retrieval-Augmented Generation with Fusion) is an <strong>extension<
 <li>
 <p><strong>Legal or Compliance like ACMA or TCP or Security documenations:</strong></p>
 <ul>
-<li>Searching across multiple regulations, rules, and previous incidents.</li>
+<li>Searching across multiple regulations, rules and previous incidents.</li>
 <li>RRF helps surface the most relevant documents that are supported across different search formulations.</li>
 </ul>
 </li>
@@ -2233,7 +2218,7 @@ HyDE effectively <strong>bridges the gap between natural language queries and do
 </ul>
 <img width="460" height="300" alt="image" src="https://github.com/user-attachments/assets/564420f8-9bd2-4f97-9e68-0e0dbcfb02f4" />
 <h2 id="query-routing">Query Routing</h2>
-<p>Query routing is a strategy used in retrieval or search systems to <strong>direct a user query to the most relevant subset of data or service</strong>. The goal is to improve retrieval efficiency, relevance, and response time. There are two main strategies: <strong>logical routing</strong> and <strong>semantic routing</strong>.</p>
+<p>Query routing is a strategy used in retrieval or search systems to <strong>direct a user query to the most relevant subset of data or service</strong>. The goal is to improve retrieval efficiency, relevance and response time. There are two main strategies: <strong>logical routing</strong> and <strong>semantic routing</strong>.</p>
 <h3 id="9-logical-routing">9. Logical Routing</h3>
 <p>Logical routing directs queries based on <strong>predefined rules, categories, or metadata</strong> associated with the documents or data sources.</p>
 <ul>
@@ -2280,7 +2265,7 @@ HyDE effectively <strong>bridges the gap between natural language queries and do
 </ul>
 <hr>
 <h2 id="query-construction">Query Construction</h2>
-<p><strong>user&rsquo;s natural language query</strong> into <strong>a structured query</strong> that can be executed against various data sources. This is essential for retrieval systems, vector stores, and relational databases.</p>
+<p><strong>user&rsquo;s natural language query</strong> into <strong>a structured query</strong> that can be executed against various data sources. This is essential for retrieval systems, vector stores and relational databases.</p>
 <hr>
 <h3 id="11-text-to-metadata-conversion">11. Text-to-Metadata Conversion</h3>
 <p>Vector stores often support <strong>metadata-based filtering</strong>, allowing more precise searches. During the embedding process:</p>
@@ -2356,12 +2341,12 @@ HyDE effectively <strong>bridges the gap between natural language queries and do
 <ul>
 <li>Combines reasoning steps with tool or function calls.</li>
 <li>Model alternates between generating thoughts and taking actions (API calls, tool invocation).</li>
-<li>Useful for multi-step tasks, retrieval, and automation.
+<li>Useful for multi-step tasks, retrieval and automation.
 <img width="1400" height="686" alt="image" src="https://github.com/user-attachments/assets/67a2124c-9270-440b-b222-5b70ab293266" /></li>
 </ul>
 <h4 id="15-reflexion">15. Reflexion</h4>
 <ul>
-<li>Model reviews its own outputs, critiques, and iteratively improves answers.</li>
+<li>Model reviews its own outputs, critiques and iteratively improves answers.</li>
 <li>Can be used for self-correction, debugging, or refining reasoning.
 <img width="2000" height="1322" alt="image" src="https://github.com/user-attachments/assets/e607b1f1-8b79-4ee6-99b2-596eea8d8693" /></li>
 </ul>
@@ -2385,7 +2370,7 @@ HyDE effectively <strong>bridges the gap between natural language queries and do
 </ul>
 <hr>
 <h2 id="agentic-patterns">Agentic Patterns</h2>
-<p>Spring AI or any other framework for that matter, inspired by Anthropic&rsquo;s research, implements five foundational agentic patterns for building effective LLM-based systems. These patterns balance simplicity, composability, and reliability, making them suitable for enterprise-grade AI applications.</p>
+<p>Spring AI or any other framework for that matter, inspired by Anthropic&rsquo;s research, implements five foundational agentic patterns for building effective LLM-based systems. These patterns balance simplicity, composability and reliability, making them suitable for enterprise-grade AI applications.</p>
 <h3 id="1-chain-workflow">1. Chain Workflow</h3>
 <ul>
 <li><strong>Description:</strong> Breaks down complex tasks into sequential, manageable steps. Each step&rsquo;s output becomes the input for the next.</li>
@@ -2735,14 +2720,14 @@ HyDE effectively <strong>bridges the gap between natural language queries and do
   
   
   <h4 class="mb-3">
-    <a href="/blog/ai/gen_ai_tools/">
-      GenAI Tools comparison
+    <a href="/blog/ai/roadmap/">
+      AI Roadmap
     </a>
   </h4>
   
   
-  <p class="mb-6">Detailed comparison and analysis of GenAI frameworks, tools, and infrastructure to help select the right stack for production and research.</p>
-  <a class="btn btn-outline-primary btn-sm" href="/blog/ai/gen_ai_tools/">
+  <p class="mb-6">Practical AI roadmap outlining architectures, deployment, security, tooling and specialization paths for building production AI systems.</p>
+  <a class="btn btn-outline-primary btn-sm" href="/blog/ai/roadmap/">
     Read More
   </a>
 </div>
@@ -2754,14 +2739,14 @@ HyDE effectively <strong>bridges the gap between natural language queries and do
   
   
   <h4 class="mb-3">
-    <a href="/blog/ai/roadmap/">
-      AI Roadmap
+    <a href="/blog/ai/gen_ai_tools/">
+      GenAI Tools comparison
     </a>
   </h4>
   
   
-  <p class="mb-6">Practical AI roadmap outlining architectures, deployment, security, tooling, and specialization paths for building production AI systems.</p>
-  <a class="btn btn-outline-primary btn-sm" href="/blog/ai/roadmap/">
+  <p class="mb-6">Detailed comparison and analysis of GenAI frameworks, tools and infrastructure to help select the right stack for production and research.</p>
+  <a class="btn btn-outline-primary btn-sm" href="/blog/ai/gen_ai_tools/">
     Read More
   </a>
 </div>

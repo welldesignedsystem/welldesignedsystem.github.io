@@ -8,18 +8,18 @@
     <language>en-us</language>
     <atom:link href="http://localhost:1313/authors/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>John Doe</title>
+      <title>A-I</title>
+      <link>http://localhost:1313/authors/i-a/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/authors/i-a/</guid>
+      <description>&lt;p&gt;I’m an entrepreneur and seasoned technology leader who has held roles from CTO to Enterprise Architect, combining deep expertise in software engineering, system design and algorithms to build robust, high-performance solutions. I thrive at the intersection of technology and business designing scalable, maintainable, future-proof architectures, leading teams, defining technical strategy and coding hands-on to solve complex problems and drive innovation.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>L-S</title>
       <link>http://localhost:1313/authors/l-s/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/authors/l-s/</guid>
-      <description>&lt;p&gt;lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostr navigation et dolore magna aliqua.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Sam Wilson</title>
-      <link>http://localhost:1313/authors/a-i/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/authors/a-i/</guid>
-      <description>&lt;p&gt;lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostr navigation et dolore magna aliqua.&lt;/p&gt;</description>
+      <description>&lt;p&gt;I lead engineering teams and shape technical vision while staying deeply involved in solving complex challenges through code. My focus spans system architecture and software development, where I design solutions built for performance, reliability, and long-term growth. I thrive at connecting business objectives with technical execution, building systems that are both practical today and designed to scale for tomorrow.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

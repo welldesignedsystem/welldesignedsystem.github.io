@@ -3,10 +3,10 @@ date = '2022-05-03T12:44:47+10:00'
 draft = false
 title = 'Python Quicky'
 tags = ['Python']
-summary = "Concise, interview-focused Python reference covering syntax, data structures, OOP, concurrency, and common pitfalls with examples."
+summary = "Concise, interview-focused Python reference covering syntax, data structures, OOP, concurrency and common pitfalls with examples."
 +++
 
-This guide covers all the essential Python topics you should master for technical interviews, from basic data types and control flow to advanced concepts like metaclasses, descriptors, and Python internals. It includes practical code examples, best practices, common pitfalls, and concise explanations to help you quickly revise and strengthen your understanding before interviews. Use this as a comprehensive checklist and reference to ensure you’re well-prepared for any Python interview scenario, whether for general programming, data science, web development, or system design roles.
+This guide covers all the essential Python topics you should master for technical interviews, from basic data types and control flow to advanced concepts like metaclasses, descriptors and Python internals. It includes practical code examples, best practices, common pitfalls and concise explanations to help you quickly revise and strengthen your understanding before interviews. Use this as a comprehensive checklist and reference to ensure you’re well-prepared for any Python interview scenario, whether for general programming, data science, web development, or system design roles.
 
 ## Table of Contents
 
@@ -1323,7 +1323,7 @@ a.balance = 50
 
 ## 25. Advanced String Operations
 
-- Know all string formatting styles: f-strings (`f"{x}"`), `.format()`, and `%` formatting; prefer f-strings for new code.
+- Know all string formatting styles: f-strings (`f"{x}"`), `.format()` and `%` formatting; prefer f-strings for new code.
 - Understand the difference between Unicode strings (`str`) and byte strings (`bytes`); know how to encode/decode.
 - String interning: Python may reuse immutable string objects for efficiency; use `sys.intern()` for large sets of repeated strings.
 - Strings are immutable; all string operations create new objects.

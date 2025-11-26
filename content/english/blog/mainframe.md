@@ -3,25 +3,25 @@ date = '2025-01-01T12:44:47+10:00'
 draft = false
 title = 'Mainframe Retirement using Gen-AI'
 tags = ['Mainframe', 'COBOL', 'Java', 'AI Migration', 'Bedrock Claude', 'Knowledge Graph']
-summary = "Step-by-step guide to migrating COBOL mainframe systems to modern Java services using AI-assisted tooling, graph-based analysis, and migration best practices."
+summary = "Step-by-step guide to migrating COBOL mainframe systems to modern Java services using AI-assisted tooling, graph-based analysis and migration best practices."
 +++
 
 ## Introduction
 
-This document provides a **detailed, step-by-step plan** for migrating a large Mainframe (COBOL) project to Java using AI, specifically leveraging the Bedrock Claude 4.5 Sonnet model. It is tailored for developers familiar with Python, Java, and JavaScript, but new to COBOL.
+This document provides a **detailed, step-by-step plan** for migrating a large Mainframe (COBOL) project to Java using AI, specifically leveraging the Bedrock Claude 4.5 Sonnet model. It is tailored for developers familiar with Python, Java and JavaScript, but new to COBOL.
 
 ---
 
 ## 1. Assessment & Preparation
 
 - **Inventory Mainframe Assets**
-  - List all COBOL programs, JCL scripts, copybooks, datasets, and utilities.
+  - List all COBOL programs, JCL scripts, copybooks, datasets and utilities.
   - Identify external dependencies (databases, files, batch jobs, CICS transactions).
   - Gather all available documentation and business process flows.
 
 - **Set Up Your Environment**
-  - Provision a Linux server or cloud VM with Python, Java, Node.js, and Docker.
-  - Install tools: `git`, `python3`, `pip`, `open-cobol` (GnuCOBOL), and a code editor (VS Code recommended).
+  - Provision a Linux server or cloud VM with Python, Java, Node.js and Docker.
+  - Install tools: `git`, `python3`, `pip`, `open-cobol` (GnuCOBOL) and a code editor (VS Code recommended).
 ---
 
 ## 2. Parsing & Code Structure Graph Construction
@@ -58,21 +58,21 @@ This document provides a **detailed, step-by-step plan** for migrating a large M
     - Business rules (from comments or external docs).
 
 - **Semantic Enrichment**
-  - Use NLP (with Bedrock Claude 4.5 Sonnet) to summarize code sections, extract business logic, and generate human-readable descriptions.
+  - Use NLP (with Bedrock Claude 4.5 Sonnet) to summarize code sections, extract business logic and generate human-readable descriptions.
   - Example prompt for Claude:
     ```
     "Summarize the business logic of this COBOL program:\n{COBOL_CODE}"
     ```
 
 - **Indexing**
-  - Use [Elasticsearch](https://www.elastic.co/) to index code, comments, and documentation for fast search.
+  - Use [Elasticsearch](https://www.elastic.co/) to index code, comments and documentation for fast search.
 
 ---
 
 ## 4. AI-Assisted Migration (COBOL to Java)
 
 - **Translation Workflow**
-  1. **Extract**: For each COBOL program, extract logic, data structures, and I/O.
+  1. **Extract**: For each COBOL program, extract logic, data structures and I/O.
   2. **Prompt Engineering**: Feed code and context to Claude 4.5 Sonnet with clear instructions, e.g.:
      ```
      "Convert this COBOL program to idiomatic Java. Explain any mainframe-specific logic in comments."
@@ -105,18 +105,18 @@ This document provides a **detailed, step-by-step plan** for migrating a large M
 ## 6. Iterative Migration & Feedback
 
 - **Start Small**
-  - Select a simple COBOL program, migrate, and validate.
-  - Use feedback to improve parsing, translation prompts, and chatbot answers.
+  - Select a simple COBOL program, migrate and validate.
+  - Use feedback to improve parsing, translation prompts and chatbot answers.
 
 - **Scale Gradually**
-  - Migrate more complex programs, update the knowledge graph, and expand chatbot capabilities.
+  - Migrate more complex programs, update the knowledge graph and expand chatbot capabilities.
 
 ---
 
 ## 7. Monitoring & Continuous Improvement
 
 - **Track Progress**
-  - Use dashboards to monitor migration status, code quality, and chatbot usage.
+  - Use dashboards to monitor migration status, code quality and chatbot usage.
 
 - **Retrain & Refine**
   - Periodically update AI prompts and retrain models with new examples and feedback.
