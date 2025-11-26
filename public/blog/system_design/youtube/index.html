@@ -1,0 +1,3146 @@
+<!doctype html>
+<html
+  itemscope
+  class=""
+  lang="en-us"
+  itemtype="http://schema.org/WebPage">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    
+    <meta charset="utf-8" />
+
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+
+<meta name="theme-name" content="hugoplate" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="shortcut icon" href="/images/favicon_hu_4384881fdc2d307e.png" type="image/x-icon">
+<link rel="icon" href="/images/favicon_hu_4384881fdc2d307e.png" type="image/x-icon">
+<link rel="icon" type="image/png" sizes="48x48" href="/images/favicon_hu_79c3559174e61a5e.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/favicon_hu_4384881fdc2d307e.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/images/favicon_hu_cfffba76e19e8ff2.png">
+
+
+
+
+
+
+
+
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta
+  name="msapplication-TileColor"
+  content="#ddd" />
+<meta
+  name="theme-color"
+  content="#ffffff" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+<title>Youtube System Design</title>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <meta
+    name="keywords"
+    content="Boilerplate, Hugo" />
+
+
+
+
+<meta name="description" content="Hugo &amp; Tailwindcss Starter" />
+
+
+
+  <meta name="author" content="zeon.studio" />
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+
+
+  
+  
+    
+    
+      
+    
+
+    
+
+
+    
+    
+
+
+    
+    
+      
+      
+      
+        <meta property="og:image" content="http://localhost:1313/images/og-image.png" />
+        <meta name="twitter:image" content="http://localhost:1313/images/og-image.png" />
+        <meta
+          name="twitter:card"
+          content="summary_large_image" />
+      
+      
+      <meta property="og:image:width" content="900" />
+      <meta property="og:image:height" content="600" />
+    
+
+
+    
+    <meta
+      property="og:image:type"
+      content="image/.png" />
+  
+
+
+  
+
+
+
+
+
+<meta property="og:title" content="Youtube System Design" />
+<meta property="og:description" content="Hugo &amp; Tailwindcss Starter" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://localhost:1313/blog/system_design/youtube/" />
+
+
+<meta name="twitter:title" content="Youtube System Design" />
+<meta name="twitter:description" content="Hugo &amp; Tailwindcss Starter" />
+
+
+  <meta name="twitter:site" content="@zeon_studio" />
+
+
+  <meta name="twitter:creator" content="@zeon.studio" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  let indexURL = "http://localhost:1313/searchindex.json";
+  let includeSectionsInSearch = ["blog"];
+  let search_no_results = "No results for";
+  let search_initial_message = "Type something to search..";
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta http-equiv="x-dns-prefetch-control" content="on" />
+<link rel="preconnect" href="https://use.fontawesome.com" crossorigin />
+<link rel="preconnect" href="//cdnjs.cloudflare.com" />
+<link rel="preconnect" href="//www.googletagmanager.com" />
+<link rel="preconnect" href="//www.google-analytics.com" />
+<link rel="dns-prefetch" href="https://use.fontawesome.com" />
+<link rel="dns-prefetch" href="//ajax.googleapis.com" />
+<link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
+<link rel="dns-prefetch" href="//www.googletagmanager.com" />
+<link rel="dns-prefetch" href="//www.google-analytics.com" />
+<link rel="dns-prefetch" href="//fonts.googleapis.com" />
+<link rel="dns-prefetch" href="//connect.facebook.net" />
+<link rel="dns-prefetch" href="//platform.linkedin.com" />
+<link rel="dns-prefetch" href="//platform.twitter.com" />
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<script>
+  (function () {
+    const googleFont = document.createElement("link");
+    googleFont.href = "https://fonts.googleapis.com/css2?family=Heebo:wght@400;600&family=Signika:wght@500;700&display=swap";
+    googleFont.type = "text/css";
+    googleFont.rel = "stylesheet";
+    document.head.appendChild(googleFont);
+  })();
+</script>
+
+
+
+
+
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link
+  href="/css/style.css"
+  integrity=""
+  rel="stylesheet" />
+
+
+<link
+  rel="stylesheet"
+  href="/css/style-lazy.css"
+  integrity=""
+  media="print"
+  onload="this.media='all'; this.onload=null;" />
+
+
+  </head>
+
+  <body>
+    
+    
+      
+
+
+
+
+
+      
+      <div
+  class="fixed left-0 top-0 z-50 flex w-[30px] items-center justify-center bg-gray-200 py-[2.5px] text-[12px] uppercase text-black sm:bg-red-200 md:bg-yellow-200 lg:bg-green-200 xl:bg-blue-200 2xl:bg-pink-200">
+  <span class="block sm:hidden">all</span>
+  <span class="hidden sm:block md:hidden">sm</span>
+  <span class="hidden md:block lg:hidden">md</span>
+  <span class="hidden lg:block xl:hidden">lg</span>
+  <span class="hidden xl:block 2xl:hidden">xl</span>
+  <span class="hidden 2xl:block">2xl</span>
+</div>
+
+    
+
+
+    
+    
+
+
+  <div id="announcement" class="announcement announcement-hide">
+    <span class='text-center block'><a class='underline' href='/blog/' rel='noopener'>Open Blog Posts 📚</a></span>
+    <button id="announcement-button" class="announcement-button">
+      &times;
+    </button>
+  </div>
+
+  
+  <style>
+    .announcement {
+      position: relative;
+      z-index: 999;
+      padding: 1rem;
+      padding-right: 2.8rem;
+      background-color: #fff;
+      box-shadow: 1px 0px 10px 7px rgba(154, 154, 154, 0.11);
+      font-size: 1.1rem;
+    }
+    .announcement-button {
+      cursor: pointer;
+      padding: 0 0.5rem;
+      border: 0;
+      font-size: 1.3rem;
+      position: absolute;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      border: 1px solid;
+      border-radius: 50%;
+      height: 1.1em;
+      width: 1.1em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .announcement-hide {
+      display: none;
+    }
+    .dark .announcement {
+      background-color: #222;
+    }
+  </style>
+
+
+
+
+    
+    <header
+  class="header sticky top-0 z-30">
+  <nav class="navbar container">
+    
+    <div class="order-0">
+      
+      <a class="navbar-brand block" href="/">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  
+  
+  
+
+
+  
+  
+    
+    
+  
+
+
+  
+  
+      
+      
+    
+    
+    
+    
+    
+    
+  
+  
+
+  
+  
+    
+    
+      
+      
+
+
+      
+      
+        
+        
+        
+        
+
+        
+        
+        
+      
+      
+    
+  
+  
+
+  
+    <img
+      fetchpriority="high"
+      decoding="async"
+      class="img img-light"
+      width="160"
+      height="32"
+      src="/images/logo_hu_75df6f187f7b785d.webp"
+      alt="Hugoplate"
+      onerror="this.onerror=null;this.src='\/images\/logo_hu_613f51f483beed3c.png';" />
+
+    <img
+      fetchpriority="high"
+      decoding="async"
+      class="img img-dark"
+      width="160"
+      height="32"
+      src="/images/logo-darkmode_hu_a274d2b570d85754.webp"
+      alt="Hugoplate"
+      onerror="this.onerror=null;this.src='\/images\/logo-darkmode_hu_11d6a0e948ad5f4.png';" />
+  
+  
+
+
+      </a>
+    </div>
+    
+    <input id="nav-toggle" type="checkbox" class="hidden" />
+    <label
+      for="nav-toggle"
+      class="order-3 cursor-pointer flex items-center lg:hidden text-text-dark dark:text-white lg:order-1">
+      <svg id="show-button" class="h-6 fill-current block" viewBox="0 0 20 20">
+        <title>Menu Open</title>
+        <path d="M0 3h20v2H0V3z m0 6h20v2H0V9z m0 6h20v2H0V0z"></path>
+      </svg>
+      <svg id="hide-button" class="h-6 fill-current hidden" viewBox="0 0 20 20">
+        <title>Menu Close</title>
+        <polygon
+          points="11 9 22 9 22 11 11 11 11 22 9 22 9 11 -2 11 -2 9 9 9 9 -2 11 -2"
+          transform="rotate(45 10 10)"></polygon>
+      </svg>
+    </label>
+    
+
+    
+    <ul
+      id="nav-menu"
+      class="navbar-nav order-3 hidden lg:flex w-full pb-6 lg:order-1 lg:w-auto lg:space-x-2 lg:pb-0 xl:space-x-8">
+      
+      
+        
+        
+        
+        
+          <li class="nav-item">
+            <a
+              class="nav-link "
+              
+              href="/"
+              >Home</a
+            >
+          </li>
+        
+      
+        
+        
+        
+        
+          <li class="nav-item">
+            <a
+              class="nav-link "
+              
+              href="/about"
+              >About</a
+            >
+          </li>
+        
+      
+        
+        
+        
+        
+          <li class="nav-item">
+            <a
+              class="nav-link "
+              
+              href="/elements"
+              >Elements</a
+            >
+          </li>
+        
+      
+        
+        
+        
+        
+          <li class="nav-item nav-dropdown group relative">
+            <input
+              type="checkbox"
+              id="submenu-pages"
+              class="peer hidden lg:hidden" />
+            <label
+              for="submenu-pages"
+              class="nav-link 
+                
+                
+                
+              
+                
+                
+                
+              
+                
+                
+                
+              
+                
+                
+                
+              
+                
+                
+                
+               inline-flex items-center">
+              Pages
+              <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </label>
+            <ul
+              class="nav-dropdown-list hidden peer-checked:block lg:invisible lg:absolute lg:block lg:opacity-0 lg:group-hover:visible lg:group-hover:opacity-100">
+              
+                
+                
+                <li class="nav-dropdown-item">
+                  <a
+                    class="nav-dropdown-link "
+                    
+                    href="/404">
+                    404 Page
+                  </a>
+                </li>
+              
+                
+                
+                <li class="nav-dropdown-item">
+                  <a
+                    class="nav-dropdown-link "
+                    
+                    href="/authors">
+                    Authors
+                  </a>
+                </li>
+              
+                
+                
+                <li class="nav-dropdown-item">
+                  <a
+                    class="nav-dropdown-link "
+                    
+                    href="/blog">
+                    Blog
+                  </a>
+                </li>
+              
+                
+                
+                <li class="nav-dropdown-item">
+                  <a
+                    class="nav-dropdown-link "
+                    
+                    href="/categories">
+                    Categories
+                  </a>
+                </li>
+              
+                
+                
+                <li class="nav-dropdown-item">
+                  <a
+                    class="nav-dropdown-link "
+                    
+                    href="/contact">
+                    Contact
+                  </a>
+                </li>
+              
+            </ul>
+          </li>
+        
+      
+      
+        <li class="mt-4 inline-block lg:hidden">
+          <a
+            class="btn btn-outline-primary btn-sm"
+            href="/contact">
+            get a quote
+          </a>
+        </li>
+      
+    </ul>
+
+    <div class="order-1 ml-auto flex items-center md:order-2 lg:ml-0">
+      
+        
+          <button
+            aria-label="search"
+            class="border-border text-text-dark hover:text-primary
+            dark:border-darkmode-border mr-5 inline-block border-r pr-5
+            text-xl dark:text-white cursor-pointer dark:hover:text-darkmode-primary
+            "
+            data-target="search-modal">
+            <i class="fa-solid fa-search"></i>
+          </button>
+        
+      
+
+      
+
+      
+
+
+  <div class="theme-switcher mr-5 invisible">
+    <input id="theme-switcher" data-theme-switcher type="checkbox" />
+    <label for="theme-switcher">
+      <span class="sr-only">theme switcher</span>
+      <span>
+        
+        <svg
+          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 opacity-100 dark:opacity-0"
+          viewBox="0 0 56 56"
+          fill="#fff"
+          height="16"
+          width="16">
+          <path
+            d="M30 4.6c0-1-.9-2-2-2a2 2 0 0 0-2 2v5c0 1 .9 2 2 2s2-1 2-2Zm9.6 9a2 2 0 0 0 0 2.8c.8.8 2 .8 2.9 0L46 13a2 2 0 0 0 0-2.9 2 2 0 0 0-3 0Zm-26 2.8c.7.8 2 .8 2.8 0 .8-.7.8-2 0-2.9L13 10c-.7-.7-2-.8-2.9 0-.7.8-.7 2.1 0 3ZM28 16a12 12 0 0 0-12 12 12 12 0 0 0 12 12 12 12 0 0 0 12-12 12 12 0 0 0-12-12Zm23.3 14c1.1 0 2-.9 2-2s-.9-2-2-2h-4.9a2 2 0 0 0-2 2c0 1.1 1 2 2 2ZM4.7 26a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4.9c1 0 2-.9 2-2s-1-2-2-2Zm37.8 13.6a2 2 0 0 0-3 0 2 2 0 0 0 0 2.9l3.6 3.5a2 2 0 0 0 2.9 0c.8-.8.8-2.1 0-3ZM10 43.1a2 2 0 0 0 0 2.9c.8.7 2.1.8 3 0l3.4-3.5c.8-.8.8-2.1 0-2.9-.8-.8-2-.8-2.9 0Zm20 3.4c0-1.1-.9-2-2-2a2 2 0 0 0-2 2v4.9c0 1 .9 2 2 2s2-1 2-2Z" />
+        </svg>
+        
+        <svg
+          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 opacity-0 dark:opacity-100"
+          viewBox="0 0 24 24"
+          fill="none"
+          height="16"
+          width="16">
+          <path
+            fill="#000"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M8.2 2.2c1-.4 2 .6 1.6 1.5-1 3-.4 6.4 1.8 8.7a8.4 8.4 0 0 0 8.7 1.8c1-.3 2 .5 1.5 1.5v.1a10.3 10.3 0 0 1-9.4 6.2A10.3 10.3 0 0 1 3.2 6.7c1-2 2.9-3.5 4.9-4.4Z" />
+        </svg>
+      </span>
+    </label>
+  </div>
+
+  
+  <script>
+    var darkMode = localStorage.getItem("theme") === "dark";
+
+    if (localStorage.getItem("theme") === null) {
+      darkMode = false;
+
+      
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        darkMode = true;
+      }
+      
+    }
+
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      var themeSwitch = document.querySelectorAll("[data-theme-switcher]");
+      var themeSwitcherContainer = document.querySelector('.theme-switcher');
+
+      [].forEach.call(themeSwitch, function (ts) {
+        ts.checked = darkMode;
+        ts.addEventListener("click", () => {
+          document.documentElement.classList.toggle("dark");
+          localStorage.setItem(
+            "theme",
+            document.documentElement.classList.contains("dark") ? "dark" : "light"
+          );
+        });
+      });
+
+      
+      themeSwitcherContainer.classList.remove("invisible");
+    });
+  </script>
+
+
+
+
+      
+      
+        <a
+          href="/contact"
+          class="btn btn-outline-primary btn-sm hidden lg:inline-block">
+          get a quote
+        </a>
+      
+    </div>
+  </nav>
+</header>
+
+    
+
+
+
+
+  
+    <div
+      class="search-modal "
+      aria-hidden="true"
+      style="--color-primary: #121212">
+      <div data-target="close-search-modal" class="search-modal-overlay"></div>
+      <div
+        class="search-wrapper"
+        data-image="true"
+        data-description="true"
+        data-tags="true"
+        data-categories="true">
+        <div class="search-wrapper-header">
+          <label for="search-modal-input" style="margin-top:-1px">
+            <span class="sr-only">search icon</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+              height="18"
+              width="18"
+              class="search-icon"
+              data-type="search">
+              <path
+                fill="currentColor"
+                d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+            </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+              height="18"
+              width="18"
+              class="search-reset"
+              data-type="reset">
+              <path
+                fill="currentColor"
+                d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
+            </svg>
+          </label>
+          <input
+            id="search-modal-input"
+            type="text"
+            data-search-input
+            autocomplete="off"
+            aria-label="Search"
+            placeholder="Search Post..." />
+        </div>
+        <div class="search-wrapper-body">
+          <div class="search-result" data-search-result></div>
+          <span class="search-result-empty">
+            Type something to search..
+          </span>
+        </div>
+        <div class="search-wrapper-footer">
+          <span>
+            <kbd>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                fill="currentColor"
+                viewBox="0 0 16 16">
+                <path
+                  d="M3.204 11h9.592L8 5.519 3.204 11zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659z" />
+              </svg>
+            </kbd>
+            <kbd>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                fill="currentColor"
+                style="margin-top:1px;"
+                viewBox="0 0 16 16">
+                <path
+                  d="M3.204 5h9.592L8 10.481 3.204 5zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z" />
+              </svg>
+            </kbd>
+            to navigate
+          </span>
+          <span>
+            <kbd>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                fill="currentColor"
+                style="display:inline-block;"
+                viewBox="0 0 16 16">
+                <path
+                  fill-rule="evenodd"
+                  d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z" />
+              </svg>
+            </kbd>
+            to select
+          </span>
+          <span class="search-result-info"></span>
+          <span data-target="close-search-modal">
+            <kbd>ESC</kbd> to close
+          </span>
+        </div>
+      </div>
+    </div>
+  
+
+
+
+
+    <main>
+      
+  <section class="section pt-7">
+    <div class="container">
+      <div class="row justify-center">
+        <article class="lg:col-10">
+          
+          
+          <h1 class="h2 mb-4">
+            Youtube System Design
+          </h1>
+          <ul class="mb-4">
+            <li class="mr-4 inline-block">
+              <a
+                href="/authors//">
+                <i class="fa-regular fa-circle-user mr-2"></i
+                >
+              </a>
+            </li>
+            
+            
+            <li class="mr-4 inline-block">
+              <i class="fa-regular fa-clock mr-2"></i>
+              January 1, 2024
+            </li>
+          </ul>
+          <div class="content mb-10">
+            
+
+ 
+  
+
+<details open class="table-of-content blog">
+  <summary>
+    
+      Table of Contents
+    
+  </summary>
+  <nav id="TableOfContents">
+  <ol>
+    <li><a href="#technical--business-requirements">Technical &amp; Business Requirements</a></li>
+    <li><a href="#nouns-and-verbs-from-video-platform-requirements">Nouns and Verbs from Video Platform Requirements</a></li>
+    <li><a href="#verbs">Verbs</a></li>
+    <li><a href="#1-requirements-gathering">1. Requirements Gathering</a>
+      <ol>
+        <li><a href="#functional-requirements">Functional Requirements</a></li>
+        <li><a href="#non-functional-requirements">Non-Functional Requirements</a>
+          <ol>
+            <li><a href="#user-scale">User Scale</a></li>
+            <li><a href="#system-throughput">System Throughput</a></li>
+            <li><a href="#availability--reliability">Availability &amp; Reliability</a></li>
+            <li><a href="#performance--latency">Performance &amp; Latency</a></li>
+            <li><a href="#consistency--data-integrity">Consistency &amp; Data Integrity</a></li>
+            <li><a href="#storage--data-management">Storage &amp; Data Management</a></li>
+            <li><a href="#bandwidth--traffic">Bandwidth &amp; Traffic</a></li>
+            <li><a href="#security--compliance">Security &amp; Compliance</a></li>
+          </ol>
+        </li>
+        <li><a href="#scale-estimation">Scale Estimation</a>
+          <ol>
+            <li><a href="#introduction-to-patterns-to-achieve-nfr">Introduction to Patterns to achieve NFR</a>
+              <ol>
+                <li><a href="#1-transactions--consistency">1. Transactions &amp; Consistency</a></li>
+                <li><a href="#2-scaling--capacity-patterns">2. Scaling &amp; Capacity Patterns</a></li>
+                <li><a href="#3-data-management--storage">3. Data Management &amp; Storage</a></li>
+                <li><a href="#4-messaging--integration-guarantees">4. Messaging &amp; Integration Guarantees</a></li>
+                <li><a href="#5-concurrency--coordination">5. Concurrency &amp; Coordination</a></li>
+                <li><a href="#6-availability--resilience">6. Availability &amp; Resilience</a></li>
+                <li><a href="#7-performance--latency">7. Performance &amp; Latency</a></li>
+                <li><a href="#8-fault-tolerance--disaster-recovery">8. Fault Tolerance &amp; Disaster Recovery</a></li>
+                <li><a href="#9-observability-testing--sre-practices">9. Observability, Testing &amp; SRE Practices</a></li>
+                <li><a href="#10-security--compliance">10. Security &amp; Compliance</a></li>
+                <li><a href="#11-deployability-upgrade--migration">11. Deployability, Upgrade &amp; Migration</a></li>
+                <li><a href="#12-cost-efficiency--operational-economics">12. Cost, Efficiency &amp; Operational Economics</a></li>
+                <li><a href="#13-developer-productivity--maintainability">13. Developer Productivity &amp; Maintainability</a></li>
+                <li><a href="#14-governance--policy">14. Governance &amp; Policy</a></li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#2-high-level-architecture">2. High-Level Architecture</a>
+      <ol>
+        <li><a href="#core-components">Core Components</a></li>
+      </ol>
+    </li>
+    <li><a href="#2a-microservice-decomposition--hexagonal-architecture-chris-richardson">2a. Microservice Decomposition &amp; Hexagonal Architecture (Chris Richardson)</a>
+      <ol>
+        <li><a href="#decomposition-strategies-from-microservices-patterns">Decomposition Strategies (from &ldquo;Microservices Patterns&rdquo;)</a></li>
+        <li><a href="#hexagonal-architecture-ports--adapters">Hexagonal Architecture (Ports &amp; Adapters)</a>
+          <ol>
+            <li><a href="#example-video-upload-service-hexagonal">Example: Video Upload Service (Hexagonal)</a></li>
+          </ol>
+        </li>
+        <li><a href="#additional-patterns-from-the-book">Additional Patterns from the Book</a></li>
+      </ol>
+    </li>
+    <li><a href="#3-scale-cube-application-for-10x-growth">3. Scale Cube Application for 10x Growth</a>
+      <ol>
+        <li><a href="#x-axis-scaling-horizontal-duplication">X-Axis Scaling (Horizontal Duplication)</a></li>
+        <li><a href="#y-axis-scaling-functional-decomposition">Y-Axis Scaling (Functional Decomposition)</a></li>
+        <li><a href="#z-axis-scaling-data-partitioning">Z-Axis Scaling (Data Partitioning)</a></li>
+      </ol>
+    </li>
+    <li><a href="#4-microservices-design-patterns">4. Microservices Design Patterns</a>
+      <ol>
+        <li><a href="#service-patterns">Service Patterns</a></li>
+        <li><a href="#data-patterns">Data Patterns</a></li>
+        <li><a href="#communication-patterns">Communication Patterns</a></li>
+      </ol>
+    </li>
+    <li><a href="#5-event-driven-architecture-eda">5. Event-Driven Architecture (EDA)</a>
+      <ol>
+        <li><a href="#event-streaming-platform">Event Streaming Platform</a></li>
+        <li><a href="#core-events">Core Events</a></li>
+        <li><a href="#event-patterns">Event Patterns</a></li>
+      </ol>
+    </li>
+    <li><a href="#6-cap-theorem-considerations">6. CAP Theorem Considerations</a>
+      <ol>
+        <li><a href="#design-decisions">Design Decisions</a></li>
+        <li><a href="#implementation-strategy">Implementation Strategy</a></li>
+      </ol>
+    </li>
+    <li><a href="#7-storage-architecture">7. Storage Architecture</a>
+      <ol>
+        <li><a href="#video-storage">Video Storage</a></li>
+        <li><a href="#metadata-storage">Metadata Storage</a></li>
+        <li><a href="#search-index">Search Index</a></li>
+      </ol>
+    </li>
+    <li><a href="#8-video-processing-pipeline">8. Video Processing Pipeline</a>
+      <ol>
+        <li><a href="#processing-stages">Processing Stages</a></li>
+        <li><a href="#technologies">Technologies</a></li>
+      </ol>
+    </li>
+    <li><a href="#9-scaling-strategies-for-10x-growth">9. Scaling Strategies for 10x Growth</a>
+      <ol>
+        <li><a href="#infrastructure-scaling">Infrastructure Scaling</a></li>
+        <li><a href="#performance-optimization">Performance Optimization</a></li>
+        <li><a href="#data-management">Data Management</a></li>
+      </ol>
+    </li>
+    <li><a href="#10-monitoring-and-observability">10. Monitoring and Observability</a>
+      <ol>
+        <li><a href="#metrics">Metrics</a></li>
+        <li><a href="#tools">Tools</a></li>
+      </ol>
+    </li>
+    <li><a href="#11-security-considerations">11. Security Considerations</a>
+      <ol>
+        <li><a href="#content-security">Content Security</a></li>
+        <li><a href="#infrastructure-security">Infrastructure Security</a></li>
+      </ol>
+    </li>
+    <li><a href="#12-cost-optimization">12. Cost Optimization</a>
+      <ol>
+        <li><a href="#storage-optimization">Storage Optimization</a></li>
+        <li><a href="#compute-optimization">Compute Optimization</a></li>
+      </ol>
+    </li>
+    <li><a href="#13-disaster-recovery-and-business-continuity">13. Disaster Recovery and Business Continuity</a>
+      <ol>
+        <li><a href="#backup-strategy">Backup Strategy</a></li>
+        <li><a href="#recovery-procedures">Recovery Procedures</a></li>
+      </ol>
+    </li>
+    <li><a href="#14-key-principles-and-laws-applied">14. Key Principles and Laws Applied</a>
+      <ol>
+        <li><a href="#performance-laws">Performance Laws</a></li>
+        <li><a href="#design-principles">Design Principles</a></li>
+        <li><a href="#reliability-patterns">Reliability Patterns</a></li>
+        <li><a href="#additional-laws-and-principles">Additional Laws and Principles</a></li>
+      </ol>
+    </li>
+    <li><a href="#15-database-design">15. Database Design</a>
+      <ol>
+        <li><a href="#user-service-database">User Service Database</a></li>
+        <li><a href="#video-service-database">Video Service Database</a></li>
+      </ol>
+    </li>
+    <li><a href="#16-api-design">16. API Design</a>
+      <ol>
+        <li><a href="#rest-api-endpoints">REST API Endpoints</a>
+          <ol>
+            <li><a href="#video-operations">Video Operations</a></li>
+            <li><a href="#user-operations">User Operations</a></li>
+            <li><a href="#social-operations">Social Operations</a></li>
+          </ol>
+        </li>
+        <li><a href="#graphql-schema-alternative">GraphQL Schema (Alternative)</a></li>
+      </ol>
+    </li>
+    <li><a href="#17-caching-strategy">17. Caching Strategy</a>
+      <ol>
+        <li><a href="#multi-level-caching">Multi-Level Caching</a></li>
+        <li><a href="#cache-invalidation-strategy">Cache Invalidation Strategy</a></li>
+      </ol>
+    </li>
+    <li><a href="#18-message-queue-architecture">18. Message Queue Architecture</a>
+      <ol>
+        <li><a href="#kafka-topic-design">Kafka Topic Design</a></li>
+        <li><a href="#event-schema-avro">Event Schema (Avro)</a></li>
+      </ol>
+    </li>
+    <li><a href="#19-load-balancing-strategy">19. Load Balancing Strategy</a>
+      <ol>
+        <li><a href="#geographic-load-balancing">Geographic Load Balancing</a></li>
+        <li><a href="#auto-scaling-configuration">Auto-scaling Configuration</a></li>
+      </ol>
+    </li>
+    <li><a href="#20-monitoring-and-alerting">20. Monitoring and Alerting</a>
+      <ol>
+        <li><a href="#key-metrics-dashboard">Key Metrics Dashboard</a></li>
+        <li><a href="#alert-rules">Alert Rules</a></li>
+      </ol>
+    </li>
+    <li><a href="#21-additional-considerations-and-patterns">21. Additional Considerations and Patterns</a>
+      <ol>
+        <li><a href="#service-governance--platform-engineering">Service Governance &amp; Platform Engineering</a></li>
+        <li><a href="#observability--operations">Observability &amp; Operations</a></li>
+        <li><a href="#security-enhancements">Security Enhancements</a></li>
+        <li><a href="#compliance--data-privacy">Compliance &amp; Data Privacy</a></li>
+        <li><a href="#advanced-data--ml">Advanced Data &amp; ML</a></li>
+        <li><a href="#reliability-engineering">Reliability Engineering</a></li>
+        <li><a href="#developer-experience">Developer Experience</a></li>
+        <li><a href="#sustainability--cost-controls">Sustainability &amp; Cost Controls</a></li>
+        <li><a href="#community--ecosystem">Community &amp; Ecosystem</a></li>
+      </ol>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ol>
+</nav>
+</details>
+
+            <p>The goal is to demonstrate a practical, modern approach to building and scaling a global video platform, suitable for system design interviews.</p>
+<h2 id="technical--business-requirements">Technical &amp; Business Requirements</h2>
+<p>The <strong>platform</strong> must <em>enable</em> <strong>users</strong> to <em>upload</em>, <em>manage</em>, and <em>stream</em> <strong>video content</strong> at <strong>scale</strong>, <em>supporting</em> a seamless <strong>experience</strong> across <strong>devices</strong> and <strong>geographies</strong>. <strong>Users</strong> should <em>be able to create</em> personal or branded <strong>channels</strong>, <em>publish</em> <strong>videos</strong> with <strong>metadata</strong> (<strong>title</strong>, <strong>description</strong>, <strong>tags</strong>), and <em>interact</em> with <strong>content</strong> through <strong>likes</strong>, <strong>comments</strong>, and <strong>shares</strong>. The <strong>system</strong> must <em>support</em> <strong>user authentication</strong>, personalized <strong>recommendations</strong>, and real-time <strong>notifications</strong> for <strong>subscriptions</strong> and <strong>interactions</strong>. <strong>Search functionality</strong> should <em>allow</em> <strong>users</strong> to <em>discover</em> <strong>content</strong> based on <strong>relevance</strong>, <strong>popularity</strong>, and <strong>preferences</strong>.</p>
+<p>From a <strong>business perspective</strong>, the <strong>system</strong> must <em>ensure</em> high <strong>availability</strong>, <strong>scalability</strong>, and <strong>performance</strong> to <em>support</em> billions of daily <strong>interactions</strong>. It should <em>enable</em> <strong>content moderation workflows</strong> to <em>maintain</em> <strong>community standards</strong> and <em>comply</em> with legal <strong>regulations</strong>. <strong>Analytics capabilities</strong> must <em>provide</em> <strong>insights</strong> into <strong>user engagement</strong>, <strong>video performance</strong>, and <strong>platform health</strong>. The <strong>architecture</strong> should <em>support</em> modular <strong>growth</strong>, <em>allowing</em> <strong>teams</strong> to independently <em>develop</em> and <em>deploy</em> <strong>features</strong> aligned with <strong>business capabilities</strong> such as <strong>video management</strong>, <strong>user engagement</strong>, and <strong>content discovery</strong>.</p>
+<h2 id="nouns-and-verbs-from-video-platform-requirements">Nouns and Verbs from Video Platform Requirements</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Noun</th>
+          <th>Category</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>platform</td>
+          <td>System</td>
+          <td>The main video streaming system</td>
+      </tr>
+      <tr>
+          <td>users</td>
+          <td>People</td>
+          <td>End users of the platform</td>
+      </tr>
+      <tr>
+          <td>video content</td>
+          <td>Media</td>
+          <td>Videos uploaded to the platform</td>
+      </tr>
+      <tr>
+          <td>scale</td>
+          <td>Concept</td>
+          <td>Large-scale operations</td>
+      </tr>
+      <tr>
+          <td>experience</td>
+          <td>Concept</td>
+          <td>User interaction quality</td>
+      </tr>
+      <tr>
+          <td>devices</td>
+          <td>Hardware</td>
+          <td>User devices (mobile, desktop, etc.)</td>
+      </tr>
+      <tr>
+          <td>geographies</td>
+          <td>Location</td>
+          <td>Global regions</td>
+      </tr>
+      <tr>
+          <td>channels</td>
+          <td>Feature</td>
+          <td>User/brand content channels</td>
+      </tr>
+      <tr>
+          <td>videos</td>
+          <td>Media</td>
+          <td>Individual video files</td>
+      </tr>
+      <tr>
+          <td>metadata</td>
+          <td>Data</td>
+          <td>Video information (title, description, tags)</td>
+      </tr>
+      <tr>
+          <td>title</td>
+          <td>Data</td>
+          <td>Video title</td>
+      </tr>
+      <tr>
+          <td>description</td>
+          <td>Data</td>
+          <td>Video description</td>
+      </tr>
+      <tr>
+          <td>tags</td>
+          <td>Data</td>
+          <td>Video categorization tags</td>
+      </tr>
+      <tr>
+          <td>content</td>
+          <td>Media</td>
+          <td>General platform content</td>
+      </tr>
+      <tr>
+          <td>likes</td>
+          <td>Interaction</td>
+          <td>User approval actions</td>
+      </tr>
+      <tr>
+          <td>comments</td>
+          <td>Interaction</td>
+          <td>User feedback/discussion</td>
+      </tr>
+      <tr>
+          <td>shares</td>
+          <td>Interaction</td>
+          <td>Content sharing actions</td>
+      </tr>
+      <tr>
+          <td>system</td>
+          <td>Infrastructure</td>
+          <td>Platform technical system</td>
+      </tr>
+      <tr>
+          <td>user authentication</td>
+          <td>Security</td>
+          <td>Login/identity verification</td>
+      </tr>
+      <tr>
+          <td>recommendations</td>
+          <td>Feature</td>
+          <td>Personalized content suggestions</td>
+      </tr>
+      <tr>
+          <td>notifications</td>
+          <td>Feature</td>
+          <td>Real-time user alerts</td>
+      </tr>
+      <tr>
+          <td>subscriptions</td>
+          <td>Feature</td>
+          <td>Channel following system</td>
+      </tr>
+      <tr>
+          <td>interactions</td>
+          <td>Activity</td>
+          <td>User engagement activities</td>
+      </tr>
+      <tr>
+          <td>search functionality</td>
+          <td>Feature</td>
+          <td>Content discovery tool</td>
+      </tr>
+      <tr>
+          <td>relevance</td>
+          <td>Algorithm</td>
+          <td>Search ranking factor</td>
+      </tr>
+      <tr>
+          <td>popularity</td>
+          <td>Algorithm</td>
+          <td>Content popularity metric</td>
+      </tr>
+      <tr>
+          <td>preferences</td>
+          <td>User Data</td>
+          <td>User personal choices</td>
+      </tr>
+      <tr>
+          <td>business perspective</td>
+          <td>Viewpoint</td>
+          <td>Commercial considerations</td>
+      </tr>
+      <tr>
+          <td>availability</td>
+          <td>Performance</td>
+          <td>System uptime</td>
+      </tr>
+      <tr>
+          <td>scalability</td>
+          <td>Performance</td>
+          <td>Growth handling capability</td>
+      </tr>
+      <tr>
+          <td>performance</td>
+          <td>Quality</td>
+          <td>System speed/efficiency</td>
+      </tr>
+      <tr>
+          <td>content moderation workflows</td>
+          <td>Process</td>
+          <td>Content review processes</td>
+      </tr>
+      <tr>
+          <td>community standards</td>
+          <td>Policy</td>
+          <td>Platform usage rules</td>
+      </tr>
+      <tr>
+          <td>regulations</td>
+          <td>Legal</td>
+          <td>Legal compliance requirements</td>
+      </tr>
+      <tr>
+          <td>analytics capabilities</td>
+          <td>Feature</td>
+          <td>Data analysis tools</td>
+      </tr>
+      <tr>
+          <td>insights</td>
+          <td>Data</td>
+          <td>Business intelligence</td>
+      </tr>
+      <tr>
+          <td>user engagement</td>
+          <td>Metrics</td>
+          <td>User activity measurements</td>
+      </tr>
+      <tr>
+          <td>video performance</td>
+          <td>Metrics</td>
+          <td>Video success metrics</td>
+      </tr>
+      <tr>
+          <td>platform health</td>
+          <td>Metrics</td>
+          <td>System status indicators</td>
+      </tr>
+      <tr>
+          <td>architecture</td>
+          <td>Infrastructure</td>
+          <td>System design structure</td>
+      </tr>
+      <tr>
+          <td>growth</td>
+          <td>Business</td>
+          <td>Platform expansion</td>
+      </tr>
+      <tr>
+          <td>teams</td>
+          <td>People</td>
+          <td>Development teams</td>
+      </tr>
+      <tr>
+          <td>features</td>
+          <td>Functionality</td>
+          <td>Platform capabilities</td>
+      </tr>
+      <tr>
+          <td>business capabilities</td>
+          <td>Concept</td>
+          <td>Core business functions</td>
+      </tr>
+      <tr>
+          <td>video management</td>
+          <td>Capability</td>
+          <td>Video handling processes</td>
+      </tr>
+      <tr>
+          <td>user engagement</td>
+          <td>Capability</td>
+          <td>User interaction systems</td>
+      </tr>
+      <tr>
+          <td>content discovery</td>
+          <td>Capability</td>
+          <td>Content finding mechanisms</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="verbs">Verbs</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Verb</th>
+          <th>Type</th>
+          <th>Usage Context</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>enable</td>
+          <td>Transitive</td>
+          <td>Allow functionality</td>
+      </tr>
+      <tr>
+          <td>upload</td>
+          <td>Transitive</td>
+          <td>Transfer video files</td>
+      </tr>
+      <tr>
+          <td>manage</td>
+          <td>Transitive</td>
+          <td>Control/organize content</td>
+      </tr>
+      <tr>
+          <td>stream</td>
+          <td>Transitive</td>
+          <td>Deliver video content</td>
+      </tr>
+      <tr>
+          <td>supporting</td>
+          <td>Present Participle</td>
+          <td>Providing assistance</td>
+      </tr>
+      <tr>
+          <td>create</td>
+          <td>Transitive</td>
+          <td>Make new channels</td>
+      </tr>
+      <tr>
+          <td>publish</td>
+          <td>Transitive</td>
+          <td>Make videos available</td>
+      </tr>
+      <tr>
+          <td>interact</td>
+          <td>Intransitive</td>
+          <td>Engage with content</td>
+      </tr>
+      <tr>
+          <td>support</td>
+          <td>Transitive</td>
+          <td>Provide functionality</td>
+      </tr>
+      <tr>
+          <td>allow</td>
+          <td>Transitive</td>
+          <td>Permit actions</td>
+      </tr>
+      <tr>
+          <td>discover</td>
+          <td>Transitive</td>
+          <td>Find content</td>
+      </tr>
+      <tr>
+          <td>ensure</td>
+          <td>Transitive</td>
+          <td>Guarantee outcomes</td>
+      </tr>
+      <tr>
+          <td>enable</td>
+          <td>Transitive</td>
+          <td>Make possible</td>
+      </tr>
+      <tr>
+          <td>maintain</td>
+          <td>Transitive</td>
+          <td>Keep standards</td>
+      </tr>
+      <tr>
+          <td>comply</td>
+          <td>Intransitive</td>
+          <td>Follow regulations</td>
+      </tr>
+      <tr>
+          <td>provide</td>
+          <td>Transitive</td>
+          <td>Supply insights</td>
+      </tr>
+      <tr>
+          <td>support</td>
+          <td>Transitive</td>
+          <td>Enable growth</td>
+      </tr>
+      <tr>
+          <td>allowing</td>
+          <td>Present Participle</td>
+          <td>Permitting teams</td>
+      </tr>
+      <tr>
+          <td>develop</td>
+          <td>Transitive</td>
+          <td>Create features</td>
+      </tr>
+      <tr>
+          <td>deploy</td>
+          <td>Transitive</td>
+          <td>Release features</td>
+      </tr>
+  </tbody>
+</table>
+<p>Key DDD Concepts Identified:</p>
+<ul>
+<li>Entities: Things with identity that change over time (Users, Videos, Channels, Comments)</li>
+<li>Value Objects: Immutable descriptors (Metadata, Tags, Preferences)</li>
+<li>Domain Events: Significant business occurrences (VideoUploaded, UserSubscribed)</li>
+<li>Domain Services: Business logic that doesn&rsquo;t belong to entities (Search, Moderation)</li>
+<li>Aggregates: Consistency boundaries (Video + Metadata, User + Channels)</li>
+</ul>
+<p>8 Bounded Contexts emerged naturally from the requirements:</p>
+<ul>
+<li>User Management</li>
+<li>Content Management</li>
+<li>Engagement</li>
+<li>Discovery</li>
+<li>Notification</li>
+<li>Analytics</li>
+<li>Moderation</li>
+<li>Content Delivery</li>
+</ul>
+<p>Ubiquitous Language: Defined key terms that should be used consistently across the development team and business stakeholders.
+This DDD analysis provides a much stronger foundation for:</p>
+<p>Microservices architecture design</p>
+<ul>
+<li>Team organization</li>
+<li>API boundaries</li>
+<li>Database design</li>
+<li>Business rule implementation</li>
+</ul>
+<h2 id="1-requirements-gathering">1. Requirements Gathering</h2>
+<h3 id="functional-requirements">Functional Requirements</h3>
+<ul>
+<li><strong>Video Upload</strong>: Users can upload videos (multiple formats, sizes up to 10GB)</li>
+<li><strong>Video Streaming</strong>: Users can watch videos with adaptive bitrate streaming</li>
+<li><strong>Video Search</strong>: Search videos by title, description, tags, channel</li>
+<li><strong>User Management</strong>: Registration, authentication, profiles, subscriptions</li>
+<li><strong>Social Features</strong>: Comments, likes/dislikes, sharing, playlists</li>
+<li><strong>Channel Management</strong>: Create channels, manage content, analytics</li>
+<li><strong>Content Moderation</strong>: Automated and manual content review</li>
+<li><strong>Notifications</strong>: Subscription updates, comment replies, trending content</li>
+</ul>
+<h3 id="non-functional-requirements">Non-Functional Requirements</h3>
+<h4 id="user-scale">User Scale</h4>
+<ul>
+<li><strong>Total registered users:</strong> 2+ billion</li>
+<li><strong>Daily active users (DAU):</strong> 500+ million</li>
+<li><strong>Monthly active users (MAU):</strong> 1.5+ billion</li>
+<li><strong>Concurrent users (peak):</strong> 50+ million</li>
+</ul>
+<h4 id="system-throughput">System Throughput</h4>
+<ul>
+<li><strong>Video uploads:</strong> 500+ hours of content uploaded per minute</li>
+<li><strong>Video consumption:</strong> 1+ billion hours watched daily</li>
+<li><strong>Search queries:</strong> 1+ billion queries per day</li>
+</ul>
+<h4 id="availability--reliability">Availability &amp; Reliability</h4>
+<ul>
+<li><strong>Uptime SLA:</strong> 99.9% globally</li>
+<li><strong>CAP Theorem priority:</strong>
+<ul>
+<li>Prioritize <strong>Availability</strong> and <strong>Partition Tolerance</strong></li>
+<li>Accept <strong>Eventual Consistency</strong> where applicable</li>
+</ul>
+</li>
+</ul>
+<h4 id="performance--latency">Performance &amp; Latency</h4>
+<ul>
+<li><strong>Video start time:</strong> &lt; 2 seconds globally</li>
+<li><strong>Search results latency:</strong> &lt; 300 milliseconds</li>
+<li><strong>Upload processing time:</strong> Variable (based on video size and format)</li>
+<li><strong>Page load time (95th percentile):</strong> &lt; 1 second</li>
+</ul>
+<h4 id="consistency--data-integrity">Consistency &amp; Data Integrity</h4>
+<ul>
+<li><strong>User authentication &amp; billing:</strong> Strong consistency</li>
+<li><strong>Social features (likes, comments, views):</strong> Eventually consistent</li>
+<li><strong>Content metadata updates:</strong> Eventually consistent</li>
+</ul>
+<h4 id="storage--data-management">Storage &amp; Data Management</h4>
+<ul>
+<li><strong>Video storage:</strong> Exabyte-scale, globally distributed</li>
+<li><strong>Metadata storage:</strong> Highly available, low-latency key-value store</li>
+<li><strong>Backup &amp; disaster recovery:</strong> Geo-redundant with RPO &lt; 1 hour</li>
+</ul>
+<h4 id="bandwidth--traffic">Bandwidth &amp; Traffic</h4>
+<ul>
+<li><strong>Daily data transfer:</strong> Petabyte-scale</li>
+<li><strong>Peak bandwidth usage:</strong> 100+ Tbps globally</li>
+<li><strong>CDN usage:</strong> Aggressive caching and edge delivery for video content</li>
+</ul>
+<h4 id="security--compliance">Security &amp; Compliance</h4>
+<ul>
+<li><strong>Data encryption:</strong> At rest and in transit</li>
+<li><strong>Access control:</strong> Role-based and region-aware</li>
+<li><strong>Compliance:</strong> GDPR, CCPA, and other regional regulations</li>
+</ul>
+<h3 id="scale-estimation">Scale Estimation</h3>
+<ul>
+<li><strong>Users</strong>: 2.7B monthly active users</li>
+<li><strong>Videos</strong>: 720,000 hours uploaded daily</li>
+<li><strong>Storage</strong>: 1PB+ new content daily</li>
+<li><strong>Bandwidth</strong>: 30PB+ daily egress traffic</li>
+<li><strong>QPS</strong>: 1M+ concurrent video streams</li>
+</ul>
+<h4 id="introduction-to-patterns-to-achieve-nfr">Introduction to Patterns to achieve NFR</h4>
+<h5 id="1-transactions--consistency">1. Transactions &amp; Consistency</h5>
+<ul>
+<li><strong>Two-Phase Commit (2PC)</strong> — classic distributed commit protocol for atomic commits across multiple resources (heavy, blocking).</li>
+<li><strong>Three-Phase Commit (3PC)</strong> — non-blocking variant of 2PC with extra phase (rare in practice).</li>
+<li><strong>XA / Distributed DB Transactions</strong> — vendor support for distributed transactions (JTA/XA); useful when available but reduces scalability.</li>
+<li><strong>TCC (Try-Confirm/Cancel)</strong> — explicit Try / Confirm / Cancel steps for compensatable remote transactions.</li>
+<li><strong>Saga (Choreography / Orchestration)</strong> — long-running transactions using local ACID steps + compensations.</li>
+<li><strong>Compensating Transactions</strong> — undo actions when a multi-step workflow fails.</li>
+<li><strong>Transactional Outbox</strong> — make DB write + outgoing message atomic by writing the message to an outbox table in the same transaction.</li>
+<li><strong>Inbox / Idempotent Receiver</strong> — persist processed message IDs to avoid double processing.</li>
+<li><strong>Quorum Reads/Writes</strong> — use majority quorums for consistency in distributed stores (Cassandra, Riak).</li>
+<li><strong>Snapshot Isolation / MVCC</strong> — reduce read/write conflicts using multi-versioning.</li>
+</ul>
+<h5 id="2-scaling--capacity-patterns">2. Scaling &amp; Capacity Patterns</h5>
+<ul>
+<li><strong>Horizontal Scaling</strong> — add more instances to increase capacity.</li>
+<li><strong>Vertical Scaling</strong> — increase instance resources (CPU, RAM).</li>
+<li><strong>Sharding / Partitioning</strong> — split data by key to distribute load.</li>
+<li><strong>Read Replicas</strong> — scale reads by replicating primary DB.</li>
+<li><strong>CQRS (Command Query Responsibility Segregation)</strong> — separate read/write models to scale each side independently.</li>
+<li><strong>Event-Driven / Work Queues</strong> — decouple producers/consumers to absorb bursts.</li>
+<li><strong>Autoscaling (HPA / Cluster autoscaler)</strong> — auto add/remove capacity based on metrics.</li>
+<li><strong>Batching / Aggregation</strong> — reduce per-message overhead by batching.</li>
+<li><strong>Fan-out / Fan-in Patterns</strong> — split work to many workers then aggregate results.</li>
+<li><strong>Tiered Storage (Hot/Warm/Cold)</strong> — store frequently accessed vs archive data differently.</li>
+</ul>
+<h5 id="3-data-management--storage">3. Data Management &amp; Storage</h5>
+<ul>
+<li><strong>Event Sourcing</strong> — store state as a sequence of events; rebuild state by replay.</li>
+<li><strong>Change Data Capture (CDC)</strong> — capture DB changes for replication or messaging.</li>
+<li><strong>Append-Only Logs</strong> — simplify correctness and replication (Kafka style).</li>
+<li><strong>Materialized Views</strong> — precompute query results for fast reads.</li>
+<li><strong>Polyglot Persistence</strong> — choose the right DB type per use case.</li>
+<li><strong>Snapshots &amp; Checkpointing</strong> — speed up rebuilds of event-sourced state.</li>
+<li><strong>TTL / Retention Policies</strong> — manage storage growth with time-based expiry.</li>
+</ul>
+<h5 id="4-messaging--integration-guarantees">4. Messaging &amp; Integration Guarantees</h5>
+<ul>
+<li><strong>At-Least-Once Delivery</strong> — messages may be delivered multiple times; require idempotency.</li>
+<li><strong>At-Most-Once Delivery</strong> — messages may be lost but never duplicated.</li>
+<li><strong>Exactly-Once Semantics (EOS)</strong> — typically approximated by idempotency + dedup + transactional outbox/CPS.</li>
+<li><strong>Message Deduplication / Idempotency Keys</strong> — detect and ignore duplicates.</li>
+<li><strong>Message Ordering / Partitioning</strong> — preserve order per key where required.</li>
+<li><strong>Dead-Letter Queue (DLQ)</strong> — isolate messages that repeatedly fail processing.</li>
+<li><strong>Poison Message Handling</strong> — quarantine or transform problematic messages.</li>
+<li><strong>Message Batching / Compression</strong> — improve throughput and reduce overhead.</li>
+</ul>
+<h5 id="5-concurrency--coordination">5. Concurrency &amp; Coordination</h5>
+<ul>
+<li><strong>Optimistic Concurrency Control (OCC)</strong> — detect conflicts on commit (version checks).</li>
+<li><strong>Pessimistic Locking</strong> — acquire locks to prevent concurrent modifications.</li>
+<li><strong>Distributed Locking (Redlock, ZK, etcd)</strong> — coordinate access to shared resources across nodes.</li>
+<li><strong>Leader Election</strong> — elect a single coordinator for tasks (Raft/ZooKeeper).</li>
+<li><strong>Consensus Algorithms (Raft, Paxos)</strong> — ensure replicated state agreement.</li>
+<li><strong>Lease / Time-bounded Locks</strong> — avoid forever-held locks by using leases.</li>
+</ul>
+<h5 id="6-availability--resilience">6. Availability &amp; Resilience</h5>
+<ul>
+<li><strong>Retry with Backoff</strong> — handle transient failures without overloading services.</li>
+<li><strong>Circuit Breaker</strong> — stop repeated calls to a failing service, fail fast.</li>
+<li><strong>Bulkhead</strong> — isolate resource pools to prevent cascading failures.</li>
+<li><strong>Fail-Fast</strong> — quickly reject requests when you know they’ll fail.</li>
+<li><strong>Timeouts</strong> — avoid resource exhaustion from long waits.</li>
+<li><strong>Fallback / Graceful Degradation</strong> — provide an alternative response when a dependency fails.</li>
+<li><strong>Load Balancing</strong> — distribute load across healthy instances.</li>
+<li><strong>Health Checks</strong> — detect and remove unhealthy instances from rotation.</li>
+<li><strong>Service Mesh Resiliency</strong> — centralize retries, timeouts, circuit breaking at network layer.</li>
+<li><strong>Multi-Region Deployment</strong> — survive entire region outages.</li>
+<li><strong>Active-Active Deployment</strong> — all regions handle traffic simultaneously for HA.</li>
+<li><strong>Quorum / Majority Replication</strong> — ensure availability while preserving consistency trade-offs.</li>
+<li><strong>Active-Passive Failover</strong> — standby instance takes over on primary failure.</li>
+<li><strong>Connection Draining / Graceful Shutdown</strong> — finish inflight requests before stopping an instance.</li>
+<li><strong>Sticky Sessions vs Stateless Services</strong> — prefer stateless for scale; sticky only when required.</li>
+<li><strong>Fallback Data Sources</strong> — degrade to cached or stale data on upstream failure.</li>
+</ul>
+<h5 id="7-performance--latency">7. Performance &amp; Latency</h5>
+<ul>
+<li><strong>Edge Caching / CDN</strong> — serve static or near-static content from the edge.</li>
+<li><strong>Cache-Aside / Write-Through / Write-Behind</strong> — cache strategies for read/write patterns.</li>
+<li><strong>Prefetching / Read-Ahead</strong> — reduce perceived latency by loading likely data.</li>
+<li><strong>Pipelining &amp; Connection Reuse</strong> — reduce RTTs by reusing connections and pipelining requests.</li>
+<li><strong>Compression / Encoding</strong> — reduce payload sizes.</li>
+<li><strong>Locality of Reference</strong> — colocate compute and data to reduce latency.</li>
+</ul>
+<h5 id="8-fault-tolerance--disaster-recovery">8. Fault Tolerance &amp; Disaster Recovery</h5>
+<ul>
+<li><strong>Backups &amp; Point-in-Time Restore (PITR)</strong> — recover from data loss.</li>
+<li><strong>Cross-Region Replication</strong> — replicate data to another region for DR.</li>
+<li><strong>RPO / RTO Planning</strong> — define acceptable data loss and recovery time.</li>
+<li><strong>Warm / Cold Standby</strong> — pre-provisioned or standby environments for failover.</li>
+<li><strong>Chaos Engineering</strong> — proactively test failure modes and recovery.</li>
+<li><strong>Automatic Failover Orchestration</strong> — scripted or automated failover to reduce MTTR.</li>
+</ul>
+<h5 id="9-observability-testing--sre-practices">9. Observability, Testing &amp; SRE Practices</h5>
+<ul>
+<li><strong>SLO / SLI / SLA</strong> — define and measure service objectives and limits.</li>
+<li><strong>Distributed Tracing (correlation IDs)</strong> — trace requests across services.</li>
+<li><strong>Centralized Metrics &amp; Logging</strong> — aggregate telemetry for alerting and forensics.</li>
+<li><strong>Synthetic Monitoring / Health Probes</strong> — proactively detect regressions.</li>
+<li><strong>Contract Testing (Consumer-Driven Contracts)</strong> — ensure API compatibility.</li>
+<li><strong>Chaos / Failure Injection</strong> — validate resiliency in production-like environments.</li>
+<li><strong>Runbooks &amp; Playbooks</strong> — documented operational responses for incidents.</li>
+</ul>
+<h5 id="10-security--compliance">10. Security &amp; Compliance</h5>
+<ul>
+<li><strong>mTLS &amp; Mutual Authentication</strong> — secure service-to-service traffic.</li>
+<li><strong>Secrets Management / Rotation</strong> — rotate keys/secrets (Vault, cloud KMS).</li>
+<li><strong>Encryption (At-rest / In-transit)</strong> — protect data confidentiality.</li>
+<li><strong>Audit Logging &amp; Tamper-evidence</strong> — record actions for forensics &amp; compliance.</li>
+<li><strong>Data Masking / Tokenization / Anonymization</strong> — protect PII in non-prod or analytics.</li>
+<li><strong>Least Privilege / RBAC / ABAC</strong> — minimize access surfaces.</li>
+<li><strong>Rate Limiting &amp; Throttling</strong> — prevent abuse and DoS attacks.</li>
+</ul>
+<h5 id="11-deployability-upgrade--migration">11. Deployability, Upgrade &amp; Migration</h5>
+<ul>
+<li><strong>Schema Migration Strategies (expand-contract)</strong> — change DB schema safely without downtime.</li>
+<li><strong>Backward/Forward Compatible APIs</strong> — design APIs to allow version-tolerant upgrades.</li>
+<li><strong>Feature Flags / Toggling</strong> — control rollout and rollback of features safely.</li>
+<li><strong>Blue-Green / Canary / Rolling Releases</strong> — reduce risk during deployment.</li>
+<li><strong>Database Versioning &amp; Migration Tools</strong> — track and apply DB changes reliably.</li>
+<li><strong>Forklift / Strangler Fig Pattern</strong> — gradually replace legacy systems with new components.</li>
+</ul>
+<h5 id="12-cost-efficiency--operational-economics">12. Cost, Efficiency &amp; Operational Economics</h5>
+<ul>
+<li><strong>Right-sizing</strong> — match instance types to workload.</li>
+<li><strong>Spot / Preemptible Instances</strong> — cost savings for non-critical workloads.</li>
+<li><strong>Serverless for Spiky Loads</strong> — pay-per-use for unpredictable bursts.</li>
+<li><strong>Capacity Reservation / Savings Plans</strong> — lower cost for steady workloads.</li>
+<li><strong>Tiered Storage &amp; Archival</strong> — move cold data to cheaper storage tiers.</li>
+<li><strong>Chargeback / Cost Allocation</strong> — attribute costs to teams or services.</li>
+</ul>
+<h5 id="13-developer-productivity--maintainability">13. Developer Productivity &amp; Maintainability</h5>
+<ul>
+<li><strong>API First / Spec-Driven Development</strong> — generate SDKs and tests from a spec (OpenAPI).</li>
+<li><strong>Semantic Versioning &amp; Deprecation Policy</strong> — manage breaking changes predictably.</li>
+<li><strong>Shared Libraries &amp; Platform Services</strong> — reduce duplication and improve consistency.</li>
+<li><strong>Automated CI/CD Pipelines</strong> — test and ship changes quickly and safely.</li>
+<li><strong>Documentation as Code / Living Docs</strong> — keep docs versioned and near code.</li>
+</ul>
+<h5 id="14-governance--policy">14. Governance &amp; Policy</h5>
+<ul>
+<li><strong>Policy-as-Code / RBAC Automation</strong> — enforce org policies automatically.</li>
+<li><strong>Schema Registry / Compatibility Rules</strong> — control event/contract evolution.</li>
+<li><strong>SLO Governance &amp; Error Budgets</strong> — tie releases and risk to objective metrics.</li>
+<li><strong>Service Catalog / Ownership Records</strong> — know who owns what and how to contact them.</li>
+</ul>
+<h2 id="2-high-level-architecture">2. High-Level Architecture</h2>
+<pre tabindex="0"><code>[CDN Layer] → [Load Balancers] → [API Gateway] → [Microservices]
+                                                      ↓
+[Message Queue] ← [Video Processing Pipeline] ← [Object Storage]
+                                                      ↓
+[Search Engine] ← [Metadata Services] → [Analytics Pipeline]
+</code></pre><h3 id="core-components">Core Components</h3>
+<ol>
+<li><strong>API Gateway</strong> - Request routing, authentication, rate limiting</li>
+<li><strong>Video Upload Service</strong> - Handle video ingestion and initial processing</li>
+<li><strong>Video Processing Pipeline</strong> - Transcoding, thumbnail generation, ML analysis</li>
+<li><strong>Video Streaming Service</strong> - Adaptive bitrate delivery</li>
+<li><strong>Metadata Service</strong> - Video information, user data, social interactions</li>
+<li><strong>Search Service</strong> - Video discovery and recommendation</li>
+<li><strong>User Service</strong> - Authentication, profiles, subscriptions</li>
+<li><strong>Analytics Service</strong> - View tracking, performance metrics</li>
+<li><strong>Notification Service</strong> - Real-time updates and alerts</li>
+</ol>
+<h2 id="2a-microservice-decomposition--hexagonal-architecture-chris-richardson">2a. Microservice Decomposition &amp; Hexagonal Architecture (Chris Richardson)</h2>
+<h3 id="decomposition-strategies-from-microservices-patterns">Decomposition Strategies (from &ldquo;Microservices Patterns&rdquo;)</h3>
+<ul>
+<li><strong>By Business Capability</strong>: Decompose services around business domains (e.g., Video Management, User Management, Social Interactions, Analytics).</li>
+<li><strong>By Subdomain (DDD)</strong>: Identify core, supporting, and generic subdomains (e.g., Video Processing as core, Notification as supporting).</li>
+<li><strong>By Transaction Boundary</strong>: Services should own their data and transactional boundaries (e.g., Video Upload and Processing as separate services).</li>
+<li><strong>By Team Ownership</strong>: Align services with team boundaries for independent delivery.</li>
+</ul>
+<h3 id="hexagonal-architecture-ports--adapters">Hexagonal Architecture (Ports &amp; Adapters)</h3>
+<ul>
+<li><strong>Service Core</strong>: Business logic is isolated from external systems.</li>
+<li><strong>Ports</strong>: Define interfaces for driving (API, UI) and driven (DB, messaging, external APIs) adapters.</li>
+<li><strong>Adapters</strong>: Implement ports for REST, gRPC, Kafka, databases, etc.</li>
+<li><strong>Benefits</strong>: Improves testability, flexibility, and separation of concerns.</li>
+</ul>
+<h4 id="example-video-upload-service-hexagonal">Example: Video Upload Service (Hexagonal)</h4>
+<ul>
+<li><strong>Core</strong>: Handles upload validation, metadata extraction, and orchestration.</li>
+<li><strong>Inbound Adapter</strong>: REST API for receiving uploads.</li>
+<li><strong>Outbound Adapters</strong>: Kafka producer for events, S3 adapter for storage, DB adapter for metadata.</li>
+</ul>
+<h3 id="additional-patterns-from-the-book">Additional Patterns from the Book</h3>
+<ul>
+<li><strong>API Composition</strong>: Aggregate data from multiple services for UI.</li>
+<li><strong>Database per Service</strong>: Each service owns its schema.</li>
+<li><strong>Saga Pattern</strong>: Manage distributed transactions (e.g., video upload workflow).</li>
+<li><strong>CQRS</strong>: Separate read/write models for scalability.</li>
+<li><strong>Event Sourcing</strong>: Persist state changes as events for auditability.</li>
+<li><strong>Service Mesh</strong>: Use a service mesh (e.g., Istio, Linkerd) for managing service-to-service communication, observability, and security.</li>
+<li><strong>Externalized Configuration</strong>: Store configuration outside the service for flexibility and easier deployments.</li>
+<li><strong>Centralized Log Management</strong>: Aggregate logs for all services to enable monitoring and troubleshooting.</li>
+<li><strong>Health Check API</strong>: Each service exposes a health check endpoint for orchestration and monitoring.</li>
+<li><strong>Consumer-Driven Contracts</strong>: Ensure service integrations are reliable and changes do not break consumers.</li>
+<li><strong>Testing Strategies</strong>: Include contract testing, component testing, and end-to-end testing for microservices.</li>
+<li><strong>Distributed Tracing</strong>: Implement tracing to follow requests across service boundaries for observability.</li>
+<li><strong>Service Template/Boilerplate</strong>: Use standardized templates to accelerate new service development and enforce best practices.</li>
+</ul>
+<h2 id="3-scale-cube-application-for-10x-growth">3. Scale Cube Application for 10x Growth</h2>
+<h3 id="x-axis-scaling-horizontal-duplication">X-Axis Scaling (Horizontal Duplication)</h3>
+<ul>
+<li><strong>Load Balancers</strong>: Deploy multiple tiers (L4/L7) with auto-scaling</li>
+<li><strong>API Gateway Clusters</strong>: Regional deployment with intelligent routing</li>
+<li><strong>Microservice Replicas</strong>: Auto-scaling based on CPU, memory, and queue depth</li>
+<li><strong>Database Read Replicas</strong>: Multiple read-only instances per region</li>
+</ul>
+<h3 id="y-axis-scaling-functional-decomposition">Y-Axis Scaling (Functional Decomposition)</h3>
+<ul>
+<li><strong>Service Decomposition</strong>:
+<ul>
+<li>Upload Service → Video Ingestion + Metadata Extraction + Storage</li>
+<li>User Service → Auth + Profile + Subscription + Preferences</li>
+<li>Social Service → Comments + Likes + Sharing + Community</li>
+</ul>
+</li>
+<li><strong>Database Decomposition</strong>: Separate DBs for videos, users, analytics, social</li>
+<li><strong>Event-Driven Architecture</strong>: Loose coupling via message queues</li>
+</ul>
+<h3 id="z-axis-scaling-data-partitioning">Z-Axis Scaling (Data Partitioning)</h3>
+<ul>
+<li><strong>Video Sharding</strong>: By video ID hash, geographic region, or creator</li>
+<li><strong>User Sharding</strong>: By user ID hash or geographic region</li>
+<li><strong>Temporal Sharding</strong>: Hot data (recent) vs cold data (archived)</li>
+<li><strong>Content-Based Sharding</strong>: By video category, language, or popularity</li>
+</ul>
+<h2 id="4-microservices-design-patterns">4. Microservices Design Patterns</h2>
+<h3 id="service-patterns">Service Patterns</h3>
+<ul>
+<li><strong>API Gateway Pattern</strong>: Single entry point with cross-cutting concerns</li>
+<li><strong>Service Registry &amp; Discovery</strong>: Consul/Eureka for service location</li>
+<li><strong>Circuit Breaker</strong>: Hystrix for fault tolerance and cascading failure prevention</li>
+<li><strong>Bulkhead</strong>: Resource isolation between services</li>
+<li><strong>Retry with Exponential Backoff</strong>: Resilient inter-service communication</li>
+</ul>
+<h3 id="data-patterns">Data Patterns</h3>
+<ul>
+<li><strong>Database per Service</strong>: Each microservice owns its data</li>
+<li><strong>Saga Pattern</strong>: Distributed transactions for video upload workflow</li>
+<li><strong>CQRS</strong>: Separate read/write models for video metadata and analytics</li>
+<li><strong>Event Sourcing</strong>: Audit trail for user actions and video lifecycle</li>
+</ul>
+<h3 id="communication-patterns">Communication Patterns</h3>
+<ul>
+<li>
+<p><strong>Asynchronous Messaging</strong>: Kafka for video processing pipeline</p>
+</li>
+<li>
+<p><strong>Request-Response</strong>: HTTP/gRPC for real-time user interactions</p>
+</li>
+<li>
+<p><strong>Publish-Subscribe</strong>: Event notifications for subscriptions</p>
+</li>
+<li>
+<p><strong>Message Routing</strong>: Content-based routing for different video types</p>
+</li>
+<li>
+<p><strong>Hexagonal Architecture</strong>: Each service is designed using ports and adapters, isolating business logic from infrastructure.</p>
+</li>
+<li>
+<p><strong>Decomposition by Business Capability</strong>: Services are split by domain, following DDD and team boundaries.</p>
+</li>
+<li>
+<p><strong>Saga Pattern</strong>: Used for workflows like video upload and processing.</p>
+</li>
+<li>
+<p><strong>CQRS &amp; Event Sourcing</strong>: Applied for scalability and auditability.</p>
+</li>
+</ul>
+<h2 id="5-event-driven-architecture-eda">5. Event-Driven Architecture (EDA)</h2>
+<h3 id="event-streaming-platform">Event Streaming Platform</h3>
+<pre tabindex="0"><code>Video Upload → [Event Producer] → [Kafka Topics] → [Event Consumers] → Processing Services
+</code></pre><h3 id="core-events">Core Events</h3>
+<ul>
+<li><strong>VideoUploadedEvent</strong>: Triggers transcoding pipeline</li>
+<li><strong>VideoProcessedEvent</strong>: Updates metadata and makes video available</li>
+<li><strong>UserActionEvent</strong>: Likes, comments, views for recommendation engine</li>
+<li><strong>SubscriptionEvent</strong>: Channel subscription/unsubscription</li>
+<li><strong>ModerationEvent</strong>: Content review results</li>
+</ul>
+<h3 id="event-patterns">Event Patterns</h3>
+<ul>
+<li><strong>Event Sourcing</strong>: Store all state changes as events</li>
+<li><strong>CQRS</strong>: Separate command and query responsibility</li>
+<li><strong>Event Choreography</strong>: Services react to events autonomously</li>
+<li><strong>Event Orchestration</strong>: Central coordinator for complex workflows</li>
+</ul>
+<h2 id="6-cap-theorem-considerations">6. CAP Theorem Considerations</h2>
+<h3 id="design-decisions">Design Decisions</h3>
+<ul>
+<li><strong>Partition Tolerance</strong>: Always required in distributed system</li>
+<li><strong>Availability vs Consistency Trade-offs</strong>:
+<ul>
+<li><strong>AP Systems</strong>: Video streaming, comments, likes (eventual consistency)</li>
+<li><strong>CP Systems</strong>: User authentication, payment processing</li>
+<li><strong>CA Systems</strong>: Single-region components with strong consistency</li>
+</ul>
+</li>
+</ul>
+<h3 id="implementation-strategy">Implementation Strategy</h3>
+<ul>
+<li><strong>Multi-Region Deployment</strong>: Handle network partitions</li>
+<li><strong>Eventual Consistency</strong>: Social features can tolerate temporary inconsistency</li>
+<li><strong>Strong Consistency</strong>: Critical operations like user authentication</li>
+<li><strong>Conflict Resolution</strong>: Last-writer-wins, vector clocks for concurrent updates</li>
+</ul>
+<h2 id="7-storage-architecture">7. Storage Architecture</h2>
+<h3 id="video-storage">Video Storage</h3>
+<ul>
+<li><strong>Object Storage</strong>: S3/GCS for raw and processed video files</li>
+<li><strong>CDN</strong>: CloudFront/CloudFlare for global content delivery</li>
+<li><strong>Storage Tiers</strong>: Hot (recent), warm (popular), cold (archived)</li>
+<li><strong>Compression</strong>: AV1 codec for 30% bandwidth savings</li>
+</ul>
+<h3 id="metadata-storage">Metadata Storage</h3>
+<ul>
+<li><strong>Relational Database</strong>: PostgreSQL for structured data (users, videos)</li>
+<li><strong>Document Database</strong>: MongoDB for flexible schemas (comments, analytics)</li>
+<li><strong>Graph Database</strong>: Neo4j for social relationships and recommendations</li>
+<li><strong>Cache Layer</strong>: Redis for frequently accessed data</li>
+</ul>
+<h3 id="search-index">Search Index</h3>
+<ul>
+<li><strong>Elasticsearch</strong>: Full-text search for videos, channels, playlists</li>
+<li><strong>Vector Database</strong>: Pinecone for ML-based video recommendations</li>
+<li><strong>Real-time Indexing</strong>: Stream processing for immediate search availability</li>
+</ul>
+<h2 id="8-video-processing-pipeline">8. Video Processing Pipeline</h2>
+<h3 id="processing-stages">Processing Stages</h3>
+<ol>
+<li><strong>Ingestion</strong>: Upload validation, virus scanning, metadata extraction</li>
+<li><strong>Transcoding</strong>: Multiple resolutions, formats, and bitrates</li>
+<li><strong>AI Processing</strong>: Content analysis, thumbnail generation, closed captions</li>
+<li><strong>Quality Check</strong>: Automated quality assessment and optimization</li>
+<li><strong>Distribution</strong>: CDN upload and cache warming</li>
+</ol>
+<h3 id="technologies">Technologies</h3>
+<ul>
+<li><strong>Message Queue</strong>: Apache Kafka for pipeline orchestration</li>
+<li><strong>Container Orchestration</strong>: Kubernetes for scalable processing</li>
+<li><strong>Workflow Engine</strong>: Apache Airflow for complex processing workflows</li>
+<li><strong>ML Platform</strong>: TensorFlow Serving for content analysis</li>
+</ul>
+<h2 id="9-scaling-strategies-for-10x-growth">9. Scaling Strategies for 10x Growth</h2>
+<h3 id="infrastructure-scaling">Infrastructure Scaling</h3>
+<ul>
+<li><strong>Multi-Cloud</strong>: AWS, GCP, Azure for redundancy and cost optimization</li>
+<li><strong>Edge Computing</strong>: Process videos closer to users</li>
+<li><strong>Serverless</strong>: Lambda/Cloud Functions for variable workloads</li>
+<li><strong>Auto-scaling</strong>: Predictive scaling based on usage patterns</li>
+</ul>
+<h3 id="performance-optimization">Performance Optimization</h3>
+<ul>
+<li><strong>Caching Strategy</strong>:
+<ul>
+<li>L1: Browser cache (static content)</li>
+<li>L2: CDN cache (popular videos)</li>
+<li>L3: Application cache (metadata)</li>
+<li>L4: Database cache (query results)</li>
+</ul>
+</li>
+</ul>
+<h3 id="data-management">Data Management</h3>
+<ul>
+<li><strong>Data Archiving</strong>: Move old content to cheaper storage tiers</li>
+<li><strong>Data Compression</strong>: Advanced codecs and compression algorithms</li>
+<li><strong>Smart Prefetching</strong>: ML-based content prediction and caching</li>
+<li><strong>Geographic Optimization</strong>: Content placement based on user location</li>
+</ul>
+<h2 id="10-monitoring-and-observability">10. Monitoring and Observability</h2>
+<h3 id="metrics">Metrics</h3>
+<ul>
+<li><strong>Golden Signals</strong>: Latency, traffic, errors, saturation</li>
+<li><strong>Business Metrics</strong>: Video start failures, buffering ratio, user engagement</li>
+<li><strong>Infrastructure Metrics</strong>: CPU, memory, network, storage utilization</li>
+</ul>
+<h3 id="tools">Tools</h3>
+<ul>
+<li><strong>Monitoring</strong>: Prometheus, Grafana, DataDog</li>
+<li><strong>Logging</strong>: ELK Stack (Elasticsearch, Logstash, Kibana)</li>
+<li><strong>Tracing</strong>: Jaeger, Zipkin for distributed tracing</li>
+<li><strong>Alerting</strong>: PagerDuty for incident management</li>
+</ul>
+<h2 id="11-security-considerations">11. Security Considerations</h2>
+<h3 id="content-security">Content Security</h3>
+<ul>
+<li><strong>DRM</strong>: Widevine, FairPlay for premium content protection</li>
+<li><strong>Content Filtering</strong>: ML-based inappropriate content detection</li>
+<li><strong>Access Control</strong>: JWT tokens, OAuth 2.0, rate limiting</li>
+</ul>
+<h3 id="infrastructure-security">Infrastructure Security</h3>
+<ul>
+<li><strong>Network Security</strong>: VPC, security groups, WAF</li>
+<li><strong>Encryption</strong>: TLS in transit, AES-256 at rest</li>
+<li><strong>Secrets Management</strong>: HashiCorp Vault, AWS Secrets Manager</li>
+<li><strong>Compliance</strong>: GDPR, COPPA, regional data protection laws</li>
+</ul>
+<h2 id="12-cost-optimization">12. Cost Optimization</h2>
+<h3 id="storage-optimization">Storage Optimization</h3>
+<ul>
+<li><strong>Intelligent Tiering</strong>: Automatic movement between storage classes</li>
+<li><strong>Deduplication</strong>: Remove duplicate video segments</li>
+<li><strong>Compression</strong>: Advanced codecs (AV1, H.265) for bandwidth savings</li>
+<li><strong>Regional Optimization</strong>: Store content closer to primary audience</li>
+</ul>
+<h3 id="compute-optimization">Compute Optimization</h3>
+<ul>
+<li><strong>Spot Instances</strong>: Use for batch processing jobs</li>
+<li><strong>Right-sizing</strong>: ML-based instance size recommendations</li>
+<li><strong>Reserved Capacity</strong>: Long-term commitments for predictable workloads</li>
+<li><strong>Serverless</strong>: Pay-per-use for variable workloads</li>
+</ul>
+<h2 id="13-disaster-recovery-and-business-continuity">13. Disaster Recovery and Business Continuity</h2>
+<h3 id="backup-strategy">Backup Strategy</h3>
+<ul>
+<li><strong>Multi-Region Replication</strong>: Critical data replicated across regions</li>
+<li><strong>Point-in-Time Recovery</strong>: Database snapshots and transaction logs</li>
+<li><strong>Content Backup</strong>: Multiple copies of popular content</li>
+</ul>
+<h3 id="recovery-procedures">Recovery Procedures</h3>
+<ul>
+<li><strong>RTO (Recovery Time Objective)</strong>: 15 minutes for critical services</li>
+<li><strong>RPO (Recovery Point Objective)</strong>: 5 minutes for user data</li>
+<li><strong>Failover Automation</strong>: Automated traffic rerouting during outages</li>
+<li><strong>Chaos Engineering</strong>: Regular disaster simulations</li>
+</ul>
+<h2 id="14-key-principles-and-laws-applied">14. Key Principles and Laws Applied</h2>
+<h3 id="performance-laws">Performance Laws</h3>
+<ul>
+<li><strong>Little&rsquo;s Law</strong>: Average number of items in a queuing system equals the average arrival rate multiplied by the average time an item spends in the system.</li>
+<li><strong>Amdahl&rsquo;s Law</strong>: The speedup of a program from parallelization is limited by the sequential portion.</li>
+<li><strong>Universal Scalability Law</strong>: Models the impact of contention and coherency delays in distributed systems.</li>
+</ul>
+<h3 id="design-principles">Design Principles</h3>
+<ul>
+<li><strong>Single Responsibility Principle</strong>: Each service has one clear purpose.</li>
+<li><strong>Open/Closed Principle</strong>: Services should be open for extension, closed for modification.</li>
+<li><strong>Dependency Inversion Principle</strong>: Depend on abstractions, not concretions.</li>
+<li><strong>Fail Fast</strong>: Detect and report errors immediately.</li>
+</ul>
+<h3 id="reliability-patterns">Reliability Patterns</h3>
+<ul>
+<li><strong>Bulkhead</strong>: Isolate resources to prevent cascading failures.</li>
+<li><strong>Circuit Breaker</strong>: Prevent calls to failing services.</li>
+<li><strong>Timeout</strong>: Set maximum wait times for all operations.</li>
+<li><strong>Idempotency</strong>: Safe to retry operations multiple times.</li>
+</ul>
+<h3 id="additional-laws-and-principles">Additional Laws and Principles</h3>
+<ul>
+<li><strong>Murphy&rsquo;s Law</strong>: &ldquo;Anything that can go wrong will go wrong.&rdquo; Design for failure and recovery.</li>
+<li><strong>Conway&rsquo;s Law</strong>: System design mirrors the communication structure of the organization.</li>
+<li><strong>Occam&rsquo;s Razor</strong>: Prefer the simplest solution that works.</li>
+<li><strong>Robustness Principle (Postel&rsquo;s Law)</strong>: &ldquo;Be conservative in what you send, be liberal in what you accept.&rdquo;</li>
+<li><strong>Law of Demeter</strong>: Minimize coupling by only interacting with immediate collaborators.</li>
+<li><strong>Hofstadter&rsquo;s Law</strong>: &ldquo;It always takes longer than you expect, even when you take into account Hofstadter&rsquo;s Law.&rdquo;</li>
+<li><strong>Pareto Principle (80/20 Rule)</strong>: 80% of effects come from 20% of causes; optimize for the critical path.</li>
+<li><strong>Peter Principle</strong>: In hierarchical organizations, people tend to be promoted to their level of incompetence (impacts team/org design).</li>
+<li><strong>Gall&rsquo;s Law</strong>: A complex system that works is invariably found to have evolved from a simple system that worked.</li>
+</ul>
+<h2 id="15-database-design">15. Database Design</h2>
+<h3 id="user-service-database">User Service Database</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Users table
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> users (
+</span></span><span style="display:flex;"><span>    user_id BIGINT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>,
+</span></span><span style="display:flex;"><span>    username VARCHAR(<span style="color:#ae81ff">50</span>) <span style="color:#66d9ef">UNIQUE</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    email VARCHAR(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">UNIQUE</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    password_hash VARCHAR(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    created_at <span style="color:#66d9ef">TIMESTAMP</span> <span style="color:#66d9ef">DEFAULT</span> NOW(),
+</span></span><span style="display:flex;"><span>    last_login <span style="color:#66d9ef">TIMESTAMP</span>
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Channels table
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> channels (
+</span></span><span style="display:flex;"><span>    channel_id BIGINT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>,
+</span></span><span style="display:flex;"><span>    user_id BIGINT <span style="color:#66d9ef">REFERENCES</span> users(user_id),
+</span></span><span style="display:flex;"><span>    channel_name VARCHAR(<span style="color:#ae81ff">100</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    description TEXT,
+</span></span><span style="display:flex;"><span>    subscriber_count BIGINT <span style="color:#66d9ef">DEFAULT</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>    created_at <span style="color:#66d9ef">TIMESTAMP</span> <span style="color:#66d9ef">DEFAULT</span> NOW()
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Subscriptions table (sharded by user_id)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> subscriptions (
+</span></span><span style="display:flex;"><span>    subscription_id BIGINT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>,
+</span></span><span style="display:flex;"><span>    subscriber_id BIGINT <span style="color:#66d9ef">REFERENCES</span> users(user_id),
+</span></span><span style="display:flex;"><span>    channel_id BIGINT <span style="color:#66d9ef">REFERENCES</span> channels(channel_id),
+</span></span><span style="display:flex;"><span>    subscribed_at <span style="color:#66d9ef">TIMESTAMP</span> <span style="color:#66d9ef">DEFAULT</span> NOW(),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">UNIQUE</span>(subscriber_id, channel_id)
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><h3 id="video-service-database">Video Service Database</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- Videos table (sharded by video_id hash)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> videos (
+</span></span><span style="display:flex;"><span>    video_id BIGINT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>,
+</span></span><span style="display:flex;"><span>    channel_id BIGINT <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    title VARCHAR(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    description TEXT,
+</span></span><span style="display:flex;"><span>    duration INTEGER, <span style="color:#75715e">-- in seconds
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    view_count BIGINT <span style="color:#66d9ef">DEFAULT</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>    like_count BIGINT <span style="color:#66d9ef">DEFAULT</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>    dislike_count BIGINT <span style="color:#66d9ef">DEFAULT</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>    upload_time <span style="color:#66d9ef">TIMESTAMP</span> <span style="color:#66d9ef">DEFAULT</span> NOW(),
+</span></span><span style="display:flex;"><span>    processing_status ENUM(<span style="color:#e6db74">&#39;uploading&#39;</span>, <span style="color:#e6db74">&#39;processing&#39;</span>, <span style="color:#e6db74">&#39;ready&#39;</span>, <span style="color:#e6db74">&#39;failed&#39;</span>),
+</span></span><span style="display:flex;"><span>    visibility ENUM(<span style="color:#e6db74">&#39;public&#39;</span>, <span style="color:#e6db74">&#39;private&#39;</span>, <span style="color:#e6db74">&#39;unlisted&#39;</span>)
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Video metadata table
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> video_metadata (
+</span></span><span style="display:flex;"><span>    video_id BIGINT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> <span style="color:#66d9ef">REFERENCES</span> videos(video_id),
+</span></span><span style="display:flex;"><span>    file_size BIGINT,
+</span></span><span style="display:flex;"><span>    codec VARCHAR(<span style="color:#ae81ff">50</span>),
+</span></span><span style="display:flex;"><span>    resolution VARCHAR(<span style="color:#ae81ff">20</span>),
+</span></span><span style="display:flex;"><span>    bitrate INTEGER,
+</span></span><span style="display:flex;"><span>    thumbnail_url VARCHAR(<span style="color:#ae81ff">500</span>),
+</span></span><span style="display:flex;"><span>    tags TEXT[] <span style="color:#75715e">-- PostgreSQL array for tags
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Comments table (sharded by video_id)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> comments (
+</span></span><span style="display:flex;"><span>    comment_id BIGINT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>,
+</span></span><span style="display:flex;"><span>    video_id BIGINT <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    user_id BIGINT <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    parent_comment_id BIGINT, <span style="color:#75715e">-- for replies
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    content TEXT <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    like_count INTEGER <span style="color:#66d9ef">DEFAULT</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>    created_at <span style="color:#66d9ef">TIMESTAMP</span> <span style="color:#66d9ef">DEFAULT</span> NOW()
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><h2 id="16-api-design">16. API Design</h2>
+<h3 id="rest-api-endpoints">REST API Endpoints</h3>
+<h4 id="video-operations">Video Operations</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Upload video
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /api/v1/videos
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">Content-Type: multipart/form-data
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Get video details
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /api/v1/videos/{videoId}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Update video metadata
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">PUT /api/v1/videos/{videoId}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Delete video
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">DELETE /api/v1/videos/{videoId}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Search videos
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /api/v1/videos/search?q={query}&amp;limit={limit}&amp;offset={offset}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Get trending videos
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /api/v1/videos/trending?category={category}&amp;region={region}
+</span></span></span></code></pre></div><h4 id="user-operations">User Operations</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># User registration
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /api/v1/users/register
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># User login
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /api/v1/users/login
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Get user profile
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /api/v1/users/{userId}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Subscribe to channel
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /api/v1/users/{userId}/subscriptions/{channelId}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Get user subscriptions
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /api/v1/users/{userId}/subscriptions
+</span></span></span></code></pre></div><h4 id="social-operations">Social Operations</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Like/Unlike video
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /api/v1/videos/{videoId}/like
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">DELETE /api/v1/videos/{videoId}/like
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Add comment
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /api/v1/videos/{videoId}/comments
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Get comments
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /api/v1/videos/{videoId}/comments?limit={limit}&amp;offset={offset}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"># Reply to comment
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /api/v1/comments/{commentId}/replies
+</span></span></span></code></pre></div><h3 id="graphql-schema-alternative">GraphQL Schema (Alternative)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-graphql" data-lang="graphql"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Video</span> {
+</span></span><span style="display:flex;"><span>  id: <span style="color:#a6e22e">ID</span>!
+</span></span><span style="display:flex;"><span>  title: <span style="color:#a6e22e">String</span>!
+</span></span><span style="display:flex;"><span>  description: <span style="color:#a6e22e">String</span>
+</span></span><span style="display:flex;"><span>  duration: <span style="color:#a6e22e">Int</span>!
+</span></span><span style="display:flex;"><span>  viewCount: <span style="color:#a6e22e">Int</span>!
+</span></span><span style="display:flex;"><span>  likeCount: <span style="color:#a6e22e">Int</span>!
+</span></span><span style="display:flex;"><span>  uploadTime: <span style="color:#a6e22e">String</span>!
+</span></span><span style="display:flex;"><span>  channel: <span style="color:#a6e22e">Channel</span>!
+</span></span><span style="display:flex;"><span>  comments(first: <span style="color:#a6e22e">Int</span>, after: <span style="color:#a6e22e">String</span>): <span style="color:#a6e22e">CommentConnection</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Channel</span> {
+</span></span><span style="display:flex;"><span>  id: <span style="color:#a6e22e">ID</span>!
+</span></span><span style="display:flex;"><span>  name: <span style="color:#a6e22e">String</span>!
+</span></span><span style="display:flex;"><span>  subscriberCount: <span style="color:#a6e22e">Int</span>!
+</span></span><span style="display:flex;"><span>  videos(first: <span style="color:#a6e22e">Int</span>, after: <span style="color:#a6e22e">String</span>): <span style="color:#a6e22e">VideoConnection</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Query</span> {
+</span></span><span style="display:flex;"><span>  video(id: <span style="color:#a6e22e">ID</span>!): <span style="color:#a6e22e">Video</span>
+</span></span><span style="display:flex;"><span>  searchVideos(<span style="color:#66d9ef">query</span>: <span style="color:#a6e22e">String</span>!, <span style="color:#a6e22e">first</span>: <span style="color:#a6e22e">Int</span>, after: <span style="color:#a6e22e">String</span>): <span style="color:#a6e22e">VideoConnection</span>
+</span></span><span style="display:flex;"><span>  trendingVideos(category: <span style="color:#a6e22e">String</span>, region: <span style="color:#a6e22e">String</span>): [<span style="color:#a6e22e">Video</span>!]!
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Mutation</span> {
+</span></span><span style="display:flex;"><span>  uploadVideo(<span style="color:#66d9ef">input</span>: <span style="color:#a6e22e">VideoInput</span>!): <span style="color:#a6e22e">Video</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">likeVideo</span>(videoId: <span style="color:#a6e22e">ID</span>!): <span style="color:#a6e22e">Video</span>
+</span></span><span style="display:flex;"><span>  addComment(videoId: <span style="color:#a6e22e">ID</span>!, content: <span style="color:#a6e22e">String</span>!): <span style="color:#a6e22e">Comment</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="17-caching-strategy">17. Caching Strategy</h2>
+<h3 id="multi-level-caching">Multi-Level Caching</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Level 1: Browser Cache</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">Static assets</span>: <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">year</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">Video thumbnails</span>: <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">week</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">API responses</span>: <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">minutes</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Level 2: CDN Cache (CloudFlare/CloudFront)</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">Video segments</span>: <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">day</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">Thumbnails</span>: <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">week</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">API responses</span>: <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">minute</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Level 3: Application Cache (Redis)</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">Popular video metadata</span>: <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">hour</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">User sessions</span>: <span style="color:#ae81ff">24</span> <span style="color:#ae81ff">hours</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">Search results</span>: <span style="color:#ae81ff">15</span> <span style="color:#ae81ff">minutes</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">Trending videos</span>: <span style="color:#ae81ff">30</span> <span style="color:#ae81ff">minutes</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Level 4: Database Query Cache</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">Complex analytics queries</span>: <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">minutes</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">User profile data</span>: <span style="color:#ae81ff">30</span> <span style="color:#ae81ff">minutes</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">Channel information</span>: <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">hour</span>
+</span></span></code></pre></div><h3 id="cache-invalidation-strategy">Cache Invalidation Strategy</h3>
+<ul>
+<li><strong>Time-based</strong>: TTL for most cached data</li>
+<li><strong>Event-based</strong>: Invalidate on video updates, user actions</li>
+<li><strong>Version-based</strong>: Cache keys include version numbers</li>
+<li><strong>Write-through</strong>: Update cache and database simultaneously</li>
+<li><strong>Write-behind</strong>: Async cache updates for non-critical data</li>
+</ul>
+<h2 id="18-message-queue-architecture">18. Message Queue Architecture</h2>
+<h3 id="kafka-topic-design">Kafka Topic Design</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Video Processing Topics</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">video-upload-events</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">partitions</span>: <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replication-factor</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">retention</span>: <span style="color:#ae81ff">7</span> <span style="color:#ae81ff">days</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">video-transcoding-jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">partitions</span>: <span style="color:#ae81ff">50</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replication-factor</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">retention</span>: <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">days</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">video-ready-events</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">partitions</span>: <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replication-factor</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">retention</span>: <span style="color:#ae81ff">30</span> <span style="color:#ae81ff">days</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># User Activity Topics</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">user-view-events</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">partitions</span>: <span style="color:#ae81ff">200</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replication-factor</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">retention</span>: <span style="color:#ae81ff">90</span> <span style="color:#ae81ff">days</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">user-interaction-events</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">partitions</span>: <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replication-factor</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">retention</span>: <span style="color:#ae81ff">30</span> <span style="color:#ae81ff">days</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Notification Topics</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">subscription-notifications</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">partitions</span>: <span style="color:#ae81ff">50</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replication-factor</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">retention</span>: <span style="color:#ae81ff">7</span> <span style="color:#ae81ff">days</span>
+</span></span></code></pre></div><h3 id="event-schema-avro">Event Schema (Avro)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;record&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;VideoUploadEvent&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;fields&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;videoId&#34;</span>, <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;userId&#34;</span>, <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;channelId&#34;</span>, <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;filename&#34;</span>, <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;fileSize&#34;</span>, <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;long&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;contentType&#34;</span>, <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;uploadTimestamp&#34;</span>, <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;long&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;metadata&#34;</span>, <span style="color:#f92672">&#34;type&#34;</span>: {<span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;map&#34;</span>, <span style="color:#f92672">&#34;values&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>}}
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="19-load-balancing-strategy">19. Load Balancing Strategy</h2>
+<h3 id="geographic-load-balancing">Geographic Load Balancing</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># DNS-based routing</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Global Load Balancer</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">US-East</span>: <span style="color:#ae81ff">40</span><span style="color:#ae81ff">% traffic</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">US-West</span>: <span style="color:#ae81ff">20</span><span style="color:#ae81ff">% traffic</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">Europe</span>: <span style="color:#ae81ff">25</span><span style="color:#ae81ff">% traffic</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">Asia-Pacific</span>: <span style="color:#ae81ff">15</span><span style="color:#ae81ff">% traffic</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Regional Load Balancers</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Regional LB (L7)</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">Path-based routing</span>: <span style="color:#ae81ff">/api/upload → Upload Service</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">Header-based routing</span>: <span style="color:#ae81ff">User-Agent → Mobile/Web Service</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">Weighted routing</span>: <span style="color:#ae81ff">Canary deployments</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Service Load Balancers (L4)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Service Discovery</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Health checks every 30 seconds</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">Circuit breaker</span>: <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">failures in 60 seconds</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">Load balancing algorithms</span>: <span style="color:#ae81ff">Weighted round-robin</span>
+</span></span></code></pre></div><h3 id="auto-scaling-configuration">Auto-scaling Configuration</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Horizontal Pod Autoscaler (Kubernetes)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Video Upload Service</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">minReplicas</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">maxReplicas</span>: <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">targetCPUUtilization</span>: <span style="color:#ae81ff">70</span><span style="color:#ae81ff">%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">targetMemoryUtilization</span>: <span style="color:#ae81ff">80</span><span style="color:#ae81ff">%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">scaleUpStabilization</span>: <span style="color:#ae81ff">60s</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">scaleDownStabilization</span>: <span style="color:#ae81ff">300s</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Video Streaming Service</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">minReplicas</span>: <span style="color:#ae81ff">50</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">maxReplicas</span>: <span style="color:#ae81ff">500</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">targetCPUUtilization</span>: <span style="color:#ae81ff">60</span><span style="color:#ae81ff">%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">customMetrics</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">concurrent_streams_per_pod</span>: <span style="color:#ae81ff">1000</span>
+</span></span></code></pre></div><h2 id="20-monitoring-and-alerting">20. Monitoring and Alerting</h2>
+<h3 id="key-metrics-dashboard">Key Metrics Dashboard</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Golden Signals</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Latency</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">Video start time</span>: <span style="color:#ae81ff">P50, P95, P99</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">API response time</span>: <span style="color:#ae81ff">P50, P95, P99</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">Upload processing time</span>: <span style="color:#ae81ff">P50, P95, P99</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Traffic</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Requests per second by endpoint</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Concurrent video streams</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Upload requests per minute</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Errors</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">HTTP error rates (4xx, 5xx)</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Video processing failures</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Database connection errors</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Saturation</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">CPU utilization across services</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Memory usage patterns</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Queue depth in Kafka topics</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Storage utilization</span>
+</span></span></code></pre></div><h3 id="alert-rules">Alert Rules</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Critical Alerts (PagerDuty)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Video Start Failure Rate &gt; 1%</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">critical</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">notification</span>: <span style="color:#ae81ff">immediate</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">API Error Rate &gt; 5%</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">critical</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">notification</span>: <span style="color:#ae81ff">immediate</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Database Connection Pool &gt; 90%</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">critical</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">notification</span>: <span style="color:#ae81ff">immediate</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Warning Alerts (Slack)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Upload Processing Time &gt; P95</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">warning</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">notification</span>: <span style="color:#ae81ff">5</span>-<span style="color:#ae81ff">minute delay</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">CDN Cache Hit Rate &lt; 85%</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">warning</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">notification</span>: <span style="color:#ae81ff">10</span>-<span style="color:#ae81ff">minute delay</span>
+</span></span></code></pre></div><h2 id="21-additional-considerations-and-patterns">21. Additional Considerations and Patterns</h2>
+<h3 id="service-governance--platform-engineering">Service Governance &amp; Platform Engineering</h3>
+<ul>
+<li><strong>API Gateway Governance</strong>: Centralized API management, versioning, and security policies.</li>
+<li><strong>Service Catalog</strong>: Maintain a registry of all services, their owners, and documentation.</li>
+<li><strong>Platform as a Service (PaaS)</strong>: Internal developer platforms for rapid service deployment and consistency.</li>
+<li><strong>Service Lifecycle Management</strong>: Automated onboarding, deprecation, and retirement of services.</li>
+</ul>
+<h3 id="observability--operations">Observability &amp; Operations</h3>
+<ul>
+<li><strong>Distributed Tracing</strong>: End-to-end request tracing across all services.</li>
+<li><strong>Log Correlation</strong>: Correlate logs, traces, and metrics for faster root cause analysis.</li>
+<li><strong>Proactive Anomaly Detection</strong>: ML-based monitoring for early detection of issues.</li>
+<li><strong>Feature Flags</strong>: Gradual rollout and rollback of features without redeployments.</li>
+</ul>
+<h3 id="security-enhancements">Security Enhancements</h3>
+<ul>
+<li><strong>Zero Trust Security Model</strong>: Authenticate and authorize every request, even within the internal network.</li>
+<li><strong>API Rate Limiting &amp; Throttling</strong>: Prevent abuse and ensure fair usage.</li>
+<li><strong>Audit Logging</strong>: Immutable logs for all sensitive operations and access.</li>
+</ul>
+<h3 id="compliance--data-privacy">Compliance &amp; Data Privacy</h3>
+<ul>
+<li><strong>Data Residency Controls</strong>: Ensure data is stored and processed in compliance with regional laws.</li>
+<li><strong>User Data Portability &amp; Deletion</strong>: GDPR-compliant APIs for user data export and erasure.</li>
+<li><strong>PII Masking</strong>: Mask personally identifiable information in logs and analytics.</li>
+</ul>
+<h3 id="advanced-data--ml">Advanced Data &amp; ML</h3>
+<ul>
+<li><strong>Real-Time Analytics</strong>: Stream processing for instant insights (e.g., Apache Flink).</li>
+<li><strong>A/B Testing Platform</strong>: Experiment with new features and recommendation algorithms.</li>
+<li><strong>Personalization Engine</strong>: ML-driven recommendations, thumbnails, and notifications.</li>
+<li><strong>Content Fingerprinting</strong>: Detect duplicate or copyrighted content at scale.</li>
+</ul>
+<h3 id="reliability-engineering">Reliability Engineering</h3>
+<ul>
+<li><strong>Self-Healing Infrastructure</strong>: Automated detection and remediation of failed components.</li>
+<li><strong>Chaos Engineering</strong>: Regularly inject failures to test system resilience.</li>
+<li><strong>Disaster Recovery Drills</strong>: Scheduled simulations to validate recovery procedures.</li>
+</ul>
+<h3 id="developer-experience">Developer Experience</h3>
+<ul>
+<li><strong>Local Development Environments</strong>: Simulate production-like environments for testing.</li>
+<li><strong>Automated Code Quality Checks</strong>: Linting, static analysis, and security scanning in CI/CD.</li>
+<li><strong>Comprehensive Documentation</strong>: Up-to-date API, architecture, and operational docs.</li>
+</ul>
+<h3 id="sustainability--cost-controls">Sustainability &amp; Cost Controls</h3>
+<ul>
+<li><strong>Green Computing Initiatives</strong>: Optimize for energy efficiency and carbon footprint.</li>
+<li><strong>Cost Visibility Dashboards</strong>: Real-time cost tracking per service and feature.</li>
+<li><strong>Resource Quotas</strong>: Prevent runaway costs by enforcing limits.</li>
+</ul>
+<h3 id="community--ecosystem">Community &amp; Ecosystem</h3>
+<ul>
+<li><strong>Open API Standards</strong>: Support for OpenAPI/GraphQL for third-party integrations.</li>
+<li><strong>Plugin/Extension Framework</strong>: Allow external developers to extend platform capabilities.</li>
+<li><strong>Community Moderation Tools</strong>: Empower users to help maintain content quality.</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>This comprehensive YouTube system design demonstrates how to architect a massive-scale video platform that can handle billions of users and petabytes of content. The design incorporates modern distributed systems principles, microservices architecture, event-driven patterns, and advanced scaling techniques.</p>
+<p>The 10x scaling strategy leverages the Scale Cube dimensions, applies CAP theorem principles strategically, and utilizes cutting-edge technologies to ensure the platform remains performant, reliable, and cost-effective as it grows. The architecture is designed to be resilient, observable, and maintainable while providing an excellent user experience globally.</p>
+
+          </div>
+          <div class="row items-start justify-between">
+            
+            
+              <div class="lg:col-6 mb-10 flex items-center lg:mb-0">
+                <h5 class="mr-3">Tags :</h5>
+                <ul>
+                  
+                    <li class="inline-block">
+                      <a
+                        class="bg-light hover:bg-primary dark:bg-darkmode-light dark:hover:bg-darkmode-primary dark:hover:text-text-dark m-1 block rounded px-3 py-1 hover:text-white"
+                        href="/tags/youtube/">
+                        Youtube
+                      </a>
+                    </li>
+                  
+                    <li class="inline-block">
+                      <a
+                        class="bg-light hover:bg-primary dark:bg-darkmode-light dark:hover:bg-darkmode-primary dark:hover:text-text-dark m-1 block rounded px-3 py-1 hover:text-white"
+                        href="/tags/interview/">
+                        Interview
+                      </a>
+                    </li>
+                  
+                </ul>
+              </div>
+            
+            <div class="lg:col-6 flex items-center lg:justify-end">
+              <h5>Share :</h5>
+              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="share-icons">
+  
+  
+    <a
+      class="share-link share-facebook"
+      href="https://facebook.com/sharer/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fblog%2fsystem_design%2fyoutube%2f"
+      target="_blank"
+      rel="noopener"
+      aria-label="share facebook">
+      <span class="share-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M18.77 7.46H14.5v-1.9c0-.9.6-1.1 1-1.1h3V.5h-4.33C10.24.5 9.5 3.44 9.5 5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4z" />
+        </svg>
+      </span>
+    </a>
+  
+
+
+  
+  
+    <a
+      class="share-link share-x"
+      href="https://x.com/intent/tweet/?text=Youtube%20System%20Design&amp;url=http%3a%2f%2flocalhost%3a1313%2fblog%2fsystem_design%2fyoutube%2f"
+      target="_blank"
+      rel="noopener"
+      aria-label="share x">
+      <span aria-hidden="true" class="share-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M8 2H1l8.26 11.015L1.45 22H4.1l6.388-7.349L16 22h7l-8.608-11.478L21.8 2h-2.65l-5.986 6.886zm9 18L5 4h2l12 16z" />
+        </svg>
+      </span>
+    </a>
+  
+
+
+  
+  
+    <a
+      class="share-link share-email"
+      href="mailto:?subject=Youtube%20System%20Design&amp;body=http%3a%2f%2flocalhost%3a1313%2fblog%2fsystem_design%2fyoutube%2f"
+      target="_self"
+      rel="noopener"
+      aria-label="share email">
+      <span aria-hidden="true" class="share-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M22 4H2C.9 4 0 4.9 0 6v12c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM7.25 14.43l-3.5 2c-.08.05-.17.07-.25.07-.17 0-.34-.1-.43-.25-.14-.24-.06-.55.18-.68l3.5-2c.24-.14.55-.06.68.18.14.24.06.55-.18.68zm4.75.07c-.1 0-.2-.03-.27-.08l-8.5-5.5c-.23-.15-.3-.46-.15-.7.15-.22.46-.3.7-.14L12 13.4l8.23-5.32c.23-.15.54-.08.7.15.14.23.07.54-.16.7l-8.5 5.5c-.08.04-.17.07-.27.07zm8.93 1.75c-.1.16-.26.25-.43.25-.08 0-.17-.02-.25-.07l-3.5-2c-.24-.13-.32-.44-.18-.68s.44-.32.68-.18l3.5 2c.24.13.32.44.18.68z" />
+        </svg>
+      </span>
+    </a>
+  
+
+
+  
+  
+
+
+  
+  
+
+
+  
+  
+
+
+  
+  
+
+
+  
+  
+
+
+  
+  
+
+
+  
+  
+
+
+  
+  
+    <span class="fediverse-share">
+      <a
+        class="share-link share-fediverse"
+        href="javascript:void(0);"
+        onclick="toggleFediverseInput(this)"
+        aria-label="share fediverse">
+        <span aria-hidden="true" class="share-icon">
+          <svg
+            viewBox="-10 -5 1034 1034"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            version="1.1">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g
+              id="SVGRepo_tracerCarrier"
+              stroke-linecap="round"
+              stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                d="M539 176q-32 0 -55 22t-25 55t20.5 58t56 27t58.5 -20.5t27 -56t-20.5 -59t-56.5 -26.5h-5zM452 271l-232 118q20 20 25 48l231 -118q-19 -20 -24 -48zM619 298q-13 25 -38 38l183 184q13 -25 39 -38zM477 320l-135 265l40 40l143 -280q-28 -5 -48 -25zM581 336 q-22 11 -46 10l-8 -1l21 132l56 9zM155 370q-32 0 -55 22.5t-25 55t20.5 58t56.5 27t59 -21t26.5 -56t-21 -58.5t-55.5 -27h-6zM245 438q1 9 1 18q-1 19 -10 35l132 21l26 -50zM470 474l-26 51l311 49q-1 -8 -1 -17q1 -19 10 -36zM842 480q-32 1 -55 23t-24.5 55t21 58 t56 27t58.5 -20.5t27 -56.5t-20.5 -59t-56.5 -27h-6zM236 493q-13 25 -39 38l210 210l51 -25zM196 531q-21 11 -44 10l-9 -1l40 256q21 -10 45 -9l8 1zM560 553l48 311q21 -10 44 -9l10 1l-46 -294zM755 576l-118 60l8 56l135 -68q-20 -20 -25 -48zM781 625l-119 231 q28 5 48 25l119 -231q-28 -5 -48 -25zM306 654l-68 134q28 5 48 25l60 -119zM568 671l-281 143q19 20 24 48l265 -135zM513 771l-51 25l106 107q13 -25 39 -38zM222 795q-32 0 -55.5 22.5t-25 55t21 57.5t56 27t58.5 -20.5t27 -56t-20.5 -58.5t-56.5 -27h-5zM311 863 q2 9 1 18q-1 19 -9 35l256 41q-1 -9 -1 -18q1 -18 10 -35zM646 863q-32 0 -55 22.5t-24.5 55t20.5 58t56 27t59 -21t27 -56t-20.5 -58.5t-56.5 -27h-6z"></path>
+            </g>
+          </svg>
+        </span>
+      </a>
+      <span class="fediverse-input-wrapper" style="display: none;">
+        <input
+          type="text"
+          placeholder="Enter Fediverse Instance URL"
+          class="fediverse-input"
+          onkeypress="handleFediverseShare(event, 'http:\/\/localhost:1313\/blog\/system_design\/youtube\/', 'Youtube System Design')" />
+        <button
+          class="fediverse-check-button"
+          onclick="handleFediverseShareButton(this, 'http:\/\/localhost:1313\/blog\/system_design\/youtube\/', 'Youtube System Design')">
+          Share
+        </button>
+      </span>
+    </span>
+  
+
+
+  
+  
+    <button
+      class="share-link share-copy"
+      onclick="copyToClipboard(this, 'http:\/\/localhost:1313\/blog\/system_design\/youtube\/')">
+      <span class="share-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7-1c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 17H5V5h14v14z" />
+        </svg>
+      </span>
+    </button>
+  
+
+</div>
+
+<script>
+  
+  function toggleFediverseInput(element) {
+    const container = element.closest(".fediverse-share");
+    const inputContainer = container.querySelector(".fediverse-input-wrapper");
+    inputContainer.style.display =
+      inputContainer.style.display === "none" ? "block" : "none";
+  }
+
+  
+  function handleFediverseShare(event, url, title) {
+    if (event.key === "Enter") {
+      const input = event.target;
+      let instanceUrl = input.value.trim();
+      if (instanceUrl) {
+        if (!instanceUrl.startsWith("https://")) {
+          instanceUrl = `https://${instanceUrl}`;
+        }
+        const shareUrl = `${instanceUrl}/share?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
+        window.open(shareUrl, "_blank", "noopener");
+      }
+    }
+  }
+
+  
+  function handleFediverseShareButton(button, url, title) {
+    const input = button.previousElementSibling;
+    let instanceUrl = input.value.trim();
+    if (instanceUrl) {
+      if (!instanceUrl.startsWith("https://")) {
+        instanceUrl = `https://${instanceUrl}`;
+      }
+      const shareUrl = `${instanceUrl}/share?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
+      window.open(shareUrl, "_blank", "noopener");
+    }
+  }
+
+  
+  function copyToClipboard(button, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const icon = button.querySelector("svg path");
+      const originalIconPath =
+        "M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7-1c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 17H5V5h14v14z";
+      const checkIconPath =
+        "M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4L9 16.2z";
+
+      
+      icon.setAttribute("d", checkIconPath);
+
+      
+      setTimeout(() => {
+        icon.setAttribute("d", originalIconPath);
+      }, 1000);
+    });
+  }
+</script>
+
+            </div>
+          </div>
+          
+          
+            <div class="mt-20">
+              <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "themefisher-template" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </div>
+          
+        </article>
+      </div>
+
+      
+      
+      
+      
+        <div class="section pb-0">
+          <h2 class="h3 mb-12">Related Posts</h2>
+          <div class="row">
+            
+              <div class="lg:col-4 md:col-6 mb-14">
+                <div class="bg-body dark:bg-darkmode-body">
+  
+  
+  <h4 class="mb-3">
+    <a href="/blog/system_design/jee_design_patterns/">
+      JEE Design Patterns
+    </a>
+  </h4>
+  
+  
+  <p class="mb-6">JEE design patterns are specialized solutions for enterprise Java applications. They address scalability, maintainability, and performance challenges in distributed systems, helping developers build robust, modular, and efficient enterprise-grade software.
+</p>
+  <a class="btn btn-outline-primary btn-sm" href="/blog/system_design/jee_design_patterns/">
+    Read More
+  </a>
+</div>
+
+              </div>
+            
+              <div class="lg:col-4 md:col-6 mb-14">
+                <div class="bg-body dark:bg-darkmode-body">
+  
+  
+  <h4 class="mb-3">
+    <a href="/blog/system_design/core_design_patterns/">
+      23 Core Design Patterns
+    </a>
+  </h4>
+  
+  
+  <p class="mb-6">Core design patterns are proven solutions to common software engineering problems. They help structure code for flexibility, scalability, and maintainability. Mastering these patterns is essential for interviews and for building robust, reusable, and understandable software systems.
+</p>
+  <a class="btn btn-outline-primary btn-sm" href="/blog/system_design/core_design_patterns/">
+    Read More
+  </a>
+</div>
+
+              </div>
+            
+              <div class="lg:col-4 md:col-6 mb-14">
+                <div class="bg-body dark:bg-darkmode-body">
+  
+  
+  <h4 class="mb-3">
+    <a href="/blog/system_design/system_design/">
+      System Design Concepts
+    </a>
+  </h4>
+  
+  
+  <p class="mb-6">System design is a critical aspect of software engineering that involves creating scalable, reliable, and efficient systems.</p>
+  <a class="btn btn-outline-primary btn-sm" href="/blog/system_design/system_design/">
+    Read More
+  </a>
+</div>
+
+              </div>
+            
+          </div>
+        </div>
+      
+    </div>
+  </section>
+
+    </main>
+
+    
+    <footer class="bg-light dark:bg-darkmode-light">
+  <div class="container">
+    <div class="row items-center py-10">
+      <div class="lg:col-3 mb-8 text-center lg:mb-0 lg:text-left">
+        
+        <a
+          class="navbar-brand inline-block"
+          href="/">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  
+  
+  
+
+
+  
+  
+    
+    
+  
+
+
+  
+  
+      
+      
+    
+    
+    
+    
+    
+    
+  
+  
+
+  
+  
+    
+    
+      
+      
+
+
+      
+      
+        
+        
+        
+        
+
+        
+        
+        
+      
+      
+    
+  
+  
+
+  
+    <img
+      fetchpriority="high"
+      decoding="async"
+      class="img img-light"
+      width="160"
+      height="32"
+      src="/images/logo_hu_75df6f187f7b785d.webp"
+      alt="Hugoplate"
+      onerror="this.onerror=null;this.src='\/images\/logo_hu_613f51f483beed3c.png';" />
+
+    <img
+      fetchpriority="high"
+      decoding="async"
+      class="img img-dark"
+      width="160"
+      height="32"
+      src="/images/logo-darkmode_hu_a274d2b570d85754.webp"
+      alt="Hugoplate"
+      onerror="this.onerror=null;this.src='\/images\/logo-darkmode_hu_11d6a0e948ad5f4.png';" />
+  
+  
+
+
+        </a>
+      </div>
+      <div class="lg:col-6 mb-8 text-center lg:mb-0">
+        <ul>
+          
+            <li class="m-3 inline-block">
+              <a
+                
+                href="
+                  /about
+                "
+                >About</a
+              >
+            </li>
+          
+            <li class="m-3 inline-block">
+              <a
+                
+                href="
+                  /elements
+                "
+                >Elements</a
+              >
+            </li>
+          
+            <li class="m-3 inline-block">
+              <a
+                
+                href="
+                  /privacy-policy
+                "
+                >Privacy Policy</a
+              >
+            </li>
+          
+        </ul>
+      </div>
+      <div class="lg:col-3 mb-8 text-center lg:mb-0 lg:mt-0 lg:text-right">
+        <ul class="social-icons">
+          
+            <li>
+              <a
+                target="_blank"
+                aria-label="facebook"
+                rel="nofollow noopener"
+                href="https://www.facebook.com/">
+                <i class="fab fa-facebook"></i>
+              </a>
+            </li>
+          
+            <li>
+              <a
+                target="_blank"
+                aria-label="twitter"
+                rel="nofollow noopener"
+                href="https://twitter.com/">
+                <i class="fab fa-twitter"></i>
+              </a>
+            </li>
+          
+            <li>
+              <a
+                target="_blank"
+                aria-label="github"
+                rel="nofollow noopener"
+                href="https://www.github.com/">
+                <i class="fab fa-github"></i>
+              </a>
+            </li>
+          
+            <li>
+              <a
+                target="_blank"
+                aria-label="linkedin"
+                rel="nofollow noopener"
+                href="https://www.linkedin.com/">
+                <i class="fab fa-linkedin"></i>
+              </a>
+            </li>
+          
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="border-border dark:border-darkmode-border border-t py-7">
+    <div
+      class="text-text-light dark:text-darkmode-text-light container text-center">
+      <p>
+        Designed &amp; Developed by <a href="https://zeon.studio"
+
+
+
+
+ target="_blank"
+ 
+
+
+>Zeon Studio</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+
+    
+    
+
+
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<script
+  crossorigin="anonymous"
+  integrity=""
+  src="/js/script.js"></script>
+
+
+<script
+  defer
+  async
+  crossorigin="anonymous"
+  integrity=""
+  src="/js/script-lazy.js"></script>
+
+
+
+<script>
+  if ('serviceWorker' in navigator){navigator.serviceWorker.register("/service-worker.js");}
+</script>
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="application/javascript">
+      const announcementBox = document.getElementById('announcement');
+      const announcementButton = document.getElementById('announcement-button');
+      if (!Cookies.get('announcement-close')) {
+        announcementBox.classList.remove('announcement-hide');
+        announcementButton.onclick = function () {
+          Cookies.set('announcement-close', true, {
+            expires:  7 
+          });
+          announcementBox.classList.add('announcement-hide');
+        };
+      }
+    </script>
+  
+
+
+
+  </body>
+</html>

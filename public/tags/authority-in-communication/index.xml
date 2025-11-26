@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Authority in Communication on Hugoplate</title>
+    <link>http://localhost:1313/tags/authority-in-communication/</link>
+    <description>Recent content in Authority in Communication on Hugoplate</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 04 Aug 2025 12:44:47 +1000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/authority-in-communication/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Speech</title>
+      <link>http://localhost:1313/blog/speech/</link>
+      <pubDate>Mon, 04 Aug 2025 12:44:47 +1000</pubDate>
+      <guid>http://localhost:1313/blog/speech/</guid>
+      <description>&lt;h2 id=&#34;1-own-the-frame--never-compete-for-it&#34;&gt;1. Own the Frame — Never Compete for It&lt;/h2&gt;&#xA;&lt;p&gt;Every social interaction has a frame: who sets the tone. You must own it early.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

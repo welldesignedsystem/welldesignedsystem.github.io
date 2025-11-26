@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cloud on Hugoplate</title>
+    <link>http://localhost:1313/tags/cloud/</link>
+    <description>Recent content in Cloud on Hugoplate</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 01 Jan 2024 12:44:47 +1000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/cloud/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>System Design in AWS</title>
+      <link>http://localhost:1313/blog/system_design/aws/</link>
+      <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
+      <guid>http://localhost:1313/blog/system_design/aws/</guid>
+      <description>&lt;p&gt;System design is a critical aspect of software engineering that involves creating scalable, reliable, and efficient systems. This document explores key concepts and strategies required for designing robust systems, including networking, databases, scalability, caching, and modern architectural patterns. It serves as a comprehensive guide for understanding the foundational and advanced principles of system design.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

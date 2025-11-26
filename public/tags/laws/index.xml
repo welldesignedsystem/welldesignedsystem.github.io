@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Laws on Hugoplate</title>
+    <link>http://localhost:1313/tags/laws/</link>
+    <description>Recent content in Laws on Hugoplate</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 01 Jan 2024 12:44:47 +1000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/laws/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Laws and Principles</title>
+      <link>http://localhost:1313/blog/laws/</link>
+      <pubDate>Mon, 01 Jan 2024 12:44:47 +1000</pubDate>
+      <guid>http://localhost:1313/blog/laws/</guid>
+      <description>A curated reference of scientific, engineering, and organizational laws and principles that shape software, systems, and team behavior.</description>
+    </item>
+  </channel>
+</rss>

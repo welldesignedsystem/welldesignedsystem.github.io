@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Learning Path on Hugoplate</title>
+    <link>http://localhost:1313/tags/learning-path/</link>
+    <description>Recent content in Learning Path on Hugoplate</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 02 Oct 2025 00:00:00 +1000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/learning-path/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Operational Research</title>
+      <link>http://localhost:1313/blog/or/</link>
+      <pubDate>Thu, 02 Oct 2025 00:00:00 +1000</pubDate>
+      <guid>http://localhost:1313/blog/or/</guid>
+      <description>Comprehensive, step-by-step roadmap to mastering Operational Research (OR) and Optimization, from foundational mathematics to expert-level systems and research.</description>
+    </item>
+  </channel>
+</rss>
