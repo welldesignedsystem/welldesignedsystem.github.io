@@ -1,0 +1,57 @@
+# Hugo
+/public/
+/resources/_gen/
+/resources/public/
+/hugo_stats.json
+
+# Node / JS
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+pnpm-lock.yaml
+
+# Build output
+dist/
+build/
+
+# Go
+/bin/
+*.exe
+*.test
+vendor/
+cover.out
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+out/
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+
+# Python cache (if any)
+__pycache__/
+*.pyc
+
+# Static site generator helpers
+/public/
+/.hugo_build
+
+# Misc
+.coverage
+coverage/
+*.orig
+
