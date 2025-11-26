@@ -1,6 +1,6 @@
 ---
-title: William Jacob
-email: williamjacob@email.com
+title: Lak Som
+email: johndoe@email.com
 image: "/images/avatar.png"
 description: this is meta description
 social:
