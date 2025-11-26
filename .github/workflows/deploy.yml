@@ -38,6 +38,18 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Fetch Hugo modules
+        # Ensure Hugo modules (theme + modules) are fetched before the Hugo build
+        run: hugo mod get -u ./... || true
+
+      - name: Build theme/frontend assets
+        # Some themes require an explicit npm build step (Tailwind/PostCSS) to generate CSS/static assets
+        run: |
+          npm run update-modules --if-present
+          npm run project-setup --if-present
+          npm run theme-setup --if-present
+          npm run build --if-present
+
       - name: Build
         run: hugo --minify
 
