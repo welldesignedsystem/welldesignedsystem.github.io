@@ -1,5 +1,5 @@
 +++
-date = '2025-10-02T00:00:00+10:00'
+date = '2022-01-01T12:44:47+10:00'
 draft = false
 title = 'Operational Research'
 tags = ['Operational Research', 'Optimization', 'OR', 'Learning Path', 'Roadmap']

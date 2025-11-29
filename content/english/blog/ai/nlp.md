@@ -1,6 +1,6 @@
 ---
 title:  "Natural Language Processing"
-date: '2025-05-10T12:44:47+10:00'
+date: '2024-01-01T12:44:47+10:00'
 tags: ["Chatbots", "RASA", "ChatGPT", "BERT", "Transformers", "Prompt Engineering"]
 Description  : "Generative AI with NLP LLM: "
 summary: "Practical overview of NLP concepts, pipelines and tools—covering tokenization, embeddings, model architectures and production best practices."

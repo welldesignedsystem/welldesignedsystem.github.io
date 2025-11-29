@@ -1,5 +1,5 @@
 +++
-date = '2024-01-01T12:44:47+10:00'
+date = '2022-01-01T12:44:47+10:00'
 draft = false
 title = 'Laws and Principles'
 tags = ['Laws']
