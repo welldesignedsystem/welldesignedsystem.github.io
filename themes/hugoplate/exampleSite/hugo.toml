@@ -34,7 +34,7 @@ shortname = 'disqus_gLR4CHXAaS' # we use disqus to show comments in blog posts .
 ########################## Pagination ############################
 [pagination]
 disableAliases = false
-pagerSize = 10
+pagerSize = 30
 path = 'page'
 
 
