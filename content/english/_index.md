@@ -2,7 +2,7 @@
 # Banner
 banner:
   title: "Partners & Patterns"
-  content: "Partners & Patterns is a collaborative notebook where two lifelong partners document learnings and design choices from building systems. We share concise how-tos, architecture patterns and curated references that turn experience into usable guidance. Each entry captures what worked, what failed and why—so ideas are reproducible and improvable. We focus on scalable, maintainable architectures and hands‑on engineering, but welcome curiosity from all levels. Read, reuse and contribute: this site grows through iteration, conversation and shared problem‑solving. Join us as we learn together, refine patterns and build better systems—one experiment at a time, every day and celebrate progress."
+  content: "The 'Well Designed System' - is a collaborative notebook where two partners document learnings, patterns and design choices from building Software systems. We share concise how-tos, architecture patterns and curated references that turn experience into usable guidance. Each entry captures what worked, what failed and why—so ideas are reproducible and improvable. We focus on scalable, maintainable architectures and hands‑on engineering, but welcome curiosity from all levels. Read, reuse and contribute: this site grows through iteration, conversation and shared problem‑solving. Join us as we learn together, refine patterns and build better systems—one experiment at a time, every day and celebrate progress."
   image: "/images/banner.png"
   button:
     enable: false
