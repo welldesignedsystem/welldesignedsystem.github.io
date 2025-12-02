@@ -1,7 +1,7 @@
 +++
 date = '2025-12-03T12:00:00+10:00'
 draft = false
-title = 'LiteLLM — Lightweight LLMs for Edge and Fast Prototyping'
+title = 'LiteLLM'
 tags = ['LiteLLM', 'LLM', 'Edge', 'Inference', 'AI']
 summary = "LiteLLM explores lightweight large-language-model approaches focused on efficiency, deployability, and fast iteration—ideal for on-device inference, constrained environments, and rapid prototyping."
 +++
