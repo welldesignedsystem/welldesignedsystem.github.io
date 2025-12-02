@@ -1,7 +1,7 @@
 +++
 date = '2024-01-01T12:44:47+10:00'
 draft = false
-title = 'Gen AI Patterns'
+title = 'Gen AI Patterns in Langchain'
 tags = ['LLM', 'AI', 'Design Patterns']
 summary = "Reusable design patterns and best practices for building robust, efficient and scalable LLM applications, covering retrieval, memory, agents, RAG and orchestration."
 +++
