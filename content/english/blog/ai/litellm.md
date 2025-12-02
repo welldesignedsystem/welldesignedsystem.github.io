@@ -1,5 +1,5 @@
 +++
-date = '2025-12-03T12:00:00+10:00'
+date = '2025-12-02T12:00:00+10:00'
 draft = false
 title = 'LiteLLM'
 tags = ['LiteLLM', 'LLM', 'Edge', 'Inference', 'AI']
