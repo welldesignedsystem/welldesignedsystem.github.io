@@ -3,6 +3,7 @@ date = '2022-05-03T12:44:47+10:00'
 draft = false
 title = 'Python Quicky'
 tags = ['Python']
+summary = "A comprehensive guide to Python fundamentals for interviews."
 +++
 
 This guide covers all the essential Python topics you should master for technical interviews, from basic data types and control flow to advanced concepts like metaclasses, descriptors, and Python internals. It includes practical code examples, best practices, common pitfalls, and concise explanations to help you quickly revise and strengthen your understanding before interviews. Use this as a comprehensive checklist and reference to ensure you’re well-prepared for any Python interview scenario, whether for general programming, data science, web development, or system design roles.
