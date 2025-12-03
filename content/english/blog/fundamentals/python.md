@@ -7,7 +7,7 @@ tags = ['Python']
 
 This guide covers all the essential Python topics you should master for technical interviews, from basic data types and control flow to advanced concepts like metaclasses, descriptors, and Python internals. It includes practical code examples, best practices, common pitfalls, and concise explanations to help you quickly revise and strengthen your understanding before interviews. Use this as a comprehensive checklist and reference to ensure you’re well-prepared for any Python interview scenario, whether for general programming, data science, web development, or system design roles.
 
-## 1. Data Types & Structures
+## Data Types & Structures
 
 ### Basic Data Types
 ```python
@@ -57,7 +57,7 @@ person["city"] = "NYC"
 | Delete | O(n) | O(1) | O(1) | N/A |
 | Append | O(1) | N/A | N/A | N/A |
 
-## 2. Control Flow & Functions
+## Control Flow & Functions
 
 ### Conditionals & Loops
 ```python
@@ -113,7 +113,7 @@ def apply_operation(func, numbers):
     return [func(x) for x in numbers]
 ```
 
-## 3. Object-Oriented Programming
+## Object-Oriented Programming
 
 ### Classes and Inheritance
 ```python
@@ -219,7 +219,7 @@ class BankAccount:
         self._balance += amount
 ```
 
-## 4. Decorators
+## Decorators
 
 ### Function Decorators
 ```python
@@ -275,7 +275,7 @@ class Database:
         self.connection = "Connected"
 ```
 
-## 5. Iterators and Generators
+## Iterators and Generators
 
 ### Iterators
 ```python
@@ -316,7 +316,7 @@ def read_large_file(file_path):
             yield line.strip()
 ```
 
-## 6. Exception Handling
+## Exception Handling
 
 ```python
 try:
@@ -341,7 +341,7 @@ def validate_age(age):
         raise ValidationError("Age cannot be negative", code="INVALID_AGE")
 ```
 
-## 7. Context Managers
+## Context Managers
 
 ```python
 # Built-in context manager
@@ -377,7 +377,7 @@ with timer_context():
     time.sleep(1)
 ```
 
-## 8. Memory Management & Garbage Collection
+## Memory Management & Garbage Collection
 
 ### Reference Counting
 ```python
@@ -407,7 +407,7 @@ node1.children.append(node2)
 node2.parent = weakref.ref(node1)  # Weak reference to parent
 ```
 
-## 9. Functional Programming
+## Functional Programming
 
 ### Map, Filter, Reduce
 ```python
@@ -458,7 +458,7 @@ print(c())  # 1
 print(c())  # 2
 ```
 
-## 10. File Handling & I/O
+## File Handling & I/O
 
 ```python
 # Reading files
@@ -491,7 +491,7 @@ with open('data.csv', 'w', newline='') as f:
     writer.writerow(['Alice', 30])
 ```
 
-## 11. Modules and Packages
+## Modules and Packages
 
 ### Creating Modules
 ```python
@@ -520,8 +520,7 @@ import importlib
 module = importlib.import_module('math_utils')
 ```
 
-## 12. Regular Expressions
-
+## Regular Expressions
 ```python
 import re
 
@@ -543,7 +542,7 @@ email_regex = re.compile(email_pattern)
 matches = email_regex.findall(text)
 ```
 
-## 13. Threading & Multiprocessing
+## Threading & Multiprocessing
 
 ### Threading
 ```python
@@ -588,7 +587,7 @@ if __name__ == "__main__":
     print(results)
 ```
 
-## 14. Error Handling & Debugging
+## Error Handling & Debugging
 
 ### Exception Hierarchy
 ```python
@@ -637,7 +636,7 @@ def problematic_function():
     return "debug me"
 ```
 
-## 15. Data Structures Implementation
+## Data Structures Implementation
 
 ### Stack
 ```python
@@ -725,7 +724,7 @@ class LinkedList:
             current.next = current.next.next
 ```
 
-## 16. Algorithms (Common Interview Questions)
+## Algorithms (Common Interview Questions)
 
 ### Sorting
 ```python
@@ -863,7 +862,7 @@ def longest_substring_without_repeating(s):
     return max_length
 ```
 
-## 17. Dynamic Programming
+## Dynamic Programming
 
 ### Memoization
 ```python
@@ -915,7 +914,7 @@ def longest_common_subsequence(text1, text2):
     return dp[m][n]
 ```
 
-## 18. Built-in Functions & Libraries
+## Built-in Functions & Libraries
 
 ### Collections Module
 ```python
@@ -961,7 +960,7 @@ for key, group in grouped:
     print(f"{key}: {list(group)}")
 ```
 
-## 19. Common Gotchas & Best Practices
+## Common Gotchas & Best Practices
 
 ### Mutable Default Arguments
 ```python
@@ -1004,7 +1003,7 @@ print(shallow)  # [[999, 2], [3, 4]] - affected
 print(deep)     # [[1, 2], [3, 4]] - not affected
 ```
 
-## 20. Testing
+## Testing
 
 ### Unit Testing
 ```python
@@ -1056,7 +1055,7 @@ def test_with_fixture(calculator):
     assert calculator.add(1, 1) == 2
 ```
 
-## 21. Performance & Optimization
+## Performance & Optimization
 
 ### Timing Code
 ```python
@@ -1089,7 +1088,7 @@ data = [1, 2, 3, 4, 5]
 print(f"Size: {sys.getsizeof(data)} bytes")
 ```
 
-## 22. Common Interview Questions & Patterns
+## Common Interview Questions & Patterns
 
 ### String Manipulation
 ```python
@@ -1146,7 +1145,7 @@ def merge_intervals(intervals):
     return merged
 ```
 
-## 23. Metaclasses
+## Metaclasses
 
 - A metaclass is a "class of a class": it defines how classes behave. By default, Python uses `type` as the metaclass.
 - Custom metaclasses are created by subclassing `type` and overriding methods like `__new__` or `__init__`.
@@ -1170,7 +1169,7 @@ a = Animal()
 print(a.speak())  # Output: Sound
 ```
 
-## 24. Descriptors
+## Descriptors
 
 - A descriptor is any object that defines at least one of `__get__`, `__set__`, or `__delete__` methods and is used as a class attribute.
 - **Data descriptor**: defines both `__get__` and `__set__` (e.g., property with setter); **non-data descriptor**: only `__get__`.
@@ -1197,7 +1196,7 @@ a.balance = 50
 # a.balance = -10  # Raises ValueError
 ```
 
-## 25. Advanced String Operations
+## Advanced String Operations
 
 - Know all string formatting styles: f-strings (`f"{x}"`), `.format()`, and `%` formatting; prefer f-strings for new code.
 - Understand the difference between Unicode strings (`str`) and byte strings (`bytes`); know how to encode/decode.
@@ -1217,7 +1216,7 @@ b = sys.intern("hello")
 print(a is b)  # True
 ```
 
-## 26. Python Internals
+## Python Internals
 
 - The GIL (Global Interpreter Lock) allows only one thread to execute Python bytecode at a time; affects multi-threaded CPU-bound code.
 - Python source code is compiled to bytecode (`.pyc` files), which is then interpreted by the CPython VM.
@@ -1233,7 +1232,7 @@ import dis
 dis.dis(add)
 ```
 
-## 27. Design Patterns
+## Design Patterns
 
 - **Singleton**: ensure only one instance of a class exists (use a class variable or decorator).
 - **Factory**: a function or class that creates objects, often based on input parameters.
@@ -1255,7 +1254,7 @@ s2 = Singleton()
 print(s1 is s2)  # True
 ```
 
-## 28. Database Integration
+## Database Integration
 
 - Connect to SQLite with `sqlite3` or to PostgreSQL/MySQL with libraries like `psycopg2` or `mysql-connector-python`.
 - ORM basics: define models as classes, use sessions to query and persist data (SQLAlchemy).
@@ -1273,7 +1272,7 @@ with sqlite3.connect(":memory:") as conn:
     print(c.fetchall())  # [(1, 'Alice')]
 ```
 
-## 29. Web Frameworks Basics
+## Web Frameworks Basics
 
 - Flask: minimal web framework; Django: full-featured framework. Know how to define routes and handle requests.
 - Understand the HTTP request/response cycle: request comes in, routed to a view, response returned.
@@ -1292,7 +1291,7 @@ def hello():
 # Run with: flask run
 ```
 
-## 30. Data Science Libraries
+## Data Science Libraries
 
 - NumPy: create arrays, perform vectorized operations, understand broadcasting rules.
 - Pandas: create DataFrames, select/filter data, use `groupby`, handle missing data.
@@ -1311,7 +1310,7 @@ df = pd.DataFrame({"A": [1, 2], "B": [3, 4]})
 print(df["A"].mean())  # 1.5
 ```
 
-## 31. Networking & APIs
+## Networking & APIs
 
 - Use the `requests` library to make HTTP requests: `requests.get()`, `requests.post()`, handle headers and JSON.
 - Parse JSON with `response.json()` and serialize with `json.dumps()`.
@@ -1326,7 +1325,7 @@ print(response.status_code)
 print(response.json())
 ```
 
-## 32. Security Considerations
+## Security Considerations
 
 - Always validate and sanitize user input to prevent injection attacks.
 - Avoid using `eval` and `pickle` on untrusted data; prefer `json` for serialization.
@@ -1341,7 +1340,7 @@ obj = json.loads(data)
 print(obj["name"])
 ```
 
-## 33. Python 3 Features
+## Python 3 Features
 
 - Type hints: annotate function arguments and return types; use `mypy` for static checking.
 - Use `pathlib.Path` for filesystem paths instead of `os.path`.
@@ -1531,32 +1530,6 @@ async def main():
 asyncio.run(main())
 ```
 
-### Async Comprehensions
-```python
-async def fetch_value(i):
-    await asyncio.sleep(0.1)
-    return i * 2
-
-async def main():
-    # Async list comprehension
-    results = [await fetch_value(i) for i in range(5)]
-    print(results)  # [0, 2, 4, 6, 8]
-    
-    # Async generator expression
-    gen = (await fetch_value(i) for i in range(5))
-    async for value in gen:
-        print(value)
-    
-    # With async iterators
-    values = [x async for x in async_range(1, 5)]
-    print(values)  # [1, 2, 3, 4]
-    
-    # With conditions
-    evens = [x async for x in async_range(1, 10) if x % 2 == 0]
-
-asyncio.run(main())
-```
-
 ### Synchronization Primitives
 ```python
 # Lock
@@ -1661,7 +1634,7 @@ async def main():
 async def long_running_task():
     try:
         await asyncio.sleep(10)
-        return "Completed"
+        return "IO Complete"
     except asyncio.CancelledError:
         print("Task was cancelled")
         raise
@@ -1984,72 +1957,4 @@ async def main():
             print("Task cancelled successfully")
 
 asyncio.run(main())
-```
-
-### Performance Considerations
-
-#### When to Use AsyncIO
-- **Use for**: I/O-bound operations (network, file I/O, database queries)
-- **Don't use for**: CPU-bound operations (use multiprocessing instead)
-- **Benefits**: Handle thousands of concurrent connections with low memory overhead
-
-#### Comparison with Threading
-```python
-# Threading (for I/O-bound with blocking libraries)
-import threading
-import time
-
-def blocking_io(n):
-    time.sleep(1)
-    return n * 2
-
-# Async (for I/O-bound with async libraries)
-async def async_io(n):
-    await asyncio.sleep(1)
-    return n * 2
-
-# Threading approach
-start = time.time()
-threads = [threading.Thread(target=blocking_io, args=(i,)) for i in range(10)]
-for t in threads:
-    t.start()
-for t in threads:
-    t.join()
-print(f"Threading: {time.time() - start:.2f}s")
-
-# Async approach
-async def run_async():
-    start = time.time()
-    results = await asyncio.gather(*[async_io(i) for i in range(10)])
-    print(f"Async: {time.time() - start:.2f}s")
-
-asyncio.run(run_async())
-```
-
-### Debugging AsyncIO
-```python
-# Enable debug mode
-asyncio.run(main(), debug=True)
-
-# Log slow callbacks
-import logging
-logging.basicConfig(level=logging.DEBUG)
-
-# Detect coroutines that were never awaited
-import warnings
-warnings.simplefilter('always', ResourceWarning)
-
-# Print running tasks
-async def debug_tasks():
-    tasks = asyncio.all_tasks()
-    for task in tasks:
-        print(f"Task: {task.get_name()}, done: {task.done()}")
-
-# Set custom loop exception handler
-def exception_handler(loop, context):
-    print(f"Exception: {context['message']}")
-    print(f"Exception details: {context.get('exception')}")
-
-loop = asyncio.get_event_loop()
-loop.set_exception_handler(exception_handler)
 ```
