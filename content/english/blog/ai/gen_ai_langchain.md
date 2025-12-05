@@ -1,7 +1,7 @@
 +++
 date = '2025-01-01T12:44:47+10:00'
 draft = false
-title = 'Langchain'
+title = 'Gen-AI Patterns'
 tags = ['LLM', 'AI', 'Design Patterns']
 summary = "Reusable design patterns and best practices for building robust, efficient and scalable LLM applications, covering retrieval, memory, agents, RAG and orchestration."
 +++
@@ -329,7 +329,7 @@ nearest = pgvector_store.similarity_search_by_vector(new_embedding, k=1)
 ```
 
 ---
-## Some Strategis for Fintech usecases: 
+## Some Strategis for various usecases: 
 
 ### 1. Information in Confluence/knowledge bases:
 - Start using Standard and Structured templates for documentation - serve as **context needed for the LLM**.
