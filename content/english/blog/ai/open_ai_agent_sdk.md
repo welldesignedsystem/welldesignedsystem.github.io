@@ -116,7 +116,7 @@ These are some of the design patterns commonly used in building AI agents:
 ### MultiAgent Patterns
 - Centralized System
   - [Hierarchical System](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L647-L696) 
-  - ![hierarchy.png](blogs/ai/img/hierarchy.png)
+  - ![hierarchy.png](img/hierarchy.png)
 - Decentralized System
   - [Swarm Systems](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L647-L696)
     - based on a concept called emergent behavior or stigmergy

@@ -3,6 +3,7 @@
     "tags": [
       "a",
       "article",
+      "base",
       "blockquote",
       "body",
       "br",
@@ -1235,7 +1236,6 @@
       "tokenization-breaking-up-text-into-smaller-pieces-called-tokens",
       "tokenizers",
       "tokens",
-      "tool-patterns",
       "tools",
       "tools-1",
       "tools-and-libraries",
