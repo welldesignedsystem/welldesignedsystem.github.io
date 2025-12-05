@@ -474,8 +474,8 @@ retriever = MultiVectorRetriever(
   - Index **both the summaries and the original documents** together.  
   - Covers for **questions ranging from low-level to high-level concepts**.
 
-<img width="1810" height="1356" alt="image" src="https://github.com/user-attachments/assets/781bebc6-19d2-4814-af83-0983f081b6ba" />
- 
+[Raptor](../images/RAPTOR.png)
+
 ```python
 # 2. Split documents into chunks
 docs = [Document(page_content=doc) for doc in all_documents]  # all_documents is your text list
@@ -554,8 +554,7 @@ results = RAG.retrieve(query_embedding, k=3)
 for r in results:
     print(r)
 ```
-<img width="1400" height="578" alt="image" src="https://github.com/user-attachments/assets/cc1d9783-9da8-4220-a1c4-e7b48beb5e16" />
-
+[ColBERT](../images/ColBERT.png)
 ---
 
 ### 4. strategies to get Control over Prompting:
