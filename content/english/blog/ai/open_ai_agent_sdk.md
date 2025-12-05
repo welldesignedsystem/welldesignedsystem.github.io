@@ -119,9 +119,12 @@ These are some of the design patterns commonly used in building AI agents:
 - Handoff Prompting
 ### MultiAgent Patterns
 - Centralized System
-  - Hierarchical System
+  - Hierarchical System 
+  - ![hierarchy.png](blogs/ai/img/hierarchy.png)
 - Decentralized System
   - Swarm Systems
     - based on a concept called emergent behavior or stigmergy
-   
+
+## Context Management Patterns
+- Local Context
 - MCP Server as a Tool
