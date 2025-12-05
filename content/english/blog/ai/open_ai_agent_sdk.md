@@ -1,7 +1,7 @@
 +++
-date = '2024-01-01T12:44:47+10:00'
+date = '2025-10-01T12:44:47+10:00'
 draft = false
-title = 'OpenAI Agents SDK'
+title = 'Agentic Patterns in OpenAIAgentsSDK'
 tags = ['OpenAI', 'Agents', 'Design Patterns', 'AI']
 summary = "Here we explore agentic systems and design patterns using the OpenAI Agents SDK."
 +++
@@ -10,7 +10,8 @@ summary = "Here we explore agentic systems and design patterns using the OpenAI 
 Here we explore the Design patterns and how they are implemented using the OpenAI Agents SDK.
 Before diving into the design patterns, let's first understand the fundamental concepts of AI agents and the role of LiteLLM in building these systems.
 
-## AI Agent
+## Fundamentals
+### AI Agent
 AI Agent is an intelligent system that has the ability to perceive its environment, reason about it, and take actions to achieve specific goals. They are able to 
 1. Observe and interpret their surroundings using sensors or data inputs
 2. Reason and make decisions based on their observations and predefined objectives
@@ -21,13 +22,14 @@ AI Agent is an intelligent system that has the ability to perceive its environme
 - Tools: The functionalities and capabilities that the agent can utilize to perform tasks. This includes APIs
 - Memory: The ability of the agent to retain and recall information from past interactions, allowing it to learn and adapt over time.
 
-## Use of LiteLLM
-- OpenAI Agent SDK might not work with a lot of LLM providers out of the box. LiteLLM can be used as a middleware to connect to various LLM providers with a consistent API.
+### Use of LiteLLM
+- the SDK is designed for OpenAI models primarily and LiteLLM is an extension for multi-provider support.
+- LiteLLM can be used as a middleware to connect to various LLM providers with a consistent API.
 - LiteLLM also gives additional benefits like cost tracking, usage monitoring, automatic fail-over between providers, and self-hosted options for privacy and control.
 - LiteLLM is a lightweight library designed to facilitate the development and deployment of AI agents. It provides a simple and efficient interface for integrating various models, tools, and memory mechanisms into agentic systems. LiteLLM supports modular design, allowing developers to easily swap out components and experiment with different configurations. This flexibility makes it an ideal choice for building custom AI agents tailored to specific applications and domains.
 - refer to [LiteLLM blog post](./litellm.md) for more details.
 
-## Core Primitives of OpenAI Agent SDK
+## Core Primitives of OpenAIAgentSDK
 ### Agent
 Agent is an autonomous entity that perceives its environment, makes decisions and takes actions to achieve specific goals. Agents can be designed to operate in various domains, such as virtual environments, robotics, or software applications. They can utilize different models, tools, and memory mechanisms to enhance their capabilities and adapt to changing circumstances.
 ### Tools
@@ -48,7 +50,7 @@ Tracing is the process of monitoring and recording the actions and decisions mad
 [Source](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py)
 
 ## Tools
-### Agent Tool & MCPs
+### Agent Tool Types
 Types of Agent Tools:
 - [Custom Tools](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L66)
 - [Agent as Tools](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L446)
@@ -60,7 +62,7 @@ Types of Agent Tools:
   - ComputerTool- Opens a browser instance and performs a task
   - LocalShellTool - Executes Shell command on local machine
 
-### Agent Tool Behaviors:
+### Controlling Tool Use and Behaviors:
 - Agents decide autonomously when to use tools based on the task at hand.
 - Where tools fit in:
   - Runner sends list of messages to LLM
@@ -89,12 +91,12 @@ Types of Agent Tools:
     - Store in Vector DB
     - Retrieval
 
-## Chat Conversation
-- conversation management with Session
+## Chat Conversation Patterns
+- [Conversation management with Session](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L467-L505)
 - large converstion threads (based on subject for example)
 - Sliding message window 
-  - involves use of a FIFO queue or deque instead of list of messages 
-- message summarization
+  - [Similar to using a list of message](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L467-L486) but involves use of a FIFO queue or deque instead of list of messages 
+- message Summarization
 
 ## Agentic AI Design Patterns
 These are some of the design patterns commonly used in building AI agents:
