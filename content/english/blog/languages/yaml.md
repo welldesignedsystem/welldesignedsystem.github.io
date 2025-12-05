@@ -1,5 +1,5 @@
 +++
-date = '2022-01-01T12:44:47+10:00'
+date = '2022-12-06T12:44:47+10:00'
 draft = false
 title = 'YAML Guide'
 tags = ['YAML', 'Configuration', 'Data Serialization', 'DevOps', 'Tutorial']

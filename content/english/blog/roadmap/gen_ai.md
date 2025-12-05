@@ -1,5 +1,5 @@
 +++
-date = '2024-12-06T12:44:47+10:00'
+date = '2025-12-06T12:44:47+10:00'
 draft = false
 title = 'Roadmap - GenAI & Agentic AI Engineering'
 tags = ['GenAI', 'Agentic AI', 'LLM', 'ML Engineering', 'Production AI', 'Roadmap']

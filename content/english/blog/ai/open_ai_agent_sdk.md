@@ -1,7 +1,7 @@
 +++
-date = '2025-10-01T12:44:47+10:00'
+date = '2025-01-01T12:44:47+10:00'
 draft = false
-title = 'Agentic Patterns in OpenAIAgentsSDK'
+title = 'OpenAI Agent SDK'
 tags = ['OpenAI', 'Agents', 'Design Patterns', 'AI']
 summary = "Here we explore agentic systems and design patterns using the OpenAI Agents SDK."
 +++
