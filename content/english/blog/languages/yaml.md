@@ -11,19 +11,6 @@ A comprehensive guide to YAML (YAML Ain't Markup Language) - a human-readable da
 
 ---
 
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Basic Syntax](#basic-syntax)
-3. [Data Types](#data-types)
-4. [Collections](#collections)
-5. [Advanced Features](#advanced-features)
-6. [Best Practices](#best-practices)
-7. [Common Use Cases](#common-use-cases)
-8. [Troubleshooting](#troubleshooting)
-
----
-
 ## Introduction
 
 ### Key Characteristics

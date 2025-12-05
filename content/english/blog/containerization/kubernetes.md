@@ -7,25 +7,6 @@ summary = "Overview of Kubernetes architecture, core concepts (pods, nodes, volu
 +++
 Kubernetes (K8s) is an open-source container orchestration platform that automates the deployment, scaling and management of containerized applications. It was originally developed by Google and is now maintained by the Cloud Native Computing Foundation (CNCF). Kubernetes provides a robust framework for running distributed systems resiliently, with features such as service discovery, load balancing, storage orchestration, automated rollouts and rollbacks, self-healing and secret and configuration management.
 
-## Table of Contents
-
-- [Architecture](#architecture)
-  - [Control Plane Nodes](#1-control-plane-nodes)
-  - [Worker Nodes](#2-worker-nodes)
-  - [Node Summary](#node-summary)
-- [Init Containers in Kubernetes](#init-containers-in-kubernetes)
-  - [Example: Pod Descriptor with Init Container and Nginx](#example-pod-descriptor-with-init-container-and-nginx)
-  - [Applying the Pod Manifest and Getting Pod Status](#applying-the-pod-manifest-and-getting-pod-status)
-- [Volumes in Kubernetes](#volumes-in-kubernetes)
-  - [VolumeMounts](#volumemounts)
-  - [emptyDir](#emptydir)
-  - [hostPath](#hostpath)
-  - [configMap](#configmap)
-  - [secret](#secret)
-  - [persistentVolumeClaim-pvc](#persistentvolumeclaim-pvc)
-  - [Example: Pod with emptyDir and hostPath Volumes](#example-pod-with-emptydir-and-hostpath-volumes)
-  - [Volume Types](#volume-types)
-
 ## Architecture
 
 ![img.png](../img/kubernetes-architecture.png)
