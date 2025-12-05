@@ -50,8 +50,8 @@ Tracing is the process of monitoring and recording the actions and decisions mad
 ## Tools
 ### Agent Tool & MCPs
 Types of Agent Tools:
-- Custom Tools
-- Agent as Tools
+- [Custom Tools](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L66)
+- [Agent as Tools](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L446)
 - OpenAI Hosted Tools
   - WebSearchTool - performs real time searches on web
   - FileSearchTool - Search and Retrieval from vector stores
@@ -59,7 +59,6 @@ Types of Agent Tools:
   - CodeInterpreterTool - runs code in Sandboxed python execution environment. 
   - ComputerTool- Opens a browser instance and performs a task
   - LocalShellTool - Executes Shell command on local machine
-- MCPs (Model Context Protocols)
 
 ### Agent Tool Behaviors:
 - Agents decide autonomously when to use tools based on the task at hand.
@@ -72,17 +71,14 @@ Types of Agent Tools:
   - auto: the agent decides which tool to use
   - required: forces the agent to use a tool
   - none: prevents the agent from using any tools
-- Tool Use Behaviors: 
+- [Tool Use Behaviors](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L241): 
   - run_llm_again: after each tool call, the agent re-invokes the LLM with the updated context
   - stop_on_first_tool: the agent stops after the first tool call and returns the tool output as the final answer
   - StopAtTools(stop_at_tool_names=["issue_refund"]): the agent stops after calling any of the specified tools
-  
-### Tool Patterns
-
 
 ## Memory & Knowledge Patterns
-- Short Term Memory
-- Long Term Memory
+- [Short Term Memory](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L465-L486)
+- [Long Term Memory](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L489-L505)
 - Training Knowledge
 - Retrieved Knowledge
   - Good for unstructured Data handling
@@ -108,23 +104,26 @@ These are some of the design patterns commonly used in building AI agents:
 - Plan-and-Execute Pattern: In this pattern, the agent first creates a plan of action based on its understanding of the task and the environment. It then executes the plan step by step, monitoring progress and making adjustments as needed. This structured approach helps ensure that the agent stays focused on its goals and effectively navigates complex tasks.
 - Hierarchical/Multi-Agent Systems: This pattern involves organizing multiple agents into a hierarchy or network, where each agent has specific roles and responsibilities. Higher-level agents can oversee and coordinate the actions of lower-level agents, allowing for more complex and collaborative problem-solving.
 ### MultiAgent Orchestration Pattern
-- Deterministic Orchestration
-- Dynamic Orchestration
+- [Deterministic Orchestration](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L510-L545)
+- [Dynamic Orchestration](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L550-L593)
 ### Handoff Patterns
 - Agent as Tool Pattern 
-- Handoff Patterns
-- Multi Agent Switching
+- [Handoff Patterns](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L259-L304)
+- [Multi Agent Switching](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L597-L642)
 - Customizing Handoffs:
   - by means of parameters such as agents, tool_name/description_override, on handoff, input_type/filter
-- Handoff Prompting
+- [Handoff Prompting](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L599-L606)
 ### MultiAgent Patterns
 - Centralized System
-  - Hierarchical System 
+  - [Hierarchical System](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L647-L696) 
   - ![hierarchy.png](blogs/ai/img/hierarchy.png)
 - Decentralized System
-  - Swarm Systems
+  - [Swarm Systems](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L647-L696)
     - based on a concept called emergent behavior or stigmergy
 
 ## Context Management Patterns
-- Local Context
+- [Local Context](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L722-L759)
 - MCP Server as a Tool
+
+## Others
+- [Unit Testing](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L780-L808)
