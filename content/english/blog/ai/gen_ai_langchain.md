@@ -408,7 +408,7 @@ vectorstore.similarity_search(query, filter={"is_active": True})
 ## Some Design Patterns:
 
 ### 1. MultiVector Retrieval  
-![Multi-Vector Retrieval](../img/MultiVectorRetriever.png)
+![Multi-Vector Retrieval](../img/multivectorretrieval.png)
 - **Problem**: Mixed-content documents (text + tables) can lose structure if split only by text.
 - **Design Pattern**: Follows *CQRS (Command Query Responsibility Segregation)* principle separate write (doc updates) and read (retrieval) models for consistency.
 - seperate out the **vector store** and **doc store**.
