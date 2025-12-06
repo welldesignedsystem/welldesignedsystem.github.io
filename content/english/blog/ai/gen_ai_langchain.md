@@ -408,6 +408,7 @@ vectorstore.similarity_search(query, filter={"is_active": True})
 ## Some Design Patterns:
 
 ### 1. MultiVector Retrieval  
+![Multi-Vector Retrieval](../img/MultiVectorRetriever.png)
 - **Problem**: Mixed-content documents (text + tables) can lose structure if split only by text.
 - **Design Pattern**: Follows *CQRS (Command Query Responsibility Segregation)* principle separate write (doc updates) and read (retrieval) models for consistency.
 - seperate out the **vector store** and **doc store**.
@@ -452,11 +453,11 @@ retriever = MultiVectorRetriever(
     id_key="id"                  # ID used in vector store entries
 )
 ```
-<img width="1200" height="611" alt="image" src="https://github.com/user-attachments/assets/830dff2f-637f-4987-9825-44a56cacb205" />
 
 ---
 
 ### 2. Recursive Abstractive Processing for Tree-Organized Retrieval —  
+![Raptor](../img/RAPTOR.png)
 - **Problem:**  
   - RAG systems must handle:
     - **Lower-level questions:** referencing specific facts in a single document.  
@@ -474,7 +475,6 @@ retriever = MultiVectorRetriever(
   - Index **both the summaries and the original documents** together.  
   - Covers for **questions ranging from low-level to high-level concepts**.
 
-[Raptor](../images/RAPTOR.png)
 
 ```python
 # 2. Split documents into chunks
@@ -517,7 +517,7 @@ for r in results:
 ---
 
 ### 3. ColBERT (Contextually Late Interactions using BERT): Optimizing Embeddings
-
+![ColBERT](../img/ColBERT.png)
 - **Problem with standard embeddings:**  
   - They **compress** the whole text into one **fixed-length vector**.  
   - Any **Irrelevant or redundant content** in that vector can lead to **wrong** or **hallucinated answers**.  
@@ -554,7 +554,7 @@ results = RAG.retrieve(query_embedding, k=3)
 for r in results:
     print(r)
 ```
-[ColBERT](../images/ColBERT.png)
+
 ---
 
 ### 4. strategies to get Control over Prompting:
@@ -601,6 +601,7 @@ for r in results:
 ---
 
 ### 6. Multi-Query Retrieval
+![multiquery.png](../img/multiquery.png)
 - **Problem:** A single user query may not capture the full scope of information needed for a comprehensive answer.  
 
 - **Solution:** Multi-query retrieval strategy:
@@ -617,11 +618,10 @@ for r in results:
     4. Is it sunny, rainy, or cloudy in Sydney currently?
     5. What is the humidity and wind speed in Sydney today?
        
-<img width="1676" height="596" alt="image" src="https://github.com/user-attachments/assets/595030dc-1a2b-4fa4-8a82-4ec58822a72d" />
-
 ---
 
 ### 7. RAG-Fusion
+![RAPTOR.png](../img/RAPTOR.png)
 Sometimes **information space is large** and **spread out** or **diverse** and a single query is **insufficient** to capture all relevant context.
 RAG-Fusion (Retrieval-Augmented Generation with Fusion) is an **extension** of the **multi-query retrieval strategy**. It enhances the retrieval process by introducing a **final reranking step** using the **Reciprocal Rank Fusion (RRF)** algorithm.
 
@@ -689,7 +689,6 @@ def reciprocal_rank_fusion(results: list[list], k=60):
 
 retrieval_chain = query_gen | retriever.batch | reciprocal_rank_fusion
 ```
-<img width="1284" height="481" alt="image" src="https://github.com/user-attachments/assets/9597f42d-7e23-40f5-985e-cabef52035b3" />
 
 ---
 
@@ -834,10 +833,10 @@ Relational databases require SQL queries, which are not naturally compatible wit
   - Hybrid (recent messages + summary)
 
 #### 14. ReAct (Reason + Act)
+![ReAct.png](../img/ReAct.png)
 - Combines reasoning steps with tool or function calls.
 - Model alternates between generating thoughts and taking actions (API calls, tool invocation).
 - Useful for multi-step tasks, retrieval and automation.
-<img width="1400" height="686" alt="image" src="https://github.com/user-attachments/assets/67a2124c-9270-440b-b222-5b70ab293266" />
 
 #### 15. Reflexion
 - Model reviews its own outputs, critiques and iteratively improves answers.
