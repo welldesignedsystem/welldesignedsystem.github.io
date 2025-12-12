@@ -1,8 +1,8 @@
 +++
-date = '2022-12-12T09:00:00+10:00'
+date = '2025-12-12T09:00:00+10:00'
 draft = false
 title = 'Docker'
-tags = ['docker', 'containerization']
+tags = ['Python']
 summary = "Overview of Docker architecture and some design patterns for using Docker container in the perspective of kubernetes."
 +++
 
@@ -186,46 +186,6 @@ docker network disconnect NETWORK CONTAINER
 # Remove networks
 docker network rm NETWORK_NAME
 docker network prune             # Remove unused networks
-```
-
-### Docker Compose Commands
-
-```bash
-# Start services
-docker-compose up                    # Start all services
-docker-compose up -d                 # Start in detached mode
-docker-compose up --build            # Rebuild images before starting
-docker-compose up SERVICE_NAME       # Start specific service
-
-# Stop services
-docker-compose down                  # Stop and remove containers
-docker-compose down -v               # Also remove volumes
-docker-compose stop                  # Stop services without removing
-
-# Service management
-docker-compose start                 # Start existing containers
-docker-compose restart               # Restart services
-docker-compose pause                 # Pause services
-docker-compose unpause               # Unpause services
-
-# View information
-docker-compose ps                    # List containers
-docker-compose logs                  # View logs
-docker-compose logs -f               # Follow logs
-docker-compose logs SERVICE_NAME     # Logs for specific service
-docker-compose top                   # Display running processes
-
-# Execute commands
-docker-compose exec SERVICE COMMAND  # Execute in running service
-docker-compose run SERVICE COMMAND   # Run one-off command
-
-# Build and pull
-docker-compose build                 # Build or rebuild services
-docker-compose pull                  # Pull service images
-
-# Configuration
-docker-compose config                # Validate and view configuration
-docker-compose config --services     # List services
 ```
 
 ### System Commands
@@ -576,6 +536,118 @@ spec:
 
 **Use Cases**: Web server with content generator, application with cache warmer, streaming data processor.
 
+### 7. Pod Disruption Budget (PDB)
+
+Ensure a minimum number of replicas remain available during voluntary disruptions (node drain, upgrades).
+
+```yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: myapp-pdb
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: myapp
+```
+
+### 8. Horizontal Pod Autoscaler (HPA)
+
+Automatically scales replicas based on CPU or custom metrics.
+
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: myapp-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: myapp
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+```
+
+### 9. NetworkPolicy (Default deny + allow to DB)
+
+Restrict east-west traffic; start with default-deny and explicitly allow needed flows.
+
+```yaml
+# Default deny all ingress to app namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: app
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]
+---
+# Allow only web pods to reach db pods on 5432
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-web-to-db
+  namespace: app
+spec:
+  podSelector:
+    matchLabels: { tier: db }
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels: { tier: web }
+    ports:
+    - protocol: TCP
+      port: 5432
+```
+
+### 10. Affinity / Anti-affinity
+
+Control pod placement to spread replicas and avoid single-node risk.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 4
+  selector:
+    matchLabels: { app: myapp }
+  template:
+    metadata:
+      labels: { app: myapp }
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values: [myapp]
+              topologyKey: kubernetes.io/hostname
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values: [zone-a, zone-b]
+```
+
 ## Best Practices
 
 ### Dockerfile Optimization
@@ -662,49 +734,6 @@ EXPOSE 3000
 CMD ["node", "server.js"]
 ```
 
-### Microservices with Docker Compose
-
-```yaml
-version: '3.8'
-
-services:
-  api:
-    build: ./api
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=postgres://db:5432/api
-      - REDIS_URL=redis://cache:6379
-    depends_on:
-      - db
-      - cache
-
-  worker:
-    build: ./worker
-    environment:
-      - REDIS_URL=redis://cache:6379
-    depends_on:
-      - cache
-
-  db:
-    image: postgres:15-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: api
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: secret
-
-  cache:
-    image: redis:7-alpine
-    volumes:
-      - redis_data:/data
-
-volumes:
-  postgres_data:
-  redis_data:
-```
-
 ## Troubleshooting
 
 ### Common Issues
@@ -734,4 +763,3 @@ docker build --no-cache .                # Build without cache
 docker build --progress=plain .          # Detailed build output
 docker history IMAGE                     # Inspect image layers
 ```
-
