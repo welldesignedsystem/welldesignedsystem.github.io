@@ -2,11 +2,11 @@
 date = '2025-12-12T09:00:00+10:00'
 draft = false
 title = 'Docker'
-tags = ['Python']
-summary = "Overview of Docker architecture and some design patterns for using Docker container in the perspective of kubernetes."
+tags = ['Docker']
+summary = "Overview of Docker architecture and practical patterns; focused on Kubernetes for orchestration."
 +++
 
-Docker is an open-source platform for building, shipping and running applications in containers. It standardizes packaging through images, enabling consistent environments across development, testing and production. Core features include image layering, container isolation, volume management, networking and orchestration via Docker Compose.
+Docker is an open-source platform for building, shipping and running applications in containers. It standardizes packaging through images, enabling consistent environments across development, testing and production. Core features include image layering, container isolation, volume management, and networking. Orchestration is typically handled by Kubernetes in production environments.
 
 ```bash
 docker run hello-world
@@ -144,48 +144,76 @@ docker image ls --digests     # Show image digests
 
 ### Volume Management
 
+Docker volume basics:
+- Named volumes: Managed by Docker and stored under Docker’s data directory; portable across containers and survive container removal.
+- Anonymous volumes: Created implicitly (no name) and can be harder to manage; useful for quick runs but less ideal for long-term persistence.
+- Bind mounts: Map a host path into a container; great for development and sharing files, but path must exist and host permissions apply.
+- Persistence: Volumes persist beyond the lifecycle of a container, unlike the container writable layer which is ephemeral.
+- Performance: Named volumes often outperform bind mounts on macOS/Windows due to filesystem sharing; on Linux both are performant.
+- Permissions/ownership: Ensure UID/GID alignment between host and container; use chown or run as matching user. On macOS, Docker Desktop translates permissions; some tools may need extra flags.
+- SELinux/AppArmor: On Linux with SELinux, use :z or :Z for bind mounts to adjust labels; AppArmor profiles may restrict mounts.
+- Backup/restore: Volumes can be backed up via `docker run --rm -v vol:/data -v $PWD:/backup busybox tar -czf /backup/vol.tgz -C /data .` and restored similarly.
+
 ```bash
 # Create volumes
 docker volume create VOLUME_NAME
-docker volume create --driver local VOLUME_NAME
 
 # List volumes
 docker volume ls
-docker volume ls -q
 
-# Inspect volumes
+# Inspect volume details
 docker volume inspect VOLUME_NAME
 
 # Remove volumes
 docker volume rm VOLUME_NAME
-docker volume prune              # Remove unused volumes
+# Remove all unused volumes
+docker volume prune
 
 # Use volumes with containers
+# Named volume mounted at a path
 docker run -v VOLUME_NAME:/path/in/container IMAGE
-docker run --mount source=VOLUME_NAME,target=/path IMAGE
+# Bind mount (host path to container path)
+docker run --mount type=bind,source=$PWD/data,target=/data IMAGE
+# Advanced --mount with options
+docker run --mount source=VOLUME_NAME,target=/path,readonly IMAGE
 ```
 
 ### Network Management
 
+Docker networking basics:
+- Bridge network: The default local, single-host network type. Containers get IPs on a private subnet and can reach each other on that bridge. Host access is via published ports (e.g., -p 8080:80). User-defined bridges also provide built-in DNS so containers can resolve each other by name.
+- Network driver: The implementation backing a network (bridge, host, macvlan, overlay). Bridge is single-host; overlay spans multiple hosts in a swarm/cluster.
+- Subnet: The IP range allocated to a Docker network, defined in CIDR notation (e.g., 172.18.0.0/16). It determines the pool from which container IPs are assigned.
+- CIDR: A way to express IP blocks. /16 provides ~65k addresses (e.g., 172.18.0.1–172.18.255.254); /24 provides 254 usable addresses (e.g., 172.18.0.1–172.18.0.254).
+- Gateway: The default route for containers on the network (often the bridge itself, e.g., 172.18.0.1). You can set it explicitly when creating networks.
+- DNS on user-defined bridges: Docker runs an embedded DNS that maps container names and service aliases to IPs on the same user-defined bridge.
+- IPAM: IP Address Management component in Docker that assigns IPs to containers from the network’s pool.
+- Isolation: User-defined bridges isolate broadcast domains; containers on different bridges cannot reach each other unless connected to both or via routing/NAT.
+
 ```bash
+# Inspect the default bridge network
+docker network inspect bridge | jq '.[0].IPAM, .[0].Containers'
+
 # Create networks
+# A generic network with default driver (bridge on single host)
 docker network create NETWORK_NAME
+# Explicit bridge network on the local host
 docker network create --driver bridge NETWORK_NAME
-docker network create --subnet=172.18.0.0/16 NETWORK_NAME
+# Bridge network with an explicit subnet in CIDR notation (and optional gateway)
+docker network create --driver bridge \
+  --subnet=172.18.0.0/16 \
+  --gateway=172.18.0.1 \
+  NETWORK_NAME
 
-# List networks
-docker network ls
+# Connect/disconnect a container to a network
+docker network connect NETWORK_NAME CONTAINER
+docker network disconnect NETWORK_NAME CONTAINER
 
-# Inspect networks
-docker network inspect NETWORK_NAME
-
-# Connect/Disconnect containers
-docker network connect NETWORK CONTAINER
-docker network disconnect NETWORK CONTAINER
-
-# Remove networks
-docker network rm NETWORK_NAME
-docker network prune             # Remove unused networks
+# Verify container IP allocation and name resolution
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' CONTAINER
+# On user-defined bridges, containers can ping each other by name
+# (replace other-container with the actual name)
+docker exec CONTAINER ping -c2 other-container
 ```
 
 ### System Commands
@@ -295,99 +323,6 @@ COPY --from=builder /app/dist ./dist
 COPY package*.json ./
 RUN npm install --production
 CMD ["node", "dist/server.js"]
-```
-
-## Docker Compose File Structure
-
-```yaml
-version: '3.8'
-
-services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-      args:
-        - NODE_ENV=production
-    image: myapp:latest
-    container_name: web_container
-    restart: always
-    ports:
-      - "8080:80"
-      - "443:443"
-    volumes:
-      - ./src:/app/src
-      - node_modules:/app/node_modules
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgres://db:5432/mydb
-    env_file:
-      - .env
-      - .env.production
-    depends_on:
-      - db
-      - redis
-    networks:
-      - frontend
-      - backend
-    command: npm start
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    deploy:
-      replicas: 3
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 256M
-
-  db:
-    image: postgres:15-alpine
-    container_name: postgres_db
-    restart: unless-stopped
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: mydb
-    networks:
-      - backend
-    ports:
-      - "5432:5432"
-
-  redis:
-    image: redis:7-alpine
-    container_name: redis_cache
-    restart: always
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
-    networks:
-      - backend
-    ports:
-      - "6379:6379"
-
-volumes:
-  postgres_data:
-    driver: local
-  redis_data:
-    driver: local
-  node_modules:
-
-networks:
-  frontend:
-    driver: bridge
-  backend:
-    driver: bridge
-    internal: true
 ```
 
 ## Design Patterns for Kubernetes
@@ -683,12 +618,13 @@ spec:
 
 ### Development Workflow
 
-1. **Local development**: Use Docker Compose for local multi-service setup.
-2. **Hot reload**: Mount source code as volumes for faster development.
-3. **Testing**: Include test stages in multi-stage builds.
-4. **CI/CD integration**: Automate image building and testing in pipelines.
-5. **Registry management**: Use private registries for proprietary images.
-6. **Tagging strategy**: Implement semantic versioning for images.
+1. **Local Kubernetes**: Use kind (Kubernetes in Docker) or minikube to spin up a local cluster.
+2. **kubectl + manifests**: Apply Deployment/Service/Ingress YAMLs directly; keep them in version control.
+3. **Helm charts**: Template and package your Kubernetes configs for repeatable installs and environment overlays.
+4. **Hot reload**: For containerized dev, bind mount source or use Skaffold/ Tilt to auto-rebuild/redeploy to Kubernetes.
+5. **Testing**: Add integration tests against cluster services; use ephemeral namespaces per test run.
+6. **CI/CD integration**: Automate image build, push, and kubectl/Helm deploy steps.
+7. **Registry management**: Use private registries and imagePullSecrets; tag images semantically.
 
 ## Common Use Cases
 
