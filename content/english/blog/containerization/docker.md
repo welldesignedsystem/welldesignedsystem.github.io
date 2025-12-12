@@ -327,7 +327,7 @@ CMD ["node", "dist/server.js"]
 
 ## Design Patterns for Kubernetes
 
-### 1. Single Container Pattern
+### Single Container Pattern
 
 Simple one-to-one mapping between container and pod.
 
@@ -344,7 +344,7 @@ spec:
     - containerPort: 8080
 ```
 
-### 2. Sidecar Pattern
+### Sidecar Pattern
 
 Helper container runs alongside main application container.
 
@@ -371,7 +371,7 @@ spec:
 
 **Use Cases**: Log collection, monitoring agents, service mesh proxies, configuration synchronization.
 
-### 3. Ambassador Pattern
+### Ambassador Pattern
 
 Proxy container that handles external connections for the main container.
 
@@ -394,7 +394,7 @@ spec:
 
 **Use Cases**: Database proxy, API gateway, circuit breaker, rate limiting.
 
-### 4. Adapter Pattern
+### Adapter Pattern
 
 Standardizes output from the main container.
 
@@ -419,7 +419,7 @@ spec:
 
 **Use Cases**: Metrics normalization, log format conversion, monitoring data transformation.
 
-### 5. Init Container Pattern
+### Init Container Pattern
 
 Runs initialization tasks before main containers start.
 
@@ -443,7 +443,7 @@ spec:
 
 **Use Cases**: Database migrations, waiting for dependencies, configuration setup, secret fetching.
 
-### 6. Multi-Container Pod Pattern
+### Multi-Container Pod Pattern
 
 Multiple tightly coupled containers sharing resources.
 
@@ -471,7 +471,7 @@ spec:
 
 **Use Cases**: Web server with content generator, application with cache warmer, streaming data processor.
 
-### 7. Pod Disruption Budget (PDB)
+### Pod Disruption Budget (PDB)
 
 Ensure a minimum number of replicas remain available during voluntary disruptions (node drain, upgrades).
 
@@ -487,7 +487,7 @@ spec:
       app: myapp
 ```
 
-### 8. Horizontal Pod Autoscaler (HPA)
+### Horizontal Pod Autoscaler (HPA)
 
 Automatically scales replicas based on CPU or custom metrics.
 
@@ -512,7 +512,7 @@ spec:
         averageUtilization: 70
 ```
 
-### 9. NetworkPolicy (Default deny + allow to DB)
+### NetworkPolicy (Default deny + allow to DB)
 
 Restrict east-west traffic; start with default-deny and explicitly allow needed flows.
 
@@ -546,7 +546,7 @@ spec:
       port: 5432
 ```
 
-### 10. Affinity / Anti-affinity
+### Affinity / Anti-affinity
 
 Control pod placement to spread replicas and avoid single-node risk.
 
@@ -582,6 +582,7 @@ spec:
                 operator: In
                 values: [zone-a, zone-b]
 ```
+
 
 ## Best Practices
 
