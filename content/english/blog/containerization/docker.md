@@ -2,7 +2,7 @@
 date = '2022-12-12T09:00:00+10:00'
 draft = false
 title = 'Docker'
-tags = ['Python']
+tags = ['docker', 'containerization']
 summary = "Overview of Docker architecture and some design patterns for using Docker container in the perspective of kubernetes."
 +++
 
