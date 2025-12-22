@@ -16,24 +16,24 @@ Thanks for joining us on this journey. Together we’ll learn, document and impr
 
 {{< plantuml >}}
 @startmindmap
-'https://plantuml.com/mindmap-diagram
+skinparam backgroundColor white
+skinparam defaultFontSize 12
 
 caption figure 1
 title My super title
 
 * Autogen
 ** Properties
-*** frameworks
-**** Autogen Current Version 0.75
-***** Complete rewrite of the core
+*** Frameworks
+**** Autogen Current\nVersion 0.75
+***** Complete rewrite\nof the core
 **** AG2
-***** Branched off Autogen
+***** Branched off\nAutogen
 *** Async foundation
 *** Layered design
 **** Core
-***** Offers Event driven programming
+***** Offers Event driven\nprogramming
 **** Agent Chat API
-** frameworks
 
 @endmindmap
 {{< /plantuml >}}
