@@ -33,20 +33,28 @@ summary = "Autogen Patterns"
 - Bench
 
 ## Mindmap
-{{< plantuml >}} 
+
+{{< plantuml >}}
 @startmindmap
 'https://plantuml.com/mindmap-diagram
 
 caption figure 1
-title AutoGen Mindmap
+title My super title
 
-@startmindmap
-*[#Orange] <&flag>AutoGen
-** Introduction
-*** Two Major Frameworks
-**** Autogen 0.7.5 [[https://microsoft.github.io/autogen/stable/index.html]]
-**** AG2 [[http://ag2.ai]]
-** Models Supported
-*** [[https://microsoft.github.io/autogen/stable//reference/python/autogen_ext.models.ollama.html]]
+*[#Orange] Autogen
+** Properties
+*** frameworks
+**** Autogen Current Version 0.75
+***** Complete rewrite of the core
+**** AG2
+***** Branched off Autogen
+*** Async foundation
+*** Layered design
+**** Core
+***** Offers Event driven programming
+**** Agent Chat API
+** frameworks
+
 @endmindmap
-{{< /plantuml >}} 
+{{< /plantuml >}}
+
