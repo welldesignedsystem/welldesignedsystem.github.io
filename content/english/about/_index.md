@@ -14,6 +14,10 @@ We invite participation. If something here helps you, use it—and tell us how y
 
 Thanks for joining us on this journey. Together we’ll learn, document and improve — one step at a time.
 
+{{< plantuml id="eg" >}}
+Alice -> Bob: test
+{{< /plantuml >}}
+
 {{< plantuml >}}
 @startuml
 Bob->Alice: Hello
