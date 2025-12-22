@@ -1,62 +1,18 @@
 <!-- layouts/shortcodes/plantuml.html -->
 {{ $diagram := .Inner | strings.TrimSpace }}
-{{ $id := md5 $diagram }}
-<div id="plantuml-{{ $id }}" style="max-width:100%; display:block; margin:auto;">
-  <p>Loading diagram...</p>
+{{ $encoded := $diagram | base64Encode }}
+{{ $urlsafe := replace (replace (replace $encoded "+" "-") "/" "_") "=" "" }}
+<img 
+  src="https://kroki.io/plantuml/svg/{{ $urlsafe }}"
+  alt="PlantUML diagram"
+  style="max-width:100%; display:block; margin:auto;"
+  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+/>
+<div style="display:none; padding:20px; background:#fff3cd; border:1px solid #ffc107; border-radius:4px;">
+  <p><strong>⚠️ Diagram failed to load</strong></p>
+  <p>The PlantUML service may be temporarily unavailable.</p>
+  <details>
+    <summary>View diagram source</summary>
+    <pre style="background:#f5f5f5; padding:10px; overflow:auto;">{{ $diagram }}</pre>
+  </details>
 </div>
-<script>
-(async function() {
-  const diagram = {{ $diagram | jsonify }};
-  const container = document.getElementById("plantuml-{{ $id }}");
-  
-  try {
-    console.log("Sending to PlantUML proxy...");
-    
-    // Use a CORS proxy
-    const response = await fetch("https://www.plantuml.com/plantuml/proxy?src=https://kroki.io/plantuml/svg", {
-      method: "POST",
-      mode: "cors",
-      body: diagram
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    
-    const svg = await response.text();
-    container.innerHTML = svg;
-    
-  } catch (e) {
-    console.error("Fetch error:", e);
-    // Fallback: generate a URL-based approach
-    container.innerHTML = '<p style="color:orange;">Trying alternative method...</p>';
-    fallbackMethod(diagram, container);
-  }
-})();
-
-function fallbackMethod(diagram, container) {
-  // Create a simple form that submits to PlantUML
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = 'https://www.plantuml.com/plantuml/svg';
-  form.target = 'plantuml-frame-{{ $id }}';
-  form.style.display = 'none';
-  
-  const textarea = document.createElement('textarea');
-  textarea.name = 'text';
-  textarea.value = diagram;
-  form.appendChild(textarea);
-  
-  const iframe = document.createElement('iframe');
-  iframe.name = 'plantuml-frame-{{ $id }}';
-  iframe.style.width = '100%';
-  iframe.style.border = 'none';
-  iframe.style.minHeight = '400px';
-  
-  container.innerHTML = '';
-  container.appendChild(iframe);
-  document.body.appendChild(form);
-  form.submit();
-  form.remove();
-}
-</script>
