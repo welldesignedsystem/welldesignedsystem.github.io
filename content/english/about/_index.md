@@ -19,3 +19,9 @@ Thanks for joining us on this journey. Together we’ll learn, document and impr
 Bob->Alice: Hello
 @enduml
 {{< /plantuml >}}
+
+{{< plantuml >}}
+@startuml
+Alice -> Bob: test
+@enduml
+{{< /plantuml >}}
