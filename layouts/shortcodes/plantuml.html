@@ -1,22 +1,6 @@
-<!-- layouts/shortcodes/plantuml.html -->
-{{ $diagram := .Inner | strings.TrimSpace }}
-{{ $id := md5 $diagram }}
-<div id="plantuml-{{ $id }}"></div>
-<script>
-(async function() {
-  const diagram = {{ $diagram | jsonify }};
-  const container = document.getElementById('plantuml-{{ $id }}');
-  
-  try {
-    const response = await fetch('https://www.plantuml.com/plantuml/svg', {
-      method: 'POST',
-      body: diagram
-    });
-    const svg = await response.text();
-    container.innerHTML = svg;
-  } catch (e) {
-    container.innerHTML = '<p style="color:red;">Error loading diagram</p>';
-    console.error(e);
-  }
-})();
-</script>
+<div class="plantuml-diagram">
+    <textarea class="plantuml-code" style="display:none;">
+    {{ .Inner }}
+    </textarea>
+    <img class="plantuml-image" src="" alt="PlantUML Diagram"/>
+</div>
