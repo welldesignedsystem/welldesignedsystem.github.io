@@ -8,7 +8,7 @@
   const container = document.getElementById('plantuml-{{ $id }}');
   
   try {
-    const response = await fetch('https://kroki.io/plantuml/svg', {
+    const response = await fetch('https://www.plantuml.com/plantuml/svg', {
       method: 'POST',
       body: diagram
     });
