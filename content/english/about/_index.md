@@ -15,25 +15,11 @@ We invite participation. If something here helps you, use it—and tell us how y
 Thanks for joining us on this journey. Together we’ll learn, document and improve — one step at a time.
 
 {{< plantuml >}}
-@startmindmap
-skinparam backgroundColor white
-skinparam defaultFontSize 12
+@startuml
+actor User
+participant Forum
 
-caption figure 1
-title My super title
-
-* Autogen
-** Properties
-*** Frameworks
-**** Autogen Current\nVersion 0.75
-***** Complete rewrite\nof the core
-**** AG2
-***** Branched off\nAutogen
-*** Async foundation
-*** Layered design
-**** Core
-***** Offers Event driven\nprogramming
-**** Agent Chat API
-
-@endmindmap
+User -> Forum: Read notes
+Forum -> User: Share learning
+@enduml
 {{< /plantuml >}}
