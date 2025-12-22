@@ -13,21 +13,3 @@ This site is intentionally informal and iterative — a living notebook that gro
 We invite participation. If something here helps you, use it—and tell us how you adapted it. If something is unclear or incomplete, open an issue, suggest an edit, or reach out. Contributions accelerate everyone's learning and help turn personal notes into shared knowledge.
 
 Thanks for joining us on this journey. Together we’ll learn, document and improve — one step at a time.
-
-{{< plantuml >}}
-@startuml
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
-
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: Another authentication Response
-@enduml
-{{< /plantuml >}}
-
-```plantuml
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
-
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: Another authentication Response
-```
