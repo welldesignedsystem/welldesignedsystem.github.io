@@ -8,7 +8,6 @@
 (function() {
   const diagram = {{ $diagram | jsonify }};
   const container = document.getElementById('plantuml-{{ $id }}');
-  alert(diagram)
   fetch('https://kroki.io/plantuml/svg', {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
@@ -19,7 +18,6 @@
     container.innerHTML = svg;
   })
   .catch(e => {
-    alert(e)
     container.innerHTML = '<p style="color:red;">Failed to load diagram: ' + e.message + '</p>';
   });
 })();
