@@ -15,7 +15,7 @@ summary = "Autogen Patterns"
 #### Apps
 - [Magentic One](https://microsoft.github.io/autogen/stable//user-guide/agentchat-user-guide/magentic-one.html) - Prebuilt application by microsoft
 #### Frameworks
-- Extension
+- [Extension](https://microsoft.github.io/autogen/stable/user-guide/extensions-user-guide/index.html)
 - [Agent Chat](https://microsoft.github.io/autogen/stable/user-guide/agentchat-user-guide/index.html)
   - **Definition** - AgentChat is a high-level API for building multi-agent applications. It is built on top of the autogen-core package. For beginner users, AgentChat is the recommended starting point. For advanced users, autogen-core’s event-driven programming model provides more flexibility and control over the underlying components.
 - [Core](https://microsoft.github.io/autogen/stable/user-guide/core-user-guide/index.html) 
@@ -29,61 +29,11 @@ summary = "Autogen Patterns"
 - **Event-Driven Architecture** - Build event-driven, distributed, scalable, and resilient AI agent systems.
   
 #### Developer Tools
-- Studio
+- [Studio](https://microsoft.github.io/autogen/stable/user-guide/autogenstudio-user-guide/index.html)
+  - no coding
 - Bench
-
-## Mindmap
-
-{{< plantuml >}}
-@startmindmap
-'https://plantuml.com/mindmap-diagram
-
-caption figure 1
-title My super title
-
-*[#Orange] Autogen
-** Properties
-*** frameworks
-**** Autogen Current Version 0.75
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-***** Complete rewrite of the core
-
-**** AG2
-***** Branched off Autogen
-*** Async foundation
-*** Layered design
-**** Core
-***** Offers Event driven programming
-**** Agent Chat API
-** frameworks
-
-@endmindmap
-{{< /plantuml >}}
-
+  - Testing ground
+  - Test AI models e.g. for
+    - performance
+    - parallelism
+    - cost
