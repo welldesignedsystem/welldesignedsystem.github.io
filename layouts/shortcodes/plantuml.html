@@ -1,18 +1,21 @@
 <!-- layouts/shortcodes/plantuml.html -->
 {{ $diagram := .Inner | strings.TrimSpace }}
-{{ $encoded := $diagram | base64Encode }}
-{{ $urlsafe := replace (replace (replace $encoded "+" "-") "/" "_") "=" "" }}
-<img 
-  src="https://kroki.io/plantuml/svg/{{ $urlsafe }}"
-  alt="PlantUML diagram"
-  style="max-width:100%; display:block; margin:auto;"
-  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-/>
-<div style="display:none; padding:20px; background:#fff3cd; border:1px solid #ffc107; border-radius:4px;">
-  <p><strong>⚠️ Diagram failed to load</strong></p>
-  <p>The PlantUML service may be temporarily unavailable.</p>
-  <details>
-    <summary>View diagram source</summary>
-    <pre style="background:#f5f5f5; padding:10px; overflow:auto;">{{ $diagram }}</pre>
-  </details>
+{{ $id := md5 $diagram }}
+<div style="max-width:100%; display:block; margin:auto;">
+  <iframe 
+    name="plantuml-{{ $id }}"
+    style="width:100%; border:none; min-height:400px;"
+    onload="console.log('Diagram loaded')"
+  ></iframe>
 </div>
+<form 
+  method="POST" 
+  action="https://www.plantuml.com/plantuml/svg" 
+  target="plantuml-{{ $id }}"
+  style="display:none;"
+>
+  <textarea name="text">{{ $diagram }}</textarea>
+</form>
+<script>
+  document.querySelector('form[target="plantuml-{{ $id }}"]').submit();
+</script>
