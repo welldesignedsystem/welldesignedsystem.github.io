@@ -15,8 +15,25 @@ We invite participation. If something here helps you, use it—and tell us how y
 Thanks for joining us on this journey. Together we’ll learn, document and improve — one step at a time.
 
 {{< plantuml >}}
-@startuml
-User -> Forum: Read notes
-Forum -> User: Share learning
-@enduml
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+caption figure 1
+title My super title
+
+* Autogen
+** Properties
+*** frameworks
+**** Autogen Current Version 0.75
+***** Complete rewrite of the core
+**** AG2
+***** Branched off Autogen
+*** Async foundation
+*** Layered design
+**** Core
+***** Offers Event driven programming
+**** Agent Chat API
+** frameworks
+
+@endmindmap
 {{< /plantuml >}}
