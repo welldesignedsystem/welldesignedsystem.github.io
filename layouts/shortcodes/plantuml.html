@@ -1,6 +1,6 @@
-{{ $src := .Inner | urlquery }}
+{{ $diagram := .Inner | strings.TrimSpace }}
 <img
-  src="https://www.plantuml.com/plantuml/svg/{{ $src }}"
+  src="https://www.plantuml.com/plantuml/svg/~h{{ $diagram | base64Encode }}"
   alt="PlantUML diagram"
-  loading="lazy"
+  style="max-width:100%; display:block; margin:auto;"
 />
