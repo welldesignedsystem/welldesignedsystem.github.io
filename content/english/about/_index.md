@@ -13,3 +13,5 @@ This site is intentionally informal and iterative — a living notebook that gro
 We invite participation. If something here helps you, use it—and tell us how you adapted it. If something is unclear or incomplete, open an issue, suggest an edit, or reach out. Contributions accelerate everyone's learning and help turn personal notes into shared knowledge.
 
 Thanks for joining us on this journey. Together we’ll learn, document and improve — one step at a time.
+
+![](//www.plantuml.com/plantuml/png/LP11ImGn38Nl_HMv2GFkg222frq74K5nJzxBDEqKfsb9KvVvzxP3KJo5b_UHb-IOHRC4JoRefAuMaPGVnp6jcgI4zJ37C7RtsdZjM0UbPft4HmBhNM64MoLULeJt3N99oB1BfGOu5OaEIGq3d3bMIppcgWQmh0DU8d_jyfU4gJ0Z2NmYvnPnStYutua1fXZIYeB0U65VQxGW2y8S6VkGbxlEFh6cUK5J6VktHKFoHZFOMCZeTiFUVDCRSeKDPkz8zJJ6Fkp3MkGCpzzjCSE-LaWSso-29zUpNNEdHGkSpg_g_udgY6Jw6ty0)
