@@ -13,3 +13,10 @@ This site is intentionally informal and iterative — a living notebook that gro
 We invite participation. If something here helps you, use it—and tell us how you adapted it. If something is unclear or incomplete, open an issue, suggest an edit, or reach out. Contributions accelerate everyone's learning and help turn personal notes into shared knowledge.
 
 Thanks for joining us on this journey. Together we’ll learn, document and improve — one step at a time.
+
+{{< plantuml >}}
+@startuml
+User -> Forum: Read notes
+Forum -> User: Share learning
+@enduml
+{{< /plantuml >}}
