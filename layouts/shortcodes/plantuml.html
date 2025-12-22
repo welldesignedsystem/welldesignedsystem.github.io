@@ -1,15 +1,26 @@
-<!-- layouts/shortcodes/plantuml.html -->
-{{ $diagram := .Inner | strings.TrimSpace }}
-{{ $id := md5 $diagram }}
-{{ $encoded := $diagram | base64Encode }}
-<script>
-  alert(encoded)
-</script>
-<div style="max-width:100%; display:block; margin:auto;">
-  <img 
-    src="https://www.plantuml.com/plantuml/{{ $encoded }}"
-    alt="PlantUML Diagram"
-    style="max-width:100%; height:auto;"
-    onload="console.log('Diagram loaded')"
-  />
-</div>
+// layouts/shortcodes/plantuml.html
+{{ $baseUrl := site.Params.plantuml.baseUrl }}
+{{ $content := .Inner }}
+
+{{ $opts := dict
+  "method" "POST"
+  "body" $content
+  "headers" (dict "Content-Type" "text/plain; charset=utf-8")
+}}
+
+{{ with resources.GetRemote $baseUrl $opts }}
+  {{ $contentType := .MediaType.Type }}
+  {{ if or (eq $contentType "image/svg+xml") (strings.Contains $contentType "svg") }}
+    <div class="plantuml-svg">
+      {{ .Content | safeHTML }}
+    </div>
+  {{ else if or (eq $contentType "image/png") (strings.Contains $contentType "png") }}
+    <div class="plantuml-png">
+      <img src="data:image/png;base64,{{ .Content | base64Encode }}" alt="PlantUML Diagram" />
+    </div>
+  {{ else }}
+    <div class="error">Unexpected content type: {{ $contentType }}</div>
+  {{ end }}
+{{ else }}
+  <div class="error">Failed to fetch PlantUML diagram</div>
+{{ end }}
