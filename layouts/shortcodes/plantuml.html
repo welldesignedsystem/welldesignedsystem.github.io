@@ -1,21 +1,15 @@
 <!-- layouts/shortcodes/plantuml.html -->
 {{ $diagram := .Inner | strings.TrimSpace }}
 {{ $id := md5 $diagram }}
-<div style="max-width:100%; display:block; margin:auto;">
-  <iframe 
-    name="plantuml-{{ $id }}"
-    style="width:100%; border:none; min-height:400px;"
-    onload="console.log('Diagram loaded')"
-  ></iframe>
-</div>
-<form 
-  method="POST" 
-  action="https://www.plantuml.com/plantuml/png" 
-  target="plantuml-{{ $id }}"
-  style="display:none;"
->
-  <textarea name="text">{{ $diagram }}</textarea>
-</form>
+{{ $encoded := $diagram | base64Encode }}
 <script>
-  document.querySelector('form[target="plantuml-{{ $id }}"]').submit();
+  alert(encoded)
 </script>
+<div style="max-width:100%; display:block; margin:auto;">
+  <img 
+    src="https://www.plantuml.com/plantuml/png/~1{{ $encoded }}"
+    alt="PlantUML Diagram"
+    style="max-width:100%; height:auto;"
+    onload="console.log('Diagram loaded')"
+  />
+</div>
