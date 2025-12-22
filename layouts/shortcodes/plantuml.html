@@ -19,6 +19,7 @@
     container.innerHTML = svg;
   })
   .catch(e => {
+    alert(e)
     container.innerHTML = '<p style="color:red;">Failed to load diagram: ' + e.message + '</p>';
   });
 })();
