@@ -1,12 +1,14 @@
 <!-- layouts/shortcodes/plantuml.html -->
 {{ $diagram := .Inner | strings.TrimSpace }}
 {{ $id := md5 $diagram }}
-{{ $encoded := $diagram | base64Encode | urlize }}
+{{ $hex := "" }}
+{{ range $diagram | split "" }}
+  {{ $hex = printf "%s%02x" $hex (. | byte) }}
+{{ end }}
 <div style="max-width:100%; display:block; margin:auto;">
-  <object 
-    data="https://www.plantuml.com/plantuml/svg/~h{{ $diagram | replaceRE `\n` `%0A` | replaceRE ` ` `%20` }}"
-    type="image/svg+xml"
-    style="max-width:100%; height:auto;">
-    <img src="https://via.placeholder.com/400x300?text=Diagram+Loading+Error" alt="PlantUML Diagram"/>
-  </object>
+  <img 
+    src="https://www.plantuml.com/plantuml/svg/~h{{ $hex }}"
+    alt="PlantUML Diagram"
+    style="max-width:100%; height:auto;"
+  />
 </div>
