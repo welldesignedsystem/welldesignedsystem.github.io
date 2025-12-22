@@ -1,14 +1,16 @@
 <!-- layouts/shortcodes/plantuml.html -->
 {{ $diagram := .Inner | strings.TrimSpace }}
 {{ $id := md5 $diagram }}
-{{ $hex := "" }}
-{{ range $diagram | split "" }}
-  {{ $hex = printf "%s%02x" $hex (. | byte) }}
-{{ end }}
-<div style="max-width:100%; display:block; margin:auto;">
-  <img 
-    src="https://www.plantuml.com/plantuml/svg/~h{{ $hex }}"
-    alt="PlantUML Diagram"
-    style="max-width:100%; height:auto;"
-  />
+<div id="plantuml-{{ $id }}" style="max-width:100%; display:block; margin:auto;">
+  <img id="img-{{ $id }}" alt="PlantUML Diagram" style="max-width:100%; height:auto;" />
 </div>
+<script>
+(function() {
+  const diagram = {{ $diagram | jsonify }};
+  const hex = Array.from(diagram)
+    .map(c => c.charCodeAt(0).toString(16).padStart(2, '0'))
+    .join('');
+  document.getElementById('img-{{ $id }}').src = 
+    'https://www.plantuml.com/plantuml/svg/~h' + hex;
+})();
+</script>
