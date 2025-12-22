@@ -1,0 +1,6 @@
+{{ $src := .Inner | urlquery }}
+<img
+  src="https://www.plantuml.com/plantuml/svg/{{ $src }}"
+  alt="PlantUML diagram"
+  loading="lazy"
+/>
