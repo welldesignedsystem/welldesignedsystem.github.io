@@ -1,6 +1,25 @@
+<!-- layouts/shortcodes/plantuml.html -->
 {{ $diagram := .Inner | strings.TrimSpace }}
-<img
-  src="https://kroki.io/plantuml/svg/{{ $diagram | base64Encode }}"
-  alt="PlantUML diagram"
-  style="max-width:100%; display:block; margin:auto;"
-/>
+{{ $id := md5 $diagram }}
+<div id="plantuml-{{ $id }}" style="max-width:100%; display:block; margin:auto;">
+  <p style="text-align:center; color:#999;">Loading diagram...</p>
+</div>
+<script>
+(function() {
+  const diagram = {{ $diagram | jsonify }};
+  const container = document.getElementById('plantuml-{{ $id }}');
+  alert(diagram)
+  fetch('https://kroki.io/plantuml/svg', {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: diagram
+  })
+  .then(r => r.text())
+  .then(svg => {
+    container.innerHTML = svg;
+  })
+  .catch(e => {
+    container.innerHTML = '<p style="color:red;">Failed to load diagram: ' + e.message + '</p>';
+  });
+})();
+</script>
