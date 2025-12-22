@@ -16,10 +16,6 @@ Thanks for joining us on this journey. Together we’ll learn, document and impr
 
 {{< plantuml >}}
 @startuml
-actor User
-participant Forum
-
-User -> Forum: Read notes
-Forum -> User: Share learning
+Bob->Alice: Hello
 @enduml
 {{< /plantuml >}}
