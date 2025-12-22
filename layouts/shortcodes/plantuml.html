@@ -1,6 +1,6 @@
 {{ $diagram := .Inner | strings.TrimSpace }}
 <img
-  src="https://www.plantuml.com/plantuml/svg/~1{{ $diagram | base64Encode }}"
-  alt="PlantUML diagram"
-  style="width:auto; max-width:100%;"
+  src="https://www.plantuml.com/plantuml/svg/~h{{ $diagram | base64Encode | urlquery }}"
+  alt="PlantUML diagram"  
+  style="max-width:100%; display:block; margin:auto;"
 />
