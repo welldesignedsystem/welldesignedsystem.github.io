@@ -12,7 +12,7 @@ summary = "Autogen Patterns"
 ![](../img/autogen_architecture.png)
 
 ## PlantUML
-{{ <plantuml> }}
+```plantuml
 @startuml
 
 ' Base interfaces and abstract classes
@@ -168,4 +168,4 @@ note right of CodeExecutorAgent
 end note
 
 @enduml
-{{ </plantuml>}}
+```
