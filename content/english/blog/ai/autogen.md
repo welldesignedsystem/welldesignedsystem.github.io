@@ -11,8 +11,12 @@ summary = "Autogen Patterns"
 ## Architecture
 ![](../img/autogen_architecture.png)
 
-## PlantUML
-```plantuml
+## Classdiagrams
+![](../img/autogen.png)
+
+<details>
+  <summary>Source</summary>
+  ```plantuml
 @startuml
 
 ' Base interfaces and abstract classes
@@ -169,3 +173,5 @@ end note
 
 @enduml
 ```
+</details>
+
