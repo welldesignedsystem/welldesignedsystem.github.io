@@ -13,5 +13,5 @@ summary = "Autogen Patterns"
 
 ## Class Diagrams
 
-![Class Diagram](https://raw.githubusercontent.com/welldesignedsystem/stunning-spork/main/Agent_Framework.svg)
+![Class Diagram](https://raw.githubusercontent.com/welldesignedsystem/stunning-spork/main/Agent_Framework.png)
 
