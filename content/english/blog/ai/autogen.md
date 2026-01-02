@@ -12,7 +12,8 @@ summary = "Autogen Patterns"
 ![](../img/autogen_architecture.png)
 
 ## Docs
-[Autogen latest](https://microsoft.github.io/autogen/stable//user-guide/core-user-guide/design-patterns/concurrent-agents.html)
+[Docs](https://microsoft.github.io/autogen/stable//user-guide/agentchat-user-guide/selector-group-chat.html)
+[Autogen Design Patterns](https://microsoft.github.io/autogen/stable//user-guide/core-user-guide/design-patterns/concurrent-agents.html)
 
 ## Class Diagrams
 
