@@ -9,13 +9,18 @@ summary = "Autogen Patterns"
 ## Introduction
 
 ## Architecture
-![](../img/autogen_architecture.png)
 
-## Docs
-[Docs](https://microsoft.github.io/autogen/stable//user-guide/agentchat-user-guide/selector-group-chat.html)
-[Autogen Design Patterns](https://microsoft.github.io/autogen/stable//user-guide/core-user-guide/design-patterns/concurrent-agents.html)
+![](../img/autogen_architecture.png)
 
 ## Class Diagrams
 
 ![Class Diagram](https://raw.githubusercontent.com/welldesignedsystem/stunning-spork/main/Agent_Framework.svg)
+
+## References
+
+- [Docs](https://microsoft.github.io/autogen/stable//user-guide/agentchat-user-guide/selector-group-chat.html)
+- [Autogen Design Patterns](https://microsoft.github.io/autogen/stable//user-guide/core-user-guide/design-patterns/concurrent-agents.html)
+- [Sample Code](https://github.com/welldesignedsystem/stunning-spork/blob/main/notebook.ipynb)
+  
+
 
