@@ -102,14 +102,13 @@ following explores histogram creation using:
 - **Pandas** - Quick plotting from DataFrames
 - **NumPy** - Computing histogram data
 
-## 1. Matplotlib
+## Matplotlib
 
 Matplotlib is the most fundamental plotting library in Python and provides fine-grained control over histogram appearance.
 
-### Basic Histogram
-
 
 ```python
+# Basic Histogram with Matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -128,4 +127,327 @@ plt.show()
     
 ![png](../img/blog_3_0.png)
     
+
+
+
+```python
+# Fixed number of bins
+plt.hist(data, bins=20)
+
+# Custom bin edges
+plt.hist(data, bins=[50, 70, 90, 110, 130, 150])
+
+# Automatic bin selection methods
+plt.hist(data, bins='auto')  # Options: 'auto', 'sturges', 'fd', 'scott'
+
+```
+
+
+
+
+    (array([  1.,   3.,   2.,   9.,  13.,  21.,  37.,  72.,  67.,  92., 100.,
+             97., 103., 101., 102.,  68.,  52.,  23.,  20.,  11.,   2.,   4.]),
+     array([ 48.81641296,  53.13805429,  57.45969562,  61.78133694,
+             66.10297827,  70.42461959,  74.74626092,  79.06790225,
+             83.38954357,  87.7111849 ,  92.03282622,  96.35446755,
+            100.67610888, 104.9977502 , 109.31939153, 113.64103285,
+            117.96267418, 122.28431551, 126.60595683, 130.92759816,
+            135.24923948, 139.57088081, 143.89252213]),
+     <BarContainer object of 22 artists>)
+
+
+
+
+    
+![png](../img/blog_4_1.png)
+    
+
+
+### Probability Dentsity and Cumulative Histograms
+
+
+```python
+# Density histogram (probability density)
+plt.hist(data, bins=30, density=True, alpha=0.7)
+
+# Cumulative histogram
+plt.hist(data, bins=30, cumulative=True)
+
+# Step histogram
+plt.hist(data, bins=30, histtype='step', linewidth=2)
+
+# Multiple histograms
+data2 = np.random.normal(110, 20, 1000)
+plt.hist([data, data2], bins=30, label=['Group A', 'Group B'], alpha=0.6)
+plt.legend()
+```
+
+
+
+
+    <matplotlib.legend.Legend at 0x10c0179e0>
+
+
+
+
+    
+![png](../img/blog_6_1.png)
+    
+
+
+## Seaborn
+
+Seaborn provides a higher-level interface with attractive default styles and additional statistical features.
+
+
+```python
+# Basic Histogram with KDE
+import seaborn as sns
+
+# Histogram with Kernel Density Estimate overlay
+sns.histplot(data, bins=30, kde=True)
+plt.title('Seaborn Histogram with KDE')
+plt.show()
+```
+
+
+    
+![png](../img/blog_8_0.png)
+    
+
+
+### Additional Features
+
+
+```python
+# Histogram with rug plot (individual data points)
+sns.histplot(data, bins=30, kde=True)
+sns.rugplot(data, color='red', alpha=0.5)
+
+# Multiple distributions
+sns.histplot(data={'Group A': data, 'Group B': data2}, bins=30, kde=True)
+
+# Using a DataFrame
+import pandas as pd
+df = pd.DataFrame({'values': data, 'category': np.random.choice(['A', 'B'], 1000)})
+sns.histplot(data=df, x='values', hue='category', bins=30, kde=True)
+```
+
+
+
+
+    <Axes: xlabel='values', ylabel='Count'>
+
+
+
+
+    
+![png](../img/blog_10_1.png)
+    
+
+
+
+```python
+# Note: distplot is deprecated in favor of histplot
+sns.displot(data, bins=30, kde=True, height=5, aspect=1.5)
+```
+
+
+
+
+    <seaborn.axisgrid.FacetGrid at 0x10f13ba10>
+
+
+
+
+    
+![png](../img/blog_11_1.png)
+    
+
+
+### Plotly
+
+
+```python
+import plotly.graph_objects as go
+import numpy as np
+
+# Sample data
+data = np.random.randn(1000)
+
+fig = go.Figure(data=[go.Histogram(x=data, nbinsx=30)])
+fig.update_layout(
+    title='Interactive Plotly Histogram',
+    xaxis_title='Value',
+    yaxis_title='Frequency'
+)
+fig.show()
+
+```
+
+
+
+### Overlay Multiple Histograms
+
+
+```python
+import plotly.graph_objects as go
+import numpy as np
+
+fig = go.Figure()
+data = np.random.randn(1000)
+data2 = np.random.randn(1000)
+
+fig.add_trace(go.Histogram(x=data, name='Group A', opacity=0.6))
+fig.add_trace(go.Histogram(x=data2, name='Group B', opacity=0.6))
+fig.update_layout(barmode='overlay')
+fig.show()
+```
+
+
+
+### Pandas
+
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+df = pd.DataFrame({'scores': data})
+
+# Simple histogram
+df['scores'].hist(bins=30)
+plt.show()
+
+# Using plot method
+df['scores'].plot(kind='hist', bins=30, edgecolor='black')
+plt.show()
+
+# Multiple columns
+df_multi = pd.DataFrame({
+    'Group A': data,
+    'Group B': data2
+})
+df_multi.hist(bins=30, alpha=0.6, figsize=(10, 5))
+plt.show()
+```
+
+
+    
+![png](../img/blog_17_0.png)
+    
+
+
+
+    
+![png](../img/blog_17_1.png)
+    
+
+
+
+    
+![png](../img/blog_17_2.png)
+    
+
+
+### Numpy
+
+NumPy doesn't create plots but computes histogram data, which is useful for custom visualizations or analysis.
+
+
+```python
+# Returns histogram values and bin edges
+counts, bin_edges = np.histogram(data, bins=30)
+
+print(f"Bin counts: {counts}")
+print(f"Bin edges: {bin_edges}")
+
+# Create custom plot
+bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+plt.bar(bin_centers, counts, width=bin_edges[1] - bin_edges[0], edgecolor='black')
+plt.show()
+```
+
+    Bin counts: [ 2  3  4  5 16 21 13 39 43 48 55 75 77 71 73 75 65 63 50 51 34 27 32 24
+     10 12  4  2  2  4]
+    Bin edges: [-2.76267982 -2.57031178 -2.37794374 -2.1855757  -1.99320766 -1.80083961
+     -1.60847157 -1.41610353 -1.22373549 -1.03136745 -0.83899941 -0.64663137
+     -0.45426332 -0.26189528 -0.06952724  0.1228408   0.31520884  0.50757688
+      0.69994492  0.89231296  1.08468101  1.27704905  1.46941709  1.66178513
+      1.85415317  2.04652121  2.23888925  2.4312573   2.62362534  2.81599338
+      3.00836142]
+
+
+
+    
+![png](../img/blog_19_1.png)
+    
+
+
+### 2d histogram
+
+
+```python
+import seaborn as sns
+
+x = np.random.normal(0, 1, 1000)
+y = np.random.normal(0, 1, 1000)
+
+# NumPy 2D histogram
+counts, xedges, yedges = np.histogram2d(x, y, bins=30)
+
+# Visualize with Matplotlib
+plt.hist2d(x, y, bins=30, cmap='Blues')
+plt.colorbar(label='Frequency')
+plt.show()
+
+# Seaborn 2D histogram (hexbin)
+sns.histplot(x=x, y=y, bins=30, cmap='viridis')
+plt.show()
+```
+
+
+    
+![png](../img/blog_21_0.png)
+    
+
+
+
+    
+![png](../img/blog_21_1.png)
+    
+
+
+
+## Comparison Table
+
+| Library | Best For | Interactivity | Learning Curve | Customization |
+|---------|----------|---------------|----------------|---------------|
+| Matplotlib | Full control, publication-quality | No | Medium | High |
+| Seaborn | Statistical plots, beautiful defaults | No | Low | Medium |
+| Plotly | Web apps, dashboards, exploration | Yes | Medium | High |
+| Pandas | Quick DataFrame exploration | No | Low | Low |
+| NumPy | Data computation, custom analysis | N/A | Low | N/A |
+
+## Choosing the Right Library
+
+- **Quick exploration**: Use Pandas `.hist()` or Seaborn `histplot()`
+- **Publication/reports**: Use Matplotlib or Seaborn with custom styling
+- **Interactive dashboards**: Use Plotly
+- **Statistical analysis**: Use Seaborn for built-in KDE and statistical features
+- **Custom calculations**: Use NumPy's `histogram()` function
+
+## Best Practices
+
+1. **Choose appropriate bin sizes**: Too few bins lose detail, too many create noise
+2. **Label your axes**: Always include descriptive labels and titles
+3. **Consider your audience**: Use interactive plots for exploration, static for reports
+4. **Normalize when comparing**: Use `density=True` when comparing distributions with different sample sizes
+5. **Show uncertainty**: Consider adding KDE curves or confidence intervals for better interpretation
+
+## Common Bin Selection Methods
+
+- **Sturges' Rule**: `bins = log₂(n) + 1` - Good for normal distributions
+- **Freedman-Diaconis**: Based on IQR - Robust to outliers
+- **Scott's Rule**: Based on standard deviation - Good for normal-like data
+- **Auto**: Matplotlib automatically chooses based on data characteristics
 
