@@ -130,17 +130,17 @@ _Practice: EDA on various datasets, build interactive dashboards, practice "anom
 ---
 
 ## Phase 2: Distance and Density-Based Methods
-**Distance Metrics & Scaling**
+### **Distance Metrics & Scaling**
 - Euclidean, Manhattan, Mahalanobis distance
 - Feature scaling and normalization (critical for production)
 - Curse of dimensionality (why high-dimensional data breaks distance metrics)
 
-**Core Algorithms**
+### **Core Algorithms**
 - k-Nearest Neighbors (kNN) for outlier detection
 - Local Outlier Factor (LOF) - detects local anomalies
 - DBSCAN for clustering-based detection
 
-**Visualization Integration:**
+### **Visualization Integration:**
 - Scatter plots to visualize kNN distances
 - Heatmaps for LOF scores
 - Cluster visualization for DBSCAN results
@@ -150,18 +150,18 @@ _Practice: Multivariate tabular data, customer behavior, transaction records. Al
 ---
 
 ## Phase 3: Ensemble Methods & Isolation Forest
-**Isolation Forest ⭐⭐⭐**
+### **Isolation Forest ⭐⭐⭐**
 - How it works (isolation via random partitioning)
 - Why it's fast and scalable
 - When it excels vs when it fails
 - Hyperparameter tuning
 
-**Ensemble Strategies**
+### **Ensemble Strategies**
 - Feature bagging
 - Score normalization techniques
 - Combining multiple detectors for robustness
 
-**Visualization Integration:**
+### **Visualization Integration:**
 - Anomaly score distributions (histograms)
 - 2D projections colored by anomaly score
 - Feature importance for interpretability
@@ -172,21 +172,21 @@ _Practice: High-dimensional data, fraud detection datasets, log anomalies_
 ---
 
 ## Phase 4: One-Class Classification
-**Core Concepts**
+### **Core Concepts**
 - Novelty detection vs outlier detection vs rare class problems
 - When you have "normal" examples but few/no anomaly examples
 
-**Key Algorithms**
+### **Key Algorithms**
 - One-Class SVM (OC-SVM)
 - Support Vector Data Description (SVDD)
 - When to use vs two-class classification
 
-**Real Applications:**
+### **Real Applications:**
 - Manufacturing quality control (learning from "good" products)
 - Network intrusion (training only on normal traffic)
 - Equipment health monitoring (baseline from healthy operation)
 
-**Visualization Integration:**
+### **Visualization Integration:**
 - Decision boundary visualization
 - Support vector plots
 - Score distributions for normal vs novel data
@@ -196,18 +196,18 @@ _Practice: Imbalanced datasets, cases where anomalies are undefined during train
 ---
 
 ## Phase 5: Dimensionality Reduction & Autoencoders
-**PCA for Anomaly Detection**
+### **PCA for Anomaly Detection**
 - Reconstruction error approach
 - Hotelling's T² and SPE (Q-statistic)
 - Incremental PCA for streaming data ⭐
 
-**Autoencoders ⭐⭐**
+### **Autoencoders ⭐⭐**
 - Vanilla autoencoders
 - Variational autoencoders (VAE)
 - Reconstruction error as anomaly score
 - Choosing architecture and bottleneck size
 
-**Visualization Integration:**
+### **Visualization Integration:**
 - PCA scatter plots (2D/3D projections)
 - Reconstruction error histograms
 - Original vs reconstructed comparisons
@@ -223,28 +223,28 @@ _Practice: Image anomalies, multi-sensor industrial data, network packet inspect
 ---
 
 ## Phase 6: Time Series Anomaly Detection
-**Time Series Fundamentals**
+### **Time Series Fundamentals**
 - Stationarity, trend, seasonality
 - Autocorrelation basics
 - Moving averages and exponential smoothing
 
-**Classical & Statistical Methods**
+### **Classical & Statistical Methods**
 - Control charts: CUSUM, EWMA ⭐⭐
 - Seasonal decomposition (STL)
 - ARIMA-based residual analysis
 
-**Probabilistic Methods **
+### **Probabilistic Methods **
 - Bayesian change point detection
 - Hidden Markov Models (HMM) for state-based anomalies
 - Probabilistic forecasting with uncertainty bounds
 
-**ML Approaches ⭐**
+### **ML Approaches ⭐**
 - LSTM autoencoders
 - Facebook Prophet anomaly detection
 - Matrix Profile (exact motif/discord discovery)
 - Isolation Forest on windowed features
 
-**Visualization Integration:**
+### **Visualization Integration:**
 - Time series plots with anomaly overlays
 - Control charts with control limits
 - Seasonal decomposition plots
@@ -256,35 +256,35 @@ _Practice: Server logs, sensor streams, financial time series, DevOps metrics_
 ---
 
 ## Phase 7: Streaming & Online Detection ⭐⭐
-**Core Streaming Concepts**
+### **Core Streaming Concepts**
 - Sliding window techniques
 - Fixed vs adaptive windows
 - Memory vs accuracy tradeoffs
 
-**Streaming Algorithms**
+### **Streaming Algorithms**
 - Incremental PCA
 - Online Isolation Forest variants
 - Reservoir sampling for large streams
 - Count-Min Sketch for frequency estimation
 
-**Concept Drift Detection ⭐**
+### **Concept Drift Detection ⭐**
 - ADWIN (Adaptive Windowing)
 - DDM (Drift Detection Method)
 - Page-Hinkley test
 - When to retrain models
 
-**Real-Time Scoring**
+### **Real-Time Scoring**
 - Latency requirements
 - Batch scoring vs real-time inference
 - Feature computation in streaming context
 
-**Visualization Integration:**
+### **Visualization Integration:**
 - Real-time dashboards (Grafana, Kibana)
 - Rolling statistics plots
 - Drift detection visualizations
 - Alert timelines
 
-**Applications:**
+### **Applications:**
 - Log monitoring and security
 - IoT sensor networks
 - Real-time fraud detection
@@ -295,30 +295,30 @@ _Practice: Kafka/streaming data, build real-time detection pipeline with live da
 ---
 
 ## Phase 8: Graph-Based Anomaly Detection ⭐
-**Graph Anomaly Types**
+### **Graph Anomaly Types**
 - Node anomalies (unusual entities)
 - Edge anomalies (unusual relationships)
 - Subgraph anomalies (unusual communities)
 
-**Classical Methods**
+### **Classical Methods**
 - Degree-based detection
 - Community detection outliers
 - Ego network features
 - PageRank anomalies
 
-**Graph Neural Networks ⭐**
+### **Graph Neural Networks ⭐**
 - Graph Convolutional Networks (GCN) basics
 - Graph autoencoders
 - Temporal graph networks
 - When deep learning on graphs is worth it
 
-**Visualization Integration:**
+### **Visualization Integration:**
 - Network graphs with anomaly highlighting
 - Degree distribution plots
 - Community structure visualization
 - Temporal graph evolution
 
-**Real Applications:**
+### **Real Applications:**
 - Fraud ring detection (financial networks)
 - Cybersecurity (attack pattern graphs)
 - Social network abuse detection
@@ -328,68 +328,33 @@ _Practice: Transaction networks, social graphs, communication patterns_
 
 ---
 
-## Phase 9: Domain-Specific Applications
-**Choose 1-2 domains to specialize:**
-
-**Fraud Detection ⭐**
-- Feature engineering for transactions
-- Velocity features and aggregations
-- Entity resolution and graph features
-- Real-time scoring under latency constraints
-- Visualization: transaction flow diagrams, geographic heatmaps
-
-**Network Security / Intrusion Detection**
-- Flow-based features
-- Behavioral profiling
-- Sequential pattern mining
-- Alert correlation
-- Visualization: network traffic heatmaps, attack timelines
-
-**Industrial Fault Detection / Predictive Maintenance**
-- Multi-sensor fusion
-- Physics-informed features
-- Remaining useful life (RUL) estimation
-- Root cause analysis workflow
-- Visualization: sensor dashboards, control charts, Pareto charts
-
-**Log Anomaly Detection**
-- Log parsing and template extraction
-- Sequential log patterns
-- DeepLog and variants
-- Alert deduplication
-- Visualization: log volume trends, error rate dashboards
-
-_Practice: Deep dive with real datasets in your chosen domain. Build complete monitoring dashboards._
-
----
-
-## Phase 10: Production & Evaluation
-**Evaluation Without Ground Truth ⭐⭐**
+## Phase 9: Production & Evaluation
+### **Evaluation Without Ground Truth ⭐⭐**
 - Precision at k
 - Volume under surface (VUS)
 - Expert validation workflows
 - A/B testing anomaly systems
 
-**Evaluation With Labels**
+### **Evaluation With Labels**
 - Why accuracy is misleading
 - Precision, Recall, F1
 - ROC-AUC, PR-AUC curves
 - Point-adjust metrics for time series
 
-**Handling Label Uncertainty ⭐**
+### **Handling Label Uncertainty ⭐**
 - Positive-Unlabeled (PU) learning
 - Weak supervision strategies
 - Noisy label handling
 - Human-in-the-loop validation
 - Active learning for labeling efficiency
 
-**Threshold Selection ⭐**
+### **Threshold Selection ⭐**
 - Statistical approaches (percentile, MAD-based)
 - Business-driven thresholds
 - Dynamic thresholds
 - Multi-threshold strategies
 
-**Production Challenges**
+### **Production Challenges**
 - Class imbalance (99.9% normal data)
 - Alert fatigue management
 - Explainability and debugging false positives
@@ -397,13 +362,13 @@ _Practice: Deep dive with real datasets in your chosen domain. Build complete mo
 - Retraining strategies
 - Feature drift detection
 
-**Deployment Patterns**
+### **Deployment Patterns**
 - Batch vs streaming architectures
 - Lambda architecture
 - Feature stores
 - Model serving infrastructure
 
-**Production Dashboards ⭐⭐**
+### **Production Dashboards ⭐⭐**
 - Monitoring system health
 - Anomaly rate trends
 - False positive/negative tracking
@@ -415,7 +380,7 @@ _Practice: End-to-end production pipeline with monitoring dashboards and alertin
 ---
 
 ## Key Libraries & Tools to Master
-**Python Ecosystem:**
+### **Python Ecosystem:**
 - PyOD - 40+ algorithms, unified API
 - scikit-learn - IsolationForest, LOF, OneClassSVM
 - stumpy - Matrix Profile for time series
@@ -424,32 +389,32 @@ _Practice: End-to-end production pipeline with monitoring dashboards and alertin
 - Facebook Prophet - Time series forecasting/anomalies
 - PyTorch Geometric - Graph neural networks
 
-**Visualization Libraries ⭐⭐**
+### **Visualization Libraries ⭐⭐**
 - Matplotlib/Seaborn - static plots, histograms, box plots
 - Plotly ⭐ - interactive plots and dashboards
 - Altair - declarative visualization
 - hvPlot - easy interactive plots from pandas
 
-**Production Dashboards:**
+### **Production Dashboards:**
 - Grafana ⭐⭐ - time series monitoring (industry standard)
 - Kibana - log visualization
 - Streamlit - rapid ML app prototyping
 - Plotly Dash - production-grade dashboards
 
-**Production Tools:**
+### **Production Tools:**
 - MLflow - experiment tracking
 - Docker - containerization
 - Apache Kafka - streaming
 - FastAPI - model serving
 
-**Notebooks:**
+### **Notebooks:**
 - Jupyter - interactive exploration
 - Observable - web-based viz notebooks
 
 ---
 
 ## Visual Detection Workflow (Core Practice)
-**Standard Workflow:**
+### **Standard Workflow:**
 - Histogram/box plot → identify distribution type
 - Time series plot → spot temporal patterns
 - Scatter/pair plots → find multivariate outliers
