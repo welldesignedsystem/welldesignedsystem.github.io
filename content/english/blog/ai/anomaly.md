@@ -1,4 +1,4 @@
- +++
++++
 date = '2025-12-22T12:44:47+10:00'
 draft = false
 title = 'Anomaly Detection'
@@ -78,7 +78,7 @@ The below is used for univariate outlier detection and spread measurement when d
   - Assumes roughly normal distribution
 - **Formula**: 
 
-![std_dev.png](std_dev.png)
+![std_dev.png](../img/std_dev.png)
 
 
 ### Median Absolute Deviation (MAD) ⭐
@@ -93,7 +93,7 @@ The below is used for univariate outlier detection and spread measurement when d
 
 - **Formula**: 
 
-![mad.png](mad.png)
+![mad.png](../img/mad.png)
 
 
 ### Interquartile Range (IQR)
@@ -113,7 +113,7 @@ The below is used for univariate outlier detection and spread measurement when d
 - **Don't use when**: Outliers present (use Modified Z-score), skewed data, small samples
 - **Formula**
 
-![img.png](z.png)
+![img.png](../img/z.png)
 
 ### Modified Z-Score
 - **What:** Z-score using median and MAD instead of mean and SD
@@ -121,7 +121,7 @@ The below is used for univariate outlier detection and spread measurement when d
 - **Don't use when:** Clean normal data, classical Z-score works fine
 - **Forumla**
 
-![modified_z.png](modified_z.png)
+![modified_z.png](../img/modified_z.png)
 
 ---
 
