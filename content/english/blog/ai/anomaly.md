@@ -77,16 +77,15 @@ The below is used for univariate outlier detection and spread measurement when d
 - **Use when**: Normal data, standardizing features, detecting outliers in clean data (|z| > 3)
 - **Don't use when**: Outliers present (use Modified Z-score), skewed data, small samples
 - **Formula**
-
-![img.png](../img/z.png)
+- ![img.png](../img/z.png)
 
 ### Modified Z-Score
 - **What:** Z-score using median and MAD instead of mean and SD
 - **Use when:** Outliers contaminate mean/SD, need robust standardization
 - **Don't use when:** Clean normal data, classical Z-score works fine
 - **Forumla**
+- ![modified_z.png](../img/modified_z.png)
 
-![modified_z.png](../img/modified_z.png)
 ---
 
 ## Univariate Visualization**
