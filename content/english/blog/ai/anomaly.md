@@ -98,14 +98,14 @@ The below is used for univariate outlier detection and spread measurement when d
 
 ### **Multivariate Visualization**
 - [Scatter plots & pair plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/scatter_n_pair.ipynb) ⭐ - bivariate outliers
-- Parallel coordinates - high-dimensional patterns
-- Heatmaps & correlation matrices - relationship anomalies
-- Andrews curves - multivariate data as curves
+- [Parallel coordinates](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/parallel.ipynb)  - high-dimensional patterns
+- [Heatmaps & correlation matrices](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/heatmap_n_correlation_mat.ipynb) - relationship anomalies
+- [Andrews curves](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/andrews.ipynb) - multivariate data as curves
 
 ### **Distribution Comparison**
-- Empirical CDF plots - compare distributions
-- Kernel Density Estimation (KDE) ⭐ - smooth distribution view
-- Lag plots - time series autocorrelation patterns
+- [Empirical CDF plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/empherical_cdf.ipynb)  - compare distributions
+- [Kernel Density Estimation (KDE)](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/kde.ipynb) ⭐ - smooth distribution view
+- [Lag plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/lag.ipynb) - time series autocorrelation patterns
 
 ### **Advanced Visual Techniques**
 - Control charts ⭐⭐ (Shewhart, CUSUM, EWMA)
@@ -117,8 +117,8 @@ The below is used for univariate outlier detection and spread measurement when d
 - Residual plots - model-based anomaly visualization
 
 ### **Dimensionality Reduction for Visualization**
-- PCA projection (2D/3D) - visualize high-dimensional outliers
-- UMAP ⭐ - preserve local structure, great for clusters
+- [PCA projection (2D/3D)](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/pca.ipynb)  - visualize high-dimensional outliers
+- [UMAP](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/umap.ipynb) ⭐ - preserve local structure, great for clusters
 - t-SNE - good for exploration (not detection)
 
 ### **Interactive Dashboards ⭐⭐**
