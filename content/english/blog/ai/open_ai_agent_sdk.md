@@ -129,3 +129,6 @@ These are some of the design patterns commonly used in building AI agents:
 
 ## Others
 - [Unit Testing](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L780-L808)
+
+## Reference
+- [Building Agents with OpenAI Agents SDK](https://documentcloud.adobe.com/gsuiteintegration/index.html?state=%7B%22ids%22%3A%5B%221vAHNByhoO5ba67nNOPaPhWfpkInnaq1u%22%5D%2C%22action%22%3A%22open%22%2C%22userId%22%3A%22110268792712000988482%22%2C%22resourceKeys%22%3A%7B%7D%7D)
