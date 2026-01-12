@@ -102,7 +102,7 @@ following explores histogram creation using:
 - **Pandas** - Quick plotting from DataFrames
 - **NumPy** - Computing histogram data
 
-## Matplotlib
+#### Matplotlib
 
 Matplotlib is the most fundamental plotting library in Python and provides fine-grained control over histogram appearance.
 
@@ -163,7 +163,7 @@ plt.hist(data, bins='auto')  # Options: 'auto', 'sturges', 'fd', 'scott'
     
 
 
-### Probability Dentsity and Cumulative Histograms
+#### Probability Dentsity and Cumulative Histograms
 
 
 ```python
@@ -195,7 +195,7 @@ plt.legend()
     
 
 
-## Seaborn
+#### Seaborn
 
 Seaborn provides a higher-level interface with attractive default styles and additional statistical features.
 
@@ -215,8 +215,6 @@ plt.show()
 ![png](../img/blog_8_0.png)
     
 
-
-### Additional Features
 
 
 ```python
@@ -242,7 +240,7 @@ sns.histplot(data=df, x='values', hue='category', bins=30, kde=True)
 
 
     
-![png](../img/blog_10_1.png)
+![png](../img/blog_9_1.png)
     
 
 
@@ -261,11 +259,11 @@ sns.displot(data, bins=30, kde=True, height=5, aspect=1.5)
 
 
     
-![png](../img/blog_11_1.png)
+![png](../img/blog_10_1.png)
     
 
 
-### Plotly
+#### Plotly
 
 
 ```python
@@ -287,7 +285,7 @@ fig.show()
 
 
 
-### Overlay Multiple Histograms
+#### Overlay Multiple Histograms
 
 
 ```python
@@ -306,7 +304,7 @@ fig.show()
 
 
 
-### Pandas
+#### Pandas
 
 
 ```python
@@ -333,23 +331,23 @@ plt.show()
 
 
     
-![png](../img/blog_17_0.png)
+![png](../img/blog_16_0.png)
     
 
 
 
     
-![png](../img/blog_17_1.png)
+![png](../img/blog_16_1.png)
     
 
 
 
     
-![png](../img/blog_17_2.png)
+![png](../img/blog_16_2.png)
     
 
 
-### Numpy
+#### Numpy
 
 NumPy doesn't create plots but computes histogram data, which is useful for custom visualizations or analysis.
 
@@ -379,11 +377,11 @@ plt.show()
 
 
     
-![png](../img/blog_19_1.png)
+![png](../img/blog_18_1.png)
     
 
 
-### 2d histogram
+#### 2d histogram
 
 
 ```python
@@ -407,18 +405,18 @@ plt.show()
 
 
     
-![png](../img/blog_21_0.png)
+![png](../img/blog_20_0.png)
     
 
 
 
     
-![png](../img/blog_21_1.png)
+![png](../img/blog_20_1.png)
     
 
 
 
-## Comparison Table
+### Comparison Table
 
 | Library | Best For | Interactivity | Learning Curve | Customization |
 |---------|----------|---------------|----------------|---------------|
@@ -428,7 +426,7 @@ plt.show()
 | Pandas | Quick DataFrame exploration | No | Low | Low |
 | NumPy | Data computation, custom analysis | N/A | Low | N/A |
 
-## Choosing the Right Library
+### Choosing the Right Library
 
 - **Quick exploration**: Use Pandas `.hist()` or Seaborn `histplot()`
 - **Publication/reports**: Use Matplotlib or Seaborn with custom styling
@@ -436,7 +434,7 @@ plt.show()
 - **Statistical analysis**: Use Seaborn for built-in KDE and statistical features
 - **Custom calculations**: Use NumPy's `histogram()` function
 
-## Best Practices
+### Best Practices
 
 1. **Choose appropriate bin sizes**: Too few bins lose detail, too many create noise
 2. **Label your axes**: Always include descriptive labels and titles
@@ -444,7 +442,7 @@ plt.show()
 4. **Normalize when comparing**: Use `density=True` when comparing distributions with different sample sizes
 5. **Show uncertainty**: Consider adding KDE curves or confidence intervals for better interpretation
 
-## Common Bin Selection Methods
+### Common Bin Selection Methods
 
 - **Sturges' Rule**: `bins = log₂(n) + 1` - Good for normal distributions
 - **Freedman-Diaconis**: Based on IQR - Robust to outliers
