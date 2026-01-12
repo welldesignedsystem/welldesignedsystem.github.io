@@ -131,10 +131,11 @@ plt.show()
 
 
 ```python
-# Fixed number of bins
+data = np.random.normal(100, 15, 1000)
+# Fixed number of bins - Divides the data range into exactly 20 equal-width bins
 plt.hist(data, bins=20)
 
-# Custom bin edges
+# Custom bin edges -  Custom bin edges (list/array)
 plt.hist(data, bins=[50, 70, 90, 110, 130, 150])
 
 # Automatic bin selection methods
@@ -143,18 +144,20 @@ plt.hist(data, bins='auto')  # Options: 'auto', 'sturges', 'fd', 'scott'
 ```
 
 
+```
 
-
-    (array([  1.,   3.,   2.,   9.,  13.,  21.,  37.,  72.,  67.,  92., 100.,
-             97., 103., 101., 102.,  68.,  52.,  23.,  20.,  11.,   2.,   4.]),
-     array([ 48.81641296,  53.13805429,  57.45969562,  61.78133694,
-             66.10297827,  70.42461959,  74.74626092,  79.06790225,
-             83.38954357,  87.7111849 ,  92.03282622,  96.35446755,
-            100.67610888, 104.9977502 , 109.31939153, 113.64103285,
-            117.96267418, 122.28431551, 126.60595683, 130.92759816,
-            135.24923948, 139.57088081, 143.89252213]),
-     <BarContainer object of 22 artists>)
-
+    (array([  1.,   7.,   2.,   6.,  10.,  26.,  31.,  53.,  58.,  65.,  88.,
+             98.,  93., 107.,  99.,  70.,  68.,  45.,  31.,  14.,   9.,   9.,
+              5.,   3.,   1.,   1.]),
+     array([ 51.50394014,  55.30463748,  59.10533482,  62.90603217,
+             66.70672951,  70.50742685,  74.30812419,  78.10882154,
+             81.90951888,  85.71021622,  89.51091356,  93.3116109 ,
+             97.11230825, 100.91300559, 104.71370293, 108.51440027,
+            112.31509762, 116.11579496, 119.9164923 , 123.71718964,
+            127.51788699, 131.31858433, 135.11928167, 138.91997901,
+            142.72067636, 146.5213737 , 150.32207104]),
+     <BarContainer object of 26 artists>)
+```
 
 
 
@@ -185,8 +188,9 @@ plt.legend()
 
 
 
-    <matplotlib.legend.Legend at 0x10c0179e0>
-
+```    
+<matplotlib.legend.Legend at 0x10c0179e0>
+```
 
 
 
@@ -234,8 +238,8 @@ sns.histplot(data=df, x='values', hue='category', bins=30, kde=True)
 
 
 
-    <Axes: xlabel='values', ylabel='Count'>
-
+```    <Axes: xlabel='values', ylabel='Count'>
+```
 
 
 
@@ -253,8 +257,8 @@ sns.displot(data, bins=30, kde=True, height=5, aspect=1.5)
 
 
 
-    <seaborn.axisgrid.FacetGrid at 0x10f13ba10>
-
+```    <seaborn.axisgrid.FacetGrid at 0x10f13ba10>
+```
 
 
 
@@ -364,7 +368,7 @@ bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
 plt.bar(bin_centers, counts, width=bin_edges[1] - bin_edges[0], edgecolor='black')
 plt.show()
 ```
-
+```
     Bin counts: [ 2  3  4  5 16 21 13 39 43 48 55 75 77 71 73 75 65 63 50 51 34 27 32 24
      10 12  4  2  2  4]
     Bin edges: [-2.76267982 -2.57031178 -2.37794374 -2.1855757  -1.99320766 -1.80083961
@@ -374,7 +378,7 @@ plt.show()
       1.85415317  2.04652121  2.23888925  2.4312573   2.62362534  2.81599338
       3.00836142]
 
-
+```
 
     
 ![png](../img/blog_18_1.png)
