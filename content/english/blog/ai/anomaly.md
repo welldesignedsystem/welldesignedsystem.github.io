@@ -140,17 +140,12 @@ _Practice: EDA on various datasets, build interactive dashboards, practice "anom
 - [Local Outlier Factor (LOF)](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/knn_lof.ipynb) - detects local anomalies
 - [DBSCAN](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/dbscan.ipynb) for clustering-based detection
 
-### **Visualization Integration:**
-- Scatter plots to visualize kNN distances
-- Heatmaps for LOF scores
-- Cluster visualization for DBSCAN results
-
 _Practice: Multivariate tabular data, customer behavior, transaction records. Always visualize results._
 
 ---
 
 ## Phase 3: Ensemble Methods & Isolation Forest
-### **Isolation Forest ⭐⭐⭐**
+### **[Isolation Forest](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/isolation.ipynb) ⭐⭐⭐**
 - How it works (isolation via random partitioning)
 - Why it's fast and scalable
 - When it excels vs when it fails
