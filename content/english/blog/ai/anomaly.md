@@ -136,9 +136,9 @@ _Practice: EDA on various datasets, build interactive dashboards, practice "anom
 - Curse of dimensionality (why high-dimensional data breaks distance metrics)
 
 ### **Core Algorithms**
-- k-Nearest Neighbors (kNN) for outlier detection
-- Local Outlier Factor (LOF) - detects local anomalies
-- DBSCAN for clustering-based detection
+- [k-Nearest Neighbors (kNN)](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/knn_lof.ipynb) for outlier detection
+- [Local Outlier Factor (LOF)](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/knn_lof.ipynb) - detects local anomalies
+- [DBSCAN](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/dbscan.ipynb) for clustering-based detection
 
 ### **Visualization Integration:**
 - Scatter plots to visualize kNN distances
