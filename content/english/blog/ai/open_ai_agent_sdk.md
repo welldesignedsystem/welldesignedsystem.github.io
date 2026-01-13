@@ -131,5 +131,5 @@ These are some of the design patterns commonly used in building AI agents:
 - [Unit Testing](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L780-L808)
 
 ## Reference
-- <img width="142" height="162" alt="image" src="https://github.com/user-attachments/assets/9f2af9c3-0676-4136-811d-d43c01aef9b9" />
 - [Building Agents with OpenAI Agents SDK](https://documentcloud.adobe.com/gsuiteintegration/index.html?state=%7B%22ids%22%3A%5B%221vAHNByhoO5ba67nNOPaPhWfpkInnaq1u%22%5D%2C%22action%22%3A%22open%22%2C%22userId%22%3A%22110268792712000988482%22%2C%22resourceKeys%22%3A%7B%7D%7D)
+- [Ed-Donner](https://github.com/ed-donner/agents/tree/main/2_openai)
