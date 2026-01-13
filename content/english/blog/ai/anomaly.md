@@ -151,15 +151,10 @@ _Practice: Multivariate tabular data, customer behavior, transaction records. Al
 - When it excels vs when it fails
 - Hyperparameter tuning
 
-### **Ensemble Strategies**
+### **[Ensemble Strategies](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/ensemble.ipynb)**
 - Feature bagging
 - Score normalization techniques
 - Combining multiple detectors for robustness
-
-### **Visualization Integration:**
-- Anomaly score distributions (histograms)
-- 2D projections colored by anomaly score
-- Feature importance for interpretability
 
 _Why This Matters: Isolation Forest is the most deployed tree-based anomaly detector in industry. Used by AWS, Azure, and countless companies._
 _Practice: High-dimensional data, fraud detection datasets, log anomalies_
