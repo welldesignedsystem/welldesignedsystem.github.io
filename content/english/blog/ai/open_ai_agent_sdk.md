@@ -3,12 +3,11 @@ date = '2026-01-01T12:44:47+10:00'
 draft = false
 title = 'OpenAI Agent SDK'
 tags = ['OpenAI', 'Agents', 'Design Patterns', 'AI']
-summary = "Here we explore agentic systems and design patterns using the OpenAI Agents SDK."
+summary = "OpenAI Agents SDK Notes."
 +++
 
 ## Introduction
-Here we explore the Design patterns and how they are implemented using the OpenAI Agents SDK.
-Before diving into the design patterns, let's first understand the fundamental concepts of AI agents and the role of LiteLLM in building these systems.
+Notes for revising OpenAI Agents SDK.
 
 ## Fundamentals
 ### AI Agent
@@ -23,13 +22,13 @@ AI Agent is an intelligent system that has the ability to perceive its environme
 - Memory: The ability of the agent to retain and recall information from past interactions, allowing it to learn and adapt over time.
 
 ### Use of LiteLLM
-- the SDK is designed for OpenAI models primarily and LiteLLM is an extension for multi-provider support.
+- SDK is designed primarily for OpenAI models and LiteLLM is an extension for multi-provider support.
 - LiteLLM can be used as a middleware to connect to various LLM providers with a consistent API.
 - LiteLLM also gives additional benefits like cost tracking, usage monitoring, automatic fail-over between providers, and self-hosted options for privacy and control.
 - LiteLLM is a lightweight library designed to facilitate the development and deployment of AI agents. It provides a simple and efficient interface for integrating various models, tools, and memory mechanisms into agentic systems. LiteLLM supports modular design, allowing developers to easily swap out components and experiment with different configurations. This flexibility makes it an ideal choice for building custom AI agents tailored to specific applications and domains.
 - refer to [LiteLLM blog post](./litellm.md) for more details.
 
-## Core Primitives of OpenAIAgentSDK
+##  Core Primitives/Terms
 ### Agent
 Agent is an autonomous entity that perceives its environment, makes decisions and takes actions to achieve specific goals. Agents can be designed to operate in various domains, such as virtual environments, robotics, or software applications. They can utilize different models, tools, and memory mechanisms to enhance their capabilities and adapt to changing circumstances.
 ### Tools
@@ -78,7 +77,7 @@ Types of Agent Tools:
   - stop_on_first_tool: the agent stops after the first tool call and returns the tool output as the final answer
   - StopAtTools(stop_at_tool_names=["issue_refund"]): the agent stops after calling any of the specified tools
 
-## Memory & Knowledge Patterns
+## Memory & Knowledge
 - [Short Term Memory](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L465-L486)
 - [Long Term Memory](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L489-L505)
 - Training Knowledge
@@ -91,7 +90,7 @@ Types of Agent Tools:
     - Store in Vector DB
     - Retrieval
 
-## Chat Conversation Patterns
+## Chat Conversations
 - [Conversation management with Session](https://github.com/welldesignedsystem/crispy-meme/blob/main/src/basics.py#L467-L505)
 - large converstion threads (based on subject for example)
 - Sliding message window 
@@ -99,7 +98,7 @@ Types of Agent Tools:
 - message Summarization
 
 ## Agentic AI Design Patterns
-These are some of the design patterns commonly used in building AI agents:
+These are some of the design patterns that can be implemented easily with OpenAIAgentSDK:
 ## Common Agentic Patterns
 - CoT (Chain of Thought) Prompting: This pattern involves breaking down complex tasks into smaller, manageable steps. The agent is guided through a series of prompts that encourage it to think through the problem step by step, leading to more accurate and coherent responses.
 - ReACT (Reasoning and Acting) Pattern: This pattern combines reasoning and action in a loop. The agent first reasons about the task at hand, then takes an action based on its reasoning, and finally evaluates the outcome of that action. This iterative process allows the agent to refine its approach and improve performance over time.
