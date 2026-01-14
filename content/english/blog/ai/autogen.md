@@ -1,5 +1,5 @@
 +++
-date = '2025-12-22T12:44:47+10:00'
+date = '2026-01-01T12:44:47+10:00'
 draft = false
 title = 'Autogen 0.75'
 tags = ['Autogen', 'Agnetic AI']
