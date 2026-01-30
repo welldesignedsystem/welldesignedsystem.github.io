@@ -12,5 +12,3 @@ Learning together means holding two things at once: curiosity and care. We ask q
 This site is intentionally informal and iterative — a living notebook that grows with every experiment. Entries are written for humans who want clear explanations, real examples and honest reflection. We prefer substance over polish: clear thinking and reproducible notes come first; shiny presentation comes later.
 We invite participation. If something here helps you, use it—and tell us how you adapted it. If something is unclear or incomplete, open an issue, suggest an edit, or reach out. Contributions accelerate everyone's learning and help turn personal notes into shared knowledge.
 
-Thanks for joining us on this journey. Together we’ll learn, document and improve — one step at a time.
-
