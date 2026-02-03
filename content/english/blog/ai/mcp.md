@@ -10,6 +10,7 @@ summary = "Model Context Protocol - Notes, Best Practices, Design Patterns."
 
 ## Class Diagram Original
 ![Class diagram](https://raw.githubusercontent.com/welldesignedsystem/silver-lamp/refs/heads/main/MCP_Original.svg)
+
 ## References
 1. [![Learn model context protocol with python](../img/learn_model_context_protocol_with_python_book.png)](https://drive.google.com/file/d/1DvwJ7qGYjk-diFtssDM7GEjlaTbYUjqP/view?usp=drive_link)
     * [Source](https://github.com/PacktPublishing/Learn-Model-Context-Protocol-with-Python/tree/main)
