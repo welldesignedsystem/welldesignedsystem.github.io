@@ -1,11 +1,142 @@
 +++
 date = '2023-01-01T12:44:47+10:00'
 draft = false
-title = 'Youtube System Design'
-tags = ['Youtube', 'Interview']
+title = 'Practising System Design'
+tags = ['Youtube', 'Interview', 'System Design', 'Microservices', 'DDD', 'Architecture']
+summary = 'Practical approach to System Design interviews, followed by a deep-dive into designing a scalable video platform like Youtube.'
 +++
 
-The goal is to demonstrate a practical, modern approach to building and scaling a global video platform, suitable for system design interviews.
+The goal is to demonstrate a practical, modern approach to System Design. 
+After introducing the questions we are going to be building and scaling a global video platform, suitable for system design interviews.
+
+## System Design interview questions
+
+1. URL Shortening Service (e.g., bit.ly)
+   - Goal: Generate short, unique aliases for long URLs and redirect with high availability.
+   - Considerations: ID generation (base62, hash, collision handling), data model, read-heavy workload, caching, analytics, expiration, custom aliases, rate limiting, and analytics storage.
+
+2. Web Cache Design / CDN
+   - Goal: Cache static or semi-static content near users to reduce latency and origin load.
+   - Considerations: Cache keys, TTLs, invalidation, cache coherency, origin failover, cache warming, CDN vs edge compute, cache hierarchy (L1-L4).
+
+3. URL Autocomplete / Search Autocomplete
+   - Goal: Provide fast prefix-based suggestions as users type.
+   - Considerations: Data structures (tries, prefix trees), ranking (popularity, recency), sharding, caching, latency (<50–200ms), and online updates.
+
+4. Translation Service (e.g., Google Translate)
+   - Goal: Translate text between languages with low latency and high throughput.
+   - Considerations: Model serving (batch vs online), caching common translations, model size and sharding, fallback/localization, quality metrics, and privacy for user text.
+
+5. Parking Lot Design (physical sensors + app)
+   - Goal: Track available spots, show real-time availability, and route users.
+   - Considerations: Real-time telemetry ingestion, sensor reliability, geospatial indexing, aggregation, offline handling, and edge vs cloud processing.
+
+6. Online Coding Judge (e.g., LeetCode)
+   - Goal: Accept code submissions, run in isolated sandboxes, score and return results.
+   - Considerations: Worker pool isolation (containers), sandboxing, queuing/backpressure, timeouts & resource limits, scaling runners, and plagiarism detection.
+
+7. Distributed DB (Cassandra-like)
+   - Goal: Provide a highly available, partition-tolerant key-value store at large scale.
+   - Considerations: Partitioning strategy, replication factor, consistency levels (QUORUM/ONE), hinted handoff, anti-entropy repair, compaction, and monitoring.
+
+8. Cloud Storage (Google Drive / Dropbox)
+   - Goal: Store user files reliably with sync, sharing, and versioning.
+   - Considerations: Object storage backend, metadata DB, deduplication, chunking & upload API, conflict resolution, sync clients, ACLs and encryption.
+
+9. Social Network Feed (e.g., Facebook/Instagram)
+   - Goal: Deliver personalized news-feed to users with low read latency.
+   - Considerations: Fan-out vs fan-in, precompute vs on-the-fly aggregation, ranking signals, cache invalidation, storage for timelines, and anti-spam moderation.
+
+10. Messaging System / Chat (e.g., WhatsApp)
+    - Goal: Deliver messages (1:1 and group) reliably and quickly.
+    - Considerations: Message ordering, delivery semantics (at-least-once, at-most-once), message queues, offline delivery, media handling, presence, and encryption.
+
+11. Real-time Notifications / Push System
+    - Goal: Push timely notifications to users across devices.
+    - Considerations: Fan-out efficiency, TTL, device tokens, push providers (APNs/FCM), deduplication, user preferences, and rate limiting.
+
+12. Matchmaking System (e.g., Tinder)
+    - Goal: Match users based on preferences and signals.
+    - Considerations: Geospatial queries, scoring/ranking, near-real-time matching, fairness, A/B experimentation, and scaling candidate generation.
+
+13. Photo/Image Hosting & Thumbnailing
+    - Goal: Store images and generate thumbnails/variants for different devices.
+    - Considerations: On-upload processing pipeline, background jobs, content-addressable storage, CDN, responsive images, and cost for stored variants.
+
+14. Video Streaming Service (HLS/DASH)
+    - Goal: Deliver adaptive bitrate streaming to viewers worldwide.
+    - Considerations: Chunking/segmenting, CDN integration, ABR algorithms, origin scaling, transcoding pipeline, and DRM for protected content.
+
+15. Recommendation System (collaborative/filtering/ML)
+    - Goal: Suggest relevant items (videos, products, friends) to users.
+    - Considerations: Offline model training, online feature store, latency constraints, A/B testing, cold-start, and fairness/bias mitigation.
+
+16. Search Engine (web or site search)
+    - Goal: Index documents and serve ranked search results quickly.
+    - Considerations: Crawling/indexing pipeline, inverted index, sharding, ranking signals, relevance tuning, caching, and near-real-time updates.
+
+17. Ad Serving Platform
+    - Goal: Serve targeted ads with real-time bidding and tracking.
+    - Considerations: Low-latency auctions, targeting and segmentation, frequency capping, billing/measurement, fraud detection, and privacy controls.
+
+18. Rate Limiter / Quota Service
+    - Goal: Enforce request quotas or rate limits per user/API key.
+    - Considerations: Token bucket vs leaky bucket, distributed counters, eventual consistency, client-side hints, and throttling strategies.
+
+19. Event Streaming / Analytics Pipeline (e.g., Kafka + Flink)
+    - Goal: Ingest and process high-volume event streams for metrics and analytics.
+    - Considerations: Ordering, partitioning, backpressure, exactly-once vs at-least-once processing, storage retention, and windowing.
+
+20. Metrics & Monitoring System
+    - Goal: Collect, store, and alert on system metrics and logs.
+    - Considerations: Cardinality control, retention, alerting thresholds, visualization, tracing correlations, and storage cost trade-offs.
+
+21. Payment Processing System
+    - Goal: Authorize and settle user payments securely.
+    - Considerations: PCI compliance, idempotency, retries, fraud detection, reconciliation, multi-currency, and settlement delays.
+
+22. Search Autocomplete / Query Suggestions (large scale)
+    - Goal: Provide relevant suggestions with low latency at large QPS.
+    - Considerations: Hot/cold data splits, precomputation, scoring, per-region personalization, and cache efficiency.
+
+23. Feature Flagging Service
+    - Goal: Toggle features for users safely and roll out gradually.
+    - Considerations: SDKs and polling/streaming, targeting rules, rollout strategies (percentage, cohorts), auditing, and performance impact.
+
+24. Map Tile Service / Geospatial Tiles
+    - Goal: Serve map tiles and geospatial queries efficiently.
+    - Considerations: Tile generation, caching/CDN, vector vs raster tiles, spatial indexing, and load hotspots.
+
+25. Email Delivery Service (transactional)
+    - Goal: Send reliable transactional emails with high deliverability.
+    - Considerations: SMTP providers vs self-hosted, bounce handling, DKIM/SPF/DMARC, rate limits, templates, and analytics.
+
+26. CI/CD System at Scale
+    - Goal: Build and deploy software reliably across many services.
+    - Considerations: Artifact storage, runner scalability, isolation, caching builds, dependency graph scheduling, and rollback strategies.
+
+27. Distributed Lock Service (e.g., etcd/Consul/Redlock)
+    - Goal: Provide coordination primitives across services.
+    - Considerations: Failure modes, lease semantics, leader election, clock skew, and throughput limits.
+
+28. Logging Pipeline / Centralized Logs
+    - Goal: Collect and query application logs across the fleet.
+    - Considerations: Ingestion throughput, indexing costs, retention, structured logging, and secure access.
+
+29. File Sync & Offline-First Clients
+    - Goal: Keep files in sync across devices with offline edits.
+    - Considerations: Conflict resolution, operational transforms or CRDTs, efficient diffs, retry/backoff, and metadata store.
+
+30. Throttling & Backpressure Patterns
+    - Goal: Protect services from overload while providing graceful degradation.
+    - Considerations: Circuit breakers, bulkheads, adaptive throttling, queue limits, shed load strategies, and graceful responses.
+
+Notes and practice tips:
+- For interviews, pick 4–6 components to deep-dive (API design, data model, scaling, and failure modes).
+- Sketch the high-level architecture first, then discuss bottlenecks and optimizations.
+- Quantify expected scale (QPS, storage, bandwidth) and justify choices.
+
+# Approaching System Design of Video Platform (e.g. Youtube)
 
 ## Technical & Business Requirements
 

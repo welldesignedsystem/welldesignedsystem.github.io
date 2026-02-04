@@ -1,7 +1,7 @@
 +++
 date = '2023-01-01T12:44:47+10:00'
 draft = false
-title = 'System Design Concepts'
+title = 'System Design Principles and Concepts'
 tags = ['Event Driven Architecture', 'Microservices', 'Interview']
 summary = "System design is a critical aspect of software engineering that involves creating scalable, reliable and efficient systems."
 +++
