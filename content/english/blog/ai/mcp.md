@@ -6,10 +6,10 @@ tags = ['MCP', 'Agents', 'Design Patterns', 'AI']
 summary = "Model Context Protocol - Notes, Best Practices, Design Patterns."
 +++
 ## Class Diagram Grouped
-![Class diagram](https://raw.githubusercontent.com/welldesignedsystem/silver-lamp/refs/heads/main/MCP_Grouped.svg)
+![Class diagram](https://raw.githubusercontent.com/welldesignedsystem/silver-lamp/refs/heads/main/misc/MCP_Grouped.svg)
 
 ## Class Diagram Original
-![Class diagram](https://raw.githubusercontent.com/welldesignedsystem/silver-lamp/refs/heads/main/MCP_Original.svg)
+![Class diagram](https://raw.githubusercontent.com/welldesignedsystem/silver-lamp/refs/heads/main/misc/MCP_Original.svg)
 
 ## References
 1. [![Learn model context protocol with python](../img/learn_model_context_protocol_with_python_book.png)](https://drive.google.com/file/d/1DvwJ7qGYjk-diFtssDM7GEjlaTbYUjqP/view?usp=drive_link)
