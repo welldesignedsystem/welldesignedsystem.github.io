@@ -7,7 +7,8 @@ summary = "Model Context Protocol - Notes, Best Practices, Design Patterns."
 +++
 
 ## Introduction
-Model Context Protocol is an open standard protocol that aims to provide a universal approach for applications to provide context to language models.  
+Model Context Protocol is an open standard protocol that aims to provide a universal approach for applications to provide context to language models.
+One advantage of this allows different clients to consume servers built by different vendors that too without needing to worry about compatibility issues.
 
 MCP is built around Javascript Object Notation Remote Procedure Call (JSON-RPC 2.0) and so it's transport agnostic. It just defines the schema driven messages for client server communication. 
 It is usually implemented as: 
