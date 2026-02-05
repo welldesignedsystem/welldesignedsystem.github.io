@@ -12,11 +12,19 @@ Model Context Protocol is an open standard protocol that aims to provide a unive
 MCP is built around Javascript Object Notation Remote Procedure Call (JSON-RPC 2.0) and so it's transport agnostic. It just defines the schema driven messages for client server communication. 
 It is usually implemented as: 
 - Streamable HTTP
-- WebSockets
 - STDIO
-- Server Sent Events (SSE) etc.
+- Server Sent Events (SSE) + HTTP.
+- WebSockets (though not mentioned in the documentation, as persistent real time connectivity may be an overkill) etc.
 
-Having said that there is nothing stopping you from using protocols such as gRPC etc. provided they treated just as the transport layer and the messages are in JSON-RPC 2.0 format.
+There might be some Transports that may feel unnatural to implement MCP such as:
+- gRPC as it may require extra work to directly support JSON-RPC
+- Messaging Queues (without reply queues) as they dont support RPC pattern
+- UDP (without custom bidirectional protocol)
+- Email - Async, unidirectional and slow.
+- Server Sent Events (without HTTP) - Unidirectional and may not support all features of JSON-RPC.
+- Webhooks
+- Polling based HTTP etc.
+
 ## Communication Message Spec 
 ### Class Diagram Grouped
 ![Class diagram](https://raw.githubusercontent.com/welldesignedsystem/silver-lamp/refs/heads/main/misc/MCP_Grouped.svg)
@@ -32,13 +40,13 @@ sequenceDiagram
     participant Server
 
     Client->>Server: initialize (request)
-    Note right of Client: JSON-RPC request\ncapabilities, protocolVersion
+    Note right of Client: JSON-RPC request
 
     Server-->>Client: initialize (response)
     Note left of Server: serverInfo,\ncapabilities
 
     Client->>Server: initialized (notification)
-    Note right of Client: No response expected
+    Note right of Client: Fire and Forget - no response expected
 ```
 
 ## References
