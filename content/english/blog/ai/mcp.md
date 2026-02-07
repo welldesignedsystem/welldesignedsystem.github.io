@@ -15,23 +15,40 @@ It is usually implemented as:
 - Streamable HTTP
 - STDIO
 - Server Sent Events (SSE) + HTTP.
-- WebSockets (though not mentioned in the documentation, as persistent real time connectivity may be an overkill) etc.
+- WebSockets (experimental - as persistent real time connectivity may be an overkill) etc.
+All the above are common in that:
+- they can operate on streams and support bidirectional communication.
+- can handle reconnection handling.
+- they can accomodate JSON-RPC messages in their payloads.
+- Session Management
+- supported in mcp.json file (websockets - experimental).
+- Supergateway which is an open source command line which acts as bridge or adatptor convertor for MCP servers.
 
-There might be some Transports that may feel unnatural to implement MCP such as:
+There might be some Transports not ideal for MCP:
 - gRPC as it may require extra work to directly support JSON-RPC
 - Messaging Queues (without reply queues) as they dont support RPC pattern
 - UDP (without custom bidirectional protocol)
+- ICMP - No Session Management
+- FTP - Block Transfer Protocol
 - Email - Async, unidirectional and slow.
 - Server Sent Events (without HTTP) - Unidirectional and may not support all features of JSON-RPC.
 - Webhooks
 - Polling based HTTP etc.
 
+[MCP Implementation and list of Servers](https://github.com/modelcontextprotocol/servers)
 ## Communication Message Spec 
 ### Class Diagram Grouped
 ![Class diagram](https://raw.githubusercontent.com/welldesignedsystem/silver-lamp/refs/heads/main/misc/MCP_Grouped.svg)
 
 ### Class Diagram Original
 ![Class diagram](https://raw.githubusercontent.com/welldesignedsystem/silver-lamp/refs/heads/main/misc/MCP_Original.svg)
+
+At its core of the library is a BaseSession class which allows to 
+- SendRequest
+- ReceiveRequest
+- SendNotification
+- ReceiveNotification
+- SendResult
 
 ## Initialization process
 ```mermaid
@@ -49,6 +66,57 @@ sequenceDiagram
     Client->>Server: initialized (notification)
     Note right of Client: Fire and Forget - no response expected
 ```
+## Streamable HTTP
+This protocol has replaced the Server Sent Events (SSE) + HTTP transport as the recommended transport for MCP.
+
+Its generally better than  SSE + HTTP due to:
+- Single Endpoint  Simplicity: client and servers communicate via single endpoint (e.g., /mcp) for all interactions, eliminating the need for separate endpoints for requests and notifications.
+- Resumability: Support for resumable sessions using headers like Last-Event-ID, Mcp-Session-ID allowing clients to recover from disconnections without losing context.
+- Compatibility: support for Modern HTTP Infrastucture - loadbalancers, proxies, API Gateways, CDNs etc where SSEs may face challenges.
+- Bidirectional Communication: SSE is unidirectional, Streamable HTTP can be upgraded to support bidirectional communication, allowing servers to send messages to clients without the need for clients to poll for updates. This makes it apt for agent-to-agent or client-server interaction.
+- Future Proofing: It is modular and extendable and designed for stateless or session based models
+
+### Accept Header: 
+  - Accept: application/json: Tells Server that client can handle batch JSON Response. The entire response is buffered and sent as a complete JSON object once it's fully ready. The client waits for the whole thing before processing.
+  - Accept: text/event-stream: Tells Server that client can handle Streamed events (via SSE). Uses Server-Sent Events (SSE) to stream data incrementally. As soon as each chunk/event is available, it's sent to the client immediately, allowing for real-time progressive updates
+
+### Resumability:
+- If client loses connection with server while data is transfered, reconnects with server to resume the exchange from where it left off. 
+- This is achieved using headers like Last-Event-ID, Mcp-Session-ID etc.
+- In the context of MCP its only supported for Streamable HTTP (though possible with both SSE & Streamable HTTP) 
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+
+    Note over Client,Server: Initial Connection
+    Client->>Server: POST /mcp/initialize
+    Server-->>Client: 200 OK<br/>Mcp-Session-Id: session-123
+    
+    Client->>Server: POST /mcp/initialized<br/>Mcp-Session-Id: session-123
+    Server-->>Client: 200 OK
+
+    Note over Client,Server: Tool Call with Streaming
+    Client->>Server: POST /mcp/call/tool<br/>Mcp-Session-Id: session-123<br/>Accept: text/event-stream
+    Server-->>Client: 200 OK<br/>Content-Type: text/event-stream<br/>Mcp-Session-Id: session-123
+    
+    Note over Server,Client: Streaming results<br/>e.g., 4 notifications and final message
+    Server-->>Client: id: 1<br/>data: notification 1/4
+    Server-->>Client: id: 2<br/>data: notification 2/4
+    
+    Note over Client: Network disconnection!<br/>Received 2/4 notifications
+    Client-xServer: Connection lost
+    
+    Note over Client,Server: Reconnection & Resume
+    Client->>Server: POST /mcp/reconnect<br/>Mcp-Session-Id: session-123<br/>Last-Event-Id: 2
+    Server-->>Client: 200 OK<br/>Content-Type: text/event-stream<br/>Mcp-Session-Id: session-123
+    
+    Note over Server,Client: Resume from where it left off
+    Server-->>Client: id: 3<br/>data: notification 3/4
+    Server-->>Client: id: 4<br/>data: notification 4/4
+    Server-->>Client: data: final result
+```  
 
 ## References
 1. [![Learn model context protocol with python](../img/learn_model_context_protocol_with_python_book.png)](https://drive.google.com/file/d/1DvwJ7qGYjk-diFtssDM7GEjlaTbYUjqP/view?usp=drive_link)
