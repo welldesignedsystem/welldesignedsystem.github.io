@@ -90,32 +90,32 @@ sequenceDiagram
     participant Client
     participant Server
 
-    Note over Client,Server: Initial Connection
-    Client->>Server: POST /mcp/initialize
-    Server-->>Client: 200 OK<br/>Mcp-Session-Id: session-123
+    Note over Client,Server: Initial Connection (JSON-RPC over POST)
+    Client->>Server: POST /mcp<br/>{"method": "initialize", "params": {...}}
+    Server-->>Client: 202 Accepted<br/>Mcp-Session-Id: session-123
     
-    Client->>Server: POST /mcp/initialized<br/>Mcp-Session-Id: session-123
-    Server-->>Client: 200 OK
+    Client->>Server: POST /mcp<br/>{"method": "notifications/initialized"}<br/>Mcp-Session-Id: session-123
+    Server-->>Client: 202 Accepted
 
-    Note over Client,Server: Tool Call with Streaming
-    Client->>Server: POST /mcp/call/tool<br/>Mcp-Session-Id: session-123<br/>Accept: text/event-stream
+    Note over Client,Server: Tool Call - Client initiates SSE stream
+    Client->>Server: POST /mcp<br/>{"method": "tools/call", "params": {...}}<br/>Mcp-Session-Id: session-123<br/>Accept: text/event-stream
     Server-->>Client: 200 OK<br/>Content-Type: text/event-stream<br/>Mcp-Session-Id: session-123
     
-    Note over Server,Client: Streaming results<br/>e.g., 4 notifications and final message
-    Server-->>Client: id: 1<br/>data: notification 1/4
-    Server-->>Client: id: 2<br/>data: notification 2/4
+    Note over Server,Client: Server streams SSE events with IDs
+    Server-->>Client: id: evt-001<br/>data: {"method": "notifications/progress", ...}
+    Server-->>Client: id: evt-002<br/>data: {"method": "notifications/progress", ...}
     
-    Note over Client: Network disconnection!<br/>Received 2/4 notifications
+    Note over Client: Network disconnection!<br/>Last received: evt-002
     Client-xServer: Connection lost
     
-    Note over Client,Server: Reconnection & Resume
-    Client->>Server: POST /mcp/reconnect<br/>Mcp-Session-Id: session-123<br/>Last-Event-Id: 2
+    Note over Client,Server: Client reconnects with Last-Event-ID
+    Client->>Server: GET /mcp<br/>Mcp-Session-Id: session-123<br/>Last-Event-ID: evt-002
     Server-->>Client: 200 OK<br/>Content-Type: text/event-stream<br/>Mcp-Session-Id: session-123
     
-    Note over Server,Client: Resume from where it left off
-    Server-->>Client: id: 3<br/>data: notification 3/4
-    Server-->>Client: id: 4<br/>data: notification 4/4
-    Server-->>Client: data: final result
+    Note over Server,Client: Server replays from evt-003 onwards
+    Server-->>Client: id: evt-003<br/>data: {"method": "notifications/progress", ...}
+    Server-->>Client: id: evt-004<br/>data: {"method": "notifications/progress", ...}
+    Server-->>Client: data: {"result": {...}}
 ```  
 
 ## References
