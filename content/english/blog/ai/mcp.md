@@ -113,9 +113,10 @@ When you create a server in Fast MCP provide features and lets you configure sev
     - Use WSGI if you are building a standard website and your framework (like Flask) doesn't natively support async, or if you prefer a simpler, proven stack.
     - Use ASGI if your app requires real-time updates, handles heavy I/O operations, or if you're using modern frameworks like FastAPI to maximize performance.
   - These frameworks are far more matured than FastMCP and provide features like multiple workers, custom middleware, better logging, monitoring etc.
-Fast MCP has [3 layers of abstraction](https://gofastmcp.com/getting-started/welcome) 
-- **[Components](https://gofastmcp.com/servers/tools)** Wrap a Python function, and FastMCP handles the schema, validation, and docs. Components are what you expose. 
-  - **Tools**: 
+## Fast MCP has [3 layers of abstraction](https://gofastmcp.com/getting-started/welcome)
+### **[Components](https://gofastmcp.com/servers/tools)** 
+Wrap a Python function, and FastMCP handles the schema, validation, and docs. Components are what you expose and includes Tools, Resources, Resource Templates and Prompts:
+  - **[Tools](https://gofastmcp.com/servers/tools)**: 
     - LLMs can only do things it's trained on, tools extend its capabilities by allowing it to interact with external systems, perform computations, or access up-to-date information.
     - functions that clients can involve to perform actions or access external systems.
     - In FastMCP, tools are  Python functions exposed to LLMs through MCP Protocol. 
@@ -124,13 +125,17 @@ Fast MCP has [3 layers of abstraction](https://gofastmcp.com/getting-started/wel
     - Tools common to company can be written as libraries and added to server using the mcp.add_tool(...).
     - Programmatically adding tools/ disabling, enabling etc will trigger notifications e.g. mpc.add_tool, mcp.disable((keys={"tool_name": "my_tool"}), mcp.enable(keys={"tool_name":) "my_tool"})
     - Dependency injection of Context: Tools can access MCP features like logging, reading resources, or reporting progress through the Context object. To use it, add a parameter to your tool function with the type hint Context. 
-  - **Resources**: expose data that clients read. They are passive data-sources that client pulls rather than invoke. 
+  - **Resources**: 
+    - expose data that clients read. They are passive data-sources that client pulls rather than invoke. 
   - **Resource** Templates: parameterized resources.  
   - **Prompts**: Reusable message templates that guide LLM interactions. This enables you to not write prompts each time, e.g. when you migrate code from legacy to modern frameworks.
-- **[Providers](https://gofastmcp.com/servers/providers/overview)** are where components come from: decorated functions, files on disk, OpenAPI specs, remote servers—your logic can live anywhere.
-- **[Transforms](https://gofastmcp.com/servers/transforms/transforms)** shape what clients see: namespacing, filtering, authorization, versioning. The same server can present differently to different users.
-- 
-### HTTP Deployment
+### **[Providers](https://gofastmcp.com/servers/providers/overview)** 
+are where components come from: decorated functions, files on disk, OpenAPI specs, remote servers—your logic can live anywhere.
+
+### **[Transforms](https://gofastmcp.com/servers/transforms/transforms)** 
+shape what clients see: namespacing, filtering, authorization, versioning. The same server can present differently to different users.
+
+## HTTP Deployment
 [Read Here](https://gofastmcp.com/deployment/http#integration-with-web-frameworks)
 Sometimes you have to deploy your MCP server behind an existing HTTP server or API Gateway or leverage on the maturity of Established Frameworks.
 FastMCP makes this easy by allowing you to mount your FastMCP application as a sub-route of an existing HTTP server.
