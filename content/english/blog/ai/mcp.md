@@ -67,9 +67,7 @@ sequenceDiagram
     Note right of Client: Fire and Forget - no response expected
 ```
 ## Streamable HTTP
-This protocol has replaced the Server Sent Events (SSE) + HTTP transport as the recommended transport for MCP.
-
-Its generally better than  SSE + HTTP due to:
+This protocol has replaced the Server Sent Events (SSE) + HTTP transport as the recommended transport for MCP because:
 - Single Endpoint  Simplicity: client and servers communicate via single endpoint (e.g., /mcp) for all interactions, eliminating the need for separate endpoints for requests and notifications.
 - Resumability: Support for resumable sessions using headers like Last-Event-ID, Mcp-Session-ID allowing clients to recover from disconnections without losing context.
 - Compatibility: support for Modern HTTP Infrastucture - loadbalancers, proxies, API Gateways, CDNs etc where SSEs may face challenges.
@@ -116,37 +114,24 @@ Wrap a Python function, and FastMCP handles the schema, validation, and docs. Co
   - **[Tools](https://gofastmcp.com/servers/tools)**: 
     - LLMs can only do things it's trained on, tools extend its capabilities by allowing it to interact with external systems, perform computations, or access up-to-date information.
     - functions that clients can involve to perform actions or access external systems.
-    - In FastMCP, tools are  Python functions exposed to LLMs through MCP Protocol. 
+    - In FastMCP, tools are Python functions exposed to LLMs through MCP Protocol. 
     - LLMs send request with parameters based on tool's schema, FastMCP validates and executes the function, and returns the result back to the LLM.
-    - Supports Async tools, which is crucial for I/O bound operations like database queries, API calls etc they are more efficient than threadpool dispatch.
-    - ToolResult object gives you explicit control over tool response
-      - content
-      - structured content
-      - metadata
-    - Tools common to company can be written as libraries and added to server using the mcp.add_tool(...).
-    - Programmatically adding tools/ disabling, enabling etc will trigger notifications e.g. mpc.add_tool, mcp.disable((keys={"tool_name": "my_tool"}), mcp.enable(keys={"tool_name":) "my_tool"})
-    - Dependency injection of Context: Tools can access MCP features like logging, reading resources, or reporting progress through the Context object. To use it, add a parameter to your tool function with the type hint Context. 
+    - **ToolResult** object gives you explicit control over tool response content, structured content, metadata
   - **Resources & Templates**: 
     - Highly Deterministic, read only no side effects and used for data retrieval.
     - Resources could be static or dynamic.
     - Resources: expose data that clients read. They are passive data-sources that client pulls rather than invoke. 
     - Templates: parameterized resources.  
-    - ResourceResult object gives you explicit control over resource response, multiple content items, per-item MIME type and metadata at both item and result levels.\
-    - like tools: 
+    - **ResourceResult** object gives you explicit control over attributes like resource response, multiple content items, per-item MIME type and metadata at both item and result levels.\
+  - **Prompts**: Reusable message templates that guide LLM interactions. This enables you to not write prompts each time, e.g. when you migrate code from legacy to modern frameworks.
+    - re-usuable, parameterized prompt templates for clients.
+    - **PromptResult** object gives you control over prompt response attributes like - messages, description
+  - with all Components: 
       - you could enable, disable resources and templates programmatically and it will trigger notifications. 
       - inject Context into resource functions to access MCP features like logging, reading other resources or reporting progress.
       - define as async functions for I/O bound operations.
       - programmatically add using add_resource etc.
       - notifications will be triggered when resources are added, enabled, disabled etc
-    - resources can be made to behave like query parameters if necessary with possible hidden defaults.
-  - **Prompts**: Reusable message templates that guide LLM interactions. This enables you to not write prompts each time, e.g. when you migrate code from legacy to modern frameworks.
-    - re-usuable, parameterized prompt templates for clients.
-    - PromptResult object gives you control over prompt response
-      - messages
-      - description
-    - Parameters can be optional or required.
-    - enable/disable programmatically with notifications.
-    - async support
 
 ### **[Providers](https://gofastmcp.com/servers/providers/overview)** 
 are where components come from: decorated functions, files on disk, OpenAPI specs, remote servers—your logic can live anywhere.
@@ -161,7 +146,7 @@ The Context object provides a clean interface to access MCP features within your
 * **Resource Access**: List and read data from resources registered with the server
 * **Prompt Access**: List and retrieve prompts registered with the server
 * **LLM Sampling**: Request the client’s LLM to generate text based on provided messages
-* **User Elicitatio**n: Request structured input from users during tool execution
+* **User Elicitation**: Request structured input from users during tool execution
 * **Session State**: Store data that persists across requests within an MCP session
 * **Session Visibility**: Control which components are visible to the current session
 * **Request Information**: Access metadata about the current request
