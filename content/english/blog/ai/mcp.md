@@ -85,40 +85,53 @@ Its generally better than  SSE + HTTP due to:
 - This is achieved using headers like Last-Event-ID, Mcp-Session-ID etc.
 - In the context of MCP its only supported for Streamable HTTP (though possible with both SSE & Streamable HTTP) 
 
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Server
+### Challenges of MCP:
+- Give it too much tools, verbose responses, and it get overwhelmed and lead to slower response times. Give it too little and it can't do the job.
+- Protocol is complex and have layers of serialization, validation and error handling.
+- MCP and libraries are fast evolving and changing.
+  - e.g. SSE transport was introduced somewhere in Nov 2024 and deprecated in favor of Streamable HTTP in March 2025.
+  - [Upgrade Guide](https://gofastmcp.com/development/upgrade-guide)
 
-    Note over Client,Server: Initial Connection (JSON-RPC over POST)
-    Client->>Server: POST /mcp<br/>{"method": "initialize", "params": {...}}
-    Server-->>Client: 202 Accepted<br/>Mcp-Session-Id: session-123
-    
-    Client->>Server: POST /mcp<br/>{"method": "notifications/initialized"}<br/>Mcp-Session-Id: session-123
-    Server-->>Client: 202 Accepted
+## FastMCP
+The FastMCP class is the central piece of every FastMCP application. It acts as the container for your tools, resources and prompts, managing communication with MCP clients and orchestrating the entire server lifecycle.
 
-    Note over Client,Server: Tool Call - Client initiates SSE stream
-    Client->>Server: POST /mcp<br/>{"method": "tools/call", "params": {...}}<br/>Mcp-Session-Id: session-123<br/>Accept: text/event-stream
-    Server-->>Client: 200 OK<br/>Content-Type: text/event-stream<br/>Mcp-Session-Id: session-123
-    
-    Note over Server,Client: Server streams SSE events with IDs
-    Server-->>Client: id: evt-001<br/>data: {"method": "notifications/progress", ...}
-    Server-->>Client: id: evt-002<br/>data: {"method": "notifications/progress", ...}
-    
-    Note over Client: Network disconnection!<br/>Last received: evt-002
-    Client-xServer: Connection lost
-    
-    Note over Client,Server: Client reconnects with Last-Event-ID
-    Client->>Server: GET /mcp<br/>Mcp-Session-Id: session-123<br/>Last-Event-ID: evt-002
-    Server-->>Client: 200 OK<br/>Content-Type: text/event-stream<br/>Mcp-Session-Id: session-123
-    
-    Note over Server,Client: Server replays from evt-003 onwards
-    Server-->>Client: id: evt-003<br/>data: {"method": "notifications/progress", ...}
-    Server-->>Client: id: evt-004<br/>data: {"method": "notifications/progress", ...}
-    Server-->>Client: data: {"result": {...}}
-```  
+When you create a server in Fast MCP you can configure it with several options like:
+- **Instructions**: Help Clients urderstand the purpose of the server and available functions.
+- **Lifespan**: Server level setup and teardown logic. We can pass our company level instructions here, or do some setup like loading data into memory, connecting to databases etc.
+- **Tools**: Tools to add to server, alternately can be done programmatically by using the @tool decorator on functions.
+- **Include/Exclude Tags**: Expose/Hide components that match one or more tags. 
+  - Enable based on Program Increment number PI-40. 
+- **Custom Rotes**: e.g. check health, metrics, documentation etc.
+- [**Integration with Web Frameworks**](https://gofastmcp.com/deployment/http#integration-with-web-frameworks): 
+  - FastMCP can be mounted as a sub-route in existing web frameworks - WSGI(like Flask), ASGI like (FastAPI and Starlette).
+    - Use WSGI if you are building a standard website and your framework (like Flask) doesn't natively support async, or if you prefer a simpler, proven stack.
+    - Use ASGI if your app requires real-time updates, handles heavy I/O operations, or if you're using modern frameworks like FastAPI to maximize performance.
+  - These frameworks are far more matured than FastMCP and provide features like multiple workers, custom middleware, better logging, monitoring etc.
+
+Fast MCP has [3 layers of abstraction](https://gofastmcp.com/getting-started/welcome) 
+- **[Components](https://gofastmcp.com/servers/tools)** Wrap a Python function, and FastMCP handles the schema, validation, and docs. Components are what you expose. 
+  - **Tools**: functions that clients can involve to perform actions or access external systems.
+  - **Resources**: expose data that clients read. They are passive data-sources that client pulls rather than invoke. 
+  - **Resource** Templates: parameterized resources.  
+  - **Prompts**: Reusable message templates that guide LLM interactions. This enables you to not write prompts each time, e.g. when you migrate code from legacy to modern frameworks.
+- **[Providers](https://gofastmcp.com/servers/providers/overview)** are where components come from: decorated functions, files on disk, OpenAPI specs, remote servers—your logic can live anywhere.
+- **[Transforms](https://gofastmcp.com/servers/transforms/transforms)** shape what clients see: namespacing, filtering, authorization, versioning. The same server can present differently to different users.
+### HTTP Deployment
+[Read Here](https://gofastmcp.com/deployment/http#integration-with-web-frameworks)
+Sometimes you have to deploy your MCP server behind an existing HTTP server or API Gateway or leverage on the maturity of Established Frameworks.
+FastMCP makes this easy by allowing you to mount your FastMCP application as a sub-route of an existing HTTP server.
+
+There are 2 approaches to deploy server as an HTTP Server:
+1. Using ASGI Middleware: 
+   - Using ASGI with Uvicorn gives you more control. 
+   - You create an app instead of running the server directly. 
+   - This is useful when you need features like multiple workers, custom middleware, or want to integrate with existing web apps.
+
+2. Direct HTTP Server
+   - This is the simplest way to get started. 
+   - Good for standalone deployments where MCP server be the only server running on port.
 
 ## References
-1. [![Learn model context protocol with python](../img/learn_model_context_protocol_with_python_book.png)](https://drive.google.com/file/d/1DvwJ7qGYjk-diFtssDM7GEjlaTbYUjqP/view?usp=drive_link)
+2. [![Learn model context protocol with python](../img/learn_model_context_protocol_with_python_book.png)](https://drive.google.com/file/d/1DvwJ7qGYjk-diFtssDM7GEjlaTbYUjqP/view?usp=drive_link)
     * [Source Code](https://github.com/PacktPublishing/Learn-Model-Context-Protocol-with-Python/tree/main)
 2. [Official Documentation](https://github.com/modelcontextprotocol/modelcontextprotocol)
