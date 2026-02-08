@@ -104,15 +104,12 @@ When you create a server in Fast MCP provide features and lets you configure sev
 - **Custom Rotes**: e.g. check health, metrics, documentation etc.
 - **Dependency Injection**: Secrets and other dependencies can be injected into tools and resources.
 - **Media Helper Classes**: Support for returning Images, audio etc. Images need to converted to Image Content block with correct MIME type and base64 encoded data. FastMCP do it for you.
-- **Structured Output**: 
-  - Object-like results (dict, Pydantic models, dataclasses) → Always become structured content (even without output schema)
-  - Non-object results (int, str, list) → Only become structured content if there’s an output schema to validate/serialize them 
-  - All results → Always become traditional content blocks for backward compatibility
 - [**Integration with Web Frameworks**](https://gofastmcp.com/deployment/http#integration-with-web-frameworks): 
   - FastMCP can be mounted as a sub-route in existing web frameworks - WSGI(like Flask), ASGI like (FastAPI and Starlette).
     - Use WSGI if you are building a standard website and your framework (like Flask) doesn't natively support async, or if you prefer a simpler, proven stack.
     - Use ASGI if your app requires real-time updates, handles heavy I/O operations, or if you're using modern frameworks like FastAPI to maximize performance.
   - These frameworks are far more matured than FastMCP and provide features like multiple workers, custom middleware, better logging, monitoring etc.
+
 ## Fast MCP has [3 layers of abstraction](https://gofastmcp.com/getting-started/welcome)
 ### **[Components](https://gofastmcp.com/servers/tools)** 
 Wrap a Python function, and FastMCP handles the schema, validation, and docs. Components are what you expose and includes Tools, Resources, Resource Templates and Prompts:
@@ -122,18 +119,53 @@ Wrap a Python function, and FastMCP handles the schema, validation, and docs. Co
     - In FastMCP, tools are  Python functions exposed to LLMs through MCP Protocol. 
     - LLMs send request with parameters based on tool's schema, FastMCP validates and executes the function, and returns the result back to the LLM.
     - Supports Async tools, which is crucial for I/O bound operations like database queries, API calls etc they are more efficient than threadpool dispatch.
+    - ToolResult object gives you explicit control over tool response
+      - content
+      - structured content
+      - metadata
     - Tools common to company can be written as libraries and added to server using the mcp.add_tool(...).
     - Programmatically adding tools/ disabling, enabling etc will trigger notifications e.g. mpc.add_tool, mcp.disable((keys={"tool_name": "my_tool"}), mcp.enable(keys={"tool_name":) "my_tool"})
     - Dependency injection of Context: Tools can access MCP features like logging, reading resources, or reporting progress through the Context object. To use it, add a parameter to your tool function with the type hint Context. 
-  - **Resources**: 
-    - expose data that clients read. They are passive data-sources that client pulls rather than invoke. 
-  - **Resource** Templates: parameterized resources.  
+  - **Resources & Templates**: 
+    - Highly Deterministic, read only no side effects and used for data retrieval.
+    - Resources could be static or dynamic.
+    - Resources: expose data that clients read. They are passive data-sources that client pulls rather than invoke. 
+    - Templates: parameterized resources.  
+    - ResourceResult object gives you explicit control over resource response, multiple content items, per-item MIME type and metadata at both item and result levels.\
+    - like tools: 
+      - you could enable, disable resources and templates programmatically and it will trigger notifications. 
+      - inject Context into resource functions to access MCP features like logging, reading other resources or reporting progress.
+      - define as async functions for I/O bound operations.
+      - programmatically add using add_resource etc.
+      - notifications will be triggered when resources are added, enabled, disabled etc
+    - resources can be made to behave like query parameters if necessary with possible hidden defaults.
   - **Prompts**: Reusable message templates that guide LLM interactions. This enables you to not write prompts each time, e.g. when you migrate code from legacy to modern frameworks.
+    - re-usuable, parameterized prompt templates for clients.
+    - PromptResult object gives you control over prompt response
+      - messages
+      - description
+    - Parameters can be optional or required.
+    - enable/disable programmatically with notifications.
+    - async support
+
 ### **[Providers](https://gofastmcp.com/servers/providers/overview)** 
 are where components come from: decorated functions, files on disk, OpenAPI specs, remote servers—your logic can live anywhere.
 
 ### **[Transforms](https://gofastmcp.com/servers/transforms/transforms)** 
 shape what clients see: namespacing, filtering, authorization, versioning. The same server can present differently to different users.
+
+## MCP Context
+The Context object provides a clean interface to access MCP features within your functions, including:
+* **Logging**: Send debug, info, warning, and error messages back to the client
+* **Progress Reporting**: Update the client on the progress of long-running operations
+* **Resource Access**: List and read data from resources registered with the server
+* **Prompt Access**: List and retrieve prompts registered with the server
+* **LLM Sampling**: Request the client’s LLM to generate text based on provided messages
+* **User Elicitatio**n: Request structured input from users during tool execution
+* **Session State**: Store data that persists across requests within an MCP session
+* **Session Visibility**: Control which components are visible to the current session
+* **Request Information**: Access metadata about the current request
+* **Server Access**: When needed, access the underlying FastMCP server instance
 
 ## HTTP Deployment
 [Read Here](https://gofastmcp.com/deployment/http#integration-with-web-frameworks)
