@@ -110,12 +110,20 @@ When you create a server in Fast MCP you can configure it with several options l
 
 Fast MCP has [3 layers of abstraction](https://gofastmcp.com/getting-started/welcome) 
 - **[Components](https://gofastmcp.com/servers/tools)** Wrap a Python function, and FastMCP handles the schema, validation, and docs. Components are what you expose. 
-  - **Tools**: functions that clients can involve to perform actions or access external systems.
+  - **Tools**: 
+    - LLMs can only do things it's trained on, tools extend its capabilities by allowing it to interact with external systems, perform computations, or access up-to-date information.
+    - functions that clients can involve to perform actions or access external systems.
+    - In FastMCP, tools are  Python functions exposed to LLMs through MCP Protocol. 
+    - LLMs send request with parameters based on tool's schema, FastMCP validates and executes the function, and returns the result back to the LLM.
+    - Supports Async tools, which is crucial for I/O bound operations like database queries, API calls etc they are more efficient than threadpool dispatch.
+    - Tools common to company can be written as libraries and added to server using the mcp.add_tool(...).
+    - 
   - **Resources**: expose data that clients read. They are passive data-sources that client pulls rather than invoke. 
   - **Resource** Templates: parameterized resources.  
   - **Prompts**: Reusable message templates that guide LLM interactions. This enables you to not write prompts each time, e.g. when you migrate code from legacy to modern frameworks.
 - **[Providers](https://gofastmcp.com/servers/providers/overview)** are where components come from: decorated functions, files on disk, OpenAPI specs, remote servers—your logic can live anywhere.
 - **[Transforms](https://gofastmcp.com/servers/transforms/transforms)** shape what clients see: namespacing, filtering, authorization, versioning. The same server can present differently to different users.
+- 
 ### HTTP Deployment
 [Read Here](https://gofastmcp.com/deployment/http#integration-with-web-frameworks)
 Sometimes you have to deploy your MCP server behind an existing HTTP server or API Gateway or leverage on the maturity of Established Frameworks.
