@@ -95,19 +95,24 @@ Its generally better than  SSE + HTTP due to:
 ## FastMCP
 The FastMCP class is the central piece of every FastMCP application. It acts as the container for your tools, resources and prompts, managing communication with MCP clients and orchestrating the entire server lifecycle.
 
-When you create a server in Fast MCP you can configure it with several options like:
-- **Instructions**: Help Clients urderstand the purpose of the server and available functions.
+When you create a server in Fast MCP provide features and lets you configure several options like:
+- **Instructions**: Help Clients understand the purpose of the server and available functions.
 - **Lifespan**: Server level setup and teardown logic. We can pass our company level instructions here, or do some setup like loading data into memory, connecting to databases etc.
 - **Tools**: Tools to add to server, alternately can be done programmatically by using the @tool decorator on functions.
 - **Include/Exclude Tags**: Expose/Hide components that match one or more tags. 
   - Enable based on Program Increment number PI-40. 
 - **Custom Rotes**: e.g. check health, metrics, documentation etc.
+- **Dependency Injection**: Secrets and other dependencies can be injected into tools and resources.
+- **Media Helper Classes**: Support for returning Images, audio etc. Images need to converted to Image Content block with correct MIME type and base64 encoded data. FastMCP do it for you.
+- **Structured Output**: 
+  - Object-like results (dict, Pydantic models, dataclasses) → Always become structured content (even without output schema)
+  - Non-object results (int, str, list) → Only become structured content if there’s an output schema to validate/serialize them 
+  - All results → Always become traditional content blocks for backward compatibility
 - [**Integration with Web Frameworks**](https://gofastmcp.com/deployment/http#integration-with-web-frameworks): 
   - FastMCP can be mounted as a sub-route in existing web frameworks - WSGI(like Flask), ASGI like (FastAPI and Starlette).
     - Use WSGI if you are building a standard website and your framework (like Flask) doesn't natively support async, or if you prefer a simpler, proven stack.
     - Use ASGI if your app requires real-time updates, handles heavy I/O operations, or if you're using modern frameworks like FastAPI to maximize performance.
   - These frameworks are far more matured than FastMCP and provide features like multiple workers, custom middleware, better logging, monitoring etc.
-
 Fast MCP has [3 layers of abstraction](https://gofastmcp.com/getting-started/welcome) 
 - **[Components](https://gofastmcp.com/servers/tools)** Wrap a Python function, and FastMCP handles the schema, validation, and docs. Components are what you expose. 
   - **Tools**: 
@@ -117,7 +122,8 @@ Fast MCP has [3 layers of abstraction](https://gofastmcp.com/getting-started/wel
     - LLMs send request with parameters based on tool's schema, FastMCP validates and executes the function, and returns the result back to the LLM.
     - Supports Async tools, which is crucial for I/O bound operations like database queries, API calls etc they are more efficient than threadpool dispatch.
     - Tools common to company can be written as libraries and added to server using the mcp.add_tool(...).
-    - 
+    - Programmatically adding tools/ disabling, enabling etc will trigger notifications e.g. mpc.add_tool, mcp.disable((keys={"tool_name": "my_tool"}), mcp.enable(keys={"tool_name":) "my_tool"})
+    - Dependency injection of Context: Tools can access MCP features like logging, reading resources, or reporting progress through the Context object. To use it, add a parameter to your tool function with the type hint Context. 
   - **Resources**: expose data that clients read. They are passive data-sources that client pulls rather than invoke. 
   - **Resource** Templates: parameterized resources.  
   - **Prompts**: Reusable message templates that guide LLM interactions. This enables you to not write prompts each time, e.g. when you migrate code from legacy to modern frameworks.
