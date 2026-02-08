@@ -124,7 +124,7 @@ Wrap a Python function, and FastMCP handles the schema, validation, and docs. Co
     - Templates: parameterized resources.  
     - **ResourceResult** object gives you explicit control over attributes like resource response, multiple content items, per-item MIME type and metadata at both item and result levels.\
   - **Prompts**: Reusable message templates that guide LLM interactions. This enables you to not write prompts each time, e.g. when you migrate code from legacy to modern frameworks.
-    - re-usuable, parameterized prompt templates for clients.
+    - reusable, parameterized prompt templates for clients.
     - **PromptResult** object gives you control over prompt response attributes like - messages, description
   - with all Components: 
       - you could enable, disable resources and templates programmatically and it will trigger notifications. 
@@ -151,6 +151,15 @@ The Context object provides a clean interface to access MCP features within your
 * **Session Visibility**: Control which components are visible to the current session
 * **Request Information**: Access metadata about the current request
 * **Server Access**: When needed, access the underlying FastMCP server instance
+
+## MCP Background Tasks
+In MCP, all component interactions are blocking by default. The MCP background task protocol solves this by letting clients:
+* Start an operation and receive a task ID immediately
+* Track progress as the operation runs
+* Retrieve the result when ready
+Add task=True to your decorator, and your function gains full background execution with progress reporting, distributed processing, and horizontal scaling.
+
+
 
 ## HTTP Deployment
 [Read Here](https://gofastmcp.com/deployment/http#integration-with-web-frameworks)
