@@ -7,8 +7,33 @@ summary = "Model Context Protocol - Notes, Best Practices, Design Patterns."
 +++
 
 ## Introduction
-Model Context Protocol is an open standard protocol that aims to provide a universal approach for applications to provide context to language models.
+- Model Context Protocol is an open standard protocol that aims to provide a universal approach for applications to provide context to language models.
 One advantage of this allows different clients to consume servers built by different vendors that too without needing to worry about compatibility issues.
+- Like usb allowing to access:
+  - Files & local Data
+  - **Databases** (ensure read-only access, query sanitization)
+    - Schema Discovery
+    - Query Eecution
+    - Write Actions
+  - IDE
+  - Web & Remote APIs
+  - Business and Productivity Tools
+  - Multi Agent Systems
+
+```json
+    {
+      "mcpServers": {
+        "postgres": {
+          "command": "npx",
+          "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://user:pass@localhost:5432/db"]
+        }
+      }
+    }
+```
+- 3 major Components or Primitives:
+  - Actions that AI can take via **Tools**
+  - Data that AI can read via **Resources**
+  - Templated Instructions via **Prompts**
 
 MCP is built around Javascript Object Notation Remote Procedure Call (JSON-RPC 2.0) and so it's transport agnostic. It just defines the schema driven messages for client server communication. 
 
@@ -82,7 +107,9 @@ Context Managent for multiple usecases within a company.
 ### Architecture Diagram
 ![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/01_mcp.png?raw=true)
 
-#### llms.txt  
+#### Quick win - llms.txt  
+![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/02_mcp-llm-txt.png?raw=true)
+
 llms.txt is a proposed standard for adding a Markdown file at /llms.txt on a website to provide LLM-friendly content so AI models can better understand a site at inference time, it contains
   - brief background info (llms.txt)
   - links to detailed resources. (llms-full.txt)
@@ -104,14 +131,17 @@ e.g.
 - Control over how your content is represented
 - Good for Developer docs and APIs. If you have a REST or GraphQL reference llms.txt can point crawler to endpoints, versioned path.
 
-### Exposing LLM.txt as MCP Server
-![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/02_mcp-llm-txt.png?raw=true)
-
 ### Testing MCP Server with LLM.txt Inspector
 ![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/03_llm-txt-inspector-result.png?raw=true)
 
 ### Testing MCP Server with PyCharm MCP Plugin
 ![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/04_pycharm_mcp.png?raw=true)
+
+### Approach
+- start off with llms.txt with any http webservers
+- documentation must be in github as markdown rather than confluence. we can use tools like pandoc and github actions to maintain documents in confluence.
+- SME work on markdowns rather than directly on confluence.
+- 
 
 ## References
 2. [![Learn model context protocol with python](../img/learn_model_context_protocol_with_python_book.png)](https://drive.google.com/file/d/1DvwJ7qGYjk-diFtssDM7GEjlaTbYUjqP/view?usp=drive_link)
