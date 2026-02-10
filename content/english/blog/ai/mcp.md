@@ -92,16 +92,16 @@ This protocol has replaced the Server Sent Events (SSE) + HTTP transport as the 
 
 ## MCP Development Environment
 ### Architecture Diagram
-![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/29203a20d183eb9b7895bee9cee677a08c5ccaf2/misc/01_mcp.png?raw=true)
+![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/01_mcp.png?raw=true)
 
 ### Exposing LLM.txt as MCP Server
-![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/29203a20d183eb9b7895bee9cee677a08c5ccaf2/misc/02_mcp-llm-txt.png?raw=true)
+![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/02_mcp-llm-txt.png?raw=true)
 
 ### Testing MCP Server with LLM.txt Inspector
-![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/29203a20d183eb9b7895bee9cee677a08c5ccaf2/misc/03_llm-txt-inspector-result.png?raw=true)
+![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/03_llm-txt-inspector-result.png?raw=true)
 
 ### Testing MCP Server with PyCharm MCP Plugin
-![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/29203a20d183eb9b7895bee9cee677a08c5ccaf2/misc/04_pycharm_mcp.png?raw=true)
+![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/04_pycharm_mcp.png?raw=true)
 
 ## References
 2. [![Learn model context protocol with python](../img/learn_model_context_protocol_with_python_book.png)](https://drive.google.com/file/d/1DvwJ7qGYjk-diFtssDM7GEjlaTbYUjqP/view?usp=drive_link)
