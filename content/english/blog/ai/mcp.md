@@ -10,6 +10,7 @@ summary = "Model Context Protocol - Notes, Best Practices, Design Patterns."
 - Model Context Protocol is an open standard protocol that aims to provide a universal approach for applications to provide context to language models.
 One advantage of this allows different clients to consume servers built by different vendors that too without needing to worry about compatibility issues.
 - Like usb allowing to access:
+  - OpenAPI integration - First class citizen
   - Files & local Data
   - **Databases** (ensure read-only access, query sanitization)
     - Schema Discovery
@@ -29,6 +30,27 @@ One advantage of this allows different clients to consume servers built by diffe
         }
       }
     }
+```
+
+```python
+import httpx
+from fastmcp import FastMCP
+
+# Create an HTTP client for your API
+client = httpx.AsyncClient(base_url="https://api.example.com")
+
+# Load your OpenAPI spec 
+openapi_spec = httpx.get("https://api.example.com/openapi.json").json()
+
+# Create the MCP server
+mcp = FastMCP.from_openapi(
+    openapi_spec=openapi_spec,
+    client=client,
+    name="My API Server"
+)
+
+if __name__ == "__main__":
+    mcp.run()
 ```
 - 3 major Components or Primitives:
   - Actions that AI can take via **Tools**
