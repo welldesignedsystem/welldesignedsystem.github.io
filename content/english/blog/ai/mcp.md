@@ -92,15 +92,6 @@ This protocol has replaced the Server Sent Events (SSE) + HTTP transport as the 
   - Uses Server-Sent Events (SSE) to stream data incrementally. 
   - As soon as each chunk/event is available, it's sent to the client immediately, allowing for real-time progressive updates
 
-### Challenges of MCP:
-- **Things have to be  just right** 
-  - Give it too much tools, verbose responses, and it get overwhelmed and lead to slower response times. 
-  - Give it too little and it can't do the job.
-- Protocol is complex and have layers of serialization, validation and error handling.
-- MCP and libraries are fast evolving and changing.
-  - e.g. SSE transport was introduced somewhere in Nov 2024 and deprecated in favor of Streamable HTTP in March 2025.
-  - [Upgrade Guide](https://gofastmcp.com/development/upgrade-guide)
-
 ## MCP Usecase
 Context Managent for multiple usecases within a company.
 
@@ -124,13 +115,30 @@ e.g.
   - [llms-full.txt](https://langchain-ai.github.io/langgraph/llms-full.txt)
 - [Directory](https://directory.llmstxt.cloud/)
 
-**Advantages**
+### **Advantages**:
 - Solves the context window problem - provides a clean, concise alternative.
 - Token Efficiency
 - Accuracy of question answering about your contents.
 - Control over how your content is represented
 - Good for Developer docs and APIs. If you have a REST or GraphQL reference llms.txt can point crawler to endpoints, versioned path.
+- The N×M Integration Problem
+- Information Silos - Data is distributed in many places
+- Prompts - reusable and proven prompts
+- Tools - reuse of most frequently used tools.
+- MCP - long term session and resumability.
+- Governance & Audibility - every info exchange is logged, permissioned, audited.
+- Elicitation - Request structured input from users during tool execution through the MCP context.
+- Sampling - Request LLM text generation from the client or a configured provider through the MCP context.
+- Authentication and Role based Access Control
 
+### **Challenges of MCP**:
+- **Things have to be  just right** 
+  - Give it too much tools, verbose responses, and it get overwhelmed and lead to slower response times. 
+  - Give it too little and it can't do the job.
+- Protocol is complex and have layers of serialization, validation and error handling.
+- MCP and libraries are fast evolving and changing.
+  - e.g. SSE transport was introduced somewhere in Nov 2024 and deprecated in favor of Streamable HTTP in March 2025.
+  - [Upgrade Guide](https://gofastmcp.com/development/upgrade-guide)
 ### Testing MCP Server with LLM.txt Inspector
 ![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/03_llm-txt-inspector-result.png?raw=true)
 
@@ -138,10 +146,14 @@ e.g.
 ![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/04_pycharm_mcp.png?raw=true)
 
 ### Approach
-- start off with llms.txt with any http webservers
+- Start off with llms.txt with any http webservers
+- SME work on markdowns rather than directly on confluence. 
+  - Template Driven 
+    - Consistent contents
+    - Easy to split for vector db.
+  - It's not extra work it's version controlled, peer reviewed documentation along with access to AI.
 - documentation must be in github as markdown rather than confluence. we can use tools like pandoc and github actions to maintain documents in confluence.
-- SME work on markdowns rather than directly on confluence.
-- 
+-  
 
 ## References
 2. [![Learn model context protocol with python](../img/learn_model_context_protocol_with_python_book.png)](https://drive.google.com/file/d/1DvwJ7qGYjk-diFtssDM7GEjlaTbYUjqP/view?usp=drive_link)
