@@ -77,19 +77,32 @@ This protocol has replaced the Server Sent Events (SSE) + HTTP transport as the 
   - [Upgrade Guide](https://gofastmcp.com/development/upgrade-guide)
 
 ## MCP Usecase
-Context Managent for a company.
+Context Managent for multiple usecases within a company.
 
 ### Architecture Diagram
 ![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/01_mcp.png?raw=true)
 
-#### llm.txt Examples 
-- [Directory](https://directory.llmstxt.cloud/)
+#### llms.txt  
+llms.txt is a proposed standard for adding a Markdown file at /llms.txt on a website to provide LLM-friendly content so AI models can better understand a site at inference time, it contains
+  - brief background info (llms.txt)
+  - links to detailed resources. (llms-full.txt)
+Similar to - robots.txt (Robots Exclusion Protocol) or sitemap.xml(list of websites important URLs for search engines to find, crawl and index efficiently)
+
+e.g.
 - FastMCP
   - [llms.txt](https://gofastmcp.com/llms.txt)
   - [llms-full.txt](https://gofastmcp.com/llms-full.txt)
 - Langgraph
   - [llms.txt](https://langchain-ai.github.io/langgraph/llms.txt)
   - [llms-full.txt](https://langchain-ai.github.io/langgraph/llms-full.txt)
+- [Directory](https://directory.llmstxt.cloud/)
+
+**Advantages**
+- Solves the context window problem - provides a clean, concise alternative.
+- Token Efficiency
+- Accuracy of question answering about your contents.
+- Control over how your content is represented
+- Good for Developer docs and APIs. If you have a REST or GraphQL reference llms.txt can point crawler to endpoints, versioned path.
 
 ### Exposing LLM.txt as MCP Server
 ![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/02_mcp-llm-txt.png?raw=true)
