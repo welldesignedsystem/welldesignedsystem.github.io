@@ -1,1 +1,72 @@
 /* Add your own custom styles here */
+
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap');
+
+:root {
+  /* Central font stack used across the site */
+  --site-font-family: 'Ubuntu', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+  /* Theme / Tailwind CSS variables used by the theme - override them to Ubuntu */
+  --font-sans: var(--site-font-family);
+  --font-primary: var(--site-font-family);
+  --font-secondary: var(--site-font-family);
+  --default-font-family: var(--site-font-family);
+
+  /* Use Ubuntu Mono for monospaced text */
+  --font-mono: 'Ubuntu Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --default-mono-font-family: var(--font-mono);
+}
+
+/* Apply Ubuntu globally to the document and form controls */
+html, body, input, textarea, select, button {
+  font-family: var(--site-font-family), sans-serif;
+}
+
+/* Override Tailwind's "font-sans" utility where it's used */
+.font-sans {
+  font-family: var(--site-font-family), sans-serif !important;
+}
+
+/* Ensure theme-specific font utilities also use Ubuntu */
+.font-primary, .font-secondary {
+  font-family: var(--site-font-family), sans-serif !important;
+}
+
+/* --- BEGIN: link-fix overrides --- */
+/* Ensure anchors are clickable even when something creates an unexpected overlay or stacking context.
+   This is intentionally scoped to anchors and href-bearing anchors only, and appended at the end
+   of the file so it overrides earlier rules. If this does not fix the issue, a more targeted
+   debug (inspect element in DevTools) is recommended. */
+
+a[href] {
+  /* Make sure links accept pointer events */
+  pointer-events: auto;
+  /* Create a local stacking context and place the link above accidental overlays */
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* Sometimes pseudo-elements (::before/::after) are used as overlays; avoid them intercepting clicks
+   unless they are intentionally interactive. This rule only affects pseudo-elements that are not
+   themselves anchors (keeps interactive pseudo-elements on anchors intact). */
+
+a[href]::before,
+a[href]::after {
+  pointer-events: none;
+}
+
+/* Specific fix for nav-dropdown-link to ensure full clickability */
+.nav-dropdown-link {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 10;
+  position: relative;
+}
+
+/* Ensure the nav dropdown list itself is not blocking clicks */
+.nav-dropdown-list {
+  pointer-events: auto !important;
+}
+
+/* --- END: link-fix overrides --- */
