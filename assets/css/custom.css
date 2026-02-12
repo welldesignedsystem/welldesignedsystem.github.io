@@ -32,6 +32,12 @@ html, body, input, textarea, select, button {
   font-family: var(--site-font-family), sans-serif !important;
 }
 
+/* H1 headings: use Ubuntu and bold weight */
+h1 {
+  font-family: var(--site-font-family), serif !important;
+  font-weight: 1000 !important;
+}
+
 /* --- BEGIN: link-fix overrides --- */
 /* Ensure anchors are clickable even when something creates an unexpected overlay or stacking context.
    This is intentionally scoped to anchors and href-bearing anchors only, and appended at the end
