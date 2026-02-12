@@ -119,7 +119,7 @@ This protocol has replaced the Server Sent Events (SSE) + HTTP transport as the 
 Context Managent for multiple usecases within a company.
 
 ### Architecture Diagram
-![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/01_mcp.png?raw=true)
+![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/mcp.png?raw=true)
 
 #### Quick win - llms.txt  
 ![MCP](https://github.com/welldesignedsystem/silver-lamp/blob/main/misc/02_mcp-llm-txt.png?raw=true)
