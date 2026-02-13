@@ -14,8 +14,9 @@ AutoGen provides a well-defined class hierarchy that forms the foundation for bu
 
 ![](../img/autogen_architecture.png)
 
-## Class Diagrams
-![Class Diagram](https://raw.githubusercontent.com/welldesignedsystem/stunning-spork/main/Agent_Framework.svg)
+## Class Diagrams 
+![Class Diagram](https://raw.githubusercontent.com/welldesignedsystem/stunning-spork/main/Agent_original.svg)
+![Class Diagram](https://raw.githubusercontent.com/welldesignedsystem/stunning-spork/main/Agent_grouped.svg)
 
 ## Some code snippets:
 [Sample Code](https://github.com/welldesignedsystem/stunning-spork/blob/main/notebook.ipynb)
