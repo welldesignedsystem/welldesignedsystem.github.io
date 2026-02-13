@@ -8,6 +8,8 @@ summary = "Agentic AI using Autogen"
 
 ## Introduction
 
+AutoGen provides a well-defined class hierarchy that forms the foundation for building agentic AI systems. Understanding this hierarchical structure is essential for effective implementation. The class diagram presented in this section offers a comprehensive view of the framework's architecture, enabling developers to quickly grasp the relationships and dependencies between core components.
+
 ## Architecture
 
 ![](../img/autogen_architecture.png)
