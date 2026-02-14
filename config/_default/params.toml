@@ -57,7 +57,7 @@ show_categories = true
 [announcement]
 enable = true
 expire_days = 7
-content = "<span class='text-center block'><a class='underline' href='/blog/' rel='noopener'>Open Blog Posts 📚</a></span>"
+content = "<span class='text-center block'><a class='underline' href='/blog/' rel='noopener'>Blog Posts 💖</a></span>"
 
 # seo meta data for OpenGraph / Twitter Card
 # seo module: https://github.com/gethugothemes/hugo-modules/tree/master/seo-tools/basic-seo
