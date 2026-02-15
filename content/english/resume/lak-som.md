@@ -73,7 +73,7 @@ Conduct R&D on emerging AI/ML technologies and architectural patterns, evaluatin
 
 ---
 
-## **Figtree Systems** | Full-time  
+## **Figtree Systems**
 Sydney, New South Wales, Australia  
 September 2020 – Present (5 years 6 months)
 
@@ -107,6 +107,8 @@ Designed and developed a cloud-native booking and inventory management system to
 **Testing:** Jest, Mocha, SuperTest  
 **Infrastructure:** Docker, Kubernetes, AWS  
 **API Documentation:** Swagger UI
+
+---
 
 ## **Medic Questionnaire**   
 September 2019 – January 2020 (5 months)
@@ -160,6 +162,7 @@ Architected and developed the system using **Event-Driven Architecture** with **
 **Logging:** Log4j
 
 ---
+
 ## **Apex Global Solutions** | Full-time  
 India  
 May 2009 – September 2011 (2 years 5 months)
