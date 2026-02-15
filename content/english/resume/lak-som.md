@@ -75,7 +75,7 @@ Conduct R&D on emerging AI/ML technologies and architectural patterns, evaluatin
 
 ## **Figtree Systems**
 Sydney, New South Wales, Australia  
-September 2020 – Present (5 years 6 months)
+September 2020 – July 2025 (4 years 11 months)
 
 ### Project Description
 Led full-stack development of an enterprise-grade Workers' Compensation Software platform serving insurers, government agencies, and manufacturing organizations. Architected highly configurable microservices using Spring Boot, RabbitMQ for asynchronous messaging, and Maven for build automation. Developed responsive UI components with ExtJS framework, enabling complex workflow management and intuitive user interactions. Implemented Kubernetes orchestration with GitLab CI/CD for automated deployment pipelines, integrated HashiCorp Vault for secrets management, and optimized MySQL/PostgreSQL schemas for performance and data integrity. Built comprehensive reporting capabilities using iText library for PDF/Excel generation and email notification systems for workflow automation.
@@ -93,7 +93,7 @@ Conducted extensive R&D on modern tech stacks and architectural patterns, implem
 
 ## **Bodhi Booking Engine**   
 New South Wales, Australia  
-January 2020 – Present (6 years 2 months)
+January 2020 – September 2020 (8 months)
 
 ### Project Description
 Designed and developed a cloud-native booking and inventory management system to replace a legacy thick-client application for a multi-location Ayurveda clinic chain. Architected scalable microservices using **Node.js**, **REST/GraphQL APIs**, **React.js**, and **Redux**, deployed on **AWS** with **Docker** and **Kubernetes**. Implemented event-driven architecture with **Apache Kafka** for high-velocity inventory streaming data, ensuring real-time medical supply tracking across locations. Utilized **PostgreSQL** and **MongoDB** for optimal data persistence, adhering to BASE principles for high availability and cost efficiency. Developed comprehensive test coverage using **Jest**, **Mocha**, and **SuperTest**, while maintaining API documentation with **Swagger UI**. Successfully transformed clinic operations by delivering a highly scalable, maintainable system that reduced operational costs and improved booking workflow efficiency.
@@ -146,7 +146,7 @@ Architected and developed enterprise applications using **Spring Boot 1.5**, **S
 
 ---
 
-## **Cognizant** | Full-time  
+## **Cognizant** 
 India  
 September 2011 – April 2013 (1 year 8 months)
 
@@ -163,7 +163,7 @@ Architected and developed the system using **Event-Driven Architecture** with **
 
 ---
 
-## **Apex Global Solutions** | Full-time  
+## **Apex Global Solutions** 
 India  
 May 2009 – September 2011 (2 years 5 months)
 
