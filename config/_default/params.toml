@@ -20,7 +20,7 @@ theme_default = "system" # available options [light/dark/system]
 # Main Sections
 mainSections = ["blog"]
 # contact form action
-contact_form_action = "https://airform.io/welldesignedsystem@gmail.com" # contact form works with [https://airform.io/] or [https://formspree.io]
+contact_form_action = "#" # contact form works with [https://airform.io/] or [https://formspree.io]
 # google tag manager, see https://developers.google.com/tag-manager/
 google_tag_manager = "" # example: G-XXXXXXXXXX
 google_adsense = ""     # example: ca-pub-xxxxxxxxxxxxxxxx
@@ -38,7 +38,7 @@ preloader = "" # use jpg, png, svg or gif format.
 # Navigation button
 [navigation_button]
 enable = true
-label = "Contact us"
+label = "get a quote"
 link = "contact"
 
 # search
@@ -57,7 +57,7 @@ show_categories = true
 [announcement]
 enable = true
 expire_days = 7
-content = "<span class='text-center block'><a class='underline' href='/blog/' rel='noopener'>Blog Posts 💖</a></span>"
+content = "<span class='text-center block'>Github Repository: <a class='underline' href='https://github.com/welldesignedsystem' target='_blank' rel='noopener'>Please 🖱️ here</a></span>"
 
 # seo meta data for OpenGraph / Twitter Card
 # seo module: https://github.com/gethugothemes/hugo-modules/tree/master/seo-tools/basic-seo

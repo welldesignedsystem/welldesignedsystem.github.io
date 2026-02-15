@@ -1,53 +1,53 @@
 ---
 # Banner
 banner:
-  title: "Partners & Patterns"
-  content: "The 'Well Designed System' - is a collaborative notebook where two partners document learnings, patterns and design choices from building Software systems. We share concise how-tos, architecture patterns and curated references that turn experience into usable guidance. Each entry captures what worked, what failed and why—so ideas are reproducible and improvable. We focus on scalable, maintainable architectures and hands‑on engineering, but welcome curiosity from all levels. Read, reuse and contribute: this site grows through iteration, conversation and shared problem‑solving. Join us as we learn together, refine patterns and build better systems—one experiment at a time, every day and celebrate progress."
+  title: "The Ultimate Starter Template You Need To Start Your Hugo Project"
+  content: "Hugoplate is a free starter template built with Hugo and TailwindCSS, providing everything you need to jumpstart your Hugo project and save valuable time."
   image: "/images/banner.png"
   button:
     enable: true
-    label: "Github Repository"
-    link: "https://github.com/welldesignedsystem"
+    label: "Go To Blog Posts"
+    link: "/blog"
 
 # Features
-# features:
-#   - title: "What's Included in Hugoplate"
-#     image: "/images/service-1.png"
-#     content: "Hugoplate is a comprehensive starter template that includes everything you need to get started with your Hugo project. What's Included in Hugoplate"
-#     bulletpoints:
-#       - "10+ Pre-build pages"
-#       - "95+ Google Pagespeed Score"
-#       - "Build with Hugo and TailwindCSS for easy and customizable styling"
-#       - "Fully responsive on all devices"
-#       - "SEO-optimized for better search engine rankings"
-#       - "**Open-source and free** for personal and commercial use"
-#     button:
-#       enable: false
-#       label: "Get Started Now"
-#       link: "#"
+features:
+  - title: "What's Included in Hugoplate"
+    image: "/images/service-1.png"
+    content: "Hugoplate is a comprehensive starter template that includes everything you need to get started with your Hugo project. What's Included in Hugoplate"
+    bulletpoints:
+      - "10+ Pre-build pages"
+      - "95+ Google Pagespeed Score"
+      - "Build with Hugo and TailwindCSS for easy and customizable styling"
+      - "Fully responsive on all devices"
+      - "SEO-optimized for better search engine rankings"
+      - "**Open-source and free** for personal and commercial use"
+    button:
+      enable: false
+      label: "Get Started Now"
+      link: "#"
 
-#   - title: "Discover the Key Features Of Hugo"
-#     image: "/images/service-2.png"
-#     content: "Hugo is an all-in-one web framework for building fast, content-focused websites. It offers a range of exciting features for developers and website creators. Some of the key features are:"
-#     bulletpoints:
-#       - "Zero JS, by default: No JavaScript runtime overhead to slow you down."
-#       - "Customizable: Tailwind, MDX and 100+ other integrations to choose from."
-#       - "UI-agnostic: Supports React, Preact, Svelte, Vue, Solid, Lit and more."
-#     button:
-#       enable: true
-#       label: "Get Started Now"
-#       link: "https://github.com/zeon-studio/hugoplate"
+  - title: "Discover the Key Features Of Hugo"
+    image: "/images/service-2.png"
+    content: "Hugo is an all-in-one web framework for building fast, content-focused websites. It offers a range of exciting features for developers and website creators. Some of the key features are:"
+    bulletpoints:
+      - "Zero JS, by default: No JavaScript runtime overhead to slow you down."
+      - "Customizable: Tailwind, MDX and 100+ other integrations to choose from."
+      - "UI-agnostic: Supports React, Preact, Svelte, Vue, Solid, Lit and more."
+    button:
+      enable: true
+      label: "Get Started Now"
+      link: "https://github.com/zeon-studio/hugoplate"
 
-#   - title: "The Top Reasons to Choose Hugo for Your Hugo Project"
-#     image: "/images/service-3.png"
-#     content: "With Hugo, you can build modern and content-focused websites without sacrificing performance or ease of use."
-#     bulletpoints:
-#       - "Instantly load static sites for better user experience and SEO."
-#       - "Intuitive syntax and support for popular frameworks make learning and using Hugo a breeze."
-#       - "Use any front-end library or framework, or build custom components, for any project size."
-#       - "Built on cutting-edge technology to keep your projects up-to-date with the latest web standards."
-#     button:
-#       enable: false
-#       label: ""
-#       link: ""
+  - title: "The Top Reasons to Choose Hugo for Your Hugo Project"
+    image: "/images/service-3.png"
+    content: "With Hugo, you can build modern and content-focused websites without sacrificing performance or ease of use."
+    bulletpoints:
+      - "Instantly load static sites for better user experience and SEO."
+      - "Intuitive syntax and support for popular frameworks make learning and using Hugo a breeze."
+      - "Use any front-end library or framework, or build custom components, for any project size."
+      - "Built on cutting-edge technology to keep your projects up-to-date with the latest web standards."
+    button:
+      enable: false
+      label: ""
+      link: ""
 ---
