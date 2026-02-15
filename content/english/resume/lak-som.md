@@ -53,13 +53,31 @@ Objective: Pursuing opportunities to apply comprehensive technical expertise and
 
 # PROFESSIONAL EXPERIENCE
 
+## **EigenAI** 
+Sydney, New South Wales, Australia · Remote  
+July-2025 - Present 
+
+### Project Description
+Lead technical development of enterprise-grade AI/ML solutions for predictive analytics, intelligent automation, and Generative AI applications serving multinational clients including top shipping and logistics organizations. Architect and implement scalable microservices using **Python**, **Node.js**, and **Java/Spring Boot**, integrating modern AI frameworks including **LangChain**, **LangGraph**, **OpenAI GPT-4**, and **Gemini** for LLM-powered automation. Design and develop **RAG (Retrieval-Augmented Generation)** systems with vector databases (**PgVector**, **ChromaDB**, **Weaviate**) for intelligent document processing and knowledge retrieval. Build event-driven architectures with **Apache Kafka** for real-time data streaming and processing, implement **REST/GraphQL** APIs for flexible data access, and develop responsive frontend applications using **React.js** and **Redux**. Deploy cloud-native solutions on **AWS** using **Docker** and **Kubernetes** orchestration, leverage services including **Lambda**, **ECS**, **S3**, **RDS**, **DynamoDB**, **SQS**, and **SNS**, and implement **CI/CD pipelines** for automated testing and deployment.
+Conduct R&D on emerging AI/ML technologies and architectural patterns, evaluating and integrating cutting-edge solutions including multi-agent systems, prompt engineering techniques, and Model Context Protocol implementations. Design end-to-end AI-powered features spanning backend microservices, machine learning pipelines, and frontend interfaces, developing reusable components and frameworks that accelerate development velocity. Implement comprehensive testing strategies using **Jest**, **Mocha**, **Pytest**, and **SuperTest** to ensure production-ready reliability. Collaborate directly with enterprise clients to understand business requirements, translate them into technical solutions, and deliver AI-driven insights that create measurable business value. Work cross-functionally with the CTO, data scientists, engineers, and stakeholders throughout the full SDLC—from requirements analysis and system architecture through model training, testing, and production deployment. Successfully deliver scalable, secure AI systems that solve complex business challenges in predictive maintenance, data analytics, and intelligent automation, reinforcing expertise in modern AI/ML engineering, cloud-native development, and enterprise solution delivery.
+
+### Technologies Used
+**AI/ML Frameworks:** LangChain, LangGraph, AutoGen, OpenAI GPT-4, Gemini, Multi-Agent Systems, RAG  
+**Vector Databases:** PgVector, ChromaDB, Weaviate, FAISS  
+**Languages & Frameworks:** Python, Node.js, Java/Spring Boot, React.js, Redux  
+**Cloud & Infrastructure:** AWS (Lambda, ECS, S3, RDS, DynamoDB, SQS, SNS), Docker, Kubernetes, Terraform  
+**Event Streaming:** Apache Kafka, AWS Kinesis  
+**Databases:** PostgreSQL, MongoDB, Redis  
+**APIs & Testing:** REST, GraphQL, Jest, Mocha, Pytest, SuperTest  
+**DevOps:** CI/CD Pipelines, Infrastructure as Code
+
 ---
 
 ## **Figtree Systems** | Full-time  
 Sydney, New South Wales, Australia  
 September 2020 – Present (5 years 6 months)
 
-### Overview
+### Project Description
 Led full-stack development of an enterprise-grade Workers' Compensation Software platform serving insurers, government agencies, and manufacturing organizations. Architected highly configurable microservices using Spring Boot, RabbitMQ for asynchronous messaging, and Maven for build automation. Developed responsive UI components with ExtJS framework, enabling complex workflow management and intuitive user interactions. Implemented Kubernetes orchestration with GitLab CI/CD for automated deployment pipelines, integrated HashiCorp Vault for secrets management, and optimized MySQL/PostgreSQL schemas for performance and data integrity. Built comprehensive reporting capabilities using iText library for PDF/Excel generation and email notification systems for workflow automation.
 Conducted extensive R&D on modern tech stacks and architectural patterns, implementing scalable solutions that addressed performance bottlenecks while ensuring regulatory compliance and security best practices. Designed end-to-end features spanning microservices architecture, API development, and frontend interfaces, developing reusable components that accelerated team productivity. Collaborated cross-functionally with product managers, UI/UX designers, and QA engineers throughout the full SDLC—from requirements gathering and technical design through comprehensive testing (unit, integration, end-to-end) and production deployment. Successfully delivered a secure, scalable platform that balanced complex multi-industry requirements with technical excellence, reinforcing expertise in cloud-native development, DevOps practices, and mission-critical software delivery.
 
