@@ -1,5 +1,5 @@
 ---
-title: Lakshmi S
+title: LakSom
 email: lakshmisoman.au@gmail.com
 image: "/images/avatar.png"
 description: this is meta description
