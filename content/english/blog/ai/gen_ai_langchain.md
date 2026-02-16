@@ -1,15 +1,16 @@
 +++
-date = '2026-01-01T12:44:47+10:00'
+date = '2026-02-01T12:44:47+10:00'
 draft = false
-title = 'Gen-AI Patterns'
-tags = ['LLM', 'AI', 'Design Patterns']
+title = 'Langchain Gen-AI Patterns'
+tags = ['LLM', 'AI', 'Langchain', 'Design Patterns']
 summary = "Reusable design patterns and best practices for building robust, efficient and scalable LLM applications, covering retrieval, memory, agents, RAG and orchestration."
 +++
 
 LLM design patterns are reusable strategies for building robust, efficient and scalable AI applications. They help developers structure retrieval, reading, rewriting, memory, agent and orchestration workflows for large language models. These patterns improve performance, maintainability accuracy, cost and security.
+## Class diagram
+![](https://raw.githubusercontent.com/welldesignedsystem/fictional-eureka/refs/heads/main/misc/langChain_class_hierarchy.svg)
 
 ## Introduction
-
 Before we proceed setting the stage.
 ## Concepts 
 ### LLMs
