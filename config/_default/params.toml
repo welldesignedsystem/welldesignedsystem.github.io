@@ -96,7 +96,7 @@ sidebar = ["categories", "tags"]
 
 
 # google map
-[google_map]Zeon Studio
+[google_map]
 enable = false
 map_api_key = "AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU"
 map_latitude = "51.5223477"

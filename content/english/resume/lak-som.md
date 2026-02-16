@@ -17,7 +17,7 @@ social:
     link: https://linkedin.com
 ---
 # OBJECTIVE
-Senior Software Engineer with 15+ years developing and architecting enterprise grade applications using microservices, cloud (AWS) and modern DevOps. Expanding expertise in AI/ML (LLMs, RAG, multi-agent systems) while delivering scalable, production-ready solutions. Proven track record leading cross-functional teams and driving technical innovation in startup and enterprise environments alike.
+Senior Software Engineer with 14+ years developing and architecting enterprise grade applications using microservices, cloud (AWS) and modern DevOps. Expanding expertise in AI/ML (LLMs, RAG, multi-agent systems) while delivering scalable, production-ready solutions. Proven track record leading cross-functional teams and driving technical innovation in startup and enterprise environments alike.
 Objective: Pursuing opportunities to apply comprehensive technical expertise and cutting-edge AI/Engineering solutions to drive innovation, solve challenging problems and create measurable business impact.
 # TECHNOLOGY & SKILLS PORTFOLIO
 
