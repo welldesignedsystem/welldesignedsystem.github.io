@@ -17,10 +17,10 @@ features:
     bulletpoints:
       - "🔥 AI & Machine Learning: Articles on agentic AI, GenAI design patterns, lightweight LLMs, model context strategies and other AI/ML insights."
       - "🚀 System & Software Design: Posts on system design principles, practical interview examples, and architectural patterns that guide building scalable, reliable systems."
-      - "🛠️ Software Engineering Fundamentals:Core topics like design patterns, data structures & algorithms, JEE design patterns and other solid engineering foundations."
-      - "🐳 DevOps-Related Tools & Practices:Guides on tools and environments like Docker, Kubernetes, YAML configuration practices — useful for modern infrastructure and deployment workflows."
-      - "🧩 Programming & Language Guides:Practical notes on languages such as Python and classic programming references like COBOL."
-      - "💼 Career & Interview Prep:Dedicated content for technical interviews, including behavioral interview advice."
+      - "🛠️ Software Engineering Fundamentals: Core topics like design patterns, data structures & algorithms, JEE design patterns and other solid engineering foundations."
+      - "🐳 DevOps-Related Tools & Practices: Guides on tools and environments like Docker, Kubernetes, YAML configuration practices — useful for modern infrastructure and deployment workflows."
+      - "🧩 Programming & Language Guides: Practical notes on languages such as Python and classic programming references like COBOL."
+      - "💼 Career & Interview Prep: Notes for technical interviews, including behavioral interview advice."
       - "📚 Conceptual & Cross-Disciplinary References:Articles that curate laws, principles, and broader ideas that shape engineering thinking."
 
     button:
