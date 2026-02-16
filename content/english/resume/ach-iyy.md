@@ -17,4 +17,4 @@ social:
     link: https://linkedin.com
 ---
 
-## Currently not seeking new opportunities
+Currently not seeking new opportunities
