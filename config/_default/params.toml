@@ -38,8 +38,8 @@ preloader = "" # use jpg, png, svg or gif format.
 # Navigation button
 [navigation_button]
 enable = true
-label = "contact us"
-link = "contact"
+label = "Github"
+link = "https://github.com/welldesignedsystem?tab=repositories"
 
 # search
 # search module: https://github.com/gethugothemes/hugo-modules/tree/master/search

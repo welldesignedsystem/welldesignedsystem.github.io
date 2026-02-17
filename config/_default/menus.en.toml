@@ -42,7 +42,7 @@ url = "/blog"
 
 [[main]]
 parent = "Pages"
-name = "Contact"
+name = "Contact Us"
 url = "/contact"
 
 [[main]]
