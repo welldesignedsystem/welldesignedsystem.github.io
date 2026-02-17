@@ -6,6 +6,7 @@
   {{- end -}}"
   lang="{{ site.LanguageCode | default `en-US` }}"
   itemtype="http://schema.org/WebPage">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
   <head>
     <!-- head (don't cache it) -->
     {{ partial "essentials/head.html" . }}
@@ -13,7 +14,12 @@
 
     <!-- style (always cache it) -->
     {{ partialCached "essentials/style.html" . }}
-
+    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+    <script>
+      const lightbox = GLightbox({
+        selector: '.glightbox' // This matches the class we will add to images
+      });
+    </script>
   </head>
 
   <body>
