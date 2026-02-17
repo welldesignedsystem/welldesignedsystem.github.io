@@ -1,8 +1,8 @@
 +++
 date = '2026-02-17T12:44:47+10:00'
 draft = false
-title = 'OpenClaw AI'
-tags = ['OpenClaw', 'Agentic AI']
+title = 'A2A'
+tags = ['A2A', 'Agentic AI']
 summary = "Agentic AI using OpenClaw"
 +++
 
