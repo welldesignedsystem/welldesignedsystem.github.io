@@ -17,7 +17,7 @@ social:
     link: https://linkedin.com
 ---
 # OBJECTIVE
-Senior Software Engineer with 11 years developing and architecting enterprise grade applications using microservices, cloud (AWS) and modern DevOps. Expanding expertise in AI/ML (LLMs, RAG, multi-agent systems) while delivering scalable, production-ready solutions. Proven track record leading cross-functional teams and driving technical innovation in startup and enterprise environments alike.
+Software Engineer with 11 years developing and architecting enterprise grade applications using microservices, cloud (AWS) and modern DevOps. Expanding expertise in AI/ML (LLMs, RAG, multi-agent systems) while delivering scalable, production-ready solutions. Proven track record leading cross-functional teams and driving technical innovation in startup and enterprise environments alike.
 Objective: Pursuing opportunities to apply comprehensive technical expertise and cutting-edge AI/Engineering solutions to drive innovation, solve challenging problems and create measurable business impact.
 # TECHNOLOGY & SKILLS PORTFOLIO
 
@@ -75,7 +75,7 @@ Conduct R&D on emerging AI/ML technologies and architectural patterns, evaluatin
 
 ## **Figtree Systems**
 Sydney, New South Wales, Australia  
-September 2020 – July 2025 (4 years 11 months)
+September 2020 – May 2025 (4 years 8 months)
 
 ### Project Description
 Led full-stack development of an enterprise-grade Workers' Compensation Software platform serving insurers, government agencies, and manufacturing organizations. Architected highly configurable microservices using Spring Boot, RabbitMQ for asynchronous messaging, and Maven for build automation. Developed responsive UI components with ExtJS framework, enabling complex workflow management and intuitive user interactions. Implemented Kubernetes orchestration with GitLab CI/CD for automated deployment pipelines, integrated HashiCorp Vault for secrets management, and optimized MySQL/PostgreSQL schemas for performance and data integrity. Built comprehensive reporting capabilities using iText library for PDF/Excel generation and email notification systems for workflow automation.
