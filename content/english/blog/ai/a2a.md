@@ -16,3 +16,6 @@ Work in Progress 👷
 
 ## Class diagram
 ![](https://raw.githubusercontent.com/welldesignedsystem/animated-system/refs/heads/main/misc/classes.svg)
+
+## Reference
+- [Agent2Agent Protocol (A2A)](https://a2aprotocol.ai/docs/)
