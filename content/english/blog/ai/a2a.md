@@ -17,5 +17,4 @@ A2A is an open standard protocol that enables seamless communication and collabo
 ![](https://raw.githubusercontent.com/welldesignedsystem/animated-system/refs/heads/main/misc/classes.svg)
 
 ## Reference
-- [Agent2Agent Protocol (A2A)](https://a2a-protocol.org/latest/topics/what-is-a2a/)
-- https://docs.google.com/document/d/169ipq-H84T1wIu_qASnv9ltx4CZoMOL-TmyisPhhPlE/edit?tab=t.0
+- [Agent2Agent Protocol (A2A)](https://drive.google.com/file/d/1FXcEFqZCYLyVR4ikWBc8SgWFM54zr9yx/view?usp=drive_link)
