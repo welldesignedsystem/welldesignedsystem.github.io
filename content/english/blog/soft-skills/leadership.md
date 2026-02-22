@@ -20,22 +20,6 @@ This document provides a comprehensive overview of each Amazon Leadership Princi
 5. **Learning**: What you gained
 6. **Application**: How it influences your current approach
 
-### **Red Flags to Avoid**
-
-#### Never Say:
-- "That's not my fault"
-- "I would never do that"
-- "I don't have any weaknesses"
-- "Everyone else was wrong"
-
-#### Always Include:
-- Personal accountability
-- Specific examples and outcomes
-- What you learned
-- How you've changed/improved
-- Context and nuance
----
-
 ### **Remember**
 
 These questions test:
