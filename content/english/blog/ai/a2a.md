@@ -36,7 +36,7 @@ A2A development follows principles that prioritize broad adoption, enterprise-gr
 * Modality Independent: The protocol allows agents to communicate using a wide variety of content types. This enables rich and flexible interactions beyond plain text.
 * Opaque Execution: Agents collaborate effectively without exposing their internal logic, memory, or proprietary tools. Interactions rely on declared capabilities and exchanged context. This preserves intellectual property and enhances security.
 
-### Understanding the Agent Stack: A2A, MCP, Agent Frameworks and Models¶
+### Understanding the Agent Stack: A2A, MCP, Agent Frameworks and Models
 A2A is situated within a broader agent stack, which includes:
 
 * A2A: Standardizes communication among agents deployed in different organizations and developed using diverse frameworks.
@@ -106,6 +106,7 @@ A2A revolves around several key concepts. For detailed explanations, please refe
 * Push Notifications: Asynchronous task updates delivered via server-initiated HTTP POST requests to a client-provided webhook URL, for long-running or disconnected scenarios.
 * Context: An optional, server-generated identifier to logically group related tasks and messages.
 * Extension: A mechanism for agents to provide additional functionality or data beyond the core A2A specification.
+[Full Specification](https://github.com/a2aproject/A2A/blob/main/docs/specification.md)
 
 ## Reference
 - [Agent2Agent Protocol (A2A)](https://drive.google.com/file/d/1FXcEFqZCYLyVR4ikWBc8SgWFM54zr9yx/view?usp=drive_link)
