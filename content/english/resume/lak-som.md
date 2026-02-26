@@ -33,7 +33,7 @@ Objective: Pursuing opportunities to apply comprehensive technical expertise and
 | **Frameworks & Runtime Stacks** | Java / Spring Ecosystem | Spring Boot, Spring Cloud, Spring MVC, Spring Security, Spring Data JPA, Spring Batch, Spring Kafka, Spring AMQP, Spring Integration, Spring AOP, Spring Actuator, Spring HATEOAS, Spring Shell |
 | | JavaScript/Node.js | Node.js, React.js, Ext.js |
 | **Cloud Platforms & Services** | Cloud Provider | Amazon Web Services (AWS) |
-| | Compute & API Services | Lambda (FaaS), API Gateway, AppSync, EC2, ECS, ELB |
+| | Compute & API Services | Lambda (FaaS), API Gateway, EC2, ECS, ELB |
 | | Networking | VPC (Virtual Private Cloud) |
 | | Storage & CDN | S3, CloudFront |
 | | Database Services | RDS (Relational), MongoDB (NoSQL) |
