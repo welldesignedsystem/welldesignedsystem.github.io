@@ -23,10 +23,10 @@ Objective: Pursuing opportunities to apply comprehensive technical expertise and
 
 | Category | Subcategory | Technologies & Details |
 |----------|-------------|------------------------|
-| **AI, Machine Learning & Generative AI** | LLM Frameworks & Agents | LangChain, Google Vertex AI, LangGraph, Microsoft AutoGen, CrewAI |
-| | LLM Models & Platforms | OpenAI (GPT-4 Turbo / GPT-5), Gemini, Mistral, Ollama, Open WebUI, AWS Bedrock |
-| | AI Concepts & Methodologies | Prompt Engineering, Retrieval-Augmented Generation (RAG), Multi-Agent Systems, Model Context Protocol |
-| | Vector Databases | PgVector, ChromaDB, Weaviate, FAISS |
+| **AI, Machine Learning & Generative AI** | LLM Frameworks & Agents | LangChain, LangGraph, Microsoft AutoGen |
+| | LLM Models & Platforms | OpenAI (GPT-4 Turbo / GPT-5), Gemini 2.5 turbo, Mistral, Ollama |
+| | AI Concepts & Methodologies | Prompt Engineering, Retrieval-Augmented Generation (RAG), Model Context Protocol |
+| | Vector Databases | PgVector, ChromaDB, FAISS |
 | **Software Architecture & Design** | Architecture Patterns | Microservices, Event-Driven (Broker & Mediator), Service-Oriented Architecture (SOA), Microkernel, Hexagonal (Ports & Adapters) |
 | | Design Principles | Core Design Patterns, Enterprise Design Patterns, Data Structures & Algorithms, Multi-Threading & Concurrency |
 | **Programming Languages** | Core Languages | Java, JavaScript/Node.js, Python |
