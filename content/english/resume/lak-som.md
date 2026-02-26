@@ -27,23 +27,22 @@ Objective: Pursuing opportunities to apply comprehensive technical expertise and
 | | LLM Models & Platforms | OpenAI (GPT-4 Turbo / GPT-5), Gemini 2.5 turbo, Mistral, Ollama |
 | | AI Concepts & Methodologies | Prompt Engineering, Retrieval-Augmented Generation (RAG), Model Context Protocol |
 | | Vector Databases | PgVector, ChromaDB, FAISS |
-| **Software Architecture & Design** | Architecture Patterns | Microservices, Event-Driven (Broker & Mediator), Service-Oriented Architecture (SOA), Microkernel, Hexagonal (Ports & Adapters) |
-| | Design Principles | Core Design Patterns, Enterprise Design Patterns, Data Structures & Algorithms, Multi-Threading & Concurrency |
+| **Software Architecture & Design** | Architecture Patterns | Microservices, Event-Driven, Hexagonal (Ports & Adapters) |
+| | Design Principles | Core Design Patterns |
 | **Programming Languages** | Core Languages | Java, JavaScript/Node.js, Python |
-| **Frameworks & Runtime Stacks** | Java / Spring Ecosystem | Spring Boot, Spring Cloud, Spring MVC, Spring WebFlux, Spring Security, Spring Data JPA, Spring Batch, Spring Kafka, Spring AMQP, Spring Integration, Spring AOP, Spring Actuator, Spring HATEOAS, Spring Shell |
+| **Frameworks & Runtime Stacks** | Java / Spring Ecosystem | Spring Boot, Spring Cloud, Spring MVC, Spring Security, Spring Data JPA, Spring Batch, Spring Kafka, Spring AMQP, Spring Integration, Spring AOP, Spring Actuator, Spring HATEOAS, Spring Shell |
 | | JavaScript/Node.js | Node.js, React.js, Ext.js |
 | **Cloud Platforms & Services** | Cloud Provider | Amazon Web Services (AWS) |
 | | Compute & API Services | Lambda (FaaS), API Gateway, AppSync, EC2, ECS, ELB |
 | | Networking | VPC (Virtual Private Cloud) |
 | | Storage & CDN | S3, CloudFront |
-| | Database Services | RDS (Relational), DynamoDB (NoSQL) |
+| | Database Services | RDS (Relational), MongoDB (NoSQL) |
 | | Messaging & Notifications | SNS (Pub/Sub), SQS (Queue), SES (Email) |
-| | Monitoring & Analytics | CloudWatch, AWS Glue |
-| | Security & Identity Management | Cognito, KMS (Key Management Service), Mobile Hub |
-| | Infrastructure as Code | Terraform, AWS CloudFormation |
-| **Containerization & Orchestration** | Container Technologies | Docker, Docker Compose, Podman |
+| | Monitoring & Analytics | CloudWatch |
+| | Infrastructure as Code | Terraform |
+| **Containerization & Orchestration** | Container Technologies | Docker, Docker Compose |
 | | Orchestration | Kubernetes |
-| **Security & Identity** | Authentication & Authorization | OAuth 2.0, Keycloak, AWS Cognito |
+| **Security & Identity** | Authentication & Authorization | OAuth 2.0 |
 | **Databases & Data Storage** | Relational (SQL) | PostgreSQL, Oracle 11g, MySQL |
 | | NoSQL (Document Store) | MongoDB |
 | | NoSQL (Key-Value Store) | DynamoDB, Redis |
