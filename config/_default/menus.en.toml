@@ -21,10 +21,10 @@ parent = "Résumé"
 name = "LakSom"
 url = "/resume/lak-som"
 
-#[[main]]
-#parent = "Résumé"
-#name = "AchIyy"
-#url = "/resume/ach-iyy"
+[[main]]
+parent = "Résumé"
+name = "AchIyy"
+url = "/resume/ach-iyy"
 
 #[[main]]
 #name = "Elements"
