@@ -17,4 +17,4 @@ social:
     link: https://linkedin.com
 ---
 
-Currently not seeking new opportunities
+## This limited-edition item is currently off the Job market. 😄
