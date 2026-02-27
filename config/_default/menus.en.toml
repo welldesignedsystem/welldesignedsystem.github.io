@@ -12,7 +12,7 @@ url = "/authors"
 weight = 2
 
 [[main]]
-name = "Résumé"
+name = "Resumé"
 url = "/resume"
 weight = 2
 
@@ -22,7 +22,7 @@ name = "LakSom"
 url = "/resume/lak-som"
 
 [[main]]
-parent = "Résumé"
+parent = "Resumé"
 name = "AchIyy"
 url = "/resume/ach-iyy"
 
