@@ -18,12 +18,12 @@ weight = 2
 
 [[main]]
 parent = "Resumé"
-name = "LakSom"
+name = "Lak-Som"
 url = "/resume/lak-som"
 
 [[main]]
 parent = "Resumé"
-name = "AchIyy"
+name = "Ach-Iyy"
 url = "/resume/ach-iyy"
 
 #[[main]]
