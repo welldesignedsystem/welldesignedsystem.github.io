@@ -480,6 +480,7 @@ Microservices architecture design
 - **Ports**: Define interfaces for driving (API, UI) and driven (DB, messaging, external APIs) adapters.
 - **Adapters**: Implement ports for REST, gRPC, Kafka, databases, etc.
 - **Benefits**: Improves testability, flexibility and separation of concerns.
+<img width="1294" height="727" alt="Screenshot From 2026-03-02 05-39-10" src="https://github.com/user-attachments/assets/602e0e62-79b9-4fbb-826a-bb5f234e646c" />
 
 #### Example: Video Upload Service (Hexagonal)
 - **Core**: Handles upload validation, metadata extraction and orchestration.
