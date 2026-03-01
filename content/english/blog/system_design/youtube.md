@@ -472,7 +472,7 @@ Microservices architecture design
 ### Decomposition Strategies (from "Microservices Patterns")
 - **By Business Capability**: Decompose services around business domains (e.g., Video Management, User Management, Social Interactions, Analytics).
 - **By Subdomain (DDD)**: Identify core, supporting and generic subdomains (e.g., Video Processing as core, Notification as supporting).
-- **By Transaction Boundary**: Services should own their data and transactional boundaries (e.g., Video Upload and Processing as separate services).
+- **By Transaction Boundary**: Services should own their data and transactional boundaries (e.g., Video **Upload** and **Processing** as separate services).
 - **By Team Ownership**: Align services with team boundaries for independent delivery.
 
 ### Hexagonal Architecture (Ports & Adapters)
