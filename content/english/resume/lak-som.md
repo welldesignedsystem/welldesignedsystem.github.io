@@ -14,8 +14,7 @@ social:
 ---
 # SUMMARY
 
-Senior AI Engineer and Software Architect with 11+ years building enterprise-grade distributed systems, with deep hands-on expertise in production LLM systems, RAG pipelines, and multi-agent architectures. Proven track record leading cross-functional teams and delivering scalable AI solutions across startup and enterprise environments in shipping, healthcare, insurance, and automotive industries.
-
+Senior AI Engineer with 11+ years designing and delivering enterprise-scale distributed systems and intelligent platforms. Deep expertise in production LLM systems, Retrieval-Augmented Generation (RAG) pipelines, and multi-agent architectures powering AI-driven automation and knowledge systems. Proven leader in translating complex business challenges into scalable AI solutions across logistics, healthcare, insurance, and automotive industries.
 ---
 
 # SKILLS
@@ -81,7 +80,7 @@ Sydney, New South Wales, Australia
 September 2020 – May 2025 (4 years 8 months)
 
 - Established the ground rules for Monolith to Microservices transformation, defining service boundaries, API contracts, and data ownership for a complex insurance claims processing system
-- Led full-stack engineering of an enterprise **Workers' Compensation platform** serving insurers, government agencies, and manufacturing organisations across 10+ clients**
+- Led full-stack engineering of an enterprise **Workers' Compensation platform** serving insurers, government agencies, and manufacturing organisations across 10+ clients
 - Architected event-driven microservices with **Spring Boot and RabbitMQ**, reducing claims workflow processing time
 - Implemented **Kubernetes orchestration** with GitLab CI/CD
 - Integrated **HashiCorp Vault** for secrets management, eliminating hardcoded credentials across 20+ services** and achieving full security compliance
