@@ -15,6 +15,7 @@ social:
 # SUMMARY
 
 Senior AI Engineer with 11+ years designing and delivering enterprise-scale distributed systems and intelligent platforms. Deep expertise in production LLM systems, Retrieval-Augmented Generation (RAG) pipelines, and multi-agent architectures powering AI-driven automation and knowledge systems. Proven leader in translating complex business challenges into scalable AI solutions across logistics, healthcare, insurance, and automotive industries.
+
 ---
 
 # SKILLS
