@@ -140,6 +140,7 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
 
 {{< /tab >}}
+
 {{< /tabs >}}
 
 <hr>
@@ -250,3 +251,39 @@ flowchart TD
 ### Custom video
 
 {{< video src="https://www.w3schools.com/html/mov_bbb.mp4" width="100%" height="auto" autoplay="false" loop="false" muted="false" controls="true" class="rounded-lg" >}}
+
+<hr>
+
+### Iframe
+
+You can embed third-party content using a reusable Hugo shortcode we've added: `layouts/shortcodes/iframe.html`.
+
+Examples:
+
+- Basic embed (16:9 ratio, lazy loading):
+
+  {{< iframe src="https://www.example.com" title="Example site" >}}
+
+- With sandboxing and allow attributes (safer for untrusted content):
+
+  {{< iframe src="https://www.example.com" sandbox="allow-scripts allow-same-origin" allow="autoplay; encrypted-media" >}}
+
+Notes and safety tips:
+
+- Use `sandbox` to limit what the iframe can do (e.g., `allow-scripts` and `allow-same-origin` only if necessary).
+- Prefer embedding content from trusted sources.
+- The shortcode uses responsive sizing by default; you can override the aspect ratio with the `ratio` parameter (e.g., `ratio="56.25%"`).
+
+<hr>
+
+### Accordions
+
+{{< accordion "Why should you need to do this?" >}}
+
+- Lorem ipsum dolor sit amet consectetur adipisicing elit.
+- Lorem ipsum dolor sit amet consectetur adipisicing elit.
+- Lorem ipsum dolor sit amet consectetur
+
+{{< /accordion >}}
+
+### ...

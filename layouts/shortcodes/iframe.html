@@ -1,0 +1,21 @@
+<div class="responsive-iframe" style="position:relative;padding-bottom:{{ default "56.25%" (.Get "ratio") }};height:0;overflow:hidden;">
+  <iframe src="{{ .Get "src" }}" title="{{ default "Embedded content" (.Get "title") }}" frameborder="0"
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    loading="{{ default "lazy" (.Get "loading") }}"
+    {{ with .Get "sandbox" }}sandbox="{{ . }}"{{ end }}
+    {{ with .Get "allow" }}allow="{{ . }}"{{ end }}
+    {{ if eq (default "true" (.Get "allowfullscreen")) "true" }} allowfullscreen{{ end }}>
+  </iframe>
+</div>
+
+{{/*
+Usage examples:
+1) Shortcode with ratio (16:9), lazy loading and allow fullscreen:
+  {{< iframe src="https://www.example.com/embed" title="Example" ratio="56.25%" >}}
+
+2) With sandbox and allow attributes:
+  {{< iframe src="https://www.example.com/embed" sandbox="allow-scripts allow-same-origin" allow="autoplay; encrypted-media" >}}
+
+3) Raw HTML alternative (if you prefer):
+  <iframe src="..." width="560" height="315" frameborder="0" allowfullscreen></iframe>
+*/}}
