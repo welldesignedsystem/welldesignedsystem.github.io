@@ -63,7 +63,7 @@ Senior AI Engineer with 11+ years designing and delivering enterprise-scale dist
 Sydney, New South Wales, Australia · Remote
 July 2025 – Present
 
-- Architected production **multi-agent RAG system** using LangGraph and PgVector for a top-5 global shipping client, reducing document retrieval latency by **~60%** and cutting analyst research time by ~20 hours/week**
+- Architected production **multi-agent RAG system** using LangGraph and PgVector for a top-5 global shipping client, reducing document retrieval latency by **~60%** and cutting analyst research time by **~20 hours/week**
 - Designed **hybrid retrieval pipeline** (BM25 + dense + Cohere reranking) improving RAG answer relevance scores, measured via RAGAS evaluation suite
 - Built **LLM observability and tracing layer** using LangSmith and LangFuse, enabling full prompt monitoring and latency tracking across 1000+ daily LLM calls** in production
 - Implemented **event-driven** AI inference pipeline on Kinesis Stream for Data Science Team - processing 100K+ events/day**, powering real-time predictive maintenance alerts for logistics operations
@@ -84,7 +84,7 @@ September 2020 – May 2025 (4 years 8 months)
 - Led full-stack engineering of an enterprise **Workers' Compensation platform** serving insurers, government agencies, and manufacturing organisations across 10+ clients
 - Architected event-driven microservices with **Spring Boot and RabbitMQ**, reducing claims workflow processing time
 - Implemented **Kubernetes orchestration** with GitLab CI/CD
-- Integrated **HashiCorp Vault** for secrets management, eliminating hardcoded credentials across 20+ services** and achieving full security compliance
+- Integrated **HashiCorp Vault** for secrets management, eliminating hardcoded credentials across **20+ services** and achieving full security compliance
 - Optimised **PostgreSQL/MySQL query performance**, significantly reducing p99 report generation latency
 - Defined and implemented architectural standards for distributed microservices, introducing reusable patterns such as Transactional Outbox, CQRS, Event Sourcing, Saga orchestration, and Polling Publisher to ensure reliable event propagation, consistency, and fault-tolerant distributed transactions.
 
@@ -97,7 +97,7 @@ New South Wales, Australia
 January 2020 – September 2020 (8 months)
 
 - Designed and built **cloud-native booking and inventory management system** from scratch, replacing a legacy thick-client app for a multi-location Ayurveda clinic chain
-- Implemented **event-driven inventory streaming** with Apache Kafka enabling real-time medical supply tracking across 3 locations**, reducing stock discrepancies b
+- Implemented **event-driven inventory streaming** with Apache Kafka enabling real-time medical supply tracking across **3 locations**, reducing stock discrepancies b
 - Delivered **GraphQL + REST APIs** with Node.js reducing average response time under peak booking load
 - Achieved 87%** test coverage using Jest, Mocha, and SuperTest — zero critical production bugs post-launch
 
@@ -109,7 +109,7 @@ January 2020 – September 2020 (8 months)
 September 2019 – January 2020 (5 months)
 
 - Built **SaaS healthcare platform** enabling physicians to capture and analyse patient lifestyle and medical history data for personalised treatment recommendations
-- Designed dual-database architecture (PostgreSQL + MongoDB) optimised for patient records** with sub-ms read latency
+- Designed dual-database architecture (PostgreSQL + MongoDB) optimised for patient records with sub-ms read latency
 - Delivered RESTful and GraphQL APIs supporting integration by 10+ external clinical systems, fully documented via Swagger UI
 
 **Technologies:** Java · Spring Boot · Spring Cloud · Node.js · React.js · Redux · GraphQL · PostgreSQL · MongoDB · Docker · Kubernetes · AWS
@@ -120,7 +120,7 @@ September 2019 – January 2020 (5 months)
 Singapore
 April 2015 – April 2016 (1 year 1 month)
 
-- Led software engineering for one of the **world's largest shipping organisations**, owning requirements through delivery for enterprise applications serving internal users** globally
+- Led software engineering for one of the **world's largest shipping organisations**, owning requirements through delivery for enterprise applications serving internal users globally
 - Architected Spring Boot backend with Oracle integration, delivering RESTful APIs documented via Swagger UI
 - Managed stakeholder engagement across product owners, business analysts, and enterprise architects, ensuring solutions met stringent maritime industry compliance requirements
 - Led effort estimation, solution prototyping, and team management across multiple concurrent workstreams
