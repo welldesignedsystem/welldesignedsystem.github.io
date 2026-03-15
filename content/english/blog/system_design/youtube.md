@@ -1,7 +1,7 @@
 +++
 date = '2023-01-01T12:44:47+10:00'
 draft = false
-title = 'Practising System Design'
+title = 'Practising System Design - Youtube'
 tags = ['Youtube', 'Interview', 'System Design', 'Microservices', 'DDD', 'Architecture']
 summary = 'Practical approach to System Design interviews, followed by a deep-dive into designing a scalable video platform like Youtube.'
 +++
@@ -468,6 +468,7 @@ Microservices architecture design
 9. **Notification Service** - Real-time updates and alerts
 
 ## 2a. Microservice Decomposition & Hexagonal Architecture (Chris Richardson)
+![](../img/chris-richardson-microservice.png)
 
 ### Decomposition Strategies (from "Microservices Patterns")
 - **By Business Capability**: Decompose services around business domains (e.g., Video Management, User Management, Social Interactions, Analytics).
