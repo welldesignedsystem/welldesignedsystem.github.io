@@ -57,7 +57,7 @@ If the answer to both is yes, you win the AEO game.
 
 **Generative Engine Optimisation (GEO)** is a newer, broader concept that specifically focuses on optimising content to be cited, referenced, or synthesised by **Large Language Model (LLM)-powered search tools** — systems that don't just retrieve answers, but *generate* them.
 
-The term was formally introduced in a 2023 research paper from Princeton, Georgia Tech, The Allen Institute for AI, and IIT Delhi titled *"GEO: Generative Engine Optimization."* It described a paradigm where content creators must not just think about search engine rankings, but about how LLMs select, weight, and quote sources when constructing generated responses.
+The term was formally introduced in a 2023 research paper from Princeton, Georgia Tech, The Allen Institute for AI and IIT Delhi titled *"GEO: Generative Engine Optimization."* It described a paradigm where content creators must not just think about search engine rankings, but about how LLMs select, weight, and quote sources when constructing generated responses.
 
 GEO-focused platforms include:
 
@@ -104,11 +104,11 @@ graph TB
     style SEO fill:#0f3460,stroke:#533483,stroke-width:3px,color:#fff
 ```
 
-**SEO** remains the foundation. If Google can't crawl and index your page, no AI system will find it either. Technical SEO, backlinks, and on-page signals matter — they feed the inputs that AEO and GEO build on.
+**SEO** remains the foundation. If Google can't crawl and index your page, no AI system will find it either. Technical SEO, backlinks and on-page signals matter — they feed the inputs that AEO and GEO build on.
 
-**AEO** layers on top by ensuring your content is structured for extraction — clear questions, concise answers, proper schema markup, and voice-search readiness.
+**AEO** layers on top by ensuring your content is structured for extraction — clear questions, concise answers, proper schema markup and voice-search readiness.
 
-**GEO** goes furthest by optimising for the generative layer — building authoritative content with the kind of depth, citations, statistics, and credibility signals that LLMs are trained to privilege.
+**GEO** goes furthest by optimising for the generative layer — building **authoritative content** with the kind of depth, citations, statistics and credibility signals that LLMs are trained to privilege.
 
 **You don't choose one. You do all three.** The good news: tactics at each level reinforce the others.
 
@@ -207,7 +207,7 @@ Sparktoro and Semrush data consistently show that over **60% of Google searches 
 
 ### The Brand Visibility Shift
 
-Even if a user doesn't click, being *cited* by an AI builds brand awareness. Users see your domain name. They associate your brand with authority on that topic. This drives direct traffic, branded searches, and trust — even without a traditional click.
+Even if a user doesn't click, being *cited* by an AI builds brand awareness. Users see your domain name. They associate your brand with authority on that topic. This drives direct traffic, branded searches and trust — even without a traditional click.
 
 ### Voice Search Is Still Growing
 
@@ -2063,18 +2063,17 @@ quadrantChart
     title Risk Matrix — Likelihood vs Impact
     x-axis "Low Likelihood" --> "High Likelihood"
     y-axis "Low Impact" --> "High Impact"
-    quadrant-1 Monitor Closely
-    quadrant-2 Immediate Action
-    quadrant-3 Accept
-    quadrant-4 Manage Actively
-    AI API Rate Limits: [0.75, 0.70]
-    Competitor Clones Feature: [0.65, 0.45]
-    LLM Changes Citation Behaviour: [0.55, 0.85]
-    Google Blocks SERP Scraping: [0.40, 0.80]
-    Data Privacy Regulation: [0.35, 0.65]
-    Team Scaling Difficulty: [0.50, 0.40]
-    AWS Outage: [0.15, 0.75]
-    Low Conversion Rate: [0.45, 0.55]
+    quadrant-1 Enterprise AI
+    quadrant-2 Enterprise Traditional
+    quadrant-3 SMB Traditional
+    quadrant-4 SMB AI
+    Semrush: [0.15, 0.60]
+    Ahrefs: [0.10, 0.55]
+    Moz: [0.12, 0.35]
+    BrightEdge: [0.20, 0.90]
+    Profound: [0.80, 0.45]
+    Otterly: [0.75, 0.25]
+    SearchIQ: [0.85, 0.70]
 ```
 
 | Risk | Likelihood | Impact | Mitigation |
@@ -2169,4 +2168,3 @@ flowchart TD
 | **ECR** | Container registry |
 | **VPC + PrivateLink** | Network isolation + secure service communication |
 
----
