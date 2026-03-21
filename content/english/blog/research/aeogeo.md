@@ -1,8 +1,8 @@
 +++
 date = '2026-03-21T12:44:47+10:00'
 draft = false
-title = 'SearchIQ Business Idea. AEO & GEO.'
-tags = ['LLM SEO', 'GEO', 'AEO']
+title = 'SearchIQ (AEO & GEO)'
+tags = ['SEO', 'GEO', 'AEO']
 summary = "Comprehensive guide to Answer Engine Optimization (AEO) and Generative Engine Optimization (GEO) - how they work, implementation strategies, best practices, and tools for succeeding in AI-powered search."
 +++
 
