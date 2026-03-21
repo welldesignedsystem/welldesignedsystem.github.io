@@ -815,21 +815,21 @@ flowchart TD
 
 ---
 
-## 21. User Personas
+## 21. User Personas Examples:
 
-### Persona 1: The Agency Director — "Alex"
+### Persona 1: The Agency Director
 - **Role:** Head of Digital at a 40-person agency managing 60+ client accounts
 - **Pain:** Manually checking AI answers for each client is impossible at scale. Clients ask "are we in ChatGPT?" and there's no good answer.
 - **Needs:** White-labelled client reporting, bulk monitoring, ROI dashboards, alerts
 - **Willing to pay:** $500–$2,000/month
 
-### Persona 2: The In-House SEO Lead — "Priya"
+### Persona 2: The In-House SEO Lead
 - **Role:** Senior SEO Manager at a mid-size e-commerce brand
 - **Pain:** Knows AI search is important but has no tooling. Justifying investment to the CMO requires data she can't produce.
 - **Needs:** GEO score benchmarking, content gap analysis, automated briefs
 - **Willing to pay:** $200–$600/month
 
-### Persona 3: The Enterprise Content Strategist — "Marcus"
+### Persona 3: The Enterprise Content Strategist
 - **Role:** VP Content at a Fortune 500 financial services firm
 - **Pain:** Compliance requires knowing exactly where brand messaging appears. AI citations are ungoverned. Competitor AI mentions are eating their share.
 - **Needs:** Enterprise governance, brand entity monitoring, competitor tracking, API access
