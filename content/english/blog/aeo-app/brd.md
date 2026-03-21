@@ -1,7 +1,7 @@
 ---
 date: '2026-03-21T12:44:47+10:00'
-draft: true
-title: 'Business Requirements Document — aeo-app.ai'
+draft: false
+title: 'Business Requirements Document: AEO-APP'
 tags: ['SEO', 'GEO', 'AEO']
 summary: "aeo-app.ai — a unified SEO, AEO, and GEO intelligence platform for the age of AI search."
 ---
