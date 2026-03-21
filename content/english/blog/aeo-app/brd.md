@@ -1,18 +1,14 @@
 ---
 date: '2026-03-21T12:44:47+10:00'
 draft: false
-title: 'Business Requirements Document: AEO-APP'
+title: 'Business Requirements Document'
 tags: ['SEO', 'GEO', 'AEO']
 summary: "aeo-app.ai — a unified SEO, AEO, and GEO intelligence platform for the age of AI search."
 ---
 
-# aeo-app.ai — Business Requirements Document
+## 1. The Problem
 
 > *The Unified SEO · AEO · GEO Intelligence Platform*
-
----
-
-## 1. The Problem
 
 For three decades, the game was simple: rank on Google, get to page one, earn clicks. That era isn't over — but it's no longer the whole story.
 
@@ -21,7 +17,6 @@ When someone searches "what's the best way to treat a mild burn at home?" they o
 **The question is no longer just "Can I rank #1?" — it's "Can I be the source that AI cites, quotes, or summarises?"**
 
 ```mermaid
-%%{init: {'theme': 'light'}}%%
 flowchart LR
     A["🔍 User Types Query\n'best CRM for startups'"] --> B{"Which Era?"}
     B --> |"2010–2020\nClick-era"| C["📋 Scans top 10 results\nClicks best-looking link\nVisits website"]
@@ -49,7 +44,6 @@ Over 60% of Google searches now end without a click (Sparktoro/Semrush data). If
 Think of these as layers of the same stack, not competing strategies:
 
 ```mermaid
-%%{init: {'theme': 'light'}}%%
 graph TB
     subgraph GEO["🌐 GEO — Optimise for AI-generated responses"]
         subgraph AEO["💡 AEO — Optimise for direct answers"]
@@ -58,9 +52,9 @@ graph TB
         end
     end
 
-    style GEO fill:#1a1a2e,stroke:#e94560,stroke-width:3px,color:#fff
-    style AEO fill:#16213e,stroke:#0f3460,stroke-width:3px,color:#fff
-    style SEO fill:#0f3460,stroke:#533483,stroke-width:3px,color:#fff
+    style GEO fill:#7979F2,stroke:#e94560,stroke-width:3px,color:#fff
+    style AEO fill:#9999F2,stroke:#0f3460,stroke-width:3px,color:#fff
+    style SEO fill:#B4B4F0,stroke:#533483,stroke-width:3px,color:#fff
 ```
 
 **SEO** remains the foundation. If Google can't crawl and index your page, no AI system will find it either. Technical SEO, backlinks, on-page signals, and Google's E-E-A-T framework (Experience, Expertise, Authoritativeness, Trustworthiness) all feed the inputs that AEO and GEO build on.
@@ -708,7 +702,6 @@ aeo-app.ai is a B2B SaaS platform giving digital marketing agencies, in-house SE
 ### Strategic Pillars
 
 ```mermaid
-%%{init: {'theme': 'light'}}%%
 mindmap
   root((aeo-app.ai))
     Measure

@@ -84,8 +84,11 @@ maxAge = "720h"
 [markup.goldmark.renderer]
 unsafe = true
 
+[markup.mermaid]
+enable = true
+
 [markup.highlight]
-style = 'monokai' # see https://xyproto.github.io/splash/docs/all.html
+style = 'fruity' # see https://xyproto.github.io/splash/docs/all.html
 lineNumbersInTable = false
 
 [markup.tableOfContents]
