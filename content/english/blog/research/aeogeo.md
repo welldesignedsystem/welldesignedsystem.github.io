@@ -1635,14 +1635,11 @@ flowchart TD
 The Content Optimiser evaluates any piece of content across 6 dimensions:
 
 ```mermaid
-radar
-  title Content AEO/GEO Readiness Score (Example Output)
-  "Answer-First Structure" : 85
-  "Schema Markup" : 40
-  "Question Coverage" : 70
-  "Statistical Depth" : 55
-  "Entity Clarity" : 65
-  "Chunk Independence" : 50
+xychart-beta horizontal
+    title "Content AEO/GEO Readiness Score"
+    x-axis ["Answer-First", "Schema Markup", "Question Coverage", "Statistical Depth", "Entity Clarity", "Chunk Independence"]
+    y-axis "Score" 0 --> 100
+    bar [85, 40, 70, 55, 65, 50]
 ```
 
 #### Dimension Definitions
