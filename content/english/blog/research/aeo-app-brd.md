@@ -1,7 +1,7 @@
 +++
 date = '2026-03-21T12:44:47+10:00'
 draft = true
-title = 'aeo-app.ai (AEO & GEO)'
+title = 'Business Requirement Document - aeo-app.ai (AEO & GEO)'
 tags = ['SEO', 'GEO', 'AEO']
 summary = "Business idea - Search IQ, a tool to help businesses optimise for AEO and GEO in the age of AI search."
 +++
@@ -10,9 +10,6 @@ summary = "Business idea - Search IQ, a tool to help businesses optimise for AEO
 
 ---
 ## 1. Executive Summary
-
-### Product Name: **aeo-app.ai**
-### Tagline: *"One platform to win every answer."*
 
 aeo-app.ai is a B2B SaaS platform that gives digital marketing agencies, in-house SEO teams, and enterprise content teams a unified command centre for the three pillars of modern search visibility:
 
@@ -43,12 +40,7 @@ flowchart LR
 
 ---
 
-## 2. Product Vision & Strategy
-
-### Vision
-> *To be the first platform that makes AI search visibility as measurable, manageable, and improvable as traditional organic search — so that every content team can compete in the answer-engine era.*
-
-### Strategic Pillars
+## 2. Strategic Pillars
 
 ```mermaid
 mindmap
@@ -96,7 +88,15 @@ quadrantChart
     BrightEdge: [0.20, 0.90]
     Profound: [0.80, 0.45]
     Otterly: [0.75, 0.25]
-    aeo-app.ai: [0.85, 0.70]
+    Goodie AI: [0.78, 0.30]
+    Surfer SEO: [0.18, 0.28]
+    Frase: [0.22, 0.22]
+    MarketMuse: [0.25, 0.65]
+    Conductor: [0.18, 0.85]
+    Botify: [0.16, 0.80]
+    SE Ranking: [0.14, 0.20]
+    Mangools: [0.11, 0.15]
+    aeo-app.ai: [0.92, 0.68]
 ```
 
 ---
@@ -1194,3 +1194,12 @@ flowchart TD
 | **ECR** | Container registry |
 | **VPC + PrivateLink** | Network isolation + secure service communication |
 
+---
+
+## Appendix B — AEO & GEO Complete Guide
+
+# AEO & GEO: The Complete Guide to Optimising for AI-Powered Search in 2026
+
+> *SEO is no longer enough. The search landscape has fundamentally changed — and if you're not showing up inside AI answers, you're invisible to a growing majority of your audience.*
+
+---
