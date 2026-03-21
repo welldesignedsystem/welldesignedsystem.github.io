@@ -527,6 +527,10 @@ User-Generated Content (UGC) plays a crucial role in establishing and demonstrat
 
 By strategically cultivating UGC, you can strengthen your entity's profile, making it more likely to meet Wikipedia notability criteria and appear in AI-generated responses as an authoritative source.
 
+**Reddit as a Key UGC Platform:**
+
+Among UGC sources, Reddit stands out for its massive user base and community-driven discussions. Engaging authentically in relevant subreddits can generate organic mentions that demonstrate community interest and expertise. For example, if your brand or content sparks discussions in niche communities, these interactions can be referenced when building a case for Wikipedia notability. However, Reddit threads are not reliable sources themselves; they serve as indicators of broader impact that can lead to coverage in more authoritative outlets.
+
 ---
 
 ### Step 8: Publish Original Research and Proprietary Data
@@ -825,6 +829,7 @@ Measuring the impact of AEO and GEO requires a different set of metrics than tra
 | **Ahrefs** | Link analysis, content gap analysis |
 | **SparkToro** | Audience research — where they consume content |
 | **BuzzSumo** | Content performance and citation research |
+| **Broken Link** | Find broken links for link building opportunities |
 
 ### Schema & Technical
 
@@ -846,6 +851,7 @@ Measuring the impact of AEO and GEO requires a different set of metrics than tra
 | **Profound** | GEO-specific citation and brand visibility tracking |
 | **Otterly.AI** | Monitor brand mentions across AI platforms |
 | **Goodie** | AI search optimisation and monitoring |
+| **GenRank** | Track AI citation visibility and GEO performance |
 
 ### Content Optimisation
 
@@ -855,6 +861,21 @@ Measuring the impact of AEO and GEO requires a different set of metrics than tra
 | **Clearscope** | Topical comprehensiveness scoring |
 | **MarketMuse** | Content depth and gap analysis |
 | **Frase** | Question-based content briefs |
+
+### Competitors
+
+While the AEO and GEO space is still emerging, several established SEO tools are beginning to incorporate AI search features. However, dedicated platforms are rare. Here's how major players stack up:
+
+| Tool | Strengths | Limitations for AEO/GEO |
+|---|---|---|
+| **Semrush** | Comprehensive keyword research, SERP feature tracking | Limited GEO citation monitoring, no real-time AI search testing |
+| **Ahrefs** | Excellent link analysis, content gap detection | Emerging AI insights, but not primary focus |
+| **Moz** | Strong traditional SEO metrics, local SEO | Minimal AEO/GEO tools, focused on legacy SEO |
+| **BrightEdge** | Enterprise-grade SEO platform, some AI capabilities | Expensive, limited generative search tracking |
+| **Profound** | Dedicated GEO citation tracking | New entrant, smaller feature set |
+| **Otterly.AI** | Brand mention monitoring in AI responses | Narrow focus on mentions, not full GEO optimisation |
+
+For businesses serious about AEO and GEO, consider supplementing these with specialised tools or exploring emerging platforms designed specifically for AI search optimisation.
 
 ---
 
