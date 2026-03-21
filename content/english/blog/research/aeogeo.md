@@ -2168,3 +2168,4 @@ flowchart TD
 | **ECR** | Container registry |
 | **VPC + PrivateLink** | Network isolation + secure service communication |
 
+<!-- genrank.io coupon code: ALEXIMONTH-->
