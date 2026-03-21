@@ -88,7 +88,7 @@ unsafe = true
 enable = true
 
 [markup.highlight]
-style = 'fruity' # see https://xyproto.github.io/splash/docs/all.html
+style = 'pastie' # see https://xyproto.github.io/splash/docs/all.html
 lineNumbersInTable = false
 
 [markup.tableOfContents]

@@ -6,3 +6,8 @@
 
 /* Ensure iframes are focus-visible for keyboard users */
 .responsive-iframe iframe:focus{outline:3px solid #2563eb;outline-offset:2px}
+
+/* Make plain code block text black */
+pre code {
+    color: #000000;
+}
