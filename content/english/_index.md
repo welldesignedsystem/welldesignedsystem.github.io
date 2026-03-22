@@ -1,8 +1,8 @@
 ---
 # Banner
 banner:
-  title: "The Well-Designed System (Powered by Coffee and Code)"
-  content: "The Well-Designed System is a technical blog built by two software engineers passionate about clean architecture, elegant design, and thoughtful engineering. Here you’ll find deep dives into system design principles, machine learning and AI patterns, infrastructure tools like Docker and Kubernetes, interview-ready strategies, and practical notes from the trenches — all served with a dash of practicality and real-world applications perspective."
+  title: "The Well-Designed System"
+  content: "The Well-Designed System is a technical blog built by two software engineers passionate about clean architecture, elegant design and thoughtful engineering."
   image: "/images/banner.png"
   button:
     enable: true
