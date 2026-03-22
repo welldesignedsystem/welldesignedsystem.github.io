@@ -1280,6 +1280,7 @@
       "python-internals",
       "q1-claude-models--practical-genai-guide-langchain--langgraph-focus",
       "q2-using-deterministic-code-vs-non-deterministic-llm",
+      "q3-miscellaneous",
       "query-construction",
       "query-routing",
       "queue",

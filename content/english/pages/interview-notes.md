@@ -148,3 +148,13 @@ temperature = 0.0 - 0.3
 - LLM = flexibility and intelligence  
 - Best systems = hybrid  
 
+# Q3: Miscellaneous:
+- https://welldesignedsystem.github.io/blog/ai/gen_ai_langchain/#prompt-engineering-and-patterns
+- https://welldesignedsystem.github.io/blog/system_design/system_design/#rest-and-rest-maturity-model 
+- https://welldesignedsystem.github.io/blog/system_design/system_design/#2-distributed-scaling--the-scale-cube
+- https://welldesignedsystem.github.io/blog/system_design/youtube/#2a-microservice-decomposition--hexagonal-architecture-chris-richardson
+- https://welldesignedsystem.github.io/blog/system_design/system_design/#cap-theorem
+- https://welldesignedsystem.github.io/blog/system_design/system_design/#sql-vs-nosql-vs-object-store
+- https://welldesignedsystem.github.io/blog/containerization/docker/
+- https://welldesignedsystem.github.io/blog/containerization/kubernetes/
+- https://docs.langchain.com/
