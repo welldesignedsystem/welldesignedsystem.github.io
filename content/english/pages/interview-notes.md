@@ -29,16 +29,26 @@ Key characteristics:
 
 ## LangChain — Access Patterns
 
-### Direct LLM Invocation
+### LLM Invocation
 
+#### Direct
 ```python
 from langchain_anthropic import ChatAnthropic
-
 llm = ChatAnthropic(
     model="claude-3-sonnet-20240229",
     temperature=0.2
 )
 
+response = llm.invoke("Explain microservices")
+```
+#### Init_model
+```python
+from langchain.chat_models import init_model
+LLM = init_model(
+        model="claude-3-sonnet-20240229",
+        model_provider=provider,
+        temperature=0.2
+    )
 response = llm.invoke("Explain microservices")
 ```
 
