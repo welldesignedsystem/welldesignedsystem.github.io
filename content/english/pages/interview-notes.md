@@ -6,16 +6,12 @@ draft: false
 ---
 # Claude Models — Practical GenAI Guide (LangChain + LangGraph Focus)
 
-## Overview
-
-Key characteristics:
+## Key characteristics:
 - Claude by Antropic is a family of LLMs optimized for reasoning, reliability and structured output.
 - Strong reasoning and structured output
 - Very large context window (~200K tokens)
 - Lower hallucination rates in multi-step workflows
 - Excellent for agents, RAG, and evaluation loops
-
----
 
 ## Claude Model Variants (Practical Comparison)
 
@@ -25,13 +21,10 @@ Key characteristics:
 | Claude 3 Sonnet | Balanced performance | Slightly weaker than Opus | Default production workloads, APIs, agents | ~200K |
 | Claude 3 Haiku | Fast, cheap | Limited reasoning | Chatbots, classification, routing | ~200K |
 
----
-
 ## LangChain — Access Patterns
 
-### LLM Invocation
+### Direct LLM Base Model
 
-#### Direct
 ```python
 from langchain_anthropic import ChatAnthropic
 llm = ChatAnthropic(
@@ -41,7 +34,9 @@ llm = ChatAnthropic(
 
 response = llm.invoke("Explain microservices")
 ```
-#### Init_model
+
+### using init_model
+
 ```python
 from langchain.chat_models import init_model
 LLM = init_model(
@@ -51,7 +46,6 @@ LLM = init_model(
     )
 response = llm.invoke("Explain microservices")
 ```
-
 ## Model Comparison
 
 | Model | Cost | Speed | Reasoning | Context | Best For |
