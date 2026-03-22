@@ -3,9 +3,36 @@ date = '2023-01-01T12:44:47+10:00'
 draft = false
 title = '23 Core Design Patterns'
 tags = ['Core Design Patterns', 'Interview']
+summary = 'Core design patterns are proven, reusable solutions to frequently occurring problems in software design. '
 +++
-
 Core design patterns are proven, reusable solutions to frequently occurring problems in software design. Catalogued by the "Gang of Four" (Gamma, Helm, Johnson, Vlissides) in their seminal 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software*, these 23 patterns are language-agnostic blueprints.
+## Software Design Principles
+
+Software design principles are fundamental guidelines that help developers create maintainable, scalable, and robust software. These principles often underpin the design patterns discussed below.
+
+### SOLID Principles
+
+1. **Single Responsibility Principle (SRP)**: A class should have only one reason to change, meaning it should have only one job or responsibility.
+
+2. **Open-Closed Principle (OCP)**: Software entities (classes, modules, functions, etc.) should be open for extension but closed for modification.
+
+3. **Liskov Substitution Principle (LSP)**: Subtypes must be substitutable for their base types without altering the correctness of the program.
+
+4. **Interface Segregation Principle (ISP)**: Clients should not be forced to depend on interfaces they do not use. Prefer smaller, specific interfaces over large, general-purpose ones.
+
+5. **Dependency Inversion Principle (DIP)**: High-level modules should not depend on low-level modules. Both should depend on abstractions. Abstractions should not depend on details; details should depend on abstractions.
+
+### Other Principles
+
+- **DRY (Don't Repeat Yourself)**: Avoid duplication of code and logic. Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.
+
+- **KISS (Keep It Simple, Stupid)**: Strive for simplicity in design and implementation. Avoid unnecessary complexity.
+
+- **YAGNI (You Aren't Gonna Need It)**: Do not add functionality until it is necessary. Avoid over-engineering.
+
+- **Composition over Inheritance**: Favor composition (has-a relationship) over inheritance (is-a relationship) for flexibility and reusability.
+
+These principles guide the application of design patterns and help in making informed design decisions.
 
 ## Creational Patterns
 
