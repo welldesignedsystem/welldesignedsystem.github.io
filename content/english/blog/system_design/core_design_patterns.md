@@ -27,6 +27,16 @@ public class Singleton {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class Singleton {
+        -uniqueInstance: Singleton$
+        -Singleton()
+        +getInstance(): Singleton
+    }
+```
+
 **When to use:**  
 
 - When you need a single shared resource (e.g., config, logger, cache).
@@ -69,6 +79,35 @@ public class CatFactory extends AnimalFactory {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class Animal {
+        <<abstract>>
+        +speak(): String
+    }
+    class Dog {
+        +speak(): String
+    }
+    class Cat {
+        +speak(): String
+    }
+    class AnimalFactory {
+        <<abstract>>
+        +createAnimal(): Animal
+    }
+    class DogFactory {
+        +createAnimal(): Animal
+    }
+    class CatFactory {
+        +createAnimal(): Animal
+    }
+    AnimalFactory <|-- DogFactory
+    AnimalFactory <|-- CatFactory
+    Animal <|-- Dog
+    Animal <|-- Cat
+```
+
 **When to use:**  
 
 - When a class can't anticipate the type of objects it needs to create.
@@ -108,6 +147,35 @@ public class WinFactory implements GUIFactory {
 public class MacFactory implements GUIFactory {
     public Button createButton() { return new MacButton(); }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class Button {
+        <<interface>>
+        +paint()
+    }
+    class WinButton {
+        +paint()
+    }
+    class MacButton {
+        +paint()
+    }
+    class GUIFactory {
+        <<interface>>
+        +createButton(): Button
+    }
+    class WinFactory {
+        +createButton(): Button
+    }
+    class MacFactory {
+        +createButton(): Button
+    }
+    Button <|.. WinButton
+    Button <|.. MacButton
+    GUIFactory <|.. WinFactory
+    GUIFactory <|.. MacFactory
 ```
 
 **When to use:**  
@@ -152,6 +220,23 @@ public class Burger {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class Burger {
+        -cheese: boolean
+        -lettuce: boolean
+    }
+    class Builder {
+        -cheese: boolean
+        -lettuce: boolean
+        +addCheese(): Builder
+        +addLettuce(): Builder
+        +build(): Burger
+    }
+    Burger +-- Builder
+```
+
 **When to use:**  
 
 - When constructing complex objects step by step.
@@ -177,6 +262,15 @@ public abstract class Prototype implements Cloneable {
         }
     }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class Prototype {
+        <<abstract>>
+        +clone(): Prototype
+    }
 ```
 
 **When to use:**  
@@ -214,6 +308,25 @@ public class SocketAdapter implements USASocket {
         return europeanSocket.voltage();
     }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class USASocket {
+        <<interface>>
+        +voltage(): int
+    }
+    class EuropeanSocket {
+        +voltage(): int
+    }
+    class SocketAdapter {
+        -europeanSocket: EuropeanSocket
+        +SocketAdapter(EuropeanSocket)
+        +voltage(): int
+    }
+    USASocket <|.. SocketAdapter
+    SocketAdapter --> EuropeanSocket
 ```
 
 **When to use:**  
@@ -258,6 +371,34 @@ public class Circle extends Shape {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class DrawingAPI {
+        <<interface>>
+        +drawCircle(int, int, int)
+    }
+    class DrawingAPI1 {
+        +drawCircle(int, int, int)
+    }
+    class Shape {
+        <<abstract>>
+        -api: DrawingAPI
+        +Shape(DrawingAPI)
+        +draw()
+    }
+    class Circle {
+        -x: int
+        -y: int
+        -r: int
+        +Circle(int, int, int, DrawingAPI)
+        +draw()
+    }
+    DrawingAPI <|.. DrawingAPI1
+    Shape <|-- Circle
+    Shape --> DrawingAPI
+```
+
 **When to use:**  
 
 - When abstraction and implementation should vary independently.
@@ -296,6 +437,26 @@ public class Composite implements Component {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class Component {
+        <<interface>>
+        +operation()
+    }
+    class Leaf {
+        +operation()
+    }
+    class Composite {
+        -children: List<Component>
+        +add(Component)
+        +operation()
+    }
+    Component <|.. Leaf
+    Component <|.. Composite
+    Composite --> Component
+```
+
 **When to use:**  
 
 - When you need to treat individual and composite objects uniformly.
@@ -325,6 +486,26 @@ public class MilkDecorator implements Coffee {
     public MilkDecorator(Coffee coffee) { this.coffee = coffee; }
     public int cost() { return coffee.cost() + 2; }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class Coffee {
+        <<interface>>
+        +cost(): int
+    }
+    class SimpleCoffee {
+        +cost(): int
+    }
+    class MilkDecorator {
+        -coffee: Coffee
+        +MilkDecorator(Coffee)
+        +cost(): int
+    }
+    Coffee <|.. SimpleCoffee
+    Coffee <|.. MilkDecorator
+    MilkDecorator --> Coffee
 ```
 
 **When to use:**  
@@ -358,6 +539,25 @@ public class ComputerFacade {
         memory.load(0, "data");
     }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class ComputerFacade {
+        -cpu: CPU
+        -memory: Memory
+        +ComputerFacade()
+        +start()
+    }
+    class CPU {
+        +freeze()
+    }
+    class Memory {
+        +load(int, String)
+    }
+    ComputerFacade --> CPU
+    ComputerFacade --> Memory
 ```
 
 **When to use:**  
@@ -395,6 +595,20 @@ public class FlyweightFactory {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class Flyweight {
+        -shared: String
+        +Flyweight(String)
+    }
+    class FlyweightFactory {
+        -flyweights: Map<String, Flyweight>
+        +getFlyweight(String): Flyweight
+    }
+    FlyweightFactory --> Flyweight
+```
+
 **When to use:**  
 
 - When many objects share common data.
@@ -429,6 +643,26 @@ public class Proxy implements Subject {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class Subject {
+        <<interface>>
+        +request()
+    }
+    class RealSubject {
+        +request()
+    }
+    class Proxy {
+        -real: RealSubject
+        +Proxy(RealSubject)
+        +request()
+    }
+    Subject <|.. RealSubject
+    Subject <|.. Proxy
+    Proxy --> RealSubject
+```
+
 **When to use:**  
 
 - For access control, lazy loading, logging.
@@ -454,6 +688,17 @@ public abstract class Handler {
         if (next != null) next.handle(request);
     }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class Handler {
+        <<abstract>>
+        -next: Handler
+        +setNext(Handler)
+        +handle(String)
+    }
 ```
 
 **When to use:**  
@@ -492,6 +737,25 @@ public class Remote {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class Command {
+        <<interface>>
+        +execute()
+    }
+    class LightOnCommand {
+        +execute()
+    }
+    class Remote {
+        -commands: List<Command>
+        +addCommand(Command)
+        +run()
+    }
+    Command <|.. LightOnCommand
+    Remote --> Command
+```
+
 **When to use:**  
 
 - For undo/redo, queuing, logging.
@@ -517,6 +781,21 @@ public class Number implements Expression {
     public Number(int value) { this.value = value; }
     public int interpret() { return value; }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class Expression {
+        <<interface>>
+        +interpret(): int
+    }
+    class Number {
+        -value: int
+        +Number(int)
+        +interpret(): int
+    }
+    Expression <|.. Number
 ```
 
 **When to use:**  
@@ -547,6 +826,24 @@ public class MyIterator implements Iterator<String> {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class Iterator {
+        <<interface>>
+        +hasNext(): boolean
+        +next(): String
+    }
+    class MyIterator {
+        -collection: List<String>
+        -index: int
+        +MyIterator(List<String>)
+        +hasNext(): boolean
+        +next(): String
+    }
+    Iterator <|.. MyIterator
+```
+
 **When to use:**  
 
 - When you need to traverse a collection.
@@ -572,6 +869,21 @@ public class Component {
     public Component(Mediator mediator) { this.mediator = mediator; }
     public void doSomething() { mediator.notify(this, "event"); }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class Mediator {
+        <<interface>>
+        +notify(Component, String)
+    }
+    class Component {
+        -mediator: Mediator
+        +Component(Mediator)
+        +doSomething()
+    }
+    Component --> Mediator
 ```
 
 **When to use:**  
@@ -602,6 +914,23 @@ public class Originator {
     public Memento save() { return new Memento(state); }
     public void restore(Memento memento) { state = memento.getState(); }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class Memento {
+        -state: String
+        +Memento(String)
+        +getState(): String
+    }
+    class Originator {
+        -state: String
+        +setState(String)
+        +save(): Memento
+        +restore(Memento)
+    }
+    Originator --> Memento
 ```
 
 **When to use:**  
@@ -636,6 +965,21 @@ public class Subject {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class Observer {
+        <<interface>>
+        +update()
+    }
+    class Subject {
+        -observers: List<Observer>
+        +attach(Observer)
+        +notifyObservers()
+    }
+    Subject --> Observer
+```
+
 **When to use:**  
 
 - For event handling, UI updates.
@@ -661,6 +1005,21 @@ public class Context {
     public Context(State state) { this.state = state; }
     public void request() { state.handle(); }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class State {
+        <<interface>>
+        +handle()
+    }
+    class Context {
+        -state: State
+        +Context(State)
+        +request()
+    }
+    Context --> State
 ```
 
 **When to use:**  
@@ -697,6 +1056,25 @@ public class Context {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class Strategy {
+        <<interface>>
+        +execute(int[]): int
+    }
+    class SortStrategy {
+        +execute(int[]): int
+    }
+    class Context {
+        -strategy: Strategy
+        +Context(Strategy)
+        +doTask(int[]): int
+    }
+    Strategy <|.. SortStrategy
+    Context --> Strategy
+```
+
 **When to use:**  
 
 - When multiple algorithms are needed.
@@ -728,6 +1106,22 @@ public class ConcreteClass extends AbstractClass {
 }
 ```
 
+#### Class Diagram
+```mermaid
+classDiagram
+    class AbstractClass {
+        <<abstract>>
+        +templateMethod()
+        +step1()*
+        +step2()*
+    }
+    class ConcreteClass {
+        +step1()
+        +step2()
+    }
+    AbstractClass <|-- ConcreteClass
+```
+
 **When to use:**  
 
 - When algorithms have invariant steps.
@@ -755,6 +1149,23 @@ public interface Element {
 public class ConcreteElement implements Element {
     public void accept(Visitor visitor) { visitor.visit(this); }
 }
+```
+
+#### Class Diagram
+```mermaid
+classDiagram
+    class Visitor {
+        <<interface>>
+        +visit(Element)
+    }
+    class Element {
+        <<interface>>
+        +accept(Visitor)
+    }
+    class ConcreteElement {
+        +accept(Visitor)
+    }
+    Element <|.. ConcreteElement
 ```
 
 **When to use:**  
