@@ -54,13 +54,13 @@ response = llm.invoke("Explain microservices")
 
 ## Model Comparison
 
-| Model | Cost | Speed | Reasoning | Code | Context | Best For |
-|------|------|------|----------|------|--------|---------|
-| Claude Sonnet | Medium | Medium | High | High | Very High | Production agents |
-| Claude Opus | High | Slow | Very High | Very High | Very High | Critical reasoning |
-| GPT-4/5 | High | Medium | Very High | Very High | High | General purpose |
-| Mistral | Low / Free | Fast | Medium | Medium | Medium | Cost-sensitive apps |
-| LLaMA | Free | Medium | Medium | Low | Medium | On-prem/private |
-| Gemini | Medium | Fast | High | High | Very High | Multimodal apps |
+| Model | Cost | Speed | Reasoning | Context | Best For |
+|------|------|------|----------|--------|---------|
+| Claude Sonnet | Medium | Medium | High | Very High | - Production agents<br>- API integrations<br>- Balanced performance tasks<br>- Multi-step workflows |
+| Claude Opus | High | Slow | Very High | Very High | - Critical reasoning<br>- Complex problem solving<br>- Architecture design<br>- High-stakes decisions |
+| GPT-4/5 | High | Medium | Very High | High | - General purpose tasks<br>- Creative writing<br>- Advanced coding<br>- Research and analysis |
+| Mistral | Low / Free | Fast | Medium | Medium | - Cost-sensitive applications<br>- Fast prototyping<br>- Lightweight chatbots<br>- Open-source projects |
+| LLaMA | Free | Medium | Medium | Medium | - On-premises deployment<br>- Private data handling<br>- Custom fine-tuning<br>- Resource-constrained environments |
+| Gemini | Medium | Fast | High | Very High | - Multimodal applications<br>- Image and text integration<br>- Fast responses<br>- Google ecosystem integration |
 
 ---
