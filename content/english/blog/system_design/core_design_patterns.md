@@ -153,6 +153,9 @@ classDiagram
     AnimalFactory <|-- CatFactory
     Animal <|-- Dog
     Animal <|-- Cat
+    AnimalFactory ..> Animal : creates
+    DogFactory ..> Dog : instantiates
+    CatFactory ..> Cat : instantiates
 ```
 
 **When to use:**
@@ -257,6 +260,10 @@ classDiagram
     Checkbox <|.. MacCheckbox
     GUIFactory <|.. WinFactory
     GUIFactory <|.. MacFactory
+    WinFactory ..> WinButton : creates
+    WinFactory ..> WinCheckbox : creates
+    MacFactory ..> MacButton : creates
+    MacFactory ..> MacCheckbox : creates
 ```
 
 **When to use:**
@@ -334,6 +341,7 @@ classDiagram
         +build(): Burger
     }
     Builder --> Burger : creates
+    Burger o-- Builder : composed by
 ```
 
 **When to use:**
@@ -404,6 +412,7 @@ classDiagram
         +draw()
     }
     Shape <|-- Circle
+    Circle ..> Shape : clones as
 ```
 
 **When to use:**
@@ -470,7 +479,8 @@ classDiagram
         +voltage(): int
     }
     USASocket <|.. SocketAdapter
-    SocketAdapter --> EuropeanSocket
+    SocketAdapter *-- EuropeanSocket : composes
+    SocketAdapter ..> USASocket : adapts to
 ```
 
 **When to use:**
@@ -560,7 +570,8 @@ classDiagram
     DrawingAPI <|.. DrawingAPI1
     DrawingAPI <|.. DrawingAPI2
     Shape <|-- Circle
-    Shape --> DrawingAPI
+    Shape *-- DrawingAPI : composes
+    Circle --> DrawingAPI : uses
 ```
 
 **When to use:**
@@ -641,7 +652,8 @@ classDiagram
     }
     FileSystemComponent <|.. File
     FileSystemComponent <|.. Directory
-    Directory --> FileSystemComponent
+    Directory o-- FileSystemComponent : aggregates
+    Directory --> FileSystemComponent : manages
 ```
 
 **When to use:**
@@ -729,7 +741,9 @@ classDiagram
     Coffee <|.. CoffeeDecorator
     CoffeeDecorator <|-- MilkDecorator
     CoffeeDecorator <|-- SugarDecorator
-    CoffeeDecorator --> Coffee
+    CoffeeDecorator *-- Coffee : wraps
+    MilkDecorator ..> Coffee : delegates to
+    SugarDecorator ..> Coffee : delegates to
 ```
 
 **When to use:**
@@ -809,9 +823,12 @@ classDiagram
     class HardDrive {
         +read(int, int): String
     }
-    ComputerFacade --> CPU
-    ComputerFacade --> Memory
-    ComputerFacade --> HardDrive
+    ComputerFacade *-- CPU : composes
+    ComputerFacade *-- Memory : composes
+    ComputerFacade *-- HardDrive : composes
+    ComputerFacade --> CPU : orchestrates
+    ComputerFacade --> Memory : orchestrates
+    ComputerFacade --> HardDrive : orchestrates
 ```
 
 **When to use:**
@@ -879,7 +896,8 @@ classDiagram
         -cache: Map~String, TreeType~$
         +getTreeType(String, String): TreeType$
     }
-    TreeTypeFactory --> TreeType
+    TreeTypeFactory o-- TreeType : caches
+    TreeTypeFactory --> TreeType : returns
 ```
 
 **When to use:**
@@ -951,7 +969,9 @@ classDiagram
     }
     Subject <|.. RealSubject
     Subject <|.. Proxy
-    Proxy --> RealSubject
+    Proxy o-- RealSubject : holds reference
+    Proxy --> RealSubject : delegates to
+    Proxy ..> Subject : implements
 ```
 
 **When to use:**
@@ -1035,7 +1055,9 @@ classDiagram
     SupportHandler <|-- FrontlineSupport
     SupportHandler <|-- TechnicalSupport
     SupportHandler <|-- Management
-    SupportHandler --> SupportHandler : next
+    SupportHandler --> SupportHandler : next handler
+    FrontlineSupport ..> TechnicalSupport : delegates to
+    TechnicalSupport ..> Management : delegates to
 ```
 
 **When to use:**
@@ -1119,8 +1141,10 @@ classDiagram
         +undo()
     }
     Command <|.. LightOnCommand
-    LightOnCommand --> Light
-    RemoteControl --> Command
+    LightOnCommand *-- Light : has
+    RemoteControl o-- Command : stores
+    RemoteControl --> Command : invokes
+    LightOnCommand ..> Light : commands
 ```
 
 **When to use:**
@@ -1197,7 +1221,9 @@ classDiagram
     Expression <|.. NumberExpression
     Expression <|.. VariableExpression
     Expression <|.. AddExpression
-    AddExpression --> Expression
+    AddExpression *-- Expression : left operand
+    AddExpression *-- Expression : right operand
+    AddExpression ..> Expression : composes
 ```
 
 **When to use:**
@@ -1269,7 +1295,9 @@ classDiagram
     }
     Iterable <|.. NameCollection
     Iterator <|.. NameIterator
-    NameCollection +-- NameIterator
+    NameCollection o-- "1" NameIterator : creates
+    NameCollection --> NameIterator : returns
+    NameIterator --> NameCollection : traverses
 ```
 
 **When to use:**
@@ -1368,7 +1396,9 @@ classDiagram
     }
     ChatMediator <|.. ChatRoom
     ChatUser <|-- ConcreteUser
-    ChatUser --> ChatMediator
+    ChatUser --> ChatMediator : knows
+    ChatRoom o-- ChatUser : manages
+    ConcreteUser ..> ChatMediator : communicates through
 ```
 
 **When to use:**
@@ -1445,8 +1475,10 @@ classDiagram
         +undo(TextEditor)
     }
     TextEditor --> EditorMemento : creates
-    UndoManager --> EditorMemento : stores
+    TextEditor ..> EditorMemento : restores from
+    UndoManager o-- EditorMemento : stores
     UndoManager --> TextEditor : restores
+    UndoManager ..> EditorMemento : manages history
 ```
 
 **When to use:**
@@ -1521,7 +1553,9 @@ classDiagram
         +changeData(Object)
     }
     Observer <|.. Logger
-    EventSource --> Observer
+    EventSource o-- Observer : maintains
+    EventSource --> Observer : notifies
+    Logger ..> EventSource : receives from
 ```
 
 **When to use:**
@@ -1613,7 +1647,11 @@ classDiagram
     TrafficLightState <|.. GreenState
     TrafficLightState <|.. YellowState
     TrafficLightState <|.. RedState
-    TrafficLight --> TrafficLightState
+    TrafficLight *-- TrafficLightState : has current state
+    TrafficLight --> TrafficLightState : delegates to
+    GreenState ..> YellowState : transitions to
+    YellowState ..> RedState : transitions to
+    RedState ..> GreenState : transitions to
 ```
 
 **When to use:**
@@ -1687,7 +1725,9 @@ classDiagram
     }
     SortStrategy <|.. BubbleSortStrategy
     SortStrategy <|.. QuickSortStrategy
-    Sorter --> SortStrategy
+    Sorter *-- SortStrategy : has
+    Sorter --> SortStrategy : delegates to
+    Sorter ..> SortStrategy : uses runtime
 ```
 
 **When to use:**
@@ -1740,7 +1780,7 @@ public class CSVDataProcessor extends DataProcessor {
 classDiagram
     class DataProcessor {
         <<abstract>>
-        +process()
+        +process()$
         #readData()*
         #processData()*
         #writeResult()*
@@ -1752,6 +1792,8 @@ classDiagram
         #writeResult()
     }
     DataProcessor <|-- CSVDataProcessor
+    DataProcessor ..> CSVDataProcessor : template calls hooks
+    CSVDataProcessor --> DataProcessor : overrides primitives
 ```
 
 **When to use:**
@@ -1841,6 +1883,10 @@ classDiagram
     TaxVisitor <|.. TaxCalculator
     Product <|.. Food
     Product <|.. Electronics
+    Food --> TaxVisitor : accepts
+    Electronics --> TaxVisitor : accepts
+    TaxCalculator ..> Food : visits
+    TaxCalculator ..> Electronics : visits
 ```
 
 **When to use:**
