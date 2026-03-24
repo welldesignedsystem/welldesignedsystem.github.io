@@ -1,7 +1,7 @@
 ---
 # Banner
 banner:
-  title: "The Well-Designed System"
+  title: "\"The Well Designed System\""
   content: "The Well-Designed System is a technical blog built by two software engineers passionate about clean architecture, elegant design and thoughtful engineering."
   image: "/images/banner.png"
   button:

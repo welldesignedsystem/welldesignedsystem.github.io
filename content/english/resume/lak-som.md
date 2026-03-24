@@ -12,13 +12,13 @@ social:
     icon: fa-brands fa-linkedin
     link: https://www.linkedin.com/in/lakshmisoman/
 ---
-# SUMMARY
+# Summary
 
 Senior AI Engineer with 11+ years designing and delivering enterprise-scale distributed systems and intelligent platforms. Deep expertise in production LLM systems, Retrieval-Augmented Generation (RAG) pipelines, and multi-agent architectures powering AI-driven automation and knowledge systems. Proven leader in translating complex business challenges into scalable AI solutions across logistics, healthcare, insurance, and automotive industries.
 
 ---
 
-# SKILLS
+# Skills
 
 | Category | Subcategory | Technologies & Details                                                                                                                                                                          |
 |----------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -57,7 +57,7 @@ Senior AI Engineer with 11+ years designing and delivering enterprise-scale dist
 
 ---
 
-# PROFESSIONAL EXPERIENCE
+# Professional Experience
 
 ## **EigenAI**
 Sydney, New South Wales, Australia · Remote
@@ -153,7 +153,7 @@ May 2009 – September 2011 (2 years 5 months)
 
 ---
 
-# EDUCATION
+# Education
 
 ## Master of Computer Application (MCA)
 **Mahatma Gandhi University**
