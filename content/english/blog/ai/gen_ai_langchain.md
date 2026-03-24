@@ -9,6 +9,7 @@ summary = "Reusable design patterns and best practices for building robust, effi
 LLM design patterns are reusable strategies for building robust, efficient and scalable AI applications. They help developers structure retrieval, reading, rewriting, memory, agent and orchestration workflows for large language models. These patterns improve performance, maintainability accuracy, cost and security.
 ## Class diagram
 ![](https://raw.githubusercontent.com/welldesignedsystem/fictional-eureka/refs/heads/main/misc/langchain.svg)
+[View Raw](https://raw.githubusercontent.com/welldesignedsystem/fictional-eureka/refs/heads/main/misc/langchain.svg)
 
 ## Introduction
 Before we proceed setting the stage.
