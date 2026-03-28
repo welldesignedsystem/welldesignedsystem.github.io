@@ -672,3 +672,1051 @@ graph TB
   }
 }
 ```
+
+## 5 Data Flow Architecture
+### 5.1 End-to-End Data Flow Diagram
+
+```mermaid
+flowchart TD
+
+    %% DATA INGESTION
+    subgraph INGEST["DATA INGESTION PHASE"]
+        A1[AIS Provider API] -->|HTTPS/JSON| K1[Kafka\nTopic: ais-raw]
+        A2[Weather API] -->|HTTPS/GRIB2| K2[Kafka\nTopic: weather]
+        A3[Vessel Systems] -->|MQTT/CSV| K3[Kafka\nTopic: vessel-ops]
+    end
+
+    %% VALIDATION & ENRICHMENT
+    subgraph VALID["VALIDATION & ENRICHMENT"]
+        V1[Schema Check\nJSON Schema] -->|pass| V2[Outlier Det.\n3-sigma rule] -->|pass| V3[Gap Filling\nAI Model]
+        
+        SYNC["Temporal Synchronization\n· Nearest neighbor interpolation for weather\n· Linear interpolation for draft between reports"]
+    end
+
+    K1 & K2 & K3 --> VALID
+    V3 --> SYNC
+
+    %% UNIFIED VESSEL STATE RECORD
+    subgraph UVSM["UNIFIED VESSEL STATE RECORD\n(1-minute resolution time-series)"]
+        UVS["· Position - lat, lon\n· Motion - SOG, COG, heading\n· Environment - Hs, Tp, wind\n· Loading - drafts, cargo\n· Timestamp UTC"]
+    end
+
+    SYNC --> UVSM
+
+    %% ANALYTICS PROCESSING
+    subgraph ANALYTICS["ANALYTICS PROCESSING"]
+
+        subgraph MODELS["Load Prediction"]
+            subgraph AI["AI LOAD MODEL"]
+                AI1["Input Features:\n· Vessel speed\n· Wave height\n· Wave period\n· Encounter angle\n· Draft state"]
+                AI2["Output:\n· Stress (MPa)\n· Load Factor"]
+            end
+
+            subgraph EMP["EMPIRICAL MODEL"]
+                EM1["Architecture:\n· Classical Naval\n· RAO Tables\n· Strip Theory\n· Slam Formulas"]
+                EM2["Output:\n· Bending Moment\n· Shear Force"]
+            end
+        end
+
+        ENSEMBLE["ENSEMBLE CONSENSUS (Weighted Average)\nFinal_Load = 0.6 × AI_Prediction\n+ 0.4 × Empirical"]
+
+        AI2 & EM2 --> ENSEMBLE
+
+        subgraph FATIGUE["FATIGUE DAMAGE ACCUMULATION"]
+            F1["1. Rainflow Cycle Counting (rolling 24-hour)\n· Extract stress cycles from time-series\n· Identify stress ranges and mean stresses"]
+            F2["2. S-N Curve Lookup\n· Material: Aluminum 5083 + DNV D-curve\n· Calculate allowable cycles (Ni)"]
+            F3["3. Palmgren-Miner Summation\nDamage = Σ(ni / Ni)\n· ni = actual cycles at stress range i\n· Ni = allowable cycles from S-N curve"]
+            F4["4. Update Cumulative Damage Register\n· Per critical section\n· Time-stamped damage increments\n· Projected remaining life calculation"]
+            F1 --> F2 --> F3 --> F4
+        end
+
+        ENSEMBLE --> FATIGUE
+    end
+
+    UVSM --> ANALYTICS
+
+    %% COMPLIANCE & ALERTING
+    subgraph ALERT["COMPLIANCE & ALERTING"]
+        DE["Design Envelope Check\n· Current Hs vs. Max Hs limit\n· Speed vs. Wave height matrix\n· Heading restrictions\n· Loading condition limits"]
+
+        RULES["Alert Rule Engine\nIF Current_Hs > Design_Limit × 0.8 → YELLOW\nIF Current_Hs > Design_Limit → RED\nIF Cumulative_Damage > 0.6 → RED (Plan Survey)\nIF Damage_Rate > Expected × 1.5 → YELLOW (Anomaly)"]
+
+        NOTIFY["Multi-Channel Notification\n· Dashboard popup\n· Email to vessel master + shore staff\n· SMS for RED alerts\n· Mobile push notification"]
+
+        DE --> RULES --> NOTIFY
+    end
+
+    FATIGUE --> ALERT
+
+    %% DATA PERSISTENCE
+    subgraph PERSIST["DATA PERSISTENCE"]
+        DB1["InfluxDB (Time-series)\n· Raw sensor data (1-min)\n· Calculated loads\n· Damage log\n· 10-year retention"]
+        DB2["PostgreSQL (Relational)\n· Vessel master data\n· Alert history\n· User accounts\n· Audit trail\n· Reports"]
+    end
+
+    ALERT --> PERSIST
+
+    %% PRESENTATION
+    subgraph PRESENT["PRESENTATION LAYER"]
+        API["REST API\n(Dashboard)"]
+        WS["WebSocket\n(Real-time)"]
+        GQL["GraphQL\n(Mobile)"]
+    end
+
+    PERSIST --> PRESENT
+
+    subgraph CLIENTS["USER CLIENTS"]
+        C1[Web Dashboard]
+        C2[Mobile App]
+        C3[API Consumers]
+    end
+
+    API & WS & GQL --> CLIENTS
+
+    %% LATENCY NOTE
+    NOTE["⏱ Total Latency Budget: 15-30s end-to-end\nTarget: <60s compliance"]
+    CLIENTS -.-> NOTE
+```
+
+## 5.2 Data Processing Latency Budget
+
+| Stage | Target Latency | Technology | Notes |
+|---|---|---|---|
+| AIS Provider + Kafka | 5-10 seconds | REST API polling | Depends on provider SLA |
+| Kafka + Validation | <1 second | Stream processing | In-memory operations |
+| Validation + Enrichment | 2-3 seconds | AI gap-filling | CPU-accelerated inference |
+| Analytics (Load Calc) | 1-2 seconds | Python/NumPy | Vectorized operations |
+| Fatigue Update | 5-10 seconds | Time-series DB write | Batch micro-writes |
+| Alert Generation | <1 second | Rules engine | Event-driven triggers |
+| **Total (Position + Alert)** | **15-30 seconds** | **End-to-end** | **Target: <60s compliance** |
+
+---
+
+## 6. AI/ML Models & Analytics
+
+### 6.1 AI Model Portfolio
+
+#### 6.1.1 Primary Model: Load Prediction Neural Network
+
+**Model Architecture:**
+```
+Input Layer (12 features)
+    +
+Dense(128, ReLU) + Dropout(0.2)
+    +
+Dense(64, ReLU) + Dropout(0.2)
+    +
+Dense(32, ReLU)
+    +
+Output Layer (4 outputs, Linear)
+    · Midship bending moment
+    · Bow stress
+    · Stern stress
+    · Torsional load
+```
+
+**Training Data Requirements:**
+- Historical dataset: 100,000+ vessel-hours across 50+ vessels
+- Features: SOG, COG, Hs, Tp, wave direction, draft, trim, displacement, encounter angle, hull form coefficients
+- Labels: Calculated loads from empirical formulas (initial training), refined with in-service validation data
+
+**Model Performance Metrics:**
+- MAE (Mean Absolute Error): <5% of design limit
+- R² Score: >0.92
+- Inference time: <50ms per prediction
+
+**Update Frequency:**
+- Retraining: Quarterly with new operational data
+- Online learning: Disabled (maintain model stability for regulatory approval)
+
+#### 6.1.2 Secondary Model: Anomaly Detection
+
+**Model Type:** Isolation Forest (Unsupervised)
+
+**Purpose:** Detect unusual operational patterns that may indicate:
+- Sensor malfunction
+- Unreported damage
+- Operational envelope violations
+- Data quality issues
+
+**Features:**
+- Stress-to-environment ratios
+- Speed-in-waves compliance
+- Loading pattern deviations
+- Temporal change rates
+
+**Alert Threshold:** Anomaly score >0.7 triggers investigation workflow
+
+#### 6.1.3 Gap-Filling Model: Data Imputation
+
+**Model Type:** Bidirectional LSTM
+
+**Purpose:** Fill missing data gaps when AIS/weather data is temporarily unavailable
+
+**Capabilities:**
+- Interpolate position for gaps <30 minutes
+- Estimate draft based on recent loading patterns
+- Predict wave conditions from nearby grid points
+
+**Confidence Scoring:** Each imputed value tagged with confidence (0-1)
+
+---
+
+### 6.2 Empirical Analysis Models
+
+#### 6.2.1 Wave-Induced Load Calculation
+
+**For High-Speed Craft (Primary Target):**
+```python
+def calculate_slam_load(vessel, speed, Hs, Tp, encounter_angle):
+    """
+    Empirical slamming load model for high-speed craft
+    Based on DNV-RP-C205 and ABS HSC Guide
+    """
+    # Relative wave encounter
+    lambda_w = 1.56 * (Tp ** 2)  # Wavelength (m)
+    encounter_freq = calculate_encounter_frequency(speed, lambda_w, encounter_angle)
+
+    # Slamming probability
+    V_rel = speed * cos(encounter_angle) + 0.5 * sqrt(g * lambda_w)
+    P_slam = slam_probability(V_rel, Hs, vessel.bow_geometry)
+
+    # Peak pressure
+    P_max = 0.5 * rho_water * (V_rel ** 2) * vessel.deadrise_angle_factor
+
+    # Structural response
+    bending_moment = P_max * vessel.pressure_distribution_factor * vessel.section_modulus
+
+    return {
+        'bending_moment': bending_moment,  # kN·m
+        'slam_probability': P_slam,
+        'encounter_frequency': encounter_freq,
+        'confidence': 0.85  # Model confidence
+    }
+```
+
+**For Conventional Hull Forms:**
+```python
+def calculate_wave_bending(vessel, Hs, Tp, encounter_angle):
+    """
+    Strip theory-based wave bending moment
+    Based on IACS UR S11 and Lloyd's SSC
+    """
+    # Fetch Response Amplitude Operator (RAO) from vessel master data
+    RAO_data = vessel.rao_table[Tp]  # Pre-computed from hydrodynamic model
+
+    # Wave bending moment amplitude
+    M_wave_amp = RAO_data['vertical_BM'] * Hs * vessel.L ** 2 * vessel.B * vessel.Cb
+
+    # Apply heading correction
+    heading_factor = cos(encounter_angle) ** 2  # Simplified
+
+    # Most probable extreme in 3-hour period
+    M_extreme = M_wave_amp * heading_factor * 1.9  # 1.9 = Rayleigh factor
+
+    return {
+        'sagging_moment': M_extreme,
+        'hogging_moment': -M_extreme * 0.85,
+        'confidence': 0.90
+    }
+```
+
+---
+
+### 6.2.2 Fatigue Damage Calculation
+
+**Rainflow Counting Implementation:**
+```python
+def rainflow_count(stress_history):
+    """
+    Rainflow cycle counting algorithm (ASTM E1049)
+    Extracts stress cycles from irregular time-series
+    """
+    cycles = []
+    residue = []
+
+    # Step 1: Identify peaks and troughs
+    peaks_troughs = identify_turning_points(stress_history)
+
+    # Step 2: Extract closed cycles
+    for point in peaks_troughs:
+        residue.append(point)
+
+        while len(residue) >= 3:
+            X, Y, Z = residue[-3:]
+
+            # Check for closed cycle (Y-X and Z-Y)
+            range_YX = abs(Y - X)
+            range_ZY = abs(Z - Y)
+
+            if range_YX <= range_ZY:
+                # Closed cycle found
+                stress_range = range_YX
+                mean_stress = (X + Y) / 2
+                cycles.append({
+                    'range': stress_range,
+                    'mean': mean_stress,
+                    'count': 0.5  # Half cycle
+                })
+                residue.pop(-2)  # Remove Y
+            else:
+                break
+
+    # Step 3: Process residue
+    # (pair remaining peaks/troughs)
+
+    return cycles
+```
+
+**Palmgren-Miner Damage Summation:**
+```python
+def calculate_fatigue_damage(stress_cycles, vessel_section):
+    """
+    Calculate cumulative fatigue damage using Palmgren-Miner rule
+    """
+    total_damage = 0.0
+
+    # Get S-N curve parameters for material
+    sn_curve = vessel_section.material.sn_curve  # e.g., "DNV_D_curve"
+    m = sn_curve.slope   # Typically 3.0 for welded steel, 5.0 for aluminum
+    A = sn_curve.intercept  # Material constant
+
+    for cycle in stress_cycles:
+        stress_range = cycle['range']
+        cycle_count = cycle['count']
+
+        # Apply stress concentration factor
+        stress_range_actual = stress_range * vessel_section.SCF
+
+        # Calculate allowable cycles at this stress range
+        # N = A / (S^m)
+        N_allowable = A / (stress_range_actual ** m)
+
+        # Add partial damage
+        partial_damage = cycle_count / N_allowable
+        total_damage += partial_damage
+
+    return {
+        'damage_increment': total_damage,
+        'cycles_processed': len(stress_cycles),
+        'timestamp': now()
+    }
+```
+
+---
+
+### 6.3 Compliance Monitoring Logic
+
+**Design Envelope Check:**
+```python
+def check_design_envelope_compliance(vessel_state, design_envelope):
+    """
+    Real-time compliance checking against design limits
+    Returns alert level and recommended actions
+    """
+    alerts = []
+
+    # Check 1: Wave height limit
+    if vessel_state.Hs > design_envelope.max_Hs * 0.8:
+        alerts.append({
+            'level': 'YELLOW' if vessel_state.Hs <= design_envelope.max_Hs else 'RED',
+            'parameter': 'wave_height',
+            'current_value': vessel_state.Hs,
+            'limit': design_envelope.max_Hs,
+            'message': f'Wave height {vessel_state.Hs:.1f}m approaching/exceeding limit {design_envelope.max_Hs:.1f}m',
+            'recommendation': 'Reduce speed or alter course to avoid heavy weather'
+        })
+
+    # Check 2: Speed in waves
+    max_allowed_speed = design_envelope.get_max_speed_for_waves(vessel_state.Hs)
+    if vessel_state.SOG > max_allowed_speed:
+        alerts.append({
+            'level': 'ORANGE',
+            'parameter': 'speed_in_waves',
+            'current_value': vessel_state.SOG,
+            'limit': max_allowed_speed,
+            'message': f'Speed {vessel_state.SOG:.1f} kts exceeds limit {max_allowed_speed:.1f} kts for Hs={vessel_state.Hs:.1f}m',
+            'recommendation': f'Reduce speed to {max_allowed_speed:.1f} knots'
+        })
+
+    # Check 3: Heading restrictions (following/quartering seas)
+    relative_wave_dir = (vessel_state.heading - vessel_state.wave_direction) % 360
+    for restricted_sector in design_envelope.heading_restrictions:
+        if restricted_sector['start'] <= relative_wave_dir <= restricted_sector['end']:
+            if vessel_state.SOG > restricted_sector['max_speed']:
+                alerts.append({
+                    'level': 'ORANGE',
+                    'parameter': 'restricted_heading',
+                    'message': f'Heading {vessel_state.heading}° in restricted sector (following seas)',
+                    'recommendation': 'Alter course by 30° or reduce speed'
+                })
+
+    # Check 4: Loading condition
+    if vessel_state.draft_fwd < design_envelope.min_draft:
+        alerts.append({
+            'level': 'YELLOW',
+            'parameter': 'light_draft',
+            'message': 'Forward draft below minimum - increased slamming risk',
+            'recommendation': 'Consider ballasting forward tanks'
+        })
+
+    return alerts
+```
+
+---
+
+## 7. Core Workflows
+## 7. Core Workflows
+
+### 7.1 Vessel Onboarding Workflow
+```
+VESSEL ONBOARDING PROCESS
+(Target: 48 hours)
+```
+
+**STEP 1: INITIAL DATA COLLECTION (Day 0, Hours 0-4)**
+- Input: Vessel IMO number
+- Action: Automated scraping of public registries
+  - IHS Sea-web database query
+  - Classification society records pull
+  - AIS historical data retrieval (past 90 days)
+- Output: Basic vessel profile created
+- Human Verification: Fleet manager reviews auto-populated data
+
+**STEP 2: TECHNICAL SPECIFICATION UPLOAD (Day 0, Hours 4-8)**
+- Input: PDF/DWG files from ship owner
+  - General arrangement plan
+  - Midship section drawing
+  - Stability booklet
+  - Loading manual
+- Action: AI document parser extracts:
+  - Principal dimensions (LOA, B, D, T)
+  - Structural scantlings (plate thickness, stiffener spacing)
+  - Material specifications
+  - Design operational envelope
+- Output: Structured master data record
+- Human Verification: Marine engineer validates extraction accuracy
+
+**STEP 3: DIGITAL TWIN GENERATION (Day 0-1, Hours 8-24)**
+- Input: Validated master data
+- Action: Automated hydrodynamic model creation
+  - Hull form discretization (100 stations)
+  - RAO calculation (15 wave periods × 12 headings)
+  - Pressure distribution mapping
+  - Structural stress point identification
+- Processing: Cloud compute cluster (4-core job)
+- Output: Vessel-specific digital twin model
+- Quality Check: Compare calculated vs. design displacement (±2% tolerance)
+
+**STEP 4: DATA SOURCE INTEGRATION (Day 1, Hours 24-32)**
+- AIS Connection:
+  - Register vessel MMSI with AIS provider API
+  - Set up real-time webhook for position updates
+  - Test: Verify position reception (5-minute window)
+- Weather Integration:
+  - Configure geo-fencing for vessel operating area
+  - Set hindcast/forecast refresh intervals
+  - Test: Fetch weather for vessel's last known position
+- Operational Data:
+  - IF vessel has DAS: Configure API connector
+  - ELSE: Set up email-to-database for noon reports
+  - Test: Simulate data submission and parsing
+- Output: Data pipeline operational
+
+**STEP 5: BASELINE CALIBRATION (Day 1-2, Hours 32-48)**
+- Input: 90 days of historical AIS + weather data
+- Action: Retrospective analysis
+  - Calculate historical load exposure
+  - Establish operational pattern baseline
+  - Identify typical vs. extreme conditions
+  - Tune AI model weights for vessel-specific behaviour
+- Output: Calibrated monitoring system
+- Deliverable: Baseline report showing:
+  - Historical compliance rate (should be >90% for well-designed vessel)
+  - Typical stress range histogram
+  - Estimated pre-monitoring fatigue accumulation
+
+**STEP 6: GO-LIVE & HANDOVER (Day 2, Hour 48)**
+- Dashboard activation: User accounts created
+- Training: 1-hour webinar for ship crew + shore staff
+- Alert configuration: Set notification preferences
+- Documentation: Deliver operation manual
+- Status: Vessel monitoring ACTIVE
+  - Real-time dashboard live
+  - Alert system armed
+  - Fatigue accumulation tracking started
+
+**POST-ONBOARDING**
+- Week 1: Daily check-ins with fleet manager
+- Month 1: Review initial findings report
+- Month 3: System performance review & fine-tuning
+
+**Onboarding Success Criteria:**
+- ✓ AIS position updates received every <5 minutes
+- ✓ Weather data matched to position within 0.5° lat/lon
+- ✓ Digital twin calculates loads within ±10% of empirical formulas
+- ✓ Dashboard loads in <3 seconds
+- ✓ Test alert delivered within 60 seconds
+
+---
+
+### 7.2 Real-Time Monitoring Workflow
+```
+CONTINUOUS MONITORING LOOP (1-minute cycle)
+```
+
+**00:00 - DATA ACQUISITION PHASE**
+
+- AIS Update:
+  - Receive: Position (lat/lon), SOG, COG, Heading, Timestamp
+  - Validate: Position within ±100nm of last position (speed check)
+  - Store: Raw AIS message in InfluxDB
+- Weather Query:
+  - API Call: GET /hindcast?lat={}&lon={}&time={}
+  - Receive: Hs, Tp, wave_dir, wind_speed, wind_dir
+  - Spatial Interpolation: If position between grid points
+  - Store: Weather data record linked to vessel position
+- Operational Data (if available):
+  - Check: New noon report or DAS update since last cycle?
+  - IF YES: Parse and extract draft, cargo, trim
+  - IF NO: Use last known values
+  - Store: Loading condition snapshot
+
+**00:15 - DATA VALIDATION & SYNCHRONIZATION**
+
+- Temporal Alignment:
+  - Ensure all data points share same timestamp (±30 seconds)
+  - IF gap detected: Trigger gap-filling AI model
+  - Tag: Mark imputed values with confidence score
+- Outlier Detection:
+  - Check: SOG < vessel_max_speed + 5 knots
+  - Check: Hs < 20m (physical sanity)
+  - Check: Draft within min/max operating range
+  - IF fail: Flag for human review, use previous valid value
+  - Log: Data quality metrics
+- Create: Unified Vessel State Record (UVSR)
+  - UVSR contains: position, motion, environment, loading (17 fields)
+
+**00:30 - LOAD CALCULATION PHASE**
+
+- Parallel Processing:
+  - Thread 1: AI Model Inference
+    - Input: UVSR + Feature vector (12 features)
+    - GPU Execution: Neural network forward pass (<50ms)
+    - Output: Predicted stresses [midship, bow, stern, torsion]
+  - Thread 2: Empirical Model
+    - Input: UVSR
+    - IF high_speed_craft:
+      - Calculate: Slamming load (empirical formula)
+    - ELSE:
+      - Calculate: Wave bending (RAO-based)
+    - Output: Calculated stresses
+- Ensemble Fusion:
+  - Weighted Average: Final = 0.6×AI + 0.4×Empirical
+  - Confidence Score: Based on agreement between models
+    - IF difference <10%: High confidence (0.9)
+    - IF difference >30%: Low confidence (0.5) → Trigger review
+  - Output: Final stress estimates with confidence
+- Store: Load calculation results in time-series DB
+
+**00:45 - COMPLIANCE & ALERT EVALUATION**
+
+- Design Envelope Check:
+  - Compare: Current Hs vs. vessel.max_Hs
+  - Compare: Current speed vs. speed_limit(Hs)
+  - Compare: Heading vs. restricted sectors
+  - Compare: Calculated stress vs. allowable stress
+  - Generate: Compliance status (GREEN/YELLOW/ORANGE/RED)
+- Alert Logic:
+  - IF YELLOW: Log event, dashboard notification
+  - IF ORANGE: Email to shore + dashboard
+  - IF RED: Email + SMS + mobile push + dashboard (CRITICAL)
+  - Cooldown: Don't re-alert same condition for 30 minutes
+- Store: Alert records with acknowledgment tracking
+
+**00:50 - FATIGUE UPDATE (Every 60 minutes)**
+
+- Trigger: If clock_time.minute == 0 (hourly batch)
+- Input: Last 24 hours of stress time-series (1,440 data points)
+- Process:
+  - Rainflow Counting: Extract stress cycles
+  - S-N Curve Lookup: Get allowable cycles for each range
+  - Damage Calculation: Σ(ni/Ni) for all cycles
+  - Update: Cumulative damage register
+    - Vessel.total_damage += hourly_damage
+    - Vessel.damage_rate_30day = rolling_average(30 days)
+    - Vessel.projected_life = (1.0 - total_damage) / damage_rate
+- Alert Logic:
+  - IF total_damage > 0.5: YELLOW alert (50% life consumed)
+  - IF total_damage > 0.7: ORANGE alert (Schedule survey)
+  - IF total_damage > 0.9: RED alert (Urgent action)
+  - IF damage_rate > baseline × 1.5: YELLOW (Anomaly detected)
+- Store: Fatigue damage log (permanent audit trail)
+
+**00:55 - DASHBOARD UPDATE**
+
+- WebSocket Broadcast:
+  - Push: New vessel position to connected clients
+  - Push: Updated stress gauges
+  - Push: Alert notifications
+  - Latency: <500ms from server to browser
+- Cache Refresh:
+  - Update: Redis cache with latest vessel state
+  - TTL: 5 minutes (stale data protection)
+
+**01:00 - LOOP RESTART**
+- Repeat cycle for all vessels in fleet (parallel processing)
+
+---
+
+### 7.3 Alert Response Workflow
+```
+ALERT RESPONSE & ESCALATION
+```
+
+**ALERT GENERATION (system)**
+- Condition Detected: e.g., Wave height exceeding 80% of limit
+- Alert Record Created:
+```json
+{
+  "alert_id": "ALT-2025-0003",
+  "vessel_imo": 9123456,
+  "timestamp": "2025-12-03T14:45:00Z",
+  "level": "YELLOW",
+  "category": "environmental_limit",
+  "message": "Wave height 2.1m approaching limit 2.5m",
+  "current_value": 2.1,
+  "threshold": 2.0,
+  "limit": 2.5,
+  "recommendation": "Monitor conditions, reduce speed if Hs exceeds 2.3m",
+  "vessel_position": {"lat": 1.25, "lon": 103.82},
+  "status": "ACTIVE",
+  "acknowledged": false
+}
+```
+
+- Notification Dispatch
+
+**LEVEL 1: YELLOW ALERT (Information/Caution)**
+- Notification Channels:
+  - Dashboard: Popup banner (dismissible after 30 sec)
+  - Email: Send to shore operations team
+  - Log: Record in alert history
+- Expected Response:
+  - Shore Team: Review within 2 hours
+  - Action: Monitor situation, no immediate action required
+  - Acknowledgment: Optional (auto-dismiss after 24 hours)
+- Escalation: None (unless condition worsens)
+
+**LEVEL 2: ORANGE ALERT (Warning)**
+- Notification Channels:
+  - Dashboard: Persistent modal (requires acknowledgment)
+  - Email: Send to shore ops + Fleet manager
+  - Mobile Push: iOS/Android app notification
+  - SMS: (if opted in by user)
+- Expected Response:
+  - Ship Master: Acknowledge within 1 hour
+  - Shore Team: Review within 30 minutes
+  - Action: Implement recommended measures
+    - e.g., "Reduce speed to 15 knots" or "Alter course 20° to starboard"
+  - Documentation: Master logs action taken in system
+- Escalation:
+  - IF not acknowledged in 2 hours → Escalate to RED
+  - IF condition persists >4 hours → Daily report to management
+- Auto-Resolution:
+  - IF condition clears (parameter back within 70% of limit)
+    - Alert status: "RESOLVED_AUTO"
+    - Notification: "Condition normalized" email
+
+**LEVEL 3: RED ALERT (Critical)**
+- Notification Channels:
+  - Dashboard: Full-screen alert (cannot be dismissed)
+  - Email: Fleet manager + Marine superintendent + Emergency contact
+  - SMS: All emergency contact numbers
+  - Mobile Push: High-priority with alarm sound
+  - API Webhook: Integrate with 3rd party fleet management systems
+- Expected Response:
+  - Ship Master: IMMEDIATE acknowledgment required (<15 minutes)
+    - IF no ack: Automated phone call to ship's satellite phone
+  - Shore Team: Immediate action (<5 minutes)
+  - Action: URGENT corrective measures
+    - e.g., "STOP VESSEL - Design limit exceeded"
+    - e.g., "Structural damage risk - Seek sheltered waters"
+  - Documentation: Mandatory incident report within 24 hours
+- Escalation:
+  - IF no acknowledgment in 30 minutes:
+    - Phone call to designated emergency contact
+    - Notify classification society duty officer
+    - Potential SAR alert (if vessel unreachable)
+- Resolution:
+  - Requires: Manual closure by authorized personnel
+  - Requires: Root cause analysis documented
+  - Requires: Preventive action plan approved
+
+**USER ACKNOWLEDGMENT FLOW**
+- Step 1: User receives notification
+- Step 2: User clicks alert in dashboard
+- Step 3: System displays:
+  - Alert details (all parameters)
+  - Vessel current state
+  - Historical trend (past 6 hours)
+  - Recommended actions
+  - Acknowledgment form:
+    - "Action Taken" (text field)
+    - "Estimated Resolution Time"
+    - "Responsible Person" (dropdown)
+- Step 4: User submits acknowledgment
+- Step 5: System updates:
+  - Alert status: "ACKNOWLEDGED"
+  - Acknowledged_by: user_name
+  - Acknowledged_at: timestamp
+  - Action_taken: user_input
+- Step 6: Alert remains visible until condition resolves
+
+**RECURRING ALERT MANAGEMENT**
+- Scenario: Same vessel triggers same alert multiple times
+- Logic:
+  - IF alert re-occurs within 30 minutes: Don't re-send notifications
+    - Update: "Alert count: 3 occurrences in past hour"
+  - IF alert persists >2 hours: Send reminder notification
+  - IF alert happens >5 times in 24 hours:
+    - Generate: Anomaly investigation ticket
+    - Notify: Marine superintendent for root cause analysis
+- User Action:
+  - Option to "Snooze" yellow alerts for 24 hours (requires justification)
+
+**POST-ALERT ANALYSIS**
+- Automatic Report Generation (24 hours after resolution):
+  - Alert timeline (trigger + acknowledgment + resolution)
+  - Vessel track during incident
+  - Environmental conditions timeline
+  - Actions taken by crew
+  - Lessons learned (optional user input)
+- Store: In audit trail (7-year retention for class surveys)
+- Analytics:
+  - Alert frequency trends (per vessel, per fleet)
+  - Response time metrics (KPI: acknowledge <30 min for ORANGE)
+  - False positive rate (target: <5%)
+
+
+## 7.4 Monthly Reporting Workflow
+
+**SCHEDULED PROCESS:** 1st day of each month, 00:00 UTC
+
+### STEP 1: DATA AGGREGATION (00:00–01:00)
+
+```
+├── Query InfluxDB: All vessel data for previous month
+├── Calculate:
+│   ├── Total operating hours
+│   ├── Distance sailed (nautical miles)
+│   ├── Hours in each sea state (Beaufort scale distribution)
+│   ├── Cargo loading cycles (count)
+│   ├── High-stress events (stress >80% of limit)
+│   ├── Design envelope compliance rate (%)
+│   ├── Fatigue damage accumulation (%)
+│   └── Alert statistics (count by level)
+└── Output: Monthly metrics dataset
+```
+
+### STEP 2: REPORT GENERATION (01:00–02:00)
+
+```
+├── Template: Pre-designed PDF template (ABS-compliant format)
+├── Populate Sections:
+│   ├── Executive Summary (1 page)
+│   │   ├── Vessel name, IMO, reporting period
+│   │   ├── Overall health score (0–100)
+│   │   ├── Compliance status: PASS/CONDITIONAL/FAIL
+│   │   └── Critical findings summary
+│   │
+│   ├── Operational Profile (2 pages)
+│   │   ├── Route map (track overlay)
+│   │   ├── Speed distribution histogram
+│   │   ├── Loading pattern chart
+│   │   └── Environmental exposure heatmap
+│   │
+│   ├── Structural Health Analysis (2 pages)
+│   │   ├── Cumulative fatigue damage gauge (%)
+│   │   ├── Damage rate trend (past 12 months)
+│   │   ├── Stress exposure histogram
+│   │   └── Critical section status table
+│   │
+│   ├── Compliance Summary (1 page)
+│   │   ├── Design envelope adherence (%)
+│   │   ├── Non-compliance incidents (list)
+│   │   ├── Alert history table
+│   │   └── Corrective actions taken
+│   │
+│   └── Recommendations (1 page)
+│       ├── Maintenance suggestions
+│       ├── Operational optimisations
+│       └── Next survey/inspection due date
+│
+├── Generate: PDF File + CSV data export
+└── Storage: S3 bucket (7-year retention)
+```
+
+### STEP 3: DISTRIBUTION (02:00–02:15)
+
+```
+├── Email Delivery:
+│   ├── TO: Vessel owner/operator
+│   ├── CC: Fleet manager, Marine superintendent
+│   ├── Subject: "Monthly SHM Report - [Vessel Name] - [Month Year]"
+│   ├── Attachment: PDF report + CSV data
+│   └── Body: Summary highlights + dashboard link
+│
+├── Dashboard Publication:
+│   └── Upload report to vessel's document library in web portal
+│
+└── API Notification:
+    └── POST /webhook to integrated fleet management system
+```
+
+### STEP 4: AUDIT TRAIL (02:15)
+
+```
+├── Log: Report generation event
+├── Record: SHA-256 hash of PDF (tamper detection)
+└── Archive: Immutable copy in compliance database
+```
+
+---
+
+## 9. Technical Requirements
+
+### 9.1 Technology Stack
+
+| Layer | Component | Technology | Justification |
+|---|---|---|---|
+| **Frontend** | Web Dashboard | React.js 18 + TypeScript | Industry standard, component reusability |
+| | Mobile Apps | React Native | Code sharing with web, single dev team |
+| | Map Library | Mapbox GL JS | Marine features, offline tiles support |
+| | Charts | Chart.js + D3.js | Lightweight + custom visualisations |
+| **Backend** | API Gateway | Node.js (Express) | Non-blocking I/O for real-time data |
+| | Analytics Engine | Python 3.11 (FastAPI) | NumPy/SciPy for numerical computing |
+| | ML Inference | TensorFlow Serving | CPU acceleration, model versioning |
+| | Rules Engine | Drools (Java) | Complex business rules, ABS compliance logic |
+| **Data** | Time-Series DB | InfluxDB 2.x | Optimised for sensor-like data streams |
+| | Relational DB | PostgreSQL 15 + PostGIS | Geospatial queries, ACID compliance |
+| | Cache | Redis 7 | Sub-millisecond read latency |
+| | Message Queue | Apache Kafka | Stream processing, data pipeline |
+| **AI/ML** | Training | Python (TensorFlow/Keras) | Model development, hyperparameter tuning |
+| | Feature Store | Feast | Consistent features for training/serving |
+| | Experiment Tracking | MLflow | Model versioning, performance comparison |
+| **Infrastructure** | Cloud Provider | AWS (primary) or Azure | Global availability, maritime-grade SLA |
+| | Container Orchestration | Kubernetes (EKS/AKS) | Auto-scaling, rolling updates |
+| | CI/CD | GitLab CI/CD | Automated testing, deployment |
+| | Monitoring | Prometheus + Grafana | System health metrics, SLA tracking |
+| | Logging | ELK Stack (Elasticsearch/Logstash/Kibana) | Centralised log analysis |
+| **Security** | API Authentication | JWT + OAuth 2.0 | Stateless, industry standard |
+| | Encryption | TLS 1.3, AES-256 | Data in transit & at rest |
+| | Secrets Management | HashiCorp Vault | API keys, database credentials |
+
+---
+
+### 9.2 Infrastructure Architecture
+
+**AWS CLOUD INFRASTRUCTURE (Multi-Region Deployment)**
+
+#### REGION 1: ap-southeast-1 (Singapore) — PRIMARY
+
+```
+├── AVAILABILITY ZONE A
+│   ├── EKS Cluster (Kubernetes)
+│   │   ├── Node Group: API Services (3 nodes, t3.medium)
+│   │   ├── Node Group: Analytics (2 nodes, c5.xlarge + GPU)
+│   │   └── Node Group: Stream Processors (2 nodes, r5.large)
+│   │
+│   ├── RDS PostgreSQL (db.r5.xlarge, Multi-AZ)
+│   ├── ElastiCache Redis (cache.r5.large)
+│   └── Application Load Balancer
+│
+├── AVAILABILITY ZONE B (Standby replicas)
+│   └── RDS Read Replica, Redis Replica
+│
+└── SHARED SERVICES
+    ├── S3 Buckets
+    │   ├── vessel-master-data (Standard)
+    │   ├── reports (Standard-IA)
+    │   └── audit-logs (Glacier for 7-year retention)
+    │
+    ├── MSK (Managed Kafka) - 3 brokers across AZs
+    ├── Timestream (InfluxDB alternative) - Serverless time-series
+    └── SageMaker Endpoint (ML model serving)
+```
+
+#### REGION 2: eu-west-1 (Ireland) — DISASTER RECOVERY
+
+```
+└── Warm Standby: Database snapshot replication, S3 cross-region replication
+```
+
+#### EDGE SERVICES
+
+```
+├── CloudFront (CDN) - Dashboard static assets
+├── Route 53 (DNS) - Geo-routing, health checks
+└── API Gateway - Rate limiting, authentication
+```
+
+#### MONITORING & OBSERVABILITY
+
+```
+├── CloudWatch Logs & Metrics
+├── X-Ray (Distributed tracing)
+└── Prometheus + Grafana (Kubernetes metrics)
+```
+
+---
+
+### 9.3 Scalability & Performance
+
+#### Performance Targets
+
+| Metric | Target | Measurement Method |
+|---|---|---|
+| API Response Time (p95) | <500ms | CloudWatch custom metrics |
+| Dashboard Load Time | <3 seconds | Lighthouse CI |
+| Position-to-Alert Latency | <60 seconds | End-to-end trace |
+| Concurrent Users | 500+ | Load testing (JMeter) |
+| Data Ingestion Rate | 10,000 messages/sec | Kafka lag monitoring |
+| Database Query Time (p95) | <100ms | RDS Performance Insights |
+
+#### Scalability Design
+
+- **Horizontal Scaling:** All services containerised, auto-scale based on CPU/memory
+- **Kafka Partitioning:** 1 partition per 50 vessels (load distribution)
+- **Database Sharding:** Partition by vessel IMO (if fleet >1000 vessels)
+- **Caching Strategy:**
+  - Hot data (current position): Redis, TTL 2 minutes
+  - Warm data (past 7 days): Database query cache, TTL 1 hour
+  - Cold data (>7 days): S3 archival, query via Athena
+- **CDN:** Static assets cached at edge locations globally
+
+---
+
+### 9.4 Security Requirements
+
+#### Authentication & Authorisation
+
+- Multi-factor authentication (MFA) for all users
+- Role-Based Access Control (RBAC):
+  - Ship Crew: View own vessel only
+  - Fleet Manager: View all vessels, acknowledge alerts
+  - Marine Superintendent: Full access, configure limits
+  - Auditor: Read-only access to reports and logs
+
+#### Data Protection
+
+- All data encrypted at rest (AES-256)
+- All API communication over TLS 1.3
+- Vessel position data anonymised for analytics (GDPR compliance)
+- Audit trail: Every data access logged (7-year retention)
+
+#### Compliance
+
+- ISO 27001 (Information Security Management)
+- SOC 2 Type II (for enterprise customers)
+- GDPR (data privacy for EU operators)
+- IACS UR E26/E27 (Cyber resilience for marine systems)
+
+---
+
+### 9.5 Data Retention Policy
+
+| Data Category | Retention Period | Storage Tier | Justification |
+|---|---|---|---|
+| Real-time position data | 90 days | Hot (InfluxDB) | Operational analysis |
+| Historical position | 7 years | Warm (S3 Standard-IA) | Regulatory requirement (ABS) |
+| Calculated loads | 7 years | Warm (S3) | Survey evidence |
+| Fatigue damage log | Vessel lifetime | Warm (S3) | Permanent structural record |
+| Alert records | 7 years | Warm (RDS + S3) | Audit trail |
+| Monthly reports | 7 years | Cold (S3 Glacier) | Class compliance |
+| System logs | 1 year | Warm (CloudWatch) | Debugging, security |
+
+---
+
+## 10. Compliance & Certification
+
+### 10.1 ABS SMART (SHM) TIER 1 Compliance Checklist
+
+| Requirement | Implementation | Verification Method | Status |
+|---|---|---|---|
+| **Data Collection** | | | |
+| Vessel-specific environmental loads | ✓ AIS + hindcast weather integration | Data pipeline audit | Design |
+| Operational data (cargo, speed, draft) | ✓ DAS integration + manual entry | Data completeness report | Design |
+| **Analysis** | | | |
+| Empirical structural load calculation | ✓ Slamming + wave bending models | Validation against class rules | In Progress |
+| Fatigue damage accumulation | ✓ Rainflow + Palmgren-Miner | Comparison with FEM analysis | In Progress |
+| Damage rate trending | ✓ Time-series analytics | Historical data review | Design |
+| **System Requirements** | | | |
+| No physical sensors required | ✓ 100% data-driven approach | System architecture review | Complete |
+| Design envelope compliance | ✓ Real-time monitoring + alerts | Test scenarios | In Progress |
+| Audit trail maintenance | ✓ Immutable logs (7-year retention) | Database schema review | Design |
+| **Documentation** | | | |
+| Software specification document | ✓ This document | ABS review submission | Complete |
+| Validation test plan | ⚠ In development | ITP preparation | Planned |
+| User operation manual | ⚠ In development | Draft review | Planned |
+| **Certification Path** | | | |
+| Product Design Assessment (PDA) | Target: Q2 2026 | ABS formal submission | Planned |
+| Software Provider Certification | ISO 9001 implementation | External audit | Planned |
+
+---
+
+### 10.2 Certification Roadmap
+
+#### Phase 1: Pre-Submission (Months 1–3)
+- Complete system development
+- Internal validation testing
+- Documentation preparation:
+  - Functional specification
+  - Design basis document
+  - Test procedures
+  - Failure modes analysis
+
+#### Phase 2: ABS Engagement (Months 4–6)
+- Initial consultation with ABS surveyor
+- Submission of preliminary documentation
+- Technical review meetings
+- Address ABS comments and queries
+
+#### Phase 3: Validation Testing (Months 7–9)
+- Deploy system on 3 pilot vessels
+- Collect 90 days of operational data
+- Parallel comparison with empirical calculations
+- Generate validation report showing:
+  - Load calculation accuracy (±10% target)
+  - Fatigue prediction consistency
+  - Alert system reliability
+
+#### Phase 4: Formal Approval (Months 10–12)
+- Submit complete documentation package
+- ABS witness testing (if required)
+- Address final findings
+- Receive Product Design Assessment certificate
+
+#### Phase 5: Market Launch (Month 13+)
+- Commercial availability
+- Marketing to vessel operators
+- Class notation assignment to enrolled vessels
+
+---
+
+## Appendices
+
+### Appendix A: Glossary
+
+| Term | Definition |
+|---|---|
+| **ABS** | American Bureau of Shipping — Classification society |
+| **AIS** | Automatic Identification System — Maritime vessel tracking |
+| **Digital Twin** | Virtual model that simulates physical vessel behaviour |
+| **Hindcast** | Historical weather data reconstructed from models |
+| **Hs** | Significant wave height — Average height of highest 1/3 of waves |
+| **Palmgren-Miner Rule** | Linear damage accumulation theory for fatigue |
+| **Rainflow Counting** | Algorithm to extract stress cycles from time-series |
+| **S-N Curve** | Stress vs. Number of cycles fatigue characterisation |
+| **Tp** | Peak wave period — Time between successive wave crests |
+| **UVSR** | Unified Vessel State Record — Synchronised data snapshot |
