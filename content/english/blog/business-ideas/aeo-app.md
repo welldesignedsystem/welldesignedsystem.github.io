@@ -3,7 +3,7 @@ date: '2022-03-21T12:44:47+10:00'
 draft: false
 title: 'Business Requirements Document'
 tags: ['SEO', 'GEO', 'AEO']
-summary: "https://aeo-app.ai — a unified SEO, AEO, and GEO intelligence platform for the age of AI search."
+summary: "https://aeo-app.ai — unified SEO, AEO & GEO intelligence platform"
 ---
 
 ## 1. The Problem
