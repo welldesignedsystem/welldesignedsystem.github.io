@@ -1,9 +1,9 @@
 ---
-date: '2026-03-21T12:44:47+10:00'
+date: '2022-03-21T12:44:47+10:00'
 draft: false
 title: 'Business Requirements Document'
 tags: ['SEO', 'GEO', 'AEO']
-summary: "aeo-app.ai — a unified SEO, AEO, and GEO intelligence platform for the age of AI search."
+summary: "https://aeo-app.ai — a unified SEO, AEO, and GEO intelligence platform for the age of AI search."
 ---
 
 ## 1. The Problem
@@ -33,7 +33,7 @@ flowchart LR
     style F fill:#991b1b,stroke:#dc2626,color:#fff
 ```
 
-Over 60% of Google searches now end without a click (Sparktoro/Semrush data). If your content isn't *the answer*, you receive no traffic even from searches you technically rank for. Existing tools — Semrush, Ahrefs, Moz — were built for the pre-LLM era and measure the wrong thing: link rankings. aeo-app.ai measures what actually matters in 2026: **who gets quoted when AI answers a question**.
+Over 60% of Google searches now end without a click (Sparktoro/Semrush data). If your content isn't *the answer*, you receive no traffic even from searches you technically rank for. Existing tools — Semrush, Ahrefs, Moz — were built for the pre-LLM era and measure the wrong thing: link rankings. https://aeo-app.ai measures what actually matters in 2026: **who gets quoted when AI answers a question**.
 
 ---
 
@@ -691,19 +691,19 @@ Emerging AI transparency regulations (particularly in the EU under the AI Act) m
 
 ---
 
-# aeo-app.ai — Platform Specification
+# https://aeo-app.ai — Platform Specification
 
 ---
 
 ## 17. Platform Overview
 
-aeo-app.ai is a B2B SaaS platform giving digital marketing agencies, in-house SEO teams, and enterprise content teams a unified command centre for SEO, AEO, and GEO.
+https://aeo-app.ai is a B2B SaaS platform giving digital marketing agencies, in-house SEO teams, and enterprise content teams a unified command centre for SEO, AEO, and GEO.
 
 ### Strategic Pillars
 
 ```mermaid
 mindmap
-  root((aeo-app.ai))
+  root((https://aeo-app.ai))
     Measure
       AI Citation Tracking
       GEO Visibility Score
@@ -749,7 +749,7 @@ mindmap
 
 ```mermaid
 quadrantChart
-    title aeo-app.ai Competitive Landscape
+    title https://aeo-app.ai Competitive Landscape
     x-axis "Traditional SEO Focus" --> "AI/Answer Search Focus"
     y-axis "Agency/SMB Focused" --> "Enterprise Focused"
     quadrant-1 Enterprise AI
@@ -770,7 +770,7 @@ quadrantChart
     Botify: [0.16, 0.80]
     SE Ranking: [0.14, 0.20]
     Mangools: [0.11, 0.15]
-    aeo-app.ai: [0.92, 0.68]
+    https://aeo-app.ai: [0.92, 0.68]
 ```
 
 | Tool | Strengths | Limitations for AEO/GEO |
@@ -889,7 +889,7 @@ flowchart TD
 
 ## 23. GEO Visibility Score™
 
-The **GEO Visibility Score™** is aeo-app.ai's proprietary metric — a 0–100 composite score representing how visible a brand is across AI-generated search responses.
+The **GEO Visibility Score™** is https://aeo-app.ai's proprietary metric — a 0–100 composite score representing how visible a brand is across AI-generated search responses.
 
 ### Score Calculation
 
@@ -1045,7 +1045,7 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    subgraph DASH["aeo-app.ai Executive Dashboard"]
+    subgraph DASH["https://aeo-app.ai Executive Dashboard"]
         subgraph GEO_CARD["GEO Score™"]
             GS["72 / 100\n▲ +8 (30d)"]
         end
@@ -1568,7 +1568,7 @@ At $299/month average plan, infrastructure is ~1.8% of revenue. Gross margin tar
 
 ```mermaid
 flowchart LR
-    subgraph aeo-app.ai["aeo-app.ai Core"]
+    subgraph https://aeo-app.ai["https://aeo-app.ai Core"]
         INT_HUB["Integration Hub\n(ECS Fargate)"]
         WEBHOOK["Webhook Engine"]
         OAUTH["OAuth 2.0\nManager"]
@@ -1672,7 +1672,7 @@ flowchart LR
 
 ```mermaid
 gantt
-    title aeo-app.ai Product Roadmap
+    title https://aeo-app.ai Product Roadmap
     dateFormat  YYYY-MM
     section Phase 1 — MVP (Q2 2026)
     GEO Tracker (core)           :active, geo1, 2026-04, 2026-06
