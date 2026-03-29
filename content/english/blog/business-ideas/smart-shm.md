@@ -2,7 +2,7 @@
 date: '2022-03-21T12:44:47+10:00'
 draft: true
 title: 'Business Requirements Document'
-tags: ['SEO', 'GEO', 'AEO']
+tags: ['SHM', 'DNV', 'ABS', 'Structural Health Monitoring', 'Vessel Monitoring', 'Marine Software']
 summary: "Smart SHM"
 ---
 
@@ -1720,3 +1720,301 @@ ALERT RESPONSE & ESCALATION
 | **S-N Curve** | Stress vs. Number of cycles fatigue characterisation |
 | **Tp** | Peak wave period — Time between successive wave crests |
 | **UVSR** | Unified Vessel State Record — Synchronised data snapshot |
+
+
+
+# V-SHM BRD — Implementation Readiness & Gap Analysis
+
+## AI/ML Training Data — Sources & Gap Analysis
+
+### AIS Data (Best Free Source)
+- 
+- **NOAA AIS Data** — Free historical AIS for US waters, downloadable by year/region. Massive dataset.
+  ```
+  https://marinecadastre.gov/data
+  ```
+- **Danish Maritime Authority** — Free AIS data for Danish waters, well-structured.
+  ```
+  https://dma.dk/safety-at-sea/navigational-information/ais-data
+  ```
+- **HELCOM** — Baltic Sea AIS data, free.
+  ```
+  https://helcom.fi/baltic-sea-action-plan/monitoring-and-assessment/monitoring-guidelines/ais-data
+  ```
+- **Global Fishing Watch** — Free AIS focused on fishing vessels but useful for patterns.
+  ```
+  https://globalfishingwatch.org/data-download/datasets/public-aistracks-v20201001
+  ```
+- **Spire / exactEarth** — Commercial, but offer research partnerships.
+  ```
+  https://spire.com/maritime
+  ```
+
+---
+
+### Environmental / Weather Data (Excellent Free Coverage)
+
+- **NOAA WAVEWATCH III** — Free global hindcast wave data going back decades. Exactly what you need for Hs, Tp, wave direction.
+  ```
+  https://polar.ncep.noaa.gov/waves/hindcasts
+  ```
+- **ERA5 (ECMWF)** — Free via Copernicus Climate Data Store. Arguably the best hindcast dataset globally, 40+ years of data.
+  ```
+  https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels
+  ```
+- **CMEMS (Copernicus Marine)** — Free ocean current, wave, wind data with API access.
+  ```
+  https://marine.copernicus.eu
+  ```
+- **NOAA GFS** — Free global forecast model data.
+  ```
+  https://nomads.ncep.noaa.gov
+  ```
+
+---
+
+### Structural / Fatigue Reference Data
+
+- **ITTC Technical Reports** — Free technical reports on hull loads and structural behaviour.
+  ```
+  https://www.ittc.info/downloads
+  ```
+- **DNV Rules & S-N Curves** — Fatigue reference data, free with account registration.
+  ```
+  https://rules.dnv.com
+  ```
+- **DNV-RP-C205 (Environmental Conditions)** — The key reference for empirical load formulas. Free PDF download.
+  ```
+  https://www.dnv.com/oilgas/download/dnv-rp-c205-environmental-conditions-and-environmental-loads.html
+  ```
+- **Lloyd's Register Research** — Many technical papers freely available.
+  ```
+  https://www.lr.org/en/latest-news/research-reports
+  ```
+
+---
+
+## Is the BRD Training Data Info Big Gaps
+
+Here's what the BRD says vs. what you actually need:
+
+| What BRD Says | What's Missing |
+|---|---|
+| "100,000+ vessel-hours across 50+ vessels" | Doesn't say what type of vessels or how to source them |
+| "Features: SOG, COG, Hs, Tp, draft..." | Doesn't define the label generation strategy |
+| "Labels: Calculated loads from empirical formulas" | The empirical formulas are themselves incomplete pseudocode |
+| "Refined with in-service validation data" | No strategy for getting this before launch |
+
+---
+
+### The Core Problem — The Label Problem
+
+This is the most critical gap. To train the neural network you need:
+
+- **Input:** Speed, wave height, wave period, draft, heading... ✅ (free sources above cover this)
+- **Output/Labels:** Actual stress measurements in MPa at critical hull sections ❌
+
+The labels (actual structural loads) require either:
+
+1. Physical strain gauges on real vessels — expensive
+2. Running a hydrodynamic simulation (FEM/BEM) using software like ANSYS AQWA to *generate* synthetic labels — requires specialist + software license
+3. Using empirical formulas to generate synthetic labels — but those formulas are incomplete in the BRD
+
+---
+
+## Practical Strategy — Bootstrapping Without Full Data
+
+### Phase 1 — Empirical-Only (No AI, MVP)
+- Implement empirical models properly using DNV-RP-C205 [this, I think](https://fenix.tecnico.ulisboa.pt/downloadFile/1689468335664874/DNVGL-RP-C205_2017-Environment.pdf)
+- Use AIS + ERA5 as inputs
+- Skip the neural network entirely for MVP
+- This is fully achievable with free data + a naval architect
+
+### Phase 2 — Synthetic Label Generation
+- Partner with a naval architecture firm to run hydrodynamic simulations on a few vessel types
+- Use simulation outputs as training labels
+- Train the neural network on synthetic data
+
+### Phase 3 — Real-World Refinement
+- As paying customers onboard, collect real operational feedback
+- Retrain model with real-world corrections
+- Model improves over time with more customers (network effect)
+
+---
+
+## Free Data You Can Start With Today
+
+| Dataset | Link | What You Get |
+|---|---|---|
+| NOAA AIS | `https://marinecadastre.gov/data` | Historical vessel positions, speed, heading |
+| ERA5 Hindcast | `https://cds.climate.copernicus.eu` | 40 years of wave, wind, current data |
+| CMEMS Marine | `https://marine.copernicus.eu` | Real-time + hindcast ocean data with API |
+| NOAA WAVEWATCH III | `https://polar.ncep.noaa.gov/waves/hindcasts` | Global wave model hindcast |
+| DNV S-N Curves | `https://rules.dnv.com` | Fatigue reference data (free account) |
+| DNV-RP-C205 | `https://www.dnv.com/oilgas/download/dnv-rp-c205-environmental-conditions-and-environmental-loads.html` | Empirical load formula reference |
+
+---
+
+## Summary
+
+The combination of **NOAA AIS + ERA5** gives you all the input features you need for free.
+The missing piece remains the **structural load labels** — no free public dataset covers this.
+That still requires the specialist hydrodynamics work to generate synthetic labels via simulation.
+
+> **Recommended starting point:** Phase 1 empirical-only MVP using DNV-RP-C205 formulas
+> with NOAA AIS + ERA5 inputs. This sidesteps the AI training data problem entirely
+> and is sufficient for ABS SMART (SHM) Tier 1 certification at MVP stage.
+
+# Final Analysis of the BRD — What You Can Build Now vs. What You Can't
+
+## What information is fairly Well-Defined
+
+- Data schemas (AIS, weather, operational JSON structures)
+- Alert levels and escalation logic
+- Technology stack choices
+- Fatigue calculation methodology (Rainflow + Palmgren-Miner)
+- Onboarding workflow steps
+- Infrastructure architecture (AWS)
+- Compliance checklist
+
+## Critical - Grey Areas 
+
+### 1. The Digital Twin — The Biggest Gap
+
+This is the **core Enginer of the entire product** and the document totally ignores or purposefully removed (section 8?) this:
+
+- It says "hull form discretization (100 stations)" and "RAO calculation" but gives zero detail on *how* to actually build one
+- RAO tables (Response Amplitude Operators) require specialist hydrodynamic software like **ANSYS AQWA, WAMIT, or NAPA** — these cost ~$50,000–$210,000/year in licensing alone, then training etc.
+- The document assumes you can "automatically generate" a digital twin from uploaded PDFs — this is **extremely non-trivial** and is essentially unsolved as a fully automated process
+- A **naval architect** needs to be involved here. This cannot be pure software engineering
+
+### 2. The AI/ML Model — No Training Data
+
+- Training Data Requirements:
+  - Historical dataset: min. 100,000+ vessel-hours across 50+ vessels
+- Where does this data come from? The document doesn't say
+- You have no vessels, no customers yet — so we have **zero training data**
+- The model can't be built without this, yet the whole product depends on it
+- The fallback (empirical model) is described in pseudocode but not fully specified mathematically
+
+### 3. The Empirical Formulas — Incomplete
+
+The Python code shown is **illustrative pseudocode**, not implementable code:
+
+```python
+P_slam = slam_probability(V_rel, Hs, vessel.bow_geometry)
+```
+
+- `slam_probability()` is not defined anywhere
+- `vessel.deadrise_angle_factor` — how is this calculated?
+- `vessel.pressure_distribution_factor` — undefined
+- These require referencing DNV-RP-C205 and ABS HSC Guide directly — they are not in this document
+
+### 4. AIS Data Sourcing
+
+- Which AIS provider? MarineTraffic, VesselFinder, exactEarth all have **very different APIs, pricing, and data access policies**
+- Commercial AIS APIs require contracts and have geographic coverage gaps
+- No API integration spec beyond a JSON example
+
+### 5. Vessel Onboarding — "AI Document Parser"
+
+```
+Action: AI document parser extracts principal dimensions from PDF/DWG files
+```
+
+- This is described as a step but is essentially **a product in itself**
+- Parsing ship drawings (DWG files) automatically is an unsolved hard problem
+- No spec on what happens when the parser fails or extracts wrong values
+
+### 6. Weather API Integration
+
+- Lists NOAA GFS, ECMWF, Copernicus as examples but no integration spec
+- Spatial interpolation mentioned ("bi-linear") but not implemented
+- Hindcast vs. forecast logic — when do you use which? Not defined
+
+### 7. The Ensemble Model Weighting
+
+```
+Final_Load = 0.6 × AI_Prediction + 0.4 × Empirical
+```
+
+- Why 0.6/0.4? Completely arbitrary, not justified
+- What happens before you have a trained AI model (Day 1)?
+- No fallback strategy documented
+
+### 8. Security & Multi-Tenancy
+
+- RBAC is listed but **not designed** — no database schema, no permission matrix detail
+- Multi-tenant data isolation (one customer can't see another's vessels) — not addressed
+- GDPR data handling procedures — mentioned but not specified
+
+### 9. Satellite Communication Integration
+
+- Mentioned as the data transmission mechanism but **zero implementation detail**
+- Inmarsat Fleet Xpress, Iridium, Starlink all work differently
+- Onboard buffering hardware — what exactly? Vendor? Spec?
+
+---
+
+## Things That Are Undefined But Less Critical (for MVP)
+
+- Mobile app spec (React Native mentioned, no screens designed)
+- GraphQL schema
+- Specific S-N curve data for aluminum 5083 (you'd source from DNV/ABS directly)
+- Webhook format for third-party fleet systems
+- Exact PDF report template layout
+
+---
+
+## Honest Summary
+
+| Area | Completeness | Notes |
+|---|---|---|
+| System architecture | 75% | Good skeleton, gaps in detail |
+| Data ingestion | 60% | Schemas defined, integration specs missing |
+| Digital twin / hydrodynamics | 15% | Dangerously underspecified |
+| AI/ML models | 40% | Architecture described, no training data strategy |
+| Empirical calculations | 50% | Pseudocode only, references external standards |
+| UI/UX | 20% | Described in words, no wireframes |
+| ABS certification process | 70% | Roadmap exists, actual submission content unclear |
+
+---
+
+## What You Can Start Building Now (✅)
+
+These are platform components you can implement immediately without specialist input:
+
+- Data ingestion pipelines (Kafka, AIS webhook, weather API polling)
+- Data validation and schema enforcement
+- PostgreSQL + InfluxDB setup and schemas
+- Authentication, RBAC scaffolding, multi-tenancy isolation
+- Web dashboard shell (React.js, map, alert log)
+- Alert engine and notification service (email, SMS, push)
+- Monthly report generation pipeline
+- AWS infrastructure (EKS, RDS, S3, MSK)
+- CI/CD pipelines
+
+## What You can't 🛑 (Not Do or Needs a Specialist)
+
+These **cannot be built from this document alone**:
+
+| Blocker | What You Need |
+|---|---|
+| Digital twin generation | Licensed naval architect + hydrodynamic software (AQWA/WAMIT) |
+| RAO table computation | Hydrodynamics consultant or existing vessel RAO datasets |
+| Empirical slam/bending formulas | Direct access to DNV-RP-C205, ABS HSC Guide, IACS UR S11 |
+| AI model training | 100,000+ hours of historical vessel + structural data |
+| ABS certification submission | ABS-approved marine engineer to author design basis documents |
+
+---
+
+## Recommendation
+
+> EigenAI can implement the **platform scaffolding** from this doc — the data pipelines, dashboards, alert system, and infrastructure. But you **cannot build the core product** (the structural analysis engine) without a licensed naval architect, hydrodynamic software, a training data strategy, and direct access to the referenced standards.
+
+The Approach is a **two-track delivery**:
+
+1. **Track 1 (We, EigenAI):** Build all platform and infrastructure components in parallel
+2. **Track 2 (Their Team/Specialist):** Engage a naval architecture firm to deliver the hydrodynamic models and empirical formula implementations as a defined sub-deliverable
+
+This avoids blocking the entire project on specialist availability while making meaningful progress.
