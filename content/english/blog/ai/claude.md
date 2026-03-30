@@ -101,7 +101,7 @@ pip install anthropic
 npm install @anthropic-ai/sdk
 ```
 
-### Basic API Call (Python)
+### Basic API Call (Not import)
 
 ```python
 import anthropic
@@ -118,23 +118,6 @@ response = client.messages.create(
 )
 
 print(response.content[0].text)
-```
-
-### Basic API Call (Node.js)
-
-```javascript
-import Anthropic from "@anthropic-ai/sdk";
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-const response = await client.messages.create({
-  model: "claude-sonnet-4-6",
-  max_tokens: 1024,
-  system: "You are a helpful assistant.",
-  messages: [{ role: "user", content: "Hello!" }],
-});
-
-console.log(response.content[0].text);
 ```
 
 ### Key Differences from OpenAI API
@@ -726,7 +709,6 @@ while True:
 for result in client.messages.batches.results(batch.id):
     print(f"{result.custom_id}: {result.result.message.content[0].text}")
 ```
-
 ---
 
 ## 14. Claude Code & CLI
@@ -1088,6 +1070,1110 @@ PDF:        "type": "document" in content array
 XML:        <tags> make Claude follow instructions better
 MCP:        mcp_servers=[{"type": "url", "url": "..."}]
 Batch:      client.messages.batches.create(requests=[...])
+```
+
+---
+
+
+
+## 1. What is Claude Code?
+
+Claude Code is Anthropic's **agentic CLI tool** for software development. Unlike IDE plugins (GitHub Copilot, Cursor) that assist you as you type, Claude Code operates **autonomously** — it reads your codebase, writes files, runs commands, browses the web, calls APIs, and iterates on its own output.
+
+### What Claude Code Can Do
+
+- Read and write files across your entire project
+- Execute shell commands (tests, builds, git operations)
+- Search the web for documentation and solutions
+- Connect to external services via MCP (GitHub, Slack, databases, etc.)
+- Run parallel sub-agents for complex multi-part tasks
+- Integrate into CI/CD pipelines as a fully automated agent
+
+### What Makes It Different from Cursor/Copilot
+
+| Feature | Cursor / Copilot | Claude Code |
+|---|---|---|
+| Primary interface | IDE (GUI) | Terminal (CLI) |
+| Context awareness | Open files | Entire codebase |
+| Autonomy level | Suggestions | Full autonomous execution |
+| MCP / Hooks | No | Yes |
+| CI/CD integration | No | Yes (GitHub Actions) |
+| Custom agents | No | Yes |
+| Sandboxing control | Limited | Full control |
+
+---
+
+## 2. Installation & Setup
+
+### Requirements
+
+- **Node.js** 18+ (required)
+- macOS 10.15+, Ubuntu 20.04+/Debian 10+, or Windows via WSL/Git Bash
+- Minimum 4GB RAM
+- Active internet connection
+
+### Install
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+### Authenticate
+
+```bash
+claude  # Opens browser for Anthropic login on first run
+```
+
+Or set via environment variable:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+```
+
+### Verify Installation
+
+```bash
+claude --version
+claude --help
+```
+
+---
+
+## 3. Architecture & Mental Model
+
+Understanding Claude Code's layered architecture is the key to mastering it.
+
+```
+┌─────────────────────────────────────────┐
+│           CORE LAYER                    │
+│  Claude Code CLI + Session Management   │
+│  CLAUDE.md context, conversation loop   │
+├─────────────────────────────────────────┤
+│           DELEGATION LAYER              │
+│  Sub-Agents  │  Skills  │  Slash Cmds   │
+├─────────────────────────────────────────┤
+│           EXTENSION LAYER               │
+│  MCP Servers  │  Hooks  │  Plugins      │
+└─────────────────────────────────────────┘
+```
+
+**Most users only use the Core Layer** — that's where context bloat and high costs come from. Power users delegate to Sub-Agents, automate with Hooks, and extend with MCP.
+
+### Key Insight
+
+> CLAUDE.md gives Claude *memory* → Slash Commands create *repeatable workflows* → Sub-Agents handle *parallel work* → Hooks enforce *deterministic rules* → MCP connects *external services*
+
+---
+
+## 4. CLI Commands & Flags
+
+### Starting Sessions
+
+```bash
+claude                              # Start new interactive session
+claude "fix the authentication bug" # Start session with initial prompt
+claude -p "explain this function"   # One-shot query, then exit (non-interactive)
+claude -c                           # Continue the most recent session
+claude --resume                     # Pick a past session to resume
+```
+
+### Model Selection
+
+```bash
+claude --model opus          # Use Claude Opus (most capable)
+claude --model sonnet        # Use Claude Sonnet (balanced)
+claude --model haiku          # Use Claude Haiku (fastest, cheapest)
+```
+
+### Permissions Flags
+
+```bash
+claude --allowedTools "Read" "Write" "Bash"     # Skip dialog for these tools
+claude --disallowedTools "Write"                 # Remove a tool entirely
+claude --dangerously-skip-permissions            # Skip ALL permission dialogs (use with extreme caution)
+claude --permission-mode plan                    # Start in plan-only mode
+```
+
+### Context & Prompt Flags
+
+```bash
+claude --system-prompt "You are a React expert"            # Replace system prompt
+claude --append-system-prompt "Never delete test files"    # Add to system prompt
+claude --agent MyCustomAgent                               # Use a specific sub-agent
+```
+
+### Output Flags (for scripting/CI)
+
+```bash
+claude -p "analyze code" --output-format json              # JSON output
+claude -p "review" --max-turns 5 > report.txt             # Limit turns, pipe output
+claude -p "audit" --allowedTools Read,Grep,Glob \
+  --output-format json > security_report.json
+```
+
+### Worktrees (Parallel Isolation)
+
+```bash
+claude --worktree feature-auth   # Create isolated git worktree for this session
+```
+
+---
+
+## 5. In-Session Shortcuts & Commands
+
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+|---|---|
+| `SHIFT + TAB` | Cycle between modes (Default → Write → Plan) |
+| `CTRL + C` | Cancel current input |
+| `ESC` | Cancel current generation (can inject new prompt mid-task) |
+| `ESC + ESC` | Undo the last action Claude performed |
+| `CTRL + B` | Move task to background (Claude continues autonomously) |
+| `OPTION + P` / `ALT + P` | Switch model mid-session |
+| `CTRL + O` | Toggle verbose output |
+| `CTRL + V` / `CMD + V` | Paste text or image into prompt |
+| `↑ / ↓ arrows` | Scroll through past messages |
+
+### Slash Commands (Built-in)
+
+```bash
+/help          # List all available commands including custom ones
+/model         # Switch AI model for current session
+/clear         # Clear context window (start fresh)
+/compact       # Summarize + clear context (retains summary)
+/compact retain the error handling patterns  # Compact with specific retention
+/context       # View context window stats and usage %
+/usage         # View plan usage / remaining quota
+/init          # Analyze project and generate CLAUDE.md
+/mcp           # View and manage connected MCP servers
+/permissions   # View and update permission settings
+/rewind        # Undo to earlier conversation point
+/config        # Open interactive settings menu
+/statusline    # Configure the terminal status bar
+```
+
+**Rule of thumb:** Use `/compact` when context hits 70-80%. Use `/clear` when switching tasks entirely.
+
+---
+
+## 6. CLAUDE.md — The Agent's Constitution
+
+`CLAUDE.md` is the most important file in your Claude Code setup. It gives Claude **persistent project memory** — instructions that load automatically at the start of every session.
+
+### File Hierarchy
+
+```
+~/.claude/CLAUDE.md              # Global — applies to ALL your projects
+your-project/CLAUDE.md           # Project — shared via Git with team
+your-project/CLAUDE.local.md     # Local — personal overrides, NOT in Git
+```
+
+### What to Put in CLAUDE.md
+
+```markdown
+# Project: E-Commerce API
+
+## Tech Stack
+- Python 3.12 + FastAPI + SQLAlchemy
+- PostgreSQL (primary DB), Redis (cache)
+- Docker for local dev, AWS ECS for production
+
+## Code Conventions
+- Use type hints everywhere — no untyped functions
+- Snake_case for variables, PascalCase for classes
+- Write docstrings for all public functions
+- Tests in `/tests` mirroring the src structure
+- Use pytest with fixtures, not unittest
+
+## Architecture Rules
+- All DB access goes through the repository pattern
+- Business logic in services, NOT in route handlers
+- Never return raw SQLAlchemy models — use Pydantic schemas
+
+## DO NOT
+- Modify `.env` or `.env.example` files
+- Delete or alter database migration files
+- Change any `*_schema.py` files without asking
+- Push directly to `main` branch — always create a PR
+
+## Running the Project
+- Start: `docker-compose up`
+- Tests: `pytest -v`
+- Migrations: `alembic upgrade head`
+- Lint: `ruff check .`
+```
+
+### Tips for Good CLAUDE.md Files
+
+1. **Be specific** — "Use snake_case" beats "follow Python conventions"
+2. **List what NOT to do** — prevents costly mistakes
+3. **Include run commands** — Claude can test its own changes
+4. **Keep it under 25KB** — larger files slow down context loading
+5. **Update it regularly** — treat it like living documentation
+
+### Modular Rules (Alternative to One Big File)
+
+```
+.claude/
+└── rules/
+    ├── code-style.md
+    ├── security.md
+    ├── testing.md
+    └── git-workflow.md
+```
+
+---
+
+## 7. Configuration & Settings Files
+
+### File Locations
+
+```
+~/.claude.json                          # Global user settings
+~/.claude/settings.json                 # Global Claude Code settings
+your-project/.claude/settings.json      # Project-shared settings (commit to Git)
+your-project/.claude/settings.local.json # Personal project settings (gitignore)
+```
+
+### Key Settings
+
+```json
+{
+  "model": "claude-sonnet-4-6",
+  "alwaysThinkingEnabled": true,
+  "permissions": {
+    "allow": ["Read", "Write", "Bash(git *)", "Bash(npm *)"],
+    "deny": ["Bash(rm -rf *)", "Write(.env*)"]
+  },
+  "env": {
+    "NODE_ENV": "development",
+    "LOG_LEVEL": "debug"
+  },
+  "hooks": {
+    "PreToolUse": [...],
+    "PostToolUse": [...]
+  }
+}
+```
+
+### Project Folder Structure (Best Practice)
+
+```
+your-project/
+├── CLAUDE.md                    # Shared project instructions (commit this)
+├── CLAUDE.local.md              # Personal instructions (gitignore)
+├── .mcp.json                    # MCP server configs (commit this)
+└── .claude/
+    ├── settings.json            # Shared settings (commit this)
+    ├── settings.local.json      # Personal settings (gitignore)
+    ├── commands/                # Custom slash commands
+    │   ├── pr.md
+    │   ├── review.md
+    │   └── deploy.md
+    ├── agents/                  # Sub-agent definitions
+    │   ├── security-auditor.md
+    │   └── test-writer.md
+    ├── skills/                  # Auto-activated expertise
+    │   └── python-typing/
+    │       └── SKILL.md
+    └── hooks/                   # Hook scripts
+        ├── pre-commit-check.sh
+        └── block-env-writes.sh
+```
+
+---
+
+## 8. Permissions & Security
+
+Claude Code asks for permission before performing potentially risky actions. You control this granularity.
+
+### Permission Levels (Modes)
+
+| Mode | Behavior |
+|---|---|
+| `default` | Ask permission for each new tool/action type |
+| `acceptEdits` | Auto-approve file writes, ask for Bash |
+| `plan` | Read-only — plan actions, execute nothing |
+| `bypassPermissions` | Skip all dialogs (dangerous!) |
+
+### Setting Granular Permissions
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Bash(git *)",
+      "Bash(npm run *)",
+      "Bash(pytest *)",
+      "Bash(docker-compose *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+      "Write(.env*)",
+      "Write(**/migrations/**)"
+    ]
+  }
+}
+```
+
+### Via CLI Flags
+
+```bash
+# Allow specific tools without dialog
+claude --allowedTools "Read" "Write" "Bash(git *)"
+
+# Deny specific tools entirely
+claude --disallowedTools "Write"
+```
+
+---
+
+## 9. MCP — Model Context Protocol
+
+MCP transforms Claude Code from a file reader/writer into a tool that can interact with **any external system** — databases, GitHub, Slack, Jira, etc.
+
+### What MCP Enables
+
+Without MCP, Claude Code can only read files and run bash commands.  
+With MCP, Claude can:
+- Query your production database
+- Create GitHub PRs and issues
+- Post Slack messages
+- Check Sentry errors
+- Interact with any API your team uses
+
+The MCP ecosystem grew from ~100K downloads in Nov 2024 to 8M+ by April 2025 — 80x growth. Over 300 integrations exist.
+
+### Adding MCP Servers
+
+```bash
+# Via CLI (wizard)
+claude mcp add github -- npx -y @modelcontextprotocol/server-github
+
+# With environment variables
+claude mcp add github -s user \
+  -e GITHUB_PERSONAL_ACCESS_TOKEN=your-token \
+  -- npx -y @modelcontextprotocol/server-github
+
+# View installed servers
+claude mcp list
+```
+
+### Via Config File (Better for Teams)
+
+Edit `.mcp.json` directly — much easier for complex configs:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token"
+      }
+    },
+    "postgres": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "DATABASE_URL": "postgresql://localhost/mydb"
+      }
+    },
+    "sequential-thinking": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    }
+  }
+}
+```
+
+### Using MCP Tools in Sessions
+
+Once connected, MCP tools appear as slash commands:
+
+```bash
+/mcp__github__create_issue
+/mcp__github__search_repositories
+/mcp__filesystem__read_file
+/mcp__memory__create_entities
+```
+
+### Popular MCP Servers
+
+| Server | Use Case |
+|---|---|
+| `@modelcontextprotocol/server-github` | GitHub PRs, issues, repos |
+| `@modelcontextprotocol/server-postgres` | Query PostgreSQL |
+| `@modelcontextprotocol/server-filesystem` | Extended filesystem ops |
+| `@modelcontextprotocol/server-slack` | Slack messaging |
+| `@playwright/mcp` | Browser automation |
+| `@modelcontextprotocol/server-sequential-thinking` | Structured reasoning |
+
+### MCP Tool Naming in Hooks
+
+MCP tools follow the pattern `mcp__<server>__<tool>` and work in hooks exactly like built-in tools:
+
+```json
+{
+  "matcher": "mcp__github__.*",   // Match all GitHub MCP tools
+  "hooks": [...]
+}
+```
+
+---
+
+## 10. Hooks — Deterministic Automation
+
+Hooks are **the most powerful and underused Claude Code feature**. They execute shell commands, HTTP endpoints, or LLM prompts automatically at specific lifecycle points — regardless of what Claude decides to do.
+
+Think of CLAUDE.md as "should do" rules. Hooks are "must do" rules.
+
+### Hook Events
+
+| Event | When It Fires |
+|---|---|
+| `PreToolUse` | Before Claude executes any tool — can BLOCK it |
+| `PostToolUse` | After a tool completes successfully |
+| `PostToolUseFailure` | After a tool fails |
+| `PermissionRequest` | When Claude asks for a new permission |
+| `Elicitation` | When an MCP server requests user input |
+
+### Hook Configuration
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git commit*)",
+        "hooks": [{
+          "type": "command",
+          "command": "bash .claude/hooks/pre-commit-check.sh"
+        }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [{
+          "type": "command",
+          "command": "bash .claude/hooks/run-linter.sh"
+        }]
+      }
+    ]
+  }
+}
+```
+
+### Pre-Commit Enforcement Hook (Real Example)
+
+This hook blocks Claude from committing until all tests pass:
+
+```bash
+#!/bin/bash
+# .claude/hooks/pre-commit-check.sh
+
+# Run tests
+npm run test 2>&1
+
+if [ $? -ne 0 ]; then
+  echo '{"decision": "block", "reason": "Tests must pass before committing"}' 
+  exit 0
+fi
+
+# Tests passed — allow commit
+echo '{"decision": "allow"}'
+```
+
+### Block Dangerous Commands Hook
+
+```bash
+#!/bin/bash
+# .claude/hooks/block-dangerous.sh
+
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin)['tool_input'].get('command',''))")
+
+# Block rm -rf
+if echo "$COMMAND" | grep -qE "rm\s+-rf\s+/"; then
+  echo '{"decision": "block", "reason": "Refusing to delete system directories"}'
+  exit 0
+fi
+
+echo '{"decision": "allow"}'
+```
+
+### Block Writes to .env Files
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Write",
+      "hooks": [{
+        "type": "command",
+        "command": "bash -c 'INPUT=$(cat); FILE=$(echo $INPUT | python3 -c \"import sys,json; print(json.load(sys.stdin)[\\\"tool_input\\\"][\\\"path\\\"]\"); if [[ $FILE == *.env* ]]; then echo \\'{{\"decision\":\"block\",\"reason\":\"Cannot write to .env files\"}}\\'; else echo \\'{{\"decision\":\"allow\"}}\\'; fi'"
+      }]
+    }]
+  }
+}
+```
+
+### Hook Best Practices
+
+- **Block at commit, not at write** — blocking mid-plan confuses Claude
+- **Use hint hooks for warnings** — non-blocking feedback is less disruptive
+- **Log hook execution** — helps debug agent behavior in production
+- **Match specifically** — overly broad matchers slow everything down
+
+---
+
+## 11. Custom Slash Commands
+
+Create your own `/commands` that Claude executes on demand — reusable, parameterized workflows.
+
+### Creating Commands
+
+```bash
+# Project-specific command
+mkdir -p .claude/commands
+echo "Review this code for security vulnerabilities, focusing on OWASP Top 10:" \
+  > .claude/commands/security-review.md
+
+# Global command (all projects)
+mkdir -p ~/.claude/commands
+echo "Write comprehensive tests for the selected code:" \
+  > ~/.claude/commands/write-tests.md
+```
+
+### Parameterized Commands
+
+Use `$ARGUMENTS` to pass dynamic input:
+
+```markdown
+<!-- .claude/commands/fix-issue.md -->
+Fix GitHub issue #$ARGUMENTS following our coding standards in CLAUDE.md.
+
+Steps:
+1. Read the issue description
+2. Identify affected files
+3. Implement the fix with tests
+4. Run the test suite
+5. Create a descriptive commit message
+```
+
+```bash
+# Usage in session
+/fix-issue 342
+```
+
+### Complex Multi-Step Command
+
+```markdown
+<!-- .claude/commands/pr.md -->
+Create a pull request for the current changes.
+
+Steps:
+1. Run `git diff` to understand all changes
+2. Run the full test suite — abort if any fail
+3. Write a clear PR description explaining WHY, not just what
+4. Create the PR with appropriate labels
+5. Request review from the relevant team members based on the files changed
+```
+
+### Viewing Available Commands
+
+```bash
+/help   # Lists all built-in AND custom commands
+```
+
+---
+
+## 12. Sub-Agents (Parallel Task Delegation)
+
+Sub-agents are **specialized Claude instances** you can spawn for specific tasks. They run in isolated contexts, preventing context pollution and enabling parallel execution.
+
+### Defining a Sub-Agent
+
+```markdown
+<!-- .claude/agents/security-auditor.md -->
+---
+name: security-auditor
+description: Specialized in application security analysis and vulnerability assessment
+allowed-tools: Read, Grep, Glob, Bash(git log:*), Bash(git diff:*)
+---
+
+# Security Auditor Agent
+
+You are a senior application security engineer specializing in:
+
+## Expertise
+- OWASP Top 10 vulnerabilities
+- SQL injection, XSS, CSRF patterns
+- Authentication and authorization flaws
+- Secrets and credential exposure
+- Dependency vulnerability analysis
+
+## Response Format
+Always provide:
+1. Severity rating (Critical/High/Medium/Low)
+2. Affected files and line numbers
+3. Proof of concept or explanation
+4. Concrete remediation steps
+5. References (CVE, OWASP, etc.)
+```
+
+### More Agent Examples
+
+```markdown
+<!-- .claude/agents/test-writer.md -->
+---
+name: test-writer
+description: Writes comprehensive tests for new or modified code
+allowed-tools: Read, Write, Bash(pytest *), Bash(npm test *)
+---
+
+You are a test engineering specialist. For every function or component:
+- Write unit tests covering happy path, edge cases, and error conditions
+- Follow existing test patterns in the codebase
+- Aim for >90% branch coverage
+- Use descriptive test names that explain what's being tested
+```
+
+```markdown
+<!-- .claude/agents/db-expert.md -->
+---
+name: db-expert
+description: Database query optimization, schema design, and migration planning
+allowed-tools: Read, Bash(psql *), mcp__postgres__.*
+---
+
+You are a database architect expert focused on:
+- Query performance and indexing strategy
+- Schema normalization and design
+- Safe migration planning
+- Analyze EXPLAIN ANALYZE output
+Always provide performance impact estimates.
+```
+
+### Using Sub-Agents
+
+```bash
+# In a session, just refer to the agent by name
+claude --agent security-auditor "audit the authentication module"
+
+# Or Claude will automatically delegate when appropriate
+"Use the security-auditor agent to review all API endpoints"
+```
+
+---
+
+## 13. Skills — Auto-Activated Expertise
+
+Unlike slash commands (user-triggered), **skills activate automatically** when Claude detects they're relevant to the current task.
+
+### How Skills Work
+
+1. You define a skill with a `SKILL.md` file
+2. Claude reads all skill descriptions at session start
+3. When your task matches a skill's description, Claude loads and applies it
+4. You never explicitly invoke a skill — it just activates
+
+### Skill Structure
+
+```
+.claude/skills/
+└── python-typing/
+    ├── SKILL.md         # Description + instructions
+    └── examples/        # Optional example files
+```
+
+```markdown
+<!-- .claude/skills/python-typing/SKILL.md -->
+---
+name: python-typing
+description: Adding or improving Python type hints and type annotations in Python code
+---
+
+When adding type hints to Python code:
+
+1. Use `from __future__ import annotations` for forward references
+2. Prefer `X | Y` over `Optional[X]` or `Union[X, Y]` (Python 3.10+)
+3. Use `TypeAlias` for complex type aliases
+4. Add `Protocol` for structural subtyping
+5. Annotate all function signatures including return types
+6. Use `TypeVar` for generic functions
+7. Add `py.typed` marker file if it's a library
+
+Always run `mypy --strict` after adding type hints to verify correctness.
+```
+
+---
+
+## 14. Plugins
+
+Plugins are **packaged collections** of hooks, commands, skills, and MCP configurations — shareable and installable as a unit.
+
+### Plugin Structure
+
+```
+my-plugin/
+├── plugin.json          # Plugin manifest
+├── commands/
+│   └── security-check.md
+├── hooks/
+│   └── pre-commit.sh
+├── skills/
+│   └── security/
+│       └── SKILL.md
+└── mcp/
+    └── config.json
+```
+
+### Installing a Plugin
+
+```bash
+# Via npm (if published)
+npm install -g claude-code-plugin-security
+
+# Or directly from GitHub
+claude plugin install https://github.com/user/my-plugin
+```
+
+Plugins are ideal for **distributing opinionated team configurations** — install once, get consistent agent behavior across everyone's machines.
+
+---
+
+## 15. Context Management
+
+Context is your most important resource in Claude Code. Managing it well is the difference between accurate autonomous work and hallucination-prone output.
+
+### Context Warning Signs
+
+| Context Usage | Status | Action |
+|---|---|---|
+| 0–50% | ✅ Good | Work freely |
+| 50–70% | ⚠️ Watch | Plan ahead |
+| 70–90% | 🟡 Danger | Run `/compact` |
+| 90%+ | 🔴 Critical | `/clear` mandatory |
+
+At 70%+ context, Claude starts losing precision. At 85%+, hallucinations increase significantly.
+
+### Check Context Usage
+
+```bash
+/context   # Shows used / total tokens, percentage
+```
+
+### Compaction Strategies
+
+```bash
+/compact                                    # Summarize everything
+/compact retain the error handling patterns # Keep specific things
+/compact retain all API endpoints discovered so far
+```
+
+### Manual Session History
+
+Claude Code saves all sessions to `~/.claude/projects/`. You can analyze these:
+
+```bash
+# Resume a previous session
+claude --resume
+
+# Continue most recent
+claude -c
+
+# Advanced: analyze session logs for patterns
+ls ~/.claude/projects/my-project/
+```
+
+### Reducing Context Bloat
+
+1. **Use sub-agents** for exploration tasks — they run in separate contexts
+2. **Use `--worktree`** to isolate parallel tasks
+3. **Be specific in requests** — vague tasks cause Claude to read more files
+4. **Use `/clear`** when switching between unrelated tasks in the same project
+
+---
+
+## 16. Modes — Default, Plan, Write
+
+### Switching Modes
+
+```bash
+SHIFT + TAB    # Cycle through modes in session
+--permission-mode plan    # Start in plan mode
+```
+
+### Mode Behaviors
+
+**Default Mode**
+- Claude asks permission per tool category
+- Good balance of safety and speed
+- Best for most tasks
+
+**Plan Mode (`plan`)**
+- Claude can only read — no writes or execution
+- Claude proposes a plan for your approval
+- Use for: reviewing architecture changes, understanding impact before committing
+
+**Write Mode (`acceptEdits`)**
+- Auto-approves file writes
+- Still asks for Bash execution
+- Use for: known-safe code generation tasks
+
+**Bypass Mode (`bypassPermissions` / `--dangerously-skip-permissions`)**
+- Skips ALL dialogs
+- Use only in sandboxed CI/CD environments
+- Never use on production systems or with untrusted prompts
+
+---
+
+## 17. Remote Sessions & GitHub Actions
+
+### Remote Web Sessions
+
+```bash
+claude --remote "Add dark mode to the settings page"
+```
+
+Starts a remote (web-based) Claude Code session — useful for sharing work or running headless.
+
+### GitHub Actions Integration
+
+This is how teams run Claude Code in CI/CD pipelines — Claude becomes a fully automated engineering agent triggered by PRs, issues, Slack messages, or alerts.
+
+```yaml
+# .github/workflows/claude-agent.yml
+name: Claude Code Agent
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  fix-issue:
+    if: github.event.label.name == 'claude-fix'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+      
+      - name: Run Claude Code Agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          claude -p "
+            Fix GitHub issue #${{ github.event.issue.number }}: 
+            ${{ github.event.issue.title }}
+            
+            Issue body: ${{ github.event.issue.body }}
+            
+            Steps:
+            1. Understand the issue
+            2. Identify the root cause
+            3. Implement the fix with tests
+            4. Verify tests pass
+            5. Create a pull request
+          " \
+          --allowedTools "Read,Write,Bash(git *),Bash(npm *)" \
+          --max-turns 20
+```
+
+### CI/CD Best Practices
+
+- Use `--output-format json` for machine-readable output
+- Set `--max-turns` to prevent runaway agents
+- Use `--allowedTools` to restrict to safe operations
+- Always review logs — Claude Code logs full agent activity in GHA
+
+---
+
+## 18. Production Best Practices
+
+### 1. Keep CLAUDE.md as the Source of Truth
+
+Treat CLAUDE.md like code. Review changes, version it, keep it accurate. The quality of Claude's output directly correlates with CLAUDE.md quality.
+
+### 2. Use Hooks for Critical Enforcement
+
+Don't rely on CLAUDE.md instructions for things that must never happen (writing to `.env`, deleting migrations). Use PreToolUse hooks that block — they're deterministic.
+
+### 3. Block at Commit, Not at Write
+
+Blocking Claude mid-plan (on file writes) confuses it. Let it finish, then enforce at the commit stage:
+
+```bash
+# PreToolUse hook on git commit — check tests passed first
+# This is better than blocking on every Edit/Write operation
+```
+
+### 4. Use Sub-Agents for Exploration
+
+When Claude needs to explore the codebase to understand something before making changes, delegate to a sub-agent. This keeps the main context clean.
+
+### 5. Model Selection by Task
+
+```bash
+# Use Haiku for cheap, fast exploration tasks
+claude --model haiku "find all files that import from auth module"
+
+# Use Sonnet for most production tasks (best balance)
+claude --model sonnet "refactor the payment service"
+
+# Use Opus only for very complex reasoning
+claude --model opus "design the new event sourcing architecture"
+```
+
+### 6. Log Everything in CI/CD
+
+```bash
+claude -p "..." \
+  --output-format json \
+  --max-turns 15 2>&1 | tee agent_log_$(date +%Y%m%d).json
+```
+
+Review these logs periodically for common errors and use them to improve CLAUDE.md.
+
+### 7. The Meta-Loop (Advanced)
+
+```bash
+# Analyze what other Claude instances got stuck on, then fix it
+cat ~/.claude/projects/*/logs/*.json | \
+  claude -p "see what the other Claude sessions got stuck on and improve our CLAUDE.md"
+```
+
+---
+
+## 19. Security Considerations
+
+### Known Risks
+
+- **Supply chain attacks** — malicious skills and MCP servers exist. Only use vetted community tools.
+- **MCP server access** — MCP servers can read and write your codebase by default. Scope their permissions.
+- **Prompt injection** — content Claude reads (files, web pages) can contain instructions trying to hijack Claude's behavior.
+- **Context leakage** — Claude may inadvertently expose secrets from files it reads.
+
+### Security Checklist
+
+```bash
+# 1. Explicitly deny dangerous operations
+{
+  "permissions": {
+    "deny": ["Bash(rm -rf *)", "Bash(sudo *)", "Write(.env*)"]
+  }
+}
+
+# 2. Use --allowedTools in CI/CD to whitelist only what's needed
+claude -p "..." --allowedTools "Read,Grep,Glob"
+
+# 3. Never use --dangerously-skip-permissions in any shared environment
+
+# 4. Audit installed MCP servers regularly
+claude mcp list
+
+# 5. Scope MCP permissions — not every server needs Write access
+```
+
+### Preventing .env Access
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "Read(.env*)",
+      "Write(.env*)",
+      "Read(**/.env*)"
+    ]
+  }
+}
+```
+
+---
+
+## 20. Quick Reference Cheat Sheet
+
+### CLI
+
+```bash
+claude                          # New session
+claude "task"                   # New session with prompt
+claude -p "task"                # One-shot, exit when done
+claude -c                       # Continue last session
+claude --resume                 # Pick session to resume
+claude --model sonnet           # Set model
+claude --allowedTools "Read,Write"   # Pre-approve tools
+claude --permission-mode plan   # Plan-only mode
+claude --append-system-prompt "..."  # Add to system prompt
+claude --agent MyAgent          # Use specific sub-agent
+claude --worktree feature-x     # Isolated git worktree
+```
+
+### In-Session
+
+```bash
+SHIFT+TAB    → cycle modes
+ESC          → cancel generation
+ESC+ESC      → undo last action
+CTRL+B       → background task
+CTRL+O       → verbose toggle
+/compact     → summarize + clear
+/clear       → clear context
+/model       → switch model
+/context     → check usage %
+/mcp         → manage MCP servers
+/permissions → update permissions
+```
+
+### Files
+
+```
+CLAUDE.md                     → project instructions (commit)
+CLAUDE.local.md               → personal instructions (gitignore)
+.claude/settings.json         → shared settings (commit)
+.claude/settings.local.json   → personal settings (gitignore)
+.mcp.json                     → MCP servers (commit)
+.claude/commands/             → custom slash commands
+.claude/agents/               → sub-agent definitions
+.claude/skills/               → auto-activated skills
+.claude/hooks/                → hook scripts
+~/.claude/CLAUDE.md           → global instructions (all projects)
+```
+
+### Context Rules of Thumb
+
+```
+< 70%  → work freely
+70-90% → /compact now
+90%+   → /clear mandatory
+switching tasks → /clear
+```
+
+### MCP Tool Pattern
+
+```
+mcp__<server>__<tool>
+mcp__github__create_issue
+mcp__postgres__query
+mcp__filesystem__read_file
 ```
 
 ---
