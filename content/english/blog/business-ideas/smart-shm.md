@@ -1,12 +1,12 @@
 ---
 date: '2022-03-21T12:44:47+10:00'
-draft: true
+draft: false
 title: 'Business Requirements Document'
 tags: ['SHM', 'DNV', 'ABS', 'Structural Health Monitoring', 'Vessel Monitoring', 'Marine Software']
-summary: "Smart SHM"
+summary: "Smart Structural Health Monitoring "
 ---
 
-# ABS SMART SHM Tier Description:
+# ABS Smart Structural Health Monitoring  Tier Description:
 
 A vessel-specific load and operation-based structural health estimation. The following are the requirements for, data collection and analysis to be employed:
 
@@ -32,15 +32,15 @@ A vessel-specific load and operation-based structural health estimation. The fol
  
 ---
 
-# ABS SMART (SHM) TIER 1 Software — Competitor Analysis
+# ABS Smart Structural Health Monitoring  TIER 1 Software — Competitor Analysis
 
 ## Application Context
 
-The term **ABS SMART (SHM) TIER 1 software** refers to specific **structural health monitoring (SHM) software** that has received an **Approval in Principle (AIP) from the American Bureau of Shipping (ABS)** under its Guide for Smart Functions for Marine Vessels and Offshore Units.
+The term **ABS Smart Structural Health Monitoring  TIER 1 software** refers to specific **structural health monitoring (SHM) software** that has received an **Approval in Principle (AIP) from the American Bureau of Shipping (ABS)** under its Guide for Smart Functions for Marine Vessels and Offshore Units.
 
 **ABS**: The American Bureau of Shipping, a leading international classification society for marine and offshore assets.
 
-**SMart SHM**: An optional class notation indicating the vessel is fitted with "SMART FUNCTIONS" for Structural Health Monitoring. These functions provide crew and personnel with key information to aid decision-making regarding the structural integrity of the vessel.
+**Smart Structural Health Monitoring **: An optional class notation indicating the vessel is fitted with "SMART FUNCTIONS" for Structural Health Monitoring. These functions provide crew and personnel with key information to aid decision-making regarding the structural integrity of the vessel.
 
 **Tier 1 (Manufacturer's Certification - MC)**: The first level of approval in the ABS framework. A Tier 1 system is generally a software-based approach that leverages existing operational data from the vessel to provide "virtual measurements" and structural health indicators, without requiring a complete suite of new, dedicated physical sensors. This offers a scalable and cost-effective entry point for shipowners to integrate structural health awareness into their operations.
 
@@ -159,7 +159,7 @@ Let's meet this "virtual doctor" for ships and see how it makes its diagnosis.
 
 In simple terms, Virtual Structural Health Monitoring (V-SHM) is a **"sensorless," cloud-based platform** that monitors a ship's structural health without requiring physical hardware like strain gauges or accelerometers. It's a software-driven approach that uses data and digital modelling to achieve what once required extensive, costly hardware. This is a fundamental shift from traditional monitoring, which relies on installing a costly and complex network of physical strain gauges that are expensive to maintain and can only measure stress at their specific installation points.
 
-The primary goal of the system is to predict structural fatigue and ensure the vessel operates safely within its official, pre-approved design limits. By continuously analysing the forces acting on the ship, V-SHM helps the crew prevent problems before they can develop. This technology is not just theoretical; it's approved by major maritime authorities like the American Bureau of Shipping (ABS) under the **SMART (SHM) Tier 1 notation**, confirming its credibility and reliability in real-world conditions.
+The primary goal of the system is to predict structural fatigue and ensure the vessel operates safely within its official, pre-approved design limits. By continuously analysing the forces acting on the ship, V-SHM helps the crew prevent problems before they can develop. This technology is not just theoretical; it's approved by major maritime authorities like the American Bureau of Shipping (ABS) under the **Smart Structural Health Monitoring  Tier 1 notation**, confirming its credibility and reliability in real-world conditions.
 
 Now that we know what the system is, let's look at how it gathers its information. Just like a good doctor, a proper diagnosis starts by asking the right questions and collecting the right clues.
 
@@ -228,13 +228,13 @@ Bringing our analogy full circle, the V-SHM system acts as a vigilant, predictiv
 
 # Project Scope: Virtual Structural Health Monitor (V-SHM) Software
 
-This project scope outlines the development of a software solution for **Virtual Structural Health Monitoring (V-SHM)**, designed to compete with ARGUS-VM and NAPA Fleet Intelligence SHM TIER 1 solutions. The system will adhere strictly to the requirements of the ABS Guide for Smart Functions for Marine Vessels and Offshore Units to achieve ABS SMART (SHM) Tier 1 approval.
+This project scope outlines the development of a software solution for **Virtual Structural Health Monitoring (V-SHM)**, designed to compete with ARGUS-VM and NAPA Fleet Intelligence SHM TIER 1 solutions. The system will adhere strictly to the requirements of the ABS Guide for Smart Functions for Marine Vessels and Offshore Units to achieve ABS Smart Structural Health Monitoring  Tier 1 approval.
 
 ---
 
 ## 1. Project Goal
 
-To deliver a reliable, cloud-based software solution that monitors the structural health of marine vessels using existing operational data (a "sensorless" approach), provides actionable insights to crew and shore personnel, and achieves ABS Product Design Assessment (PDA) certification for the SMART (SHM) Tier 1 notation.
+To deliver a reliable, cloud-based software solution that monitors the structural health of marine vessels using existing operational data (a "sensorless" approach), provides actionable insights to crew and shore personnel, and achieves ABS Product Design Assessment (PDA) certification for the Smart Structural Health Monitoring  Tier 1 notation.
 
 ---
 
@@ -385,7 +385,7 @@ The V-SHM system is entirely reliant on existing data infrastructure. We categor
 
 ## 1.1 Product Overview
 
-**V-SHM TIER 1** is a cloud-based, AI-powered structural health monitoring platform designed for vessels operating in restricted conditions. The system achieves ABS SMART (SHM) TIER 1 notation through a **sensorless approach**, leveraging existing operational data, AIS tracking, and environmental data to predict structural fatigue and ensure operational compliance.
+**V-SHM TIER 1** is a cloud-based, AI-powered structural health monitoring platform designed for vessels operating in restricted conditions. The system achieves ABS Smart Structural Health Monitoring  TIER 1 notation through a **sensorless approach**, leveraging existing operational data, AIS tracking, and environmental data to predict structural fatigue and ensure operational compliance.
 
 ## 1.2 Key Differentiators
 
@@ -415,7 +415,7 @@ The V-SHM system is entirely reliant on existing data infrastructure. We categor
 
 ## 2.2 Business Objectives
 
-1. **Regulatory Compliance**: Achieve ABS SMART (SHM) TIER 1 certification
+1. **Regulatory Compliance**: Achieve ABS Smart Structural Health Monitoring  TIER 1 certification
 2. **Market Penetration**: Capture 15% of high-speed craft market (Year 1)
 3. **Cost Leadership**: Deliver monitoring at 1/5 the cost of sensor-based solutions
 4. **Operational Excellence**: Reduce unplanned maintenance by 30%
@@ -1640,7 +1640,7 @@ ALERT RESPONSE & ESCALATION
 
 ## 10. Compliance & Certification
 
-### 10.1 ABS SMART (SHM) TIER 1 Compliance Checklist
+### 10.1 ABS Smart Structural Health Monitoring  TIER 1 Compliance Checklist
 
 | Requirement | Implementation | Verification Method | Status |
 |---|---|---|---|
@@ -1863,7 +1863,7 @@ That still requires the specialist hydrodynamics work to generate synthetic labe
 
 > **Recommended starting point:** Phase 1 empirical-only MVP using DNV-RP-C205 formulas
 > with NOAA AIS + ERA5 inputs. This sidesteps the AI training data problem entirely
-> and is sufficient for ABS SMART (SHM) Tier 1 certification at MVP stage.
+> and is sufficient for ABS Smart Structural Health Monitoring  Tier 1 certification at MVP stage.
 
 # Final Analysis of the BRD — What You Can Build Now vs. What You Can't
 
