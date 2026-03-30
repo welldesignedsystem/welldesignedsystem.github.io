@@ -1,7 +1,7 @@
 ---
 date: '2022-03-21T12:44:47+10:00'
 draft: false
-title: 'Business Requirements Document AEO-APP'
+title: 'Business Requirements Document'
 tags: ['SEO', 'GEO', 'AEO']
 summary: "aeo-app.ai — unified SEO, AEO & GEO intelligence platform"
 ---

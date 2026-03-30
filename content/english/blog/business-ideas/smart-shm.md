@@ -1,6 +1,6 @@
 ---
 date: '2022-03-21T12:44:47+10:00'
-draft: false
+draft: true
 title: 'Business Requirements Document'
 tags: ['SHM', 'DNV', 'ABS', 'Structural Health Monitoring', 'Vessel Monitoring', 'Marine Software']
 summary: "Smart Structural Health Monitoring "
