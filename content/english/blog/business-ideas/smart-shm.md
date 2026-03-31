@@ -2010,11 +2010,371 @@ These **cannot be built from this document alone**:
 
 ## Recommendation
 
-> EigenAI can implement the **platform scaffolding** from this doc — the data pipelines, dashboards, alert system, and infrastructure. But you **cannot build the core product** (the structural analysis engine) without a licensed naval architect, hydrodynamic software, a training data strategy, and direct access to the referenced standards.
+> EigenAI can implement the **platform scaffolding** from the provided BRD doc — data pipelines, dashboards, alert system and infra. But **cannot build the core product** (the structural analysis engine) without help of a naval architect, hydrodynamic software, a training data strategy and direct access to the referenced standards.
 
 The Approach is a **two-track delivery**:
 
 1. **Track 1 (We, EigenAI):** Build all platform and infrastructure components in parallel
 2. **Track 2 (Their Team/Specialist):** Engage a naval architecture firm to deliver the hydrodynamic models and empirical formula implementations as a defined sub-deliverable
 
-This avoids blocking the entire project on specialist availability while making meaningful progress.
+---
+
+# Estimation
+
+## 1. Pre-Commence Requirements
+
+These are business, procurement and specialist decisions that block the analytical core of the product. 
+The platform scaffolding (infra, UI, pipelines) can start immediately — but the structural analysis engine cannot be built until these are resolved.
+
+### 1.1 Hard Blockers — Must Resolve Before first Sprint (Analytical Track)
+
+- **Naval Architecture Partner (CRITICAL)**
+  - Engage a licensed naval architect firm to deliver: digital twin hydrodynamic models, RAO tables and empirical formula implementations
+  - Without this, Phase 5 of **Analytics Engine** cannot be built. This is not optional according to BRD
+  - Mayt even require issuing an RFP to 3–5 naval architecture firms.
+
+- **Hydrodynamic Softwares License/Training (CRITICAL)**
+  - ANSYS AQWA, WAMIT, or NAPA must be procured — or the naval architecture firm must supply this capability
+  - Non-negotiable for RAO computation and digital twin generation
+  - Recommended path: contract a firm that already holds licences and delivers vessel models as a sub-deliverable
+
+- **Access to Referenced Standards (CRITICAL)**
+  - DNV-RP-C205 — free PDF available but implementation requires naval architect interpretation
+  - ABS HSC Guide — may require purchase - required for slamming load formulas
+  - IACS UR S11 — required for conventional hull wave bending calculation
+  - Without these, all empirical formulas as metnioned in the BRD remain pseudocode.
+
+- **AI Model Training Data Decision (CRITICAL)**
+  - The neural network requires ~100,000+ vessel-hours of data with structural load labels. No free public source exists for labels
+  - Decision required: accept Phase 1 as empirical-only MVP (recommended) or invest in synthetic label generation via FEM simulations
+  - If empirical-only MVP is accepted, document this formally as a scope decision before development starts
+
+### 1.2 Commercial & Procurement — Must Resolve Before Phase 3
+
+- **AIS Data Provider Contract**
+  - Free NOAA/DMA AIS is fine for dev/test. Not acceptable for production SLA
+  - Evaluate and contract one of: MarineTraffic API, Spire Maritime, exactEarth or VesselFinder
+  - Define coverage area, latency SLA and pricing model before the ingestion sprint begins
+
+- **Weather/Environmental Data Provider Contract**
+  - Free ERA5 and NOAA WAVEWATCH III are excellent for development. Production needs a paid SLA with guaranteed uptime
+  - Evaluate: StormGeo, Meteomatics or Copernicus Marine Service commercial tier
+  - Define spatial resolution and refresh rate requirements upfront
+
+- **Satellite Communications Specification**
+  - The BRD mentions Inmarsat Fleet Xpress as an example only. Inmarsat, Iridium and Starlink have incompatible protocols
+  - Define minimum onboard connectivity spec (bandwidth, latency tolerance)
+  - Choose primary satellite comms partner and specify edge-buffering hardware model before integration work begins
+
+### 1.3 ABS Certification Prerequisites (EigenAI can only assist as advisory) — Must be Resolved Before Phase 7
+
+- **ABS Pre-Submission Consultation**
+  - ABS offers pre-submission consultations for smart notation applications. Initiate no later than Month 6
+  - Early engagement significantly reduces risk of costly rework during the formal PDA process
+
+- **ABS-Approved Marine Engineer**
+  - Design basis documents, failure modes analysis, and the ITP for ABS review must be authored or co-authored by an ABS-approved professional
+  - EigenAI cannot produce these documents alone — they carry professional liability
+
+- **Pilot Vessel Agreements (MOUs)**
+  - ABS certification requires real-world validation data from at least 3 pilot vessels operating for 90+ days
+  - Identify vessel operators in the target market (HSC, crew boats, OPV) willing to participate in a pilot program
+
+- **ISO 9001 Quality Management Program**
+  - ABS Software Provider Conformity (ISQM USC/PDA) requires ISO 9001 at the company level
+  - Initiate certification process in parallel with product development. Lead time: 6–12 months
+
+---
+
+## 2. Detailed Project Estimation — Design to Implementation
+
+> **Man-day basis:** 1 MD = 1 person working 1 full day. Estimates assume senior-level engineers. No estimation for meetings, reviews or rework — must add 20%+ buffer at sprint planning.  
+> **Build Status:** ✅ Can Build = EigenAI executes independently | ⚠️ Partial = Buildable with caveats | ⛔ Blocked = Eigen AI doesn't have capability (Requires specialist or procurement action first)
+
+---
+
+### Phase 1 — Design & Architecture
+
+| Work Stream | Deliverable | Owner | Man-Days | Build Status |
+|---|---|---|:--------:|:---:|
+| System Architecture | Cloud infrastructure design (AWS EKS, RDS, Kafka, InfluxDB) | EigenAI |    4     | ✅ Can Build |
+| System Architecture | Multi-tenancy & RBAC design document | EigenAI |    3     | ✅ Can Build |
+| Data Architecture | Full data schema definitions (AIS, weather, ops, master) | EigenAI |    3     | ✅ Can Build |
+| Data Architecture | Data flow & pipeline architecture diagram | EigenAI |    2     | ✅ Can Build |
+| API Design | REST API specification (OpenAPI 3.0) | EigenAI |    3     | ✅ Can Build |
+| UX/UI Design | Wireframes: Fleet map, vessel detail, alert log, fatigue module | EigenAI |    8     | ✅ Can Build |
+| UX/UI Design | UI component library & design system | EigenAI |    5     | ✅ Can Build |
+| Naval Architecture | Digital twin methodology specification | Naval Arch. |   10?    | ⛔ Blocked |
+| Naval Architecture | Empirical formula selection & validation plan | Naval Arch. |    8?    | ⛔ Blocked |
+
+**Phase 1 Total: ~46 MD** (28 MD EigenAI | 18? MD Naval Arch.)
+
+---
+
+### Phase 2 — Infrastructure Setup
+
+| Work Stream | Deliverable | Owner | Man-Days | Build Status |
+|---|---|---|:---:|:---:|
+| Cloud Setup | AWS EKS cluster + VPC networking | EigenAI | 4 | ✅ Can Build |
+| Cloud Setup | RDS PostgreSQL (multi-AZ) + PostGIS extension | EigenAI | 2 | ✅ Can Build |
+| Cloud Setup | InfluxDB / AWS Timestream (time-series DB) | EigenAI | 2 | ✅ Can Build |
+| Cloud Setup | Apache Kafka (MSK) cluster setup + topic configuration | EigenAI | 3 | ✅ Can Build |
+| Cloud Setup | Redis ElastiCache cluster | EigenAI | 1 | ✅ Can Build |
+| Cloud Setup | S3 buckets + lifecycle policies (7-year retention) | EigenAI | 2 | ✅ Can Build |
+| DevOps | CI/CD pipelines (GitLab CI) | EigenAI | 4 | ✅ Can Build |
+| DevOps | Prometheus + Grafana monitoring stack | EigenAI | 3 | ✅ Can Build |
+| DevOps | ELK stack (centralised logging) | EigenAI | 3 | ✅ Can Build |
+| Security | JWT + OAuth 2.0 authentication framework | EigenAI | 4 | ✅ Can Build |
+| Security | HashiCorp Vault (secrets management) | EigenAI | 2 | ✅ Can Build |
+| Security | TLS 1.3 + AES-256 encryption at rest and in transit | EigenAI | 2 | ✅ Can Build |
+
+**Phase 2 Total: 32 MD** (32 MD EigenAI)
+
+---
+
+### Phase 3 — Data Ingestion Pipelines
+
+| Work Stream | Deliverable | Owner | Man-Days | Build Status |
+|---|---|---|:---:|:---:|
+| AIS Integration | AIS provider API connector (commercial provider) | EigenAI | 5 | ✅ Can Build |
+| AIS Integration | AIS data validation & schema enforcement | EigenAI | 3 | ✅ Can Build |
+| AIS Integration | Kafka topic setup + AIS stream consumer | EigenAI | 2 | ✅ Can Build |
+| Weather Integration | Weather API connector (ERA5 / NOAA WAVEWATCH III) | EigenAI | 5 | ✅ Can Build |
+| Weather Integration | Spatial bi-linear interpolation engine | EigenAI | 4 | ✅ Can Build |
+| Weather Integration | Hindcast vs. forecast routing logic | EigenAI | 3 | ⚠️ Partial |
+| Operational Data | DAS / noon report parser (email + API intake) | EigenAI | 5 | ✅ Can Build |
+| Operational Data | Manual data entry form (draft, cargo, trim) | EigenAI | 3 | ✅ Can Build |
+| Validation Engine | Unified outlier detection (3-sigma rule) | EigenAI | 4 | ✅ Can Build |
+| Validation Engine | Temporal synchronisation — Unified Vessel State Record | EigenAI | 4 | ✅ Can Build |
+| Validation Engine | AI gap-filling model (BiLSTM for missing data) | EigenAI | 10 | ⚠️ Partial |
+
+**Phase 3 Total: ~48 MD** (48 MD EigenAI)
+
+---
+
+### Phase 4 — Vessel Onboarding & Master Data
+
+| Work Stream | Deliverable | Owner | Man-Days | Build Status |
+|---|---|---|:--------:|:---:|
+| Vessel Registry | Vessel master data schema + PostgreSQL tables | EigenAI |    3     | ✅ Can Build |
+| Vessel Registry | IHS Sea-web / public registry scraper | EigenAI |    4     | ✅ Can Build |
+| Vessel Registry | Manual vessel spec upload UI (PDF/DWG file intake) | EigenAI |    3     | ✅ Can Build |
+| AI Doc Parser | PDF parser for principal dimensions extraction | EigenAI |    10    | ⚠️ Partial |
+| Digital Twin Gen. | Automated hull discretisation (100 stations) | Naval Arch. |   15?    | ⛔ Blocked |
+| Digital Twin Gen. | RAO table computation (15 periods × 12 headings per vessel) | Naval Arch. |   15?    | ⛔ Blocked |
+| Digital Twin Gen. | Pressure distribution + structural stress point mapping | Naval Arch. |   10?    | ⛔ Blocked |
+| Calibration | 90-day historical AIS retroactive baseline calculation | EigenAI |    6     | ⚠️ Partial |
+
+**Phase 4 Total: ~66 MD** (26 MD EigenAI | 40? MD Naval Arch.)
+
+---
+
+### Phase 5 — Analytics Engine
+
+| Work Stream | Deliverable | Owner | Man-Days | Build Status |
+|---|---|---|:--------:|:---:|
+| Empirical Models | Slamming load model (DNV-RP-C205 / ABS HSC Guide) | Naval Arch. |   15?    | ⛔ Blocked |
+| Empirical Models | Wave bending moment — RAO-based strip theory | Naval Arch. |   15?    | ⛔ Blocked |
+| Empirical Models | Ensemble weighting logic (AI + empirical fusion) | EigenAI + NA |    5?    | ⚠️ Partial |
+| AI Load Model | Training data sourcing strategy & pipeline | EigenAI |   10?    | ⚠️ Partial |
+| AI Load Model | Neural network training (12-feature input, 4-output) | EigenAI |   20?    | ⛔ Blocked |
+| AI Load Model | Anomaly detection model (Isolation Forest) | EigenAI |    6     | ✅ Can Build |
+| AI Load Model | Model versioning & MLflow experiment tracking | EigenAI |    3     | ✅ Can Build |
+| Fatigue Calc. | Rainflow cycle counting (ASTM E1049) | EigenAI |    6     | ✅ Can Build |
+| Fatigue Calc. | Palmgren-Miner damage summation engine | EigenAI |    6     | ✅ Can Build |
+| Fatigue Calc. | S-N curve database integration (DNV D-curve) | EigenAI + NA |    4?    | ⚠️ Partial |
+| Fatigue Calc. | Cumulative damage register per critical section | EigenAI |    4     | ✅ Can Build |
+| Compliance | Design envelope checker (Hs, speed, heading limits) | EigenAI |    6     | ✅ Can Build |
+| Compliance | Alert rule engine (GREEN / YELLOW / ORANGE / RED) | EigenAI |    4     | ✅ Can Build |
+
+**Phase 5 Total: ~104 MD** (74 MD EigenAI | 30? MD Naval Arch.)
+
+---
+
+### Phase 6 — Presentation Layer
+
+| Work Stream | Deliverable | Owner | Man-Days | Build Status |
+|---|---|---|:---:|:---:|
+| Web Dashboard | Fleet map (Mapbox GL JS, colour-coded vessel icons) | EigenAI | 8 | ✅ Can Build |
+| Web Dashboard | Vessel detail panel (stress gauges, operational limits) | EigenAI | 6 | ✅ Can Build |
+| Web Dashboard | Alert log UI (filter, sort, acknowledge workflow) | EigenAI | 6 | ✅ Can Build |
+| Web Dashboard | Fatigue life module (damage gauge + 12-month trend) | EigenAI | 6 | ✅ Can Build |
+| Web Dashboard | Historical voyage track overlay | EigenAI | 4 | ✅ Can Build |
+| Mobile App | React Native iOS/Android app (alerts + map) | EigenAI | 15 | ✅ Can Build |
+| Notifications | Multi-channel alert dispatcher (email / SMS / push) | EigenAI | 6 | ✅ Can Build |
+| Reporting | Monthly PDF report generation pipeline | EigenAI | 8 | ✅ Can Build |
+| Reporting | CSV data export + webhook API for fleet mgmt. systems | EigenAI | 3 | ✅ Can Build |
+
+**Phase 6 Total: 62 MD** (62 MD EigenAI | 0 MD Naval Arch.)
+
+---
+
+### Phase 7 — ABS Certification & Validation
+
+| Work Stream | Deliverable | Owner | Man-Days | Build Status |
+|---|---|---|:--------:|:---:|
+| Documentation | Functional specification document (ABS format) | EigenAI + NA |    8?    | ⚠️ Partial |
+| Documentation | Design basis document + failure modes analysis | Naval Arch. |   12?    | ⛔ Blocked |
+| Documentation | Inspection Test Plan (ITP) for ABS review | Naval Arch. |    8?    | ⛔ Blocked |
+| Documentation | User operation manual | EigenAI |    6     | ✅ Can Build |
+| Validation | 3-vessel pilot deployment (90-day data capture) | EigenAI + NA |   20?    | ⚠️ Partial |
+| Validation | Load calculation accuracy validation report (±10% target) | Naval Arch. |   15?    | ⛔ Blocked |
+| ABS Submission | PDA formal submission + ABS witness testing | Naval Arch. |   20?    | ⛔ Blocked |
+| Cybersecurity | IACS UR E26/E27 compliance assessment | Naval Arch. |    6?    | ⛔ Blocked |
+| Cybersecurity | ISO 27001 / SOC 2 Type II preparation | Naval Arch. |   10?    | ⛔ Blocked |
+
+**Phase 7 Total: ~105 MD** (34 MD EigenAI | 71? MD Naval Arch.)
+
+---
+
+## 3. Phase Summary
+
+| Phase | EigenAI (MD) | Naval Arch. (MD) | Total (MD) | Overall Status |
+|---|:------------:|:----------------:|:---:|:---:|
+| Phase 1 — Design & Architecture |      28      |        18        | 46 | ⚠️ Partial |
+| Phase 2 — Infrastructure Setup |      32      |        0         | 32 | ✅ Can Build |
+| Phase 3 — Data Ingestion Pipelines |      48      |        0         | 48 | ⚠️ Partial |
+| Phase 4 — Vessel Onboarding & Master Data |      26      |        40        | 66 | ⛔ Blocked |
+| Phase 5 — Analytics Engine |      74      |        30        | 104 | ⛔ Blocked |
+| Phase 6 — Presentation Layer |      62      |        0         | 62 | ✅ Can Build |
+| Phase 7 — Certification & Validation |      34      |        71        | 105 | ⛔ Blocked |
+| **TOTAL** |  **320 MD**  |    **143 MD**    | **463 MD** | |
+| **EigenAI-Only Track** |  **320 MD**  |        —         | **320 MD** | ✅ Can Build |
+| **Full Product (both tracks)** |      —       |        —         | **463 MD** | ⛔ Blocked |
+
+**Notes:**
+- 320 MD EigenAI-only track = ~64 weeks solo, ~16 weeks with a team of 4, ~11 weeks with a team of 6
+- Naval arch. track (143 MD) runs in parallel — it does not add to calendar time if contracted simultaneously
+- With parallel execution (both tracks running from Week 1), realistic delivery to pilot-ready is ~20–24 weeks
+- ABS PDA approval adds a further 6–12 months of review and testing on top of pilot-ready
+
+---
+
+## 4. Gap Analysis — What Is Needed Before Starting
+
+### Critical Gaps — Block the Core Product
+
+- **Digital Twin Generation**
+  - The entire SHM product depends on vessel-specific hydrodynamic models. The BRD describes it in one paragraph. It is, in reality, a multi-month specialist engineering effort per vessel type
+  - What is needed: Licensed naval architect firm + ANSYS AQWA / WAMIT / NAPA licence
+  - When needed: Before Phase 4 (Week 6 at latest)
+  - Cost implication: $150K–$300K specialist engagement + $50K–$210K/yr software licence
+
+- **Empirical Formula Implementation**
+  - All Python code in the BRD for slamming loads and wave bending is illustrative pseudocode. Functions like `slam_probability()`, `vessel.deadrise_angle_factor`, and `vessel.pressure_distribution_factor` are undefined
+  - What is needed: Naval architect to translate DNV-RP-C205 + ABS HSC Guide + IACS UR S11 into production-ready, validated implementations
+  - When needed: Before Phase 5 (Week 8 at latest)
+
+- **AI Model Training Data**
+  - No free public dataset exists that contains structural load labels (stress in MPa at critical hull sections). The BRD says "100,000+ vessel-hours" without a sourcing strategy
+  - What is needed: Formal scope decision — accept empirical-only MVP for Phase 1, defer AI training to Phase 2 post-launch using real customer data
+  - When needed: Decision must be made before development starts to avoid building infrastructure for a model that cannot be trained
+
+- **RAO Tables (Response Amplitude Operators)**
+  - These are pre-computed vessel response tables used to calculate how a specific hull responds to waves at various headings and periods. They cannot be derived from the vessel's PDF spec sheet
+  - What is needed: Hydrodynamic simulation software + naval architect to run computations per vessel type (15 periods × 12 headings each)
+  - When needed: Before Phase 4 (Week 6 at latest)
+
+### High Severity Gaps — Block Commercial Readiness
+
+- **AIS Data Provider Contract**
+  - No commercial AIS API has been selected. MarineTraffic, Spire, exactEarth, and VesselFinder all have different APIs, pricing models, and coverage zones
+  - What is needed: Commercial contract signed with defined SLA before the Phase 3 ingestion sprint begins
+  - When needed: Before Phase 3 (Week 4)
+
+- **Weather API Provider Contract**
+  - Free ERA5 and NOAA data are not suitable for production use (no SLA, rate limits, no commercial support)
+  - What is needed: StormGeo, Meteomatics, or Copernicus Marine commercial contract with defined spatial resolution and refresh intervals
+  - When needed: Before Phase 3 (Week 4)
+
+- **S-N Curve Dataset**
+  - Fatigue damage calculation (Palmgren-Miner) requires material-specific S-N curves. Aluminum 5083 and DNV D-curve data must be sourced and validated for the target vessel types
+  - What is needed: DNV account registration + naval architect sign-off on applicable curves
+  - When needed: Before Phase 5 (Week 8)
+
+- **ABS Certification Engagement**
+  - The PDA submission cannot proceed without an ABS-approved marine engineer co-authoring the design basis documents. EigenAI cannot do this unilaterally
+  - What is needed: ABS pre-submission consultation initiated by Month 6. ABS-approved consultant identified and engaged
+  - Cost implication: $50K–$150K for the certification process alone
+
+- **Pilot Vessel Agreements**
+  - ABS requires 90 days of real-world operational data from at least 3 vessels for validation
+  - What is needed: MOUs with vessel operators (HSC, crew boats, OPV) willing to run the system in parallel with normal operations during the pilot period
+  - When needed: Agreements in place before Phase 7 (Month 7)
+
+### Medium Severity Gaps — Create Rework Risk If Ignored
+
+- **Satellite Communications Specification**
+  - The data transmission mechanism from vessel to cloud is unspecified. Inmarsat, Iridium, and Starlink have incompatible onboard hardware and APIs. This affects the onboarding workflow and edge-buffering design
+  - What is needed: Define minimum connectivity spec. Choose primary satellite comms vendor. Specify onboard buffering hardware before Phase 3
+
+- **DWG / CAD File Parsing**
+  - The BRD describes an "AI document parser" that extracts vessel dimensions from DWG files as a routine onboarding step. Automated DWG parsing is a hard, largely unsolved problem
+  - What is needed: Define a manual-first intake process with human-in-the-loop verification as the MVP approach. Automated parsing is a future enhancement, not a Phase 1 feature
+
+- **Ensemble Model Weighting**
+  - The 60% AI / 40% empirical weighting is arbitrary with no statistical justification. ABS may reject the methodology without a validated basis
+  - What is needed: At MVP, run 100% empirical (0% AI). Document that weights will be calibrated post-pilot based on validation results. Get naval architect sign-off on initial weighting methodology
+
+- **Multi-Tenancy & Data Isolation Design**
+  - RBAC is listed in the BRD but not designed. No permission matrix, no database schema for tenant isolation, and no GDPR data handling procedures are defined
+  - What is needed: Complete the RBAC design and multi-tenant isolation schema before any authentication or user management code is written
+
+---
+
+## 5. Recommended Two-Track Approach
+
+### Track 1 — EigenAI (Start Week 1)
+
+Everything below has no specialist dependency and can begin immediately in parallel with procurement.
+
+- AWS cloud infrastructure (EKS, RDS, Kafka, InfluxDB, Redis, S3)
+- CI/CD, monitoring (Prometheus + Grafana), ELK logging
+- JWT + OAuth 2.0 auth, RBAC scaffolding, multi-tenant data isolation
+- AIS ingestion pipeline + Kafka topics + schema validation
+- Weather API integration (free ERA5 for dev; commercial for prod)
+- Operational data intake (DAS connector + manual entry form)
+- Data validation engine (outlier detection, temporal sync, UVSR generation)
+- Alert rule engine (GREEN / YELLOW / ORANGE / RED)
+- Multi-channel notification service (email, SMS, push)
+- Web dashboard (Mapbox fleet map, vessel detail panel, alert log)
+- Fatigue life module UI (gauge + trend chart)
+- Mobile app (React Native, iOS + Android)
+- Monthly PDF report generation pipeline
+- Vessel master data schema + basic onboarding UI
+- Rainflow counting + Palmgren-Miner engine (code-ready; needs S-N data to execute)
+- Anomaly detection model (Isolation Forest — no training labels needed)
+- IACS UR E26/E27 cybersecurity documentation
+- ISO 27001 / SOC 2 Type II preparation
+
+### Track 2 — Naval Architecture Firm (Procure ASAP, Target Week 2)
+
+These are sub-deliverables contracted to a specialist firm. EigenAI integrates them once delivered. Treat as a separate SOW with defined inputs, outputs, and acceptance criteria.
+
+- Digital twin generation per vessel type (hull discretisation, hydrodynamic model)
+- RAO table computation (15 wave periods × 12 headings per vessel)
+- Pressure distribution mapping + critical structural section identification
+- DNV-RP-C205 slamming load formula — full implementation with all sub-functions defined
+- Wave bending moment calculation using strip theory / RAO-based method
+- S-N curve dataset for target hull materials (Aluminum 5083, marine steel)
+- Design basis document + failure modes analysis (ABS-submittable format)
+- Validation report: load calculation accuracy vs. empirical reference (±10% target)
+- Inspection Test Plan (ITP) for ABS review
+- Co-authorship of ABS PDA submission documentation
+
+---
+
+## 6. Decision Gate — Month 3
+
+At the end of Month 3, a formal go/no-go gate should assess the following. If any item is not in place, the ABS certification target of Month 12–14 should be revised accordingly.
+
+- [ ] Naval architecture firm contracted and initial methodology spec delivered
+- [ ] Hydrodynamic software access confirmed (via firm or direct licence)
+- [ ] AIS provider commercial contract signed
+- [ ] Weather API commercial contract signed
+- [ ] Empirical-only MVP formally accepted as Phase 1 scope
+- [ ] Pilot vessel MOUs initiated with at least one operator
+- [ ] ABS pre-submission consultation scheduled
+- [ ] ISO 9001 certification process initiated
+
+---
