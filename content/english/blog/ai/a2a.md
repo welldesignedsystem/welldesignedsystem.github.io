@@ -3,7 +3,7 @@ date = '2026-02-17T12:44:47+10:00'
 draft = false
 title = 'Agent2Agent Protocol (A2A)'
 tags = ['A2A', 'Agentic AI']
-summary = "Agentic AI using OpenClaw"
+summary = "Agent to Agent Protocol (A2A) is an open standard protocol to enable seamless communication and collaboration between AI agents."
 +++
 
 {{< notice "warning" >}}
