@@ -1,6 +1,5 @@
 ---
 title: LakSom
-email: lakshmisoman.au@gmail.com
 image: "/images/avatar.png"
 description: this is meta description
 social:
@@ -156,8 +155,7 @@ May 2009 – September 2011 (2 years 5 months)
 # Education
 
 ## Master of Computer Application (MCA)
-**Mahatma Gandhi University**
-**Year:** 2006 – 2009
-**Grade:** Distinction
+- **Year:** 2006 – 2009
+- **Grade:** Distinction
 
 ---

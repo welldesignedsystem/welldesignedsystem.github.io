@@ -31,8 +31,8 @@
   },
   "fonts": {
     "font_family": {
-      "primary": "Heebo:wght@400;600",
-      "primary_type": "sans-serif",
+      "primary": "JetBrains+Mono:wght@400;600",
+      "primary_type": "monospace",
       "secondary": "Signika:wght@500;700",
       "secondary_type": "sans-serif"
     },
