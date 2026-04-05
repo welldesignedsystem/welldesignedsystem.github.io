@@ -227,6 +227,7 @@ class BankAccount:
 import functools
 import time
 
+# timer is a simple deorator
 def timer(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -237,6 +238,7 @@ def timer(func):
         return result
     return wrapper
 
+# retry is a decorator factory
 def retry(max_attempts=3):
     def decorator(func):
         @functools.wraps(func)
@@ -248,8 +250,8 @@ def retry(max_attempts=3):
                     if attempt == max_attempts - 1:
                         raise
                     print(f"Attempt {attempt + 1} failed: {e}")
-            return wrapper
-        return decorator
+        return wrapper
+    return decorator
 
 @timer
 @retry(max_attempts=2)
@@ -258,6 +260,11 @@ def risky_operation():
     if random.random() < 0.5:
         raise Exception("Random failure")
     return "Success!"
+
+# above is equallent to 
+# risky_operation = timer(
+#    retry(max_attempts=2)(risky_operation)
+#)
 ```
 
 ### Class Decorators
