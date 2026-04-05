@@ -770,7 +770,7 @@ quadrantChart
     Botify: [0.16, 0.80]
     SE Ranking: [0.14, 0.20]
     Mangools: [0.11, 0.15]
-    https://aeo-app.ai: [0.92, 0.68]
+    aeo-app.ai: [0.92, 0.68]
 ```
 
 | Tool | Strengths | Limitations for AEO/GEO |
