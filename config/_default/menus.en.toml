@@ -16,15 +16,15 @@ weight = 2
 # url = "/resume"
 # weight = 2
 
-[[main]]
-parent = "Resumé"
-name = "Lak-Som"
-url = "/resume/lak-som"
+# [[main]]
+# parent = "Resumé"
+# name = "Lak-Som"
+# url = "/resume/lak-som"
 
-[[main]]
-parent = "Resumé"
-name = "Ach-Iyy"
-url = "/resume/ach-iyy"
+# [[main]]
+# parent = "Resumé"
+# name = "Ach-Iyy"
+# url = "/resume/ach-iyy"
 
 #[[main]]
 #name = "Elements"
