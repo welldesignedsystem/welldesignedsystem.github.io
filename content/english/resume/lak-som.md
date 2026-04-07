@@ -12,4 +12,4 @@ social:
     link: https://www.linkedin.com/in/lakshmisoman/
 ---
 
-## Currently not open to new roles. 
+Currently not open to new roles. 
