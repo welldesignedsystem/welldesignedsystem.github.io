@@ -17,4 +17,4 @@ social:
     link: https://linkedin.com
 ---
 
-## This limited-edition item is currently off the Job market. 😄
+This limited-edition item is currently off the Job market. 😄
