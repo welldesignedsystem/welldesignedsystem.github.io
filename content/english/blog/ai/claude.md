@@ -8,23 +8,63 @@ summary = "Claude is a family of large language models developed by Anthropic, d
 
 ## 1. What is Claude?
 
-Claude is a family of large language models developed by **Anthropic**, an AI safety company founded in 2021. Unlike OpenAI (which focuses on capability maximization) or Google (scale-first), Anthropic's core differentiator is **safety-first AI development**.
+Claude is a family of large language models developed by **Anthropic**. Focus of each: 
+- OpenAI focuses on **capability maximization** 
+- Google **scale-first** 
+- Anthropic's focuses **safety-first AI development**.
 
-Claude is accessible via:
-- **Claude.ai** — consumer chat interface
-- **Anthropic API** — for developers building applications
+## Ways to Access Claude
+
+### Anthropic Interfaces
+- **Claude.ai** — consumer web/mobile/desktop chat interface
+- **Claude for mobile devices** — native Android/iOS app
+- **Claude Desktop App** — native macOS and Windows app
+
+### Developer Tools
+- **Anthropic API** — direct API access for building applications
 - **Claude Code** — agentic CLI for software development
-- **Claude in Chrome, Excel, PowerPoint** — embedded product integrations
+- **Claude Code for IDEs** - VS Code, IntelliJ, PyCharm and other JetBrains IDEs
+
+### Embedded Product Integrations
+- **Claude in Browers** — browser-based browsing agent
+- **Claude in Excel/PowerPoint** 
+- **Claude Code for Slack** — Claude accessible within Slack workspaces
+- **Cowork** — desktop tool for non-developers to automate file and task management
+
+### Third-Party Cloud Providers
+- **Amazon Bedrock** — Claude models via AWS
+- **Google Cloud Vertex AI** — Claude models via GCP
+
+### Ecosystem / Third-Party Apps
+Various platforms building on the Anthropic API, including tools like Cursor, Notion, Perplexity, and more.
 
 ### Key Strengths of Claude
-- Industry-leading **200K token context window**
+- Large Token context window
 - Native **PDF and document understanding**
 - Strong **instruction following** and structured output
 - Excellent at **code generation and reasoning**
 - Unique **Extended Thinking** capability
 - Strong **multilingual** performance
 
----
+## AI Model Context Window Comparison (April 2026)
+
+To understand 1 Million tokens - think of entire Harry Potter series its almost ~1.08M Tokens. 1 Million Tokens is approx ~3000 pages.
+
+| Model | Provider | Context Window | How They Achieve It |
+|---|---|---|---|
+| **Llama 4 Scout** | Meta | 10M tokens | Mixture-of-Experts (17B active / 109B total params); open-weight, self-hosted |
+| **Gemini 1.5 Pro** | Google | 2M tokens | Efficient attention scaling; optimized for retrieval over synthesis |
+| **Claude Opus 4.6** | Anthropic | 1M tokens | Constitutional AI architecture; strong recall & reasoning at depth |
+| **GPT-5.4** | OpenAI | 1M tokens | Large dense model with extended attention; Codex-tier access |
+| **Gemini 3.1 Pro** | Google | 1M tokens | Native multimodal attention across text, image, audio, video |
+| **Qwen 3.6 Plus** | Alibaba | 1M tokens | Sparse MoE transformer; cost-efficient at scale |
+| **Grok 4.20** | xAI | 2M tokens | High-throughput transformer with extended positional encoding |
+| **Gemini 3.1 Flash** | Google | 200K tokens | Distilled Flash architecture; optimized for speed and low latency |
+| **Claude Sonnet 4.6** | Anthropic | 200K tokens | Balanced compute/quality; strong instruction-following |
+| **Claude Haiku 4.5** | Anthropic | 200K tokens | Lightweight; optimized for fast, high-volume tasks |
+| **GPT-4o** | OpenAI | 128K tokens | Dense transformer with rotary position embeddings |
+| **Perplexity Sonar** | Perplexity | 200K tokens | RAG-augmented; retrieval offsets context limits |
+
 
 ## 2. Constitutional AI — How Claude Thinks
 
