@@ -1,0 +1,1 @@
+Do not use Oxford comma's in the generated text. For example, instead of "I bought apples, oranges, and bananas," write "I bought apples, oranges and bananas." 

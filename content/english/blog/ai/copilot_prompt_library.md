@@ -23,15 +23,17 @@ The three types of Customeization Library covered are:
 
 ### Custom Instructions
 
-Custom instructions are Markdown files whose content is automatically included in the context of every Copilot Chat interaction. You do not invoke them — they are always active once in place. There are four scopes:
+- Custom instructions are Markdown files whose content is automatically included in the context of every Copilot Chat interaction. 
+- You do not invoke them — they are always active once in place. 
 
-**Repository-wide instructions**:
+There are four scopes:
+
+#### **Repository-wide instructions**:
 - A single file at `.github/copilot-instructions.md`. 
 - Applies to all files in the repository. 
 - This is the most broadly supported form and works across IDEs, GitHub.com chat, and the coding agent.
 
-**Path-specific instructions**:
-
+#### **Path-specific instructions**:
 - One or more files named `NAME.instructions.md` inside the `.github/` directory (optionally organized in subdirectories like `.github/instructions/`). 
 - Each file must include a YAML frontmatter (_a way to identify metadata in Markdown files_) block with an `applyTo` glob pattern. 
 - Instructions only activate when Copilot is working with files that match the pattern. 
@@ -43,43 +45,53 @@ applyTo: "tests/**/*.py"
 ---
 ```
 
-Multiple patterns are separated by commas. If both a path-specific file and `copilot-instructions.md` apply to the same file, instructions from both are used. Avoid conflicting instructions between them — Copilot's behavior when instructions conflict is non-deterministic.
+- Multiple patterns are separated by commas. 
+- If both a path-specific file and `copilot-instructions.md` apply to the same file, instructions from both are used. 
+- Avoid conflicting instructions between them — Copilot's behavior when instructions conflict is non-deterministic.
 
-**Personal instructions** — Set on GitHub.com under your profile picture → "Personal instructions". Apply only to you, only in Copilot Chat on GitHub.com. Good for quick personal testing before rolling something out to a team.
+#### **Personal instructions** 
+- Set on GitHub.com under your profile picture → "Personal instructions". 
+- Apply only to you, only in Copilot Chat on GitHub.com. 
+- Good for quick personal testing before rolling something out to a team.
 
-**Organization instructions** — Set in organization settings on GitHub.com. Apply to all organization members in Copilot Chat on GitHub.com. Do not affect IDE interactions.
+#### **Organization instructions** 
+- Set in organization settings on GitHub.com. 
+- Apply to all organization members in Copilot Chat on GitHub.com. 
+- Do not affect IDE interactions.
 
 ---
 
 ### Prompt Files
 
-Prompt files (currently **public preview**, subject to change) are reusable, on-demand task prompts stored in your repository. Unlike custom instructions, they only run when you explicitly invoke them.
-
-**File location:** `.github/prompts/`  
-**File extension:** `.prompt.md`  
-**Supported in:** VS Code, Visual Studio, JetBrains IDEs only. Not available in GitHub.com chat, GitHub Mobile, or Windows Terminal.
-
-Frontmatter fields:
-- `agent` — set to `'agent'` to run in agent mode
-- `description` — a human-readable label shown in the IDE
-
-Dynamic input variables use this syntax: `${input:variableName:placeholder text}`. When you invoke the prompt, Copilot pauses to ask you for each variable before running.
-
-**How to invoke in VS Code:** Open Copilot Chat, type `/filename` (the filename without `.prompt.md`). Or use the "Attach context" icon → "Prompt..." and select the file. You can optionally attach additional files for context alongside the prompt.
+- Prompt files (currently **public preview**, subject to change) are reusable, on-demand task prompts stored in your repository. 
+- Unlike custom instructions, they only run when you explicitly invoke them.
+- File location: `.github/prompts/`  
+- File extension: `.prompt.md`  
+- Supported in: VS Code, Visual Studio, JetBrains IDEs only.
+- **Frontmatter fields:**
+  - `agent` — set to `'agent'` to run in agent mode
+  - `description` — a human-readable label shown in the IDE
+- **Dynamic input variables** use this syntax: `${input:variableName:placeholder text}`. 
+  - When you invoke the prompt, Copilot pauses to ask you for each variable before running.
+- **How to invoke in VS Code:** 
+  - Open Copilot Chat, type `/filename` (the filename without `.prompt.md`). 
+  - Or use the "Attach context" icon → "Prompt..." and select the file. 
+  - You can optionally attach additional files for context alongside the prompt.
 
 ---
 
 ### Custom Agents
 
-Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, and tool access. They maintain their full configuration throughout an entire autonomous session — reading files, searching the codebase, editing files, and opening pull requests.
-
-The docs define the distinction: custom instructions shape all interactions broadly; prompt files execute a one-time task; custom agents are **selected for a specific task and maintain their configuration for the entire autonomous workflow**.
-
-**File location:** `.github/agents/`  
-**File extension:** `.agent.md`  
-**Requirement:** Must be committed to the repository's **default branch** to appear in the dropdown at `github.com/copilot/agents`.
-
-Frontmatter:
+- Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, and tool access. 
+- They maintain their full configuration throughout an entire autonomous session — reading files, searching the codebase, editing files, and opening pull requests.
+- The docs define the distinction: 
+  - custom instructions shape all interactions broadly; 
+  - prompt files execute a one-time task; 
+  - custom agents are **selected for a specific task and maintain their configuration for the entire autonomous workflow**.
+- File location: `.github/agents/`  
+- File extension: `.agent.md`  
+- Requirement: Must be committed to the repository's **default branch** to appear in the dropdown at `github.com/copilot/agents`.
+- **Frontmatter:**
 ```yaml
 ---
 name: agent-name
@@ -87,17 +99,14 @@ description: What this agent does (shown in the UI)
 tools: ['read', 'search', 'edit']
 ---
 ```
-
-The `tools` array declares what actions the agent may take. The tools available and used in the library examples are `read`, `search`, and `edit`.
-
-The body of the file is the agent's system prompt. It defines the agent's role, capabilities, and explicit limitations. A well-designed agent profile always includes a clear "do NOT" section to prevent scope creep.
-
-**How to use a custom agent:**
-1. Commit the `.agent.md` file to the default branch
-2. Go to `https://github.com/copilot/agents`
-3. Select your repository, branch, and agent from the dropdowns
-4. Type a task and press Enter — the agent runs autonomously and creates a PR
-5. Track progress in real time via the session view
+- The `tools` array declares what actions the agent may take. The tools available and used in the library examples are `read`, `search`, and `edit`.
+- The body of the file is the agent's system prompt. It defines the agent's role, capabilities, and explicit limitations. A well-designed agent profile always includes a clear "do NOT" section to prevent scope creep.
+- **How to use a custom agent:**
+  1. Commit the `.agent.md` file to the default branch
+  2. Go to `https://github.com/copilot/agents`
+  3. Select your repository, branch, and agent from the dropdowns
+  4. Type a task and press Enter — the agent runs autonomously and creates a PR
+  5. Track progress in real time via the session view
 
 ---
 
@@ -791,3 +800,377 @@ Beyond the 19 official examples, GitHub maintains a community repository with ad
   - Instructions by language/scenario: `docs/README.instructions.md`
   - Prompt files: `docs/README.prompts.md`
   - Custom agents: `agents/` directory
+
+
+# Best Practices & Design Patterns
+
+> Sources:
+> - https://docs.github.com/en/copilot/tutorials/use-custom-instructions (official GitHub Docs tutorial)
+> - https://github.blog/ai-and-ml/github-copilot/5-tips-for-writing-better-custom-instructions-for-copilot/ (official GitHub Blog, September 2025)
+> - https://awesome-copilot.github.com/learning-hub/defining-custom-instructions/ (GitHub's own Awesome Copilot community hub)
+
+---
+
+## Important caveat before reading
+
+Copilot is a probabilistic AI system. The same instructions can produce different results on different runs. The goal of all these practices is to **tilt the scales** — to make the outcome you want more likely, not to guarantee it. No instruction file produces perfect results 100% of the time.
+
+---
+
+## Writing Effective Custom Instructions
+
+### 1. Keep files short and focused
+
+The most important rule from the official docs: **shorter instruction files are more reliably processed**.
+
+- Copilot code review only reads the **first 4,000 characters** of any instruction file. Instructions beyond that limit are ignored entirely for code review purposes. (This limit does not apply to Copilot Chat or the coding agent.)
+- For general quality, keep any single instruction file to a **maximum of around 1,000 lines**. Beyond this, response quality can deteriorate.
+- Start with a minimal set of 10–20 specific instructions, then add more iteratively based on what actually works.
+
+### 2. Use clear structure and formatting
+
+Copilot processes well-structured Markdown better than narrative prose. Use:
+
+- **Distinct headings** (`##`) to separate topics
+- **Bullet points** for rules — they're easier to scan than paragraphs
+- **Short, imperative directives** ("Use snake_case for variables") rather than long explanations
+
+**Don't write this:**
+```
+When you're reviewing code, it would be good if you could try to look for
+situations where developers might have accidentally left in sensitive
+information like passwords or API keys, and also check for security issues.
+```
+
+**Write this instead:**
+```markdown
+## Security
+
+- Check for hardcoded secrets, API keys, or credentials
+- Look for SQL injection and XSS vulnerabilities
+- Verify proper input validation and sanitization
+```
+
+### 3. Provide concrete code examples
+
+Examples eliminate ambiguity. Include code snippets showing both the pattern to avoid and the pattern to prefer. The official docs show this directly in the Code Reviewer example from the library:
+
+```markdown
+## Naming
+
+Use intention-revealing names.
+
+```javascript
+// Avoid
+const d = new Date();
+const x = users.filter(u => u.active);
+
+// Prefer
+const currentDate = new Date();
+const activeUsers = users.filter(user => user.isActive);
+```
+```
+
+### 4. Be specific, not vague
+
+Vague instructions do not help and the official docs specifically call these out as **not supported** for code review:
+
+- ❌ `Be more accurate`
+- ❌ `Don't miss any issues`
+- ❌ `Be consistent in your feedback`
+
+These add noise without improving results — Copilot is already optimized to do these things. Instead, write instructions about specific patterns in your codebase.
+
+### 5. Avoid instructions Copilot cannot follow
+
+From the official docs, the following types of instructions are **not currently supported** for Copilot code review:
+
+- Instructions that change formatting: `Use bold text for critical issues`, `Add emoji to comments`
+- Instructions that modify the PR overview comment: `Include a summary of security issues in the PR overview`
+- Instructions that change core function: `Block a PR from merging unless all Copilot comments are addressed`
+- Instructions referencing external URLs: `Review code according to standards at https://example.com`
+  - Workaround: Copy the relevant content directly into your instruction file
+- Instructions about self-improvement: `Be consistent`, `Don't miss any issues`
+
+### 6. Don't let perfect be the enemy of good
+
+From the official GitHub Blog: an "imperfect" instructions file delivers far more impact than no file at all. Instruction files should evolve over time, just like documentation. Experiment, iterate, and don't overthink the initial version.
+
+---
+
+## Structuring the Content of `copilot-instructions.md`
+
+The official GitHub Blog recommends five sections every instructions file should include. These are **recommendations**, not requirements:
+
+### Section 1: Project overview
+
+The header of your instructions file should be the elevator pitch for your project — what it is, who uses it, what the key features are. A few sentences is enough.
+
+```markdown
+# Contoso Companions
+
+This is a website to support pet adoption agencies. Agencies can manage their
+locations, available pets, and publicize events. Potential adopters can search
+for pets in their area and submit adoption applications.
+```
+
+### Section 2: Tech stack
+
+List the technologies in use — backend, frontend, testing. Include brief notes on how they're used if non-obvious. This prevents Copilot from generating code for the wrong framework.
+
+```markdown
+## Tech Stack
+
+### Backend
+- Flask for the API
+- PostgreSQL with SQLAlchemy as the ORM
+
+### Frontend
+- Astro for core site and routing
+- Svelte for interactivity
+- TypeScript for all frontend code
+
+### Testing
+- pytest for Python unit tests
+- Vitest for TypeScript
+- Playwright for end-to-end tests
+```
+
+### Section 3: Coding guidelines
+
+Explicit rules about how code should be written — naming conventions, formatting, patterns to use or avoid.
+
+```markdown
+## Coding Guidelines
+
+- Always use type hints in any language that supports them
+- JavaScript/TypeScript must use semicolons
+- Unit tests are required and must pass before a PR can merge
+- Follow RESTful API design principles
+- Always follow good security practices
+- Use scripts to perform actions when available
+```
+
+### Section 4: Project structure
+
+List what's in each directory. This saves Copilot exploration time and lets you add context about what each folder contains.
+
+```markdown
+## Project Structure
+
+- server/     : Flask backend
+  - models/   : SQLAlchemy ORM models
+  - routes/   : API endpoints organized by resource
+  - tests/    : Unit tests
+- client/     : Astro/Svelte frontend
+  - src/components/ : Reusable Svelte components
+  - src/pages/      : Astro pages and routes
+- scripts/    : Development, deployment, and testing scripts
+- docs/       : Project documentation — kept in sync at all times
+```
+
+### Section 5: Available resources and tools
+
+Point Copilot to scripts, MCP servers, and other tools it can use. This increases accuracy when Copilot is operating autonomously.
+
+```markdown
+## Resources
+
+- scripts/start-app.sh     : Installs all libraries and starts the app
+- scripts/test-project.sh  : Runs unit and end-to-end tests
+- MCP servers:
+  - Playwright: For generating tests or interacting with the site
+  - GitHub: For interacting with the repository and backlog
+```
+
+---
+
+## Organizing Instructions Across Multiple Files
+
+### Pattern: Repository-wide + path-specific split
+
+Use `copilot-instructions.md` for concerns that apply to the **entire codebase**, and path-specific `*.instructions.md` files for **language- or directory-specific** rules. This prevents Python rules from applying to TypeScript files and vice versa.
+
+The official docs recommend this layout:
+
+```
+.github/
+  copilot-instructions.md           ← General: security, error handling, docs
+
+.github/instructions/
+  python.instructions.md            ← Python-only (applyTo: "**/*.py")
+  typescript.instructions.md        ← TypeScript-only (applyTo: "**/*.{ts,tsx}")
+  frontend.instructions.md          ← React components (applyTo: "src/components/**/*.{tsx,jsx}")
+  api.instructions.md               ← API routes (applyTo: "src/routes/**")
+```
+
+**Use `copilot-instructions.md` for:**
+- General team standards
+- Universal security requirements
+- Cross-cutting concerns (error handling, logging philosophy)
+- Documentation expectations
+
+**Use path-specific files for:**
+- Language-specific naming conventions and style
+- Framework-specific patterns (React, Flask, etc.)
+- Technology-specific security concerns
+- Different rules for different parts of the codebase
+
+### Recommended file structure template
+
+From the official GitHub Docs tutorial, this is the recommended template for any instruction file:
+
+```markdown
+---
+applyTo: "**/*.{js,ts}"   # Only needed for path-specific files
+---
+
+# [Technology or Domain] Guidelines
+
+## Purpose
+Brief statement of what this file covers and when these instructions apply.
+
+## Naming Conventions
+- Rule 1
+- Rule 2
+
+## Code Style
+- Style rule 1
+- Style rule 2
+
+```javascript
+// Example showing correct pattern
+```
+
+## Error Handling
+- How to handle errors
+- What patterns to use
+- What to avoid
+
+## Security Considerations
+- Security rule 1
+- Security rule 2
+
+## Testing Guidelines
+- Testing expectation 1
+- Testing expectation 2
+
+## Performance
+- Performance consideration 1
+- Performance consideration 2
+```
+
+---
+
+## Testing and Iterating on Instructions
+
+### Start minimal, iterate
+
+1. Begin with 10–20 instructions covering your most important standards
+2. Open a pull request and request a Copilot review
+3. Observe which instructions Copilot follows reliably and which it misses
+4. Add one new instruction at a time, test with a real PR, then refine
+
+### Signs an instruction is not working
+
+- It's vague or ambiguous — rewrite it to be specific and imperative
+- The file is too long — the instruction may be past the 4,000-character limit
+- Instructions conflict with each other — review and prioritize
+
+### Avoiding common anti-patterns
+
+| Anti-pattern | Problem | Fix |
+|---|---|---|
+| `applyTo: '**'` for language-specific rules | Rules bleed into unrelated files | Scope to the relevant extension: `applyTo: '**/*.py'` |
+| Instructions referencing deprecated libraries | Copilot generates outdated code | Review and update instructions when dependencies change |
+| 2,000-line instruction file | Instructions past the 4,000-character limit are ignored by code review | Break into multiple focused files |
+| Conflicting instructions across files | Non-deterministic behavior | Design complementary instructions, more specific patterns take priority |
+
+---
+
+## Custom Agent Design Patterns
+
+### Always define explicit scope limits
+
+Every agent profile in the official library includes a clear "do NOT" section. The README Specialist example demonstrates this pattern:
+
+```markdown
+**Important Limitations:**
+- Do NOT modify code files or code documentation within source files
+- Do NOT analyze or change API documentation generated from code
+- Focus only on standalone documentation files
+- Ask for clarification if a task involves code modifications
+```
+
+Without explicit scope limits, agents can drift into unintended areas of the codebase.
+
+### Define escalation behavior
+
+Agents should know what to do when they encounter something outside their scope rather than proceeding silently:
+
+```markdown
+- Ask for clarification if a task involves code modifications
+```
+
+### Keep the tools array minimal
+
+Only declare the tools the agent actually needs. The tools available are `read`, `search`, and `edit`. An agent that only needs to read and search should not include `edit`.
+
+### Separate planning agents from implementation agents
+
+The library's Implementation Planner example demonstrates this: an agent that only reads the codebase and produces a plan, but never writes code. This is a deliberate design choice — having separate agents for planning and implementation makes each one more predictable and easier to review.
+
+---
+
+## Using Copilot to Write Its Own Instructions
+
+The official GitHub Blog recommends using Copilot agent mode to generate your initial `copilot-instructions.md`. The official recommended prompt from the GitHub Docs is:
+
+```
+Your task is to "onboard" this repository to a coding agent by adding a
+.github/copilot-instructions.md file. It should contain information describing
+how the agent, seeing the repo for the first time, can work most efficiently.
+
+## Goals
+- Document existing project structure and tech stack.
+- Ensure established practices are followed.
+- Minimize bash command and build failures.
+
+## Limitations
+- Instructions must be no longer than 2 pages.
+- Instructions should be broadly applicable to the entire project.
+
+## Guidance
+Ensure you include the following:
+- A summary of what the app does.
+- The tech stack in use
+- Coding guidelines
+- Project structure
+- Existing tools and resources
+
+## Steps to follow
+- Perform a comprehensive inventory of the codebase. Search for and view:
+  - README.md, CONTRIBUTING.md, and all other documentation files.
+  - Search the codebase for indications of workarounds like 'HACK', 'TODO', etc.
+- All scripts, particularly those pertaining to build and repo or environment setup.
+- All project files.
+- All configuration and linting files.
+
+## Validation
+Use the newly created instructions file to implement a sample feature. Use
+learnings from any failures or errors to further refine the instructions file.
+```
+
+This approach lets Copilot scan the repository and produce a well-structured starting point, which you then edit and refine.
+
+---
+
+## Key Hard Limits (from the Docs)
+
+These are confirmed technical constraints, not style recommendations:
+
+- **4,000 characters**: The maximum Copilot code review reads from any instruction file. Instructions beyond this are silently ignored for PR reviews. (Does not apply to Copilot Chat or the coding agent.)
+- **~1,000 lines**: Recommended soft limit for any instruction file before quality starts degrading.
+- **No external URL following**: Copilot cannot fetch external links in instructions. Copy relevant content directly into the file.
+- **Both files applied when overlap occurs**: When a path-specific `.instructions.md` file and `copilot-instructions.md` both match the same file, both sets of instructions are used. Avoid writing contradictory instructions across them.
+- **Base branch used for PR reviews**: Copilot code review uses the instructions from the base branch of the PR (e.g., `main`), not the feature branch. New instruction files must be merged before they affect reviews.
