@@ -1,365 +1,635 @@
 +++
-date = '2026-01-01T13:00:00+10:00'
+date = '2026-04-10T13:00:00+10:00'
 draft = false
-title = 'GitHub Copilot Prompt Library'
+title = 'GitHub Copilot Notes'
 tags = ['GitHub', 'Copilot', 'AI', 'Prompting', 'DevTools', 'Agents', 'LLM']
 summary = "GitHub Copilot's prompt library unlocks a structured, repeatable way to guide AI assistance across your codebase—covering custom instructions, reusable prompt files, agent mode, and extensible skills for end-to-end AI-driven workflows."
 +++
 
-A first-class prompt engineering system baked directly into your IDE. Define how Copilot thinks, what it knows about your project, and what it can *do*—all through version-controlled files living alongside your code.
+Here we explore GitHub Copilot and it's prompt library—a powerful framework for structuring and reusing prompts to get consistent, high-quality AI assistance across codebase.
+
+> Source: https://docs.github.com/copilot/tutorials/customization-library 
+
+## What Is the Customization Library?
+
+The Customization Library is a section of the GitHub Copilot documentation containing **19 curated, ready-to-use examples** across three types of Copilot customization. The docs explicitly describe all examples as "intended for inspiration" — you are encouraged to adapt them to your specific projects, languages, and team processes.
+
+The three types covered are:
+- **Custom instructions** — persistent behavioral guidance injected into every interaction
+- **Prompt files** — reusable, on-demand task prompts (public preview)
+- **Custom agents** — specialized autonomous coding agents with a defined scope and tool access
 
 ---
 
-### The Core Mental Model
-
-Copilot's prompt library is built around three layers that stack on top of each other:
-
-1. **Custom Instructions** — persistent context that shapes *every* interaction
-2. **Prompt Files** — reusable, parameterised prompts for specific tasks
-3. **Agent Mode + Skills** — autonomous multi-step execution with tool access
-
-Understanding this hierarchy is the key to getting repeatable, high-quality output at scale.
-
----
+## The Three Customization Types
 
 ### Custom Instructions
 
-Custom instructions let you inject persistent context into every Copilot Chat conversation without repeating yourself. Think of them as a standing system prompt for your project.
+Custom instructions are Markdown files whose content is automatically included in the context of every Copilot Chat interaction. You do not invoke them — they are always active once in place. There are four scopes:
 
-**`.github/copilot-instructions.md`** is the magic file. Drop it in your repo root and Copilot reads it automatically in VS Code, Visual Studio, and JetBrains IDEs (with the Copilot plugin).
+**Repository-wide instructions** — A single file at `.github/copilot-instructions.md`. Applies to all files in the repository. This is the most broadly supported form and works across IDEs, GitHub.com chat, and the coding agent.
 
-```markdown
-# Project: Payments API
-
-## Stack
-- Java 21 / Spring Boot 3.3
-- PostgreSQL 16 via Spring Data JPA + Hibernate
-- JUnit 5 + Mockito for unit tests, Testcontainers for integration
-
-## Conventions
-- All monetary values are stored as `BigDecimal` or integer cents—never `double` or `float`
-- Use Java `record` types for DTOs and value objects
-- Use `Optional<T>` for nullable return values—never return `null` from service methods
-- Database migrations managed by Flyway in `src/main/resources/db/migration` with `V{timestamp}__description.sql` naming
-- Always add Javadoc to public methods and classes
-
-## Testing
-- Every new service method needs a unit test using JUnit 5 and Mockito
-- Integration tests use Testcontainers and live in `src/test/java/.../integration`
-- Use `@DisplayName` annotations to describe test intent in plain English
-- Use `@Nested` classes to group related test cases
-
-## What to avoid
-- Do not use `java.util.Date` or `java.util.Calendar`—use `java.time.*`
-- Do not use field injection (`@Autowired` on fields)—use constructor injection
-- Do not use raw types—always parameterise generics
-```
-
-**Best practices:**
-
-- Keep it under ~500 words. Copilot has a context window, not infinite patience.
-- Write it for the AI, not for humans—be directive, not descriptive.
-- Commit it to source control. The whole team benefits automatically.
-- Separate *what the project is* from *how to write code for it*. Both matter.
-
-**Multiple instruction files (VS Code `>=1.99`):**
-
-You can now define instructions per-concern using the `github.copilot.chat.codeGeneration.instructions` setting, pointing to multiple `.md` files:
-
-```json
-"github.copilot.chat.codeGeneration.instructions": [
-  { "file": ".github/instructions/stack.md" },
-  { "file": ".github/instructions/testing.md" },
-  { "file": ".github/instructions/style.md" },
-  { "file": ".github/instructions/spring.md" }
-]
-```
-
-This is especially useful in monorepos where different packages have different conventions.
-
----
-
-### Prompt Files (`.prompt.md`)
-
-Prompt files are reusable, shareable, parameterised prompts stored as Markdown. They let you encode your team's best prompts into version-controlled artifacts—no more copying and pasting the same prompt into chat.
-
-**Location:** `.github/prompts/` (or any folder, configured via settings)
-
-**File extension:** `.prompt.md`
-
-**Anatomy of a prompt file:**
+**Path-specific instructions** — One or more files named `NAME.instructions.md` inside the `.github/` directory (optionally organized in subdirectories like `.github/instructions/`). Each file must include a YAML frontmatter block with an `applyTo` glob pattern. Instructions only activate when Copilot is working with files that match the pattern. Currently supported in: **Copilot Chat in VS Code**, **Visual Studio**, and the **Copilot coding agent**. Not supported in JetBrains, Xcode, GitHub.com chat, or mobile for this format.
 
 ```markdown
 ---
-mode: 'ask'           # ask | edit | agent
-model: 'gpt-4o'       # optional model override
-tools: []             # tools available in agent mode
-description: 'Scaffold a new REST endpoint following project conventions'
+applyTo: "tests/**/*.py"
 ---
-
-# New REST Endpoint
-
-Create a new REST endpoint for `${input:resource}` (e.g. `users`, `orders`).
-
-## Requirements
-- Controller at `src/main/java/.../controller/${input:Resource}Controller.java`
-  annotated with `@RestController` and `@RequestMapping("/${input:resource}s")`
-- Service interface + implementation at `src/main/java/.../service/${input:Resource}Service.java`
-  and `${input:Resource}ServiceImpl.java`
-- Spring Data JPA repository at `src/main/java/.../repository/${input:Resource}Repository.java`
-- Request/response DTOs as Java `record` types in `.../dto/`
-- Bean Validation annotations (`@NotNull`, `@Size`, etc.) on all request records
-- JUnit 5 + Mockito unit test for the service implementation
-
-## Reference files
-Use [src/main/java/.../controller/ProductController.java](../src/main/java/.../controller/ProductController.java) as the canonical example.
-
-Follow all conventions in [copilot-instructions.md](../copilot-instructions.md).
 ```
 
-**Variable interpolation:**
+Multiple patterns are separated by commas. If both a path-specific file and `copilot-instructions.md` apply to the same file, instructions from both are used. Avoid conflicting instructions between them — Copilot's behavior when instructions conflict is non-deterministic.
 
-| Syntax | Behaviour |
-|---|---|
-| `${input:variableName}` | Prompts the user for a value at run time |
-| `${input:variableName:default}` | Same, with a default value pre-filled |
-| `${workspaceFolder}` | Absolute path to the workspace root |
-| `${file}` | Currently active file |
-| `${selectedText}` | Current editor selection |
+**Personal instructions** — Set on GitHub.com under your profile picture → "Personal instructions". Apply only to you, only in Copilot Chat on GitHub.com. Good for quick personal testing before rolling something out to a team.
 
-**Referencing other files:**
+**Organization instructions** — Set in organization settings on GitHub.com. Apply to all organization members in Copilot Chat on GitHub.com. Do not affect IDE interactions.
 
-Prompt files can embed other files using relative Markdown links. Copilot pulls the content into context automatically:
+---
+
+### Prompt Files
+
+Prompt files (currently **public preview**, subject to change) are reusable, on-demand task prompts stored in your repository. Unlike custom instructions, they only run when you explicitly invoke them.
+
+**File location:** `.github/prompts/`  
+**File extension:** `.prompt.md`  
+**Supported in:** VS Code, Visual Studio, JetBrains IDEs only. Not available in GitHub.com chat, GitHub Mobile, or Windows Terminal.
+
+Frontmatter fields:
+- `agent` — set to `'agent'` to run in agent mode
+- `description` — a human-readable label shown in the IDE
+
+Dynamic input variables use this syntax: `${input:variableName:placeholder text}`. When you invoke the prompt, Copilot pauses to ask you for each variable before running.
+
+**How to invoke in VS Code:** Open Copilot Chat, type `/filename` (the filename without `.prompt.md`). Or use the "Attach context" icon → "Prompt..." and select the file. You can optionally attach additional files for context alongside the prompt.
+
+---
+
+### Custom Agents
+
+Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, and tool access. They maintain their full configuration throughout an entire autonomous session — reading files, searching the codebase, editing files, and opening pull requests.
+
+The docs define the distinction: custom instructions shape all interactions broadly; prompt files execute a one-time task; custom agents are **selected for a specific task and maintain their configuration for the entire autonomous workflow**.
+
+**File location:** `.github/agents/`  
+**File extension:** `.agent.md`  
+**Requirement:** Must be committed to the repository's **default branch** to appear in the dropdown at `github.com/copilot/agents`.
+
+Frontmatter:
+```yaml
+---
+name: agent-name
+description: What this agent does (shown in the UI)
+tools: ['read', 'search', 'edit']
+---
+```
+
+The `tools` array declares what actions the agent may take. The tools available and used in the library examples are `read`, `search`, and `edit`.
+
+The body of the file is the agent's system prompt. It defines the agent's role, capabilities, and explicit limitations. A well-designed agent profile always includes a clear "do NOT" section to prevent scope creep.
+
+**How to use a custom agent:**
+1. Commit the `.agent.md` file to the default branch
+2. Go to `https://github.com/copilot/agents`
+3. Select your repository, branch, and agent from the dropdowns
+4. Type a task and press Enter — the agent runs autonomously and creates a PR
+5. Track progress in real time via the session view
+
+---
+
+## File Location Reference
+
+```
+your-repo/
+└── .github/
+    ├── copilot-instructions.md          ← Repository-wide instructions (all surfaces)
+    │
+    ├── instructions/                    ← Optional subdirectory for path-specific files
+    │   └── python-tests.instructions.md ← Requires applyTo: "glob" in frontmatter
+    │                                       Supported: VS Code, Visual Studio, coding agent only
+    │
+    ├── prompts/
+    │   ├── explain-code.prompt.md       ← Invoke with /explain-code in IDE chat
+    │   └── create-readme.prompt.md      ← VS Code, Visual Studio, JetBrains only
+    │
+    └── agents/
+        ├── readme-specialist.agent.md   ← Must be on default branch
+        └── bug-fix-teammate.agent.md    ← Selected at github.com/copilot/agents
+```
+
+---
+
+## All 19 Library Examples
+
+### Custom Instructions (9 examples)
+
+---
+
+#### 1. Your First Custom Instructions
+**Complexity:** Simple
+
+A minimal introduction demonstrating the impact instructions have on code generation.
 
 ```markdown
-Refactor the following service to match the patterns in
-[src/services/userService.ts](../src/services/userService.ts).
-
-Apply the error handling style from
-[docs/error-handling.md](../../docs/error-handling.md).
+When writing functions, always:
+- Add descriptive JSDoc comments
+- Include input validation
+- Use early returns for error conditions
+- Add meaningful variable names
+- Include at least one example usage in comments
 ```
 
-**Running a prompt file:**
-
-- Open Command Palette → `Chat: Run Prompt File`
-- Or right-click a `.prompt.md` → `Run in Copilot Chat`
-- Or reference it inside chat: `#file:.github/prompts/new-endpoint.prompt.md`
+**How to test:** Add as personal instructions on GitHub.com (profile picture → Personal instructions), then ask: `Create a JavaScript function that calculates the area of a circle`. Without instructions you get a bare function. With them, Copilot adds JSDoc, input validation, early returns, and an example usage comment.
 
 ---
 
-### Mode: `ask` vs `edit` vs `agent`
+#### 2. Concept Explainer
+**Complexity:** Simple
 
-The `mode` frontmatter key controls how Copilot behaves when the prompt runs.
-
-**`ask` (default):** Conversational. Copilot responds with text, code blocks, and explanations but does not touch files. Best for: exploration, architecture discussions, code review, explaining concepts.
-
-**`edit`:** Copilot directly edits files in your workspace. You review a diff before accepting. Best for: targeted refactors, applying a consistent change across multiple files, code generation with predictable scope.
+Instructs Copilot to explain technical concepts progressively — starting from analogies, building toward technical detail, and always connecting theory to real problems.
 
 ```markdown
----
-mode: 'edit'
-description: 'Add OpenTelemetry tracing spans to all service methods'
----
+When explaining technical concepts:
 
-Add OpenTelemetry tracing to every public method in ${file}.
+## Start Simple, Build Up
+- Begin with everyday analogies and familiar examples
+- Introduce technical terms gradually after concepts are clear
+- Build each new idea on what was already explained
+- Use concrete examples before abstract theory
 
-- Inject `OpenTelemetry openTelemetry` via constructor and obtain a `Tracer`
-  with `openTelemetry.getTracer(getClass().getName())`
-- Wrap each method body in `tracer.spanBuilder("ServiceName.methodName").startSpan()`
-  and use a try-with-resources or try/finally to call `span.end()`
-- In catch blocks, call `span.setStatus(StatusCode.ERROR, e.getMessage())`
-  and `span.recordException(e)`
-- Do not change method signatures or return types
+## Make It Practical
+- Include working code examples that demonstrate the concept
+- Show real-world applications and use cases
+- Connect theory to problems developers actually face
+- Provide step-by-step implementation when relevant
+
+## Address Common Confusion
+- Highlight misconceptions that typically trip up learners
+- Explain what NOT to do and why
+- Address edge cases that often cause problems
+- Show debugging approaches when things go wrong
+
+## Check Understanding
+- Ask questions to gauge comprehension
+- Provide simple exercises to reinforce learning
+- Break complex topics into smaller, digestible pieces
+- Adjust complexity based on the learner's responses
+
+Always prioritize clarity and practical understanding over comprehensive coverage.
 ```
 
-**`agent`:** Copilot operates autonomously across multiple steps—reading files, running terminal commands, calling tools, and iterating until the task is complete. This is the most powerful mode and the one that benefits most from tight instructions. Best for: scaffolding features end-to-end, running test suites and fixing failures, database migrations, multi-file refactors.
-
 ---
 
-### Agent Mode
+#### 3. Debugging Tutor
+**Complexity:** Simple
 
-Agent mode transforms Copilot from a suggestion engine into an autonomous development loop. It can:
-
-- Read and write arbitrary files in your workspace
-- Execute terminal commands (with your confirmation, by default)
-- Call registered MCP tools and Copilot Extensions
-- Iterate—run tests, see failures, fix them, repeat—until a goal is met
-
-**Enabling agent mode:**
-
-```json
-// settings.json
-"github.copilot.chat.agent.enabled": true
-```
-
-Open the Chat panel, switch the mode dropdown from **Ask** / **Edit** to **Agent**.
-
-**Prompt design for agent mode:**
-
-Agent prompts need to be more explicit about *definition of done* than ask/edit prompts. Copilot will keep iterating, so give it a clear stopping condition.
+Tells Copilot to act as a debugging teacher — guiding users through systematic methodology rather than handing them direct answers. Builds long-term problem-solving skills.
 
 ```markdown
----
-mode: 'agent'
-description: 'Implement the invoicing feature end-to-end'
-tools: ['codebase', 'terminal', 'github']
----
+When helping with debugging, guide users through:
 
-Implement the `invoicing` feature according to the spec in
-[docs/specs/invoicing.md](../docs/specs/invoicing.md).
+## Systematic Approach
+- Start by reproducing the issue consistently
+- Read error messages carefully—they contain crucial clues
+- Use print statements or debugger to trace execution flow
+- Test one change at a time to isolate what fixes the problem
 
-## Steps (execute in order)
-1. Create the JPA entity and Spring Data repository
-2. Write the Flyway migration SQL in `src/main/resources/db/migration/`
-3. Implement the service interface and `@Service` implementation with constructor injection
-4. Implement the `@RestController` with Bean Validation on request bodies
-5. Write JUnit 5 + Mockito unit tests for the service—all must pass before continuing
-6. Write Testcontainers integration tests for the repository layer
+## Key Debugging Questions
+- What exactly is happening vs. what you expected?
+- When did this problem start occurring?
+- What was the last change made before the issue appeared?
+- Can you create a minimal example that reproduces the problem?
 
-## Definition of done
-- `./mvnw test` exits 0 with no skipped tests
-- `./mvnw checkstyle:check` exits 0
-- `./mvnw compile` produces no warnings about raw types or unchecked casts
+## Common Investigation Steps
+1. Check logs and error messages for specific details
+2. Verify inputs and outputs at each step
+3. Use debugging tools (breakpoints, step-through)
+4. Search for similar issues in documentation and forums
 
-Do not ask for confirmation between steps unless you encounter an ambiguity
-not resolvable from existing code patterns.
+## Teaching Approach
+- Ask leading questions rather than giving direct answers
+- Encourage hypothesis formation: "What do you think might cause this?"
+- Guide toward systematic elimination of possibilities
+- Help build understanding of the underlying problem, not just quick fixes
+- Focus on teaching debugging methodology that users can apply independently to future problems
+- Encourage defensive programming techniques to prevent common error categories
+- Teach how to build automated tests that catch regressions and edge cases
+
+## Teaching Through Debugging
+- Use debugging sessions as opportunities to reinforce programming concepts
+- Explain the reasoning behind each debugging step and decision
+- Help learners understand code execution flow and data transformations
+- Connect debugging exercises to broader software engineering principles
+- Build pattern recognition skills for common problem categories
+
+Always encourage curiosity and questioning rather than providing quick fixes, building long-term debugging skills and confidence.
 ```
 
-**Terminal command approval:**
-
-By default, Copilot asks before running each terminal command. You can pre-approve safe commands in settings:
-
-```json
-"github.copilot.chat.agent.autoApprove": ["./mvnw test", "./mvnw checkstyle:check", "./mvnw compile"]
-```
-
 ---
 
-### Agent Skills (Tools)
+#### 4. Code Reviewer
+**Complexity:** Simple
 
-Skills—called *tools* in the API surface—are the capabilities an agent can invoke during a run. They're declared in the `tools` array of a prompt file's frontmatter.
+Directs Copilot to focus code reviews on security, performance, and code quality — with constructive, reasoned feedback. Includes an inline code example demonstrating the kind of readability improvement to suggest.
 
-**Built-in tools:**
+```markdown
+When reviewing code, focus on:
 
-| Tool | What it does |
-|---|---|
-| `codebase` | Semantic search and file reading across the whole repo |
-| `terminal` | Execute shell commands |
-| `github` | Read issues, PRs, commits, and repo metadata via the GitHub API |
-| `browser` | Fetch and render web pages (where enabled) |
-| `search` | Web search for documentation and external references |
+## Security Critical Issues
+- Check for hardcoded secrets, API keys, or credentials
+- Look for SQL injection and XSS vulnerabilities
+- Verify proper input validation and sanitization
+- Review authentication and authorization logic
 
-**MCP (Model Context Protocol) tools:**
+## Performance Red Flags
+- Identify N+1 database query problems
+- Spot inefficient loops and algorithmic issues
+- Check for memory leaks and resource cleanup
+- Review caching opportunities for expensive operations
 
-Copilot supports MCP servers, letting you connect any external tool. Register them in `.vscode/mcp.json`:
+## Code Quality Essentials
+- Functions should be focused and appropriately sized
+- Use clear, descriptive naming conventions
+- Ensure proper error handling throughout
 
-```json
-{
-  "servers": {
-    "postgres": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://localhost/mydb"]
-    },
-    "linear": {
-      "command": "npx",
-      "args": ["-y", "linear-mcp-server"],
-      "env": { "LINEAR_API_KEY": "${env:LINEAR_API_KEY}" }
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/user/projects"]
-    }
-  }
+## Review Style
+- Be specific and actionable in feedback
+- Explain the "why" behind recommendations
+- Acknowledge good patterns when you see them
+- Ask clarifying questions when code intent is unclear
+
+Always prioritize security vulnerabilities and performance issues that could impact users.
+
+Always suggest changes to improve readability. For example, this suggestion seeks to make the code more readable and also makes the validation logic reusable and testable.
+
+// Instead of:
+if (user.email && user.email.includes('@') && user.email.length > 5) {
+  submitButton.enabled = true;
+} else {
+  submitButton.enabled = false;
 }
+
+// Consider:
+function isValidEmail(email) {
+  return email && email.includes('@') && email.length > 5;
+}
+
+submitButton.enabled = isValidEmail(user.email);
 ```
 
-Once registered, reference them in your prompt files:
+---
+
+#### 5. GitHub Actions Helper
+**Complexity:** Simple | **Path-specific:** `.github/workflows/**/*.yml`
+
+A path-specific file that activates only when Copilot works with GitHub Actions workflow YAML files. Enforces security (secret handling, SHA-pinning), performance (caching, timeouts), and best-practice patterns.
 
 ```markdown
 ---
-mode: 'agent'
-tools: ['codebase', 'postgres', 'linear']
-description: 'Triage failing queries reported in Linear and add DB indexes'
+applyTo: ".github/workflows/**/*.yml"
 ---
 
-1. Fetch open Linear issues labelled `perf/slow-query`
-2. For each issue, identify the slow JPQL or native query in the codebase
-3. Query `pg_stat_statements` via the postgres tool to confirm high mean exec time
-4. Add a covering index in a new Flyway migration under `src/main/resources/db/migration/`
-5. Add the corresponding `@Index` annotation to the JPA entity
-6. Comment on the Linear issue with the migration filename and expected improvement
+When generating or improving GitHub Actions workflows:
+
+## Security First
+- Use GitHub secrets for sensitive data, never hardcode credentials
+- Pin third-party actions to specific commits by using the SHA value
+  (e.g., `- uses: owner/some-action@a824008085750b8e136effc585c3cd6082bd575f`)
+- Configure minimal permissions for GITHUB_TOKEN required for the workflow
+
+## Performance Essentials
+- Cache dependencies with `actions/cache` or built-in cache options
+- Add `timeout-minutes` to prevent hung workflows
+- Use matrix strategies for multi-environment testing
+
+## Best Practices
+- Use descriptive names for workflows, jobs, and steps
+- Include appropriate triggers: `push`, `pull_request`, `workflow_dispatch`
+- Add `if: always()` for cleanup steps that must run regardless of failure
+
+## Example Pattern
+name: CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
 ```
 
-**Copilot Extensions:**
+---
 
-Extensions are first-party skills published to the GitHub Marketplace—think of them as managed MCP tools. Reference them with the `@` mention in chat or declare them in prompt files. Examples: `@azure`, `@docker`, `@datastax`.
+#### 6. Pull Request Assistant
+**Complexity:** Simple
+
+A comprehensive instructions set for both writing PR descriptions and reviewing PRs. One of the most detailed examples in the library.
+
+```markdown
+When creating pull request descriptions or reviewing PRs:
+
+## PR Description Template
+**What changed**
+- Clear summary of modifications and affected components
+- Link to related issues or tickets
+
+**Why**
+- Business context and requirements
+- Technical reasoning for approach taken
+
+**Testing**
+- [ ] Unit tests pass and cover new functionality
+- [ ] Manual testing completed for user-facing changes
+- [ ] Performance/security considerations addressed
+
+**Breaking Changes**
+- List any API changes or behavioral modifications
+- Include migration instructions if needed
+
+## Review Focus Areas
+- **Security**: Check for hardcoded secrets, input validation, auth issues
+- **Performance**: Look for database query problems, inefficient loops
+- **Testing**: Ensure adequate test coverage for new functionality
+- **Documentation**: Verify code comments and README updates
+
+## Review Style
+- Be specific and constructive in feedback
+- Acknowledge good patterns and solutions
+- Ask clarifying questions when code intent is unclear
+- Focus on maintainability and readability improvements
+- Always prioritize changes that improve security, performance, or user experience
+- Provide migration guides for significant changes
+- Update version compatibility information
+
+### Deployment Requirements
+- [ ] Database migrations and rollback plans
+- [ ] Environment variable updates required
+- [ ] Feature flag configurations needed
+- [ ] Third-party service integrations updated
+- [ ] Documentation updates completed
+
+## Review Comment Format
+
+Use this structure for consistent, helpful feedback:
+
+**Issue:** Describe what needs attention
+**Suggestion:** Provide specific improvement with code example
+**Why:** Explain the reasoning and benefits
+
+## Review Labels and Emojis
+- 🔒 Security concerns requiring immediate attention
+- ⚡ Performance issues or optimization opportunities
+- 🧹 Code cleanup and maintainability improvements
+- 📚 Documentation gaps or update requirements
+- ✅ Positive feedback and acknowledgment of good practices
+- 🚨 Critical issues that block merge
+- 💭 Questions for clarification or discussion
+
+Always provide constructive feedback that helps the team improve together.
+```
 
 ---
 
-### Workspace Context (`#` References)
+#### 7. Issue Manager
+**Complexity:** Simple
 
-Beyond prompt files and instructions, Copilot can pull in context on demand using `#` symbols in chat:
+Instructions for writing well-structured GitHub issues — for bugs, feature requests, and issue responses — with clear titles, reproduction steps, acceptance criteria, and consistent triage templates.
 
-| Reference | What it pulls in |
-|---|---|
-| `#file:path/to/file.ts` | Content of a specific file |
-| `#selection` | Current editor selection |
-| `#codebase` | Semantic search across the repo |
-| `#terminalLastCommand` | Output of the last terminal command |
-| `#terminalSelection` | Selected text in the integrated terminal |
-| `#problems` | Current Problems panel (compiler errors, lint) |
-| `#changes` | Current git diff (unstaged + staged) |
-| `#testFailure` | Most recent test run failures |
-| `#editor` | Full content of the active editor tab |
+---
 
-Combine these in prompt files for surgical context injection:
+#### 8. Accessibility Auditor
+**Complexity:** Intermediate | **Path-specific:** targets frontend file types
+
+A path-specific instructions file for frontend code. Directs Copilot to evaluate code for WCAG 2.1 AA compliance — checking ARIA attributes, keyboard navigation, color contrast, semantic HTML, screen reader compatibility — and to generate actionable remediation suggestions.
+
+---
+
+#### 9. Testing Automation
+**Complexity:** Advanced | **Path-specific:** `tests/**/*.py`
+
+The most advanced custom instructions example in the library. Path-specific for Python test files. Embeds a concrete pytest code pattern directly in the instructions to teach Copilot the exact conventions to follow.
 
 ```markdown
 ---
-mode: 'edit'
+applyTo: "tests/**/*.py"
 ---
 
-Fix the issues shown in #problems without changing the public method signatures.
-Reference the existing test suite at #file:src/test/java/.../service/UserServiceTest.java
-to understand expected behaviour.
+When writing Python tests:
+
+## Test Structure Essentials
+- Use pytest as the primary testing framework
+- Follow AAA pattern: Arrange, Act, Assert
+- Write descriptive test names that explain the behavior being tested
+- Keep tests focused on one specific behavior
+
+## Key Testing Practices
+- Use pytest fixtures for setup and teardown
+- Mock external dependencies (databases, APIs, file operations)
+- Use parameterized tests for testing multiple similar scenarios
+- Test edge cases and error conditions, not just happy paths
+
+## Example Test Pattern
+import pytest
+from unittest.mock import Mock, patch
+
+class TestUserService:
+    @pytest.fixture
+    def user_service(self):
+        return UserService()
+
+    @pytest.mark.parametrize("invalid_email", ["", "invalid", "@test.com"])
+    def test_should_reject_invalid_emails(self, user_service, invalid_email):
+        with pytest.raises(ValueError, match="Invalid email"):
+            user_service.create_user({"email": invalid_email})
+
+    @patch('src.user_service.email_validator')
+    def test_should_handle_validation_failure(self, mock_validator, user_service):
+        mock_validator.validate.side_effect = ConnectionError()
+
+        with pytest.raises(ConnectionError):
+            user_service.create_user({"email": "test@example.com"})
 ```
+
+What makes this "Advanced": it combines path-specificity with the AAA pattern, pytest fixtures, parameterized testing, and mocking — all demonstrated in an embedded code example within the instructions themselves.
 
 ---
 
-### Organising a Production Prompt Library
+### Prompt Files (6 examples)
 
-A suggested structure for a real project:
-
-```
-.github/
-├── copilot-instructions.md          # Global instructions (always active)
-├── instructions/
-│   ├── stack.md                     # Spring Boot, JPA, Flyway conventions
-│   ├── testing.md                   # JUnit 5, Mockito, Testcontainers style
-│   ├── security.md                  # Input validation, secrets, Spring Security rules
-│   └── api-design.md               # REST conventions, error response shapes
-└── prompts/
-    ├── scaffold/
-    │   ├── new-endpoint.prompt.md   # Controller + Service + Repository + DTO
-    │   ├── new-entity.prompt.md     # JPA entity + Flyway migration
-    │   └── new-exception.prompt.md  # Custom exception + @ControllerAdvice handler
-    ├── review/
-    │   ├── security-review.prompt.md
-    │   ├── performance-review.prompt.md
-    │   └── accessibility-review.prompt.md
-    ├── ops/
-    │   ├── incident-runbook.prompt.md
-    │   └── deploy-checklist.prompt.md
-    └── docs/
-        ├── generate-readme.prompt.md
-        └── changelog-entry.prompt.md
-```
+All stored in `.github/prompts/*.prompt.md`. Available in VS Code, Visual Studio, and JetBrains only.
 
 ---
 
-### Advantages
-- Prompt files are version-controlled — diffs, blame, and PRs work as normal
-- Custom instructions mean every team member gets consistent AI behaviour without configuration
-- Agent mode + MCP turns Copilot into an end-to-end workflow engine, not just an autocomplete
-- Prompt files are composable — reference other prompt files and docs to build complex behaviour from simple parts
-- Works across VS Code, Visual Studio, JetBrains, and `gh copilot` CLI with the same file format
+#### 10. Your First Prompt File
+**Complexity:** Simple | **Filename:** `explain-code.prompt.md`
+
+Introductory example. Generates a beginner-friendly explanation of any code snippet.
+
+```markdown
+---
+agent: 'agent'
+description: 'Generate a clear code explanation with examples'
+---
+
+Explain the following code in a clear, beginner-friendly way:
+
+Code to explain: ${input:code:Paste your code here}
+Target audience: ${input:audience:Who is this explanation for? (e.g., beginners, intermediate developers, etc.)}
+
+Please provide:
+
+* A brief overview of what the code does
+* A step-by-step breakdown of the main parts
+* Explanation of any key concepts or terminology
+* A simple example showing how it works
+* Common use cases or when you might use this approach
+
+Use clear, simple language and avoid unnecessary jargon.
+```
+
+**How to test:** Save the file, open Copilot Chat in VS Code, type `/explain-code`. Copilot switches to agent mode and prompts you for the `code` and `audience` variables. Example input: `The code is function fibonacci(n) { return n <= 1 ? n : fibonacci(n-1) + fibonacci(n-2); }. The audience is beginners.`
+
+Key concepts demonstrated: `${input:variableName:placeholder}` syntax, `agent: 'agent'` frontmatter, the `description` field.
+
+---
+
+#### 11. Create README
+**Complexity:** Simple | **Filename:** `create-readme.prompt.md`
+
+Reusable across repositories. Copilot scans the codebase and generates a structured README covering: project description, prerequisites, installation, usage examples, contributing guide, and license section.
+
+---
+
+#### 12. Onboarding Plan
+**Complexity:** Simple | **Filename:** `onboarding-plan.prompt.md`
+
+Generates a personalized onboarding plan for a new team member joining a project. Takes the repository context and a developer's background as inputs and produces a structured checklist: repo overview, key architecture decisions, local setup, coding conventions, and suggested first tasks.
+
+---
+
+#### 13. Document API
+**Complexity:** Advanced | **Filename:** `document-api.prompt.md`
+
+Generates comprehensive API documentation from source code. Covers endpoint descriptions, request/response schemas, authentication requirements, error codes, and usage examples.
+
+---
+
+#### 14. Review Code
+**Complexity:** Advanced | **Filename:** `review-code.prompt.md`
+
+Performs a structured code review with actionable feedback. Analyzes for correctness, performance, security vulnerabilities, readability, test coverage gaps, and adherence to conventions. Outputs findings with severity levels and suggested fixes.
+
+---
+
+#### 15. Generate Unit Tests
+**Complexity:** Intermediate | **Filename:** `generate-unit-tests.prompt.md`
+
+Takes source code as input and generates unit tests covering happy paths, edge cases, boundary conditions, and error scenarios. Adapts to the language and testing framework detected in the repository.
+
+---
+
+### Custom Agents (4 examples)
+
+All stored in `.github/agents/*.agent.md`. Must be on the **default branch**. Used at `github.com/copilot/agents`.
+
+---
+
+#### 16. Your First Custom Agent — README Specialist
+**Complexity:** Simple | **Filename:** `readme-specialist.agent.md`
+
+The introductory custom agent example. Specializes in README and documentation files, with an explicit hard boundary against ever touching code files.
+
+```markdown
+---
+name: readme-specialist
+description: Specialized agent for creating and improving README files and project documentation
+tools: ['read', 'search', 'edit']
+---
+
+You are a documentation specialist focused primarily on README files, but you can also help with other project documentation when requested. Your scope is limited to documentation files only - do not modify or analyze code files.
+
+**Primary Focus - README Files:**
+- Create and update README.md files with clear project descriptions
+- Structure README sections logically: overview, installation, usage, contributing
+- Write scannable content with proper headings and formatting
+- Add appropriate badges, links, and navigation elements
+- Use relative links (e.g., `docs/CONTRIBUTING.md`) instead of absolute URLs for files within the repository
+- Ensure all links work when the repository is cloned
+- Use proper heading structure to enable GitHub's auto-generated table of contents
+- Keep content under 500 KiB (GitHub truncates beyond this)
+
+**Other Documentation Files (when requested):**
+- Create or improve CONTRIBUTING.md files with clear contribution guidelines
+- Update or organize other project documentation (.md, .txt files)
+- Ensure consistent formatting and style across all documentation
+- Cross-reference related documentation appropriately
+
+**File Types You Work With:**
+- README files (primary focus)
+- Contributing guides (CONTRIBUTING.md)
+- Other documentation files (.md, .txt)
+- License files and project metadata
+
+**Important Limitations:**
+- Do NOT modify code files or code documentation within source files
+- Do NOT analyze or change API documentation generated from code
+- Focus only on standalone documentation files
+- Ask for clarification if a task involves code modifications
+
+Always prioritize clarity and usefulness. Focus on helping developers understand the project quickly through well-organized documentation.
+```
+
+**Sample task:** `Please review and improve our README.md file.`
+
+Design patterns worth noting: explicit "do NOT" limitations, primary vs secondary focus, practical technical constraints embedded in the instructions (500 KiB limit, relative link preference), and defined escalation behavior.
+
+---
+
+#### 17. Implementation Planner
+**Complexity:** Simple | **Filename:** `implementation-planner.agent.md`
+
+Breaks down a feature request or user story into actionable implementation tasks and creates a detailed plan. Reads the codebase to understand existing patterns, then produces: task breakdown, order of operations, affected files, suggested approach, and potential risks. The agent focuses on planning — it does not write code.
+
+---
+
+#### 18. Bug Fix Teammate
+**Complexity:** Simple | **Filename:** `bug-fix-teammate.agent.md`
+
+Identifies critical bugs in the project and implements targeted, minimal fixes. Searches for error patterns and failing tests, diagnoses root causes, and applies the smallest safe change needed. Explains each fix it makes.
+
+---
+
+#### 19. Cleanup Specialist
+**Complexity:** Simple | **Filename:** `cleanup-specialist.agent.md`
+
+Cleans up messy code across both code and documentation files — removing duplication, fixing inconsistent naming, eliminating dead code, and closing documentation gaps — without changing any external behavior. Produces a summary of what was cleaned up.
+
+---
+
+## Important Caveats
+
+**Prompt files are public preview** as of April 2026, subject to change, and only work in VS Code, Visual Studio, and JetBrains.
+
+**Path-specific instructions** (using `applyTo`) are only supported in Copilot Chat in VS Code, Visual Studio, and the coding agent. JetBrains and Xcode support only the single `copilot-instructions.md` file.
+
+**Personal and organization instructions** only apply to Copilot Chat on GitHub.com. They do not affect any IDE.
+
+**Custom agents require the coding agent feature** to be enabled for your organization. The `.agent.md` file must be merged to the default branch before it appears in the UI.
+
+**When both a path-specific file and `copilot-instructions.md` apply to the same file, both sets of instructions are used.** Avoid writing conflicting instructions across them.
+
+---
+
+## Community Examples
+
+Beyond the 19 official examples, GitHub maintains a community repository with additional material:
+
+- **Awesome GitHub Copilot Customizations:** https://github.com/github/awesome-copilot
+  - Instructions by language/scenario: `docs/README.instructions.md`
+  - Prompt files: `docs/README.prompts.md`
+  - Custom agents: `agents/` directory
