@@ -12,9 +12,7 @@ Here we explore GitHub Copilot and it's prompt library—a powerful framework fo
 
 ## What Is the Customization Library?
 
-The Customization Library is a section of the GitHub Copilot documentation containing **19 curated, ready-to-use examples** across three types of Copilot customization. The docs explicitly describe all examples as "intended for inspiration" — you are encouraged to adapt them to your specific projects, languages, and team processes.
-
-The three types covered are:
+The three types of Customeization Library covered are:
 - **Custom instructions** — persistent behavioral guidance injected into every interaction
 - **Prompt files** — reusable, on-demand task prompts (public preview)
 - **Custom agents** — specialized autonomous coding agents with a defined scope and tool access
@@ -27,9 +25,17 @@ The three types covered are:
 
 Custom instructions are Markdown files whose content is automatically included in the context of every Copilot Chat interaction. You do not invoke them — they are always active once in place. There are four scopes:
 
-**Repository-wide instructions** — A single file at `.github/copilot-instructions.md`. Applies to all files in the repository. This is the most broadly supported form and works across IDEs, GitHub.com chat, and the coding agent.
+**Repository-wide instructions**:
+- A single file at `.github/copilot-instructions.md`. 
+- Applies to all files in the repository. 
+- This is the most broadly supported form and works across IDEs, GitHub.com chat, and the coding agent.
 
-**Path-specific instructions** — One or more files named `NAME.instructions.md` inside the `.github/` directory (optionally organized in subdirectories like `.github/instructions/`). Each file must include a YAML frontmatter block with an `applyTo` glob pattern. Instructions only activate when Copilot is working with files that match the pattern. Currently supported in: **Copilot Chat in VS Code**, **Visual Studio**, and the **Copilot coding agent**. Not supported in JetBrains, Xcode, GitHub.com chat, or mobile for this format.
+**Path-specific instructions**:
+
+- One or more files named `NAME.instructions.md` inside the `.github/` directory (optionally organized in subdirectories like `.github/instructions/`). 
+- Each file must include a YAML frontmatter (_a way to identify metadata in Markdown files_) block with an `applyTo` glob pattern. 
+- Instructions only activate when Copilot is working with files that match the pattern. 
+- Currently supported in: **Copilot Chat in VS Code**, **Visual Studio**, and the **Copilot coding agent** (Not in JetBrains, Xcode, GitHub.com chat or mobile) as of April 2026.
 
 ```markdown
 ---
