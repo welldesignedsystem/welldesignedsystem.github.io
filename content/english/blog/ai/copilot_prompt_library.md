@@ -396,18 +396,170 @@ Always provide constructive feedback that helps the team improve together.
 ---
 
 #### 7. Issue Manager
-**Complexity:** Simple
+**Complexity:** Simple | **Filename:** `issue-manager.instructions.md` (repository-wide or path-specific)
 
 Instructions for writing well-structured GitHub issues — for bugs, feature requests, and issue responses — with clear titles, reproduction steps, acceptance criteria, and consistent triage templates.
+
+```markdown
+When creating or managing GitHub issues:
+
+## Bug Report Essentials
+**Description**: Clear, concise summary of the problem
+
+**Steps to Reproduce**: Numbered list of exact actions that cause the issue
+
+**Expected vs Actual Behavior**: What should happen vs what actually happens
+
+**Environment**: OS, browser/client, app version, relevant dependencies
+
+**Additional Context**: Screenshots, error logs, or stack traces
+
+## Feature Request Structure
+**Problem**: What specific problem does this solve?
+
+**Proposed Solution**: Brief description of the suggested approach
+
+**Use Cases**: 2-3 concrete examples of when this would be valuable
+
+**Success Criteria**: How to measure if the feature works
+
+## Issue Management Best Practices
+- Use clear, descriptive titles that summarize the request
+- Apply appropriate labels: bug/feature, priority level, component areas
+- Ask clarifying questions when details are missing
+- Link related issues using #number syntax
+- Provide specific next steps and realistic timelines
+
+## Key Response Guidelines
+- Request reproduction steps for unclear bugs
+- Ask for screenshots/logs when visual issues are reported
+- Explain technical concepts clearly for non-technical users
+- Update issue status regularly with progress information
+
+Focus on making issues actionable and easy for contributors to understand.
+```
 
 ---
 
 #### 8. Accessibility Auditor
-**Complexity:** Intermediate | **Path-specific:** targets frontend file types
+**Complexity:** Intermediate | **Path-specific:** `**/*.html` | **Filename:** `accessibility.instructions.md`
 
-A path-specific instructions file for frontend code. Directs Copilot to evaluate code for WCAG 2.1 AA compliance — checking ARIA attributes, keyboard navigation, color contrast, semantic HTML, screen reader compatibility — and to generate actionable remediation suggestions.
+A path-specific instructions file for HTML files. Directs Copilot to evaluate code for WCAG accessibility compliance — checking ARIA attributes, keyboard navigation, color contrast, semantic HTML, screen reader compatibility �� and to generate actionable remediation suggestions.
 
+```markdown
 ---
+applyTo: "**/*.html"
+---
+
+When reviewing or writing HTML code:
+
+## Semantic HTML Foundation
+- Use proper heading hierarchy (h1, h2, h3...) — never skip levels
+- Use semantic tags: `<nav>`, `<main>`, `<article>`, `<aside>` instead of generic divs
+- Use `<button>` for clickable elements, not `<div onclick>` or `<span>`
+- Use `<form>`, `<label>`, `<fieldset>` for all form controls
+- Ensure form labels are properly associated with inputs via `for` and `id`
+
+## ARIA Attributes & Landmark Roles
+- Add `role="navigation"`, `role="main"`, `role="complementary"` when semantic tags aren't available
+- Use `aria-label` or `aria-labelledby` for icon buttons and unlabeled controls
+- Use `aria-describedby` to provide additional context when needed
+- Use `aria-current="page"` on navigation links pointing to current page
+- Use `aria-expanded` on toggles that show/hide content
+- Use `aria-live="polite"` for dynamic content updates (search results, notifications)
+- Never use ARIA to fix incorrect HTML — use semantic HTML first
+
+## Keyboard Navigation
+- Every interactive element must be reachable via Tab key
+- Ensure logical tab order (left-to-right, top-to-bottom)
+- Use `tabindex="0"` only when necessary for custom interactive components
+- Avoid positive `tabindex` values (creates confusing tab order)
+- Provide `tabindex="-1"` for programmatically focusable elements
+- Test with keyboard only: Tab, Shift+Tab, Enter, Space, Arrow keys
+
+## Color Contrast & Visual Design
+- Maintain at least 4.5:1 contrast ratio for text on background
+- Maintain at least 3:1 contrast ratio for UI components and graphical objects
+- Never rely on color alone to convey information — use text, patterns, or icons
+- Test with color blindness simulators (Coblis, Color Oracle)
+
+## Screen Reader Compatibility
+- Write alt text for all images:
+  - Decorative images: `alt=""` (empty)
+  - Informative images: descriptive, concise text (under 125 characters)
+  - Complex images/diagrams: provide a description link nearby or use `<figure>` with `<figcaption>`
+  - Icons: describe the action or meaning, not the visual shape
+
+Good alt text examples:
+```
+<!-- Incorrect (too literal) -->
+<img src="chart.png" alt="Bar chart">
+
+<!-- Correct (describes the data) -->
+<img src="chart.png" alt="Sales revenue by quarter: Q1 $50K, Q2 $75K, Q3 $90K, Q4 $120K">
+
+<!-- Icon example -->
+<button><i class="icon-trash"></i></button> <!-- Missing alt/aria-label -->
+<button aria-label="Delete item"><i class="icon-trash"></i></button> <!-- Correct -->
+```
+
+- Use `<caption>` and `<thead>/<tbody>/<tfoot>` for data tables
+- Avoid using tables for layout — use CSS Grid or Flexbox instead
+- Test with screen readers: NVDA (Windows), VoiceOver (Mac), JAWS
+
+## Form Accessibility
+- Label every form input with `<label for="inputId">` or `aria-label`
+- Group related inputs with `<fieldset>` and `<legend>`
+- Mark required fields with `required` attribute and visual indicator
+- Provide clear error messages linked to form fields via `aria-describedby`
+- Use `type="email"`, `type="tel"`, `type="date"` for native mobile keyboards
+- Ensure form validation messages are announced to screen readers
+
+## Links & Buttons
+- Avoid ambiguous link text like "Click here", "Read more"
+- Use descriptive link text: "Download project requirements", "GitHub repository"
+- If context is unclear, add `aria-label` or use `<span class="sr-only">` for off-screen context
+- Use `<button>` for actions that trigger scripts; use `<a>` for navigation
+- Ensure all buttons are keyboard accessible and have focus styles
+
+## Motion & Animation
+- Respect `prefers-reduced-motion` media query:
+```css
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+```
+
+- Auto-playing videos/audio must have a pause button that's immediately discoverable
+- Use `aria-busy="true"` during loading states
+
+## CI/CD Testing Integration
+- Add axe-core checks to automated tests:
+```javascript
+const { axe } = require('jest-axe');
+
+it('should not have accessibility violations', async () => {
+  const { container } = render(<YourComponent />);
+  const results = await axe(container);
+  expect(results).toHaveNoViolations();
+});
+```
+
+- Run Lighthouse accessibility audit in CI pipelines
+- Test with real assistive technologies in QA process
+
+## Accessibility as Standard Practice
+- Include accessibility in Definition of Done
+- Test every new feature with keyboard and screen reader
+- Document accessibility decisions in code comments
+- Build inclusive by default, don't add accessibility as an afterthought
+
+Always prioritize accessibility — it benefits everyone, including users with situational disabilities (bright sunlight, noisy environments, temporary injuries).
+```
+
 
 #### 9. Testing Automation
 **Complexity:** Advanced | **Path-specific:** `tests/**/*.py`
