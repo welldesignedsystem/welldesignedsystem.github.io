@@ -186,18 +186,6 @@ When multiple types of custom instructions exist, they are all provided to the A
 
 ---
 
-#### Settings-based instructions (deprecated in VS Code 1.102)
-
-Settings-based `codeGeneration` and `testGeneration` instructions are deprecated as of VS Code 1.102. Use file-based instructions instead. However, for code review, commit messages, and pull request descriptions, VS Code settings are still supported:
-
-| Scenario | Setting |
-|---|---|
-| Code review | `github.copilot.chat.reviewSelection.instructions` |
-| Commit messages | `github.copilot.chat.commitMessageGeneration.instructions` |
-| Pull request descriptions | `github.copilot.chat.pullRequestDescriptionGeneration.instructions` |
-
----
-
 #### Syncing user instructions across devices
 
 VS Code can sync your user instructions files across multiple devices using Settings Sync. Run **Settings Sync: Configure** from the Command Palette and enable **Prompts and Instructions** from the sync list.
