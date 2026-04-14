@@ -23,13 +23,7 @@ The three types of Customization Instructions covered are:
 
 ---
 
-## The Three Customization Types
-
-### Custom Instructions
-
-Custom instructions are Markdown files whose content is automatically included in the context of every Copilot Chat interaction. You do not invoke them — they are always active once in place.
-
-#### Instruction types by category
+## High level:
 
 The VS Code docs distinguish two broad categories:
 
@@ -50,6 +44,7 @@ The VS Code docs distinguish two broad categories:
 | User-level | `~/.copilot/instructions/` or the instructions folder of your VS Code profile | Applies across all workspaces for that user |
 
 ---
+## Customization Types
 
 #### 1. Repository-wide instructions (`.github/copilot-instructions.md`)
 
