@@ -84,32 +84,6 @@ Use `copilot-instructions.md` for:
 
 **Supported in:** Copilot Chat in VS Code, Visual Studio, and the Copilot coding agent. _(Not supported in JetBrains, Xcode, GitHub.com chat, or mobile as of April 2026.)_
 
-**Configuring custom file locations:** The default search location is `.github/instructions/`. You can configure additional locations via the `chat.instructionsFilesLocations` VS Code setting:
-
-```json
-"chat.instructionsFilesLocations": {
-  ".github/instructions": true,
-  ".claude/rules": true,
-  "~/.copilot/instructions": false,
-  "~/.claude/rules": false
-}
-```
-
-VS Code searches all configured folders recursively, so you can organize files in subdirectories. For example:
-
-```
-.github/instructions/
-  frontend/
-    react.instructions.md
-    accessibility.instructions.md
-  backend/
-    api-design.instructions.md
-  testing/
-    unit-tests.instructions.md
-```
-
-**Claude format compatibility:** For compatibility with Claude Code and other Claude-based tools, VS Code also detects `.instructions.md` files in `.claude/rules/` (workspace) and `~/.claude/rules/` (user). These use a `paths` property (array of globs) instead of `applyTo`.
-
 **Example:**
 ```markdown
 ---
@@ -129,36 +103,7 @@ applyTo: '**/*.py'
 
 ---
 
-#### 3. `AGENTS.md` files
-
-- VS Code automatically detects `AGENTS.md` at the workspace root and applies it to all chat requests — useful when you work with multiple AI agents and want a single instruction file recognized by all of them.
-- Supports subfolder-level instructions using the experimental `chat.useNestedAgentsMdFiles` setting, which causes VS Code to search recursively in all subfolders for `AGENTS.md` files.
-- Enable/disable support with the `chat.useAgentsMdFile` setting.
-
-When to use `AGENTS.md` over `copilot-instructions.md`:
-- You work with multiple AI coding agents and want one file recognized by all of them
-- You want subfolder-level instructions in a monorepo
-
----
-
-#### 4. `CLAUDE.md` files
-
-VS Code automatically detects `CLAUDE.md` and applies it as always-on instructions, similar to `AGENTS.md`. This is specifically for compatibility with Claude Code or other Claude-based tools so a single file works across all of them.
-
-VS Code searches for `CLAUDE.md` in these locations:
-
-| Location | Description |
-|---|---|
-| Workspace root | `CLAUDE.md` at the root of your workspace |
-| `.claude` folder | `.claude/CLAUDE.md` in your workspace |
-| User home | `~/.claude/CLAUDE.md` for personal instructions across all projects |
-| Local variant | `CLAUDE.local.md` for local-only instructions (not committed to version control) |
-
-Enable/disable support with the `chat.useClaudeMdFile` setting.
-
----
-
-#### 5. Personal instructions
+#### 3. Personal instructions
 
 - Set on GitHub.com under your profile picture → "Personal instructions".
 - Apply only to you, only in Copilot Chat on GitHub.com.
@@ -166,7 +111,7 @@ Enable/disable support with the `chat.useClaudeMdFile` setting.
 
 ---
 
-#### 6. Organization instructions
+#### 4. Organization instructions
 
 - Set in GitHub organization settings on GitHub.com.
 - Apply to all organization members in Copilot Chat on GitHub.com.
@@ -175,79 +120,8 @@ Enable/disable support with the `chat.useClaudeMdFile` setting.
 - Learn how to add org-level instructions at the [GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions).
 
 ---
-## VS Code Copilot possibilities 
 
-#### Instruction priority (VS Code)
 
-When multiple types of custom instructions exist, they are all provided to the AI. When conflicts occur, higher-priority instructions take precedence:
-
-1. Personal instructions (user-level) — highest priority
-2. Repository instructions (`.github/copilot-instructions.md` or `AGENTS.md`)
-3. Organization instructions — lowest priority
-
----
-
-#### Syncing user instructions across devices
-
-VS Code can sync your user instructions files across multiple devices using Settings Sync. Run **Settings Sync: Configure** from the Command Palette and enable **Prompts and Instructions** from the sync list.
-
----
-
-#### Generating instructions with AI
-
-**Generate workspace-wide instructions:** Type `/init` in the chat input to analyze your workspace and generate a `.github/copilot-instructions.md` tailored to your project. VS Code discovers existing AI conventions, analyzes your project structure, and generates comprehensive instructions.
-
-**Generate a targeted instructions file:** Type `/create-instruction` and describe the convention you want to enforce (e.g. "always use tabs and single quotes in this project"). The agent asks clarifying questions and generates an `.instructions.md` file with the appropriate `applyTo` pattern.
-
-**Extract instructions from conversation:** Ask "extract an instruction from this" mid-conversation to capture a correction as a project convention (e.g. after you corrected the agent's import style).
-
-The official recommended prompt for `/init` from the GitHub Docs is:
-
-```
-Your task is to "onboard" this repository to a coding agent by adding a
-.github/copilot-instructions.md file. It should contain information describing
-how the agent, seeing the repo for the first time, can work most efficiently.
-
-## Goals
-- Document existing project structure and tech stack.
-- Ensure established practices are followed.
-- Minimize bash command and build failures.
-
-## Limitations
-- Instructions must be no longer than 2 pages.
-- Instructions should be broadly applicable to the entire project.
-
-## Guidance
-Ensure you include the following:
-- A summary of what the app does.
-- The tech stack in use
-- Coding guidelines
-- Project structure
-- Existing tools and resources
-
-## Steps to follow
-- Perform a comprehensive inventory of the codebase. Search for and view:
-  - README.md, CONTRIBUTING.md, and all other documentation files.
-  - Search the codebase for indications of workarounds like 'HACK', 'TODO', etc.
-- All scripts, particularly those pertaining to build and repo or environment setup.
-- All project files.
-- All configuration and linting files.
-
-## Validation
-Use the newly created instructions file to implement a sample feature. Use
-learnings from any failures or errors to further refine the instructions file.
-```
-
----
-
-#### Diagnostics: why isn't my instructions file being applied?
-
-Use the chat customization diagnostics view to see all loaded instruction files and any errors. Right-click in the Chat view and select **Diagnostics**.
-
-Common reasons instructions fail to apply:
-- Wrong file location — `.github/copilot-instructions.md` must be in `.github/` at the workspace root. `*.instructions.md` files must be in a folder listed in `chat.instructionsFilesLocations` (or its subdirectories).
-- `applyTo` glob doesn't match the files being worked on. Check the **References** section in the chat response to confirm which instructions were used.
-- Relevant settings are disabled. Check: `chat.includeApplyingInstructions` (pattern-based), `chat.includeReferencedInstructions` (Markdown-linked instructions), `chat.useAgentsMdFile` (AGENTS.md).
 
 ---
 
@@ -320,7 +194,7 @@ handoffs:                                  # Optional: transition to another age
 |---|---|
 | `name` | Display name in the UI |
 | `description` | Short description of the agent's role |
-| `tools` | Array of tools the agent may use. Available tools include `read`, `search`, `edit`, `web/fetch`, `search/codebase`, `search/usages`, and others. |
+| `tools` | Array of tools the agent may use. See the [Default Available Tools for VS Code Custom Agents](#default-available-tools-for-vs-code-custom-agents) section for a complete list. |
 | `model` | Optional. Specify preferred model(s) in priority order. |
 | `handoffs` | Optional. Define transitions to other agents. `send: true` auto-submits the handoff prompt; `send: false` pre-fills it for the user to review. |
 
@@ -333,42 +207,17 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 4. Type a task and press Enter — the agent runs autonomously and creates a PR
 5. Track progress in real time via the session view
 
-**How to use a custom agent (VS Code):**
-1. Select the agent from the agents dropdown in the Chat view
-2. Type a task and start the session
-
-**Enable org-level custom agents in VS Code:** Set `github.copilot.chat.organizationCustomAgents.enabled` to `true`.
-
-**VS Code settings for custom agents**
-For local or repo-shared custom agents, add these settings to `.vscode/settings.json` or your user settings file:
-
-```json
-{
-  "github.copilot.chat.organizationCustomAgents.enabled": true,
-  "chat.agentFilesLocations": [
-    ".github/agents"
-  ],
-  "github.copilot.chat.commitMessageGeneration.instructions": [
-    { "file": ".github/commit-instructions.md" }
-  ]
-}
-```
-
-- `github.copilot.chat.organizationCustomAgents.enabled`: enables discovery of org-level custom agents in VS Code
-- `chat.agentFilesLocations`: points VS Code to local or workspace agent files
-- `github.copilot.chat.commitMessageGeneration.instructions`: example of a similar config style using a repo file reference
-
-If you also want org-level instructions enabled, add:
-
-```json
-{
-  "github.copilot.chat.organizationInstructions.enabled": true
-}
-```
+**How to use a custom agent (GitHub cloud agent) or VS Code:**
+- **GitHub cloud agent:** Commit the `.agent.md` file to the default branch, go to `https://github.com/copilot/agents`, select your repository, branch, and agent from the dropdowns, then type a task and press Enter.
+- **VS Code:** Select the agent from the agents dropdown in the Chat view, then type a task and start the session.
 
 **Generate an agent with AI:** Type `/create-agent` in chat and describe the agent's role to generate a `.agent.md` file.
 
 ---
+
+## Default Available Tools for VS Code Custom Agents
+
+- [Important Cheat Sheet](https://code.visualstudio.com/docs/copilot/reference/copilot-vscode-features)
 
 ## File Location Reference
 
@@ -831,6 +680,173 @@ You can also use slash commands in chat to generate any type of customization fi
 | `/create-agent` | `.agent.md` file |
 | `/create-skill` | Agent skill file |
 | `/create-hook` | Hook file |
+
+---
+
+### AGENTS.md Files (VS Code only)
+
+VS Code automatically detects `AGENTS.md` at the workspace root and applies it to all chat requests. This is useful when you work with multiple AI agents and want a single instruction file recognized by all of them.
+
+**Features:**
+- Supports subfolder-level instructions using the experimental `chat.useNestedAgentsMdFiles` setting, which causes VS Code to search recursively in all subfolders for `AGENTS.md` files
+- Enable/disable support with the `chat.useAgentsMdFile` setting
+
+**When to use `AGENTS.md` over `copilot-instructions.md`:**
+- You work with multiple AI coding agents and want one file recognized by all of them
+- You want subfolder-level instructions in a monorepo
+
+---
+
+### CLAUDE.md Files (VS Code only)
+
+VS Code automatically detects `CLAUDE.md` and applies it as always-on instructions, similar to `AGENTS.md`. This is specifically for compatibility with Claude Code or other Claude-based tools so a single file works across all of them.
+
+VS Code searches for `CLAUDE.md` in these locations:
+
+| Location | Description |
+|---|---|
+| Workspace root | `CLAUDE.md` at the root of your workspace |
+| `.claude` folder | `.claude/CLAUDE.md` in your workspace |
+| User home | `~/.claude/CLAUDE.md` for personal instructions across all projects |
+| Local variant | `CLAUDE.local.md` for local-only instructions (not committed to version control) |
+
+Enable/disable support with the `chat.useClaudeMdFile` setting.
+
+---
+
+### VS Code Settings & Configuration
+
+Configure VS Code behavior with these settings in `.vscode/settings.json` or your user settings:
+
+#### Path-specific instruction file locations
+
+The default search location is `.github/instructions/`. Configure additional locations via the `chat.instructionsFilesLocations` setting:
+
+```json
+{
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    ".claude/rules": true,
+    "~/.copilot/instructions": false,
+    "~/.claude/rules": false
+  }
+}
+```
+
+VS Code searches all configured folders recursively, allowing you to organize files in subdirectories.
+
+#### Custom agent file locations
+
+Enable org-level custom agents and configure local agent file paths:
+
+```json
+{
+  "github.copilot.chat.organizationCustomAgents.enabled": true,
+  "chat.agentFilesLocations": [
+    ".github/agents"
+  ],
+  "github.copilot.chat.organizationInstructions.enabled": true
+}
+```
+
+#### Commit message generation configuration
+
+Configure instructions for commit message generation:
+
+```json
+{
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    { "file": ".github/commit-instructions.md" }
+  ]
+}
+```
+
+#### Instruction behavior toggles
+
+Control which instruction types are applied:
+
+```json
+{
+  "chat.includeApplyingInstructions": true,
+  "chat.includeReferencedInstructions": true,
+  "chat.useAgentsMdFile": true,
+  "chat.useClaudeMdFile": true
+}
+```
+
+---
+
+### Instruction Priority (VS Code)
+
+When multiple types of custom instructions exist, they are all provided to the AI. When conflicts occur, higher-priority instructions take precedence:
+
+1. Personal instructions (user-level) — highest priority
+2. Repository instructions (`.github/copilot-instructions.md` or `AGENTS.md`)
+3. Organization instructions — lowest priority
+
+---
+
+### Syncing Instructions Across Devices
+
+VS Code can sync your user instructions files across multiple devices using Settings Sync. Run **Settings Sync: Configure** from the Command Palette and enable **Prompts and Instructions** from the sync list.
+
+---
+
+### Diagnostics: Troubleshooting Instructions
+
+Use the chat customization diagnostics view to see all loaded instruction files and any errors. Right-click in the Chat view and select **Diagnostics**.
+
+**Common reasons instructions fail to apply:**
+- Wrong file location — `.github/copilot-instructions.md` must be in `.github/` at the workspace root. `*.instructions.md` files must be in a folder listed in `chat.instructionsFilesLocations` (or its subdirectories).
+- `applyTo` glob doesn't match the files being worked on. Check the **References** section in the chat response to confirm which instructions were used.
+- Relevant settings are disabled. Check the instruction behavior toggles listed above.
+
+---
+
+### Generating Instructions with AI (VS Code)
+
+**Generate workspace-wide instructions:** Type `/init` in the chat input to analyze your workspace and generate a `.github/copilot-instructions.md` tailored to your project. VS Code discovers existing AI conventions, analyzes your project structure, and generates comprehensive instructions.
+
+**Generate a targeted instructions file:** Type `/create-instruction` and describe the convention you want to enforce (e.g. "always use tabs and single quotes in this project"). The agent asks clarifying questions and generates an `.instructions.md` file with the appropriate `applyTo` pattern.
+
+**Extract instructions from conversation:** Ask "extract an instruction from this" mid-conversation to capture a correction as a project convention.
+
+The official recommended prompt for `/init` from the GitHub Docs is:
+
+```
+Your task is to "onboard" this repository to a coding agent by adding a
+.github/copilot-instructions.md file. It should contain information describing
+how the agent, seeing the repo for the first time, can work most efficiently.
+
+## Goals
+- Document existing project structure and tech stack.
+- Ensure established practices are followed.
+- Minimize bash command and build failures.
+
+## Limitations
+- Instructions must be no longer than 2 pages.
+- Instructions should be broadly applicable to the entire project.
+
+## Guidance
+Ensure you include the following:
+- A summary of what the app does.
+- The tech stack in use
+- Coding guidelines
+- Project structure
+- Existing tools and resources
+
+## Steps to follow
+- Perform a comprehensive inventory of the codebase. Search for and view:
+  - README.md, CONTRIBUTING.md, and all other documentation files.
+  - Search the codebase for indications of workarounds like 'HACK', 'TODO', etc.
+- All scripts, particularly those pertaining to build and repo or environment setup.
+- All project files.
+- All configuration and linting files.
+
+## Validation
+Use the newly created instructions file to implement a sample feature. Use
+learnings from any failures or errors to further refine the instructions file.
+```
 
 ---
 
