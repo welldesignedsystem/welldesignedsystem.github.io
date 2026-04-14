@@ -175,6 +175,7 @@ Enable/disable support with the `chat.useClaudeMdFile` setting.
 - Learn how to add org-level instructions at the [GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions).
 
 ---
+## VS Code Copilot possibilities 
 
 #### Instruction priority (VS Code)
 
@@ -337,6 +338,33 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 2. Type a task and start the session
 
 **Enable org-level custom agents in VS Code:** Set `github.copilot.chat.organizationCustomAgents.enabled` to `true`.
+
+**VS Code settings for custom agents**
+For local or repo-shared custom agents, add these settings to `.vscode/settings.json` or your user settings file:
+
+```json
+{
+  "github.copilot.chat.organizationCustomAgents.enabled": true,
+  "chat.agentFilesLocations": [
+    ".github/agents"
+  ],
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    { "file": ".github/commit-instructions.md" }
+  ]
+}
+```
+
+- `github.copilot.chat.organizationCustomAgents.enabled`: enables discovery of org-level custom agents in VS Code
+- `chat.agentFilesLocations`: points VS Code to local or workspace agent files
+- `github.copilot.chat.commitMessageGeneration.instructions`: example of a similar config style using a repo file reference
+
+If you also want org-level instructions enabled, add:
+
+```json
+{
+  "github.copilot.chat.organizationInstructions.enabled": true
+}
+```
 
 **Generate an agent with AI:** Type `/create-agent` in chat and describe the agent's role to generate a `.agent.md` file.
 
