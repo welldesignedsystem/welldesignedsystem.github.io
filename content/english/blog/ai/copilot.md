@@ -386,6 +386,27 @@ CLAUDE.local.md                                ← Local-only, not committed to 
 
 ---
 
+## Comparison of Customization Types - Prompts File vs. Agent Skills
+
+| Feature | Prompt File (`.prompt.md`) | Agent Skill (`SKILL.md`) |
+|---|---|---|
+| **File location** | `.github/prompts/` | `skills/<skill-name>/SKILL.md` |
+| **How it's triggered** | Manually invoked via `/filename` in chat | Auto-invoked by Copilot based on intent matching, or manually via `/skill-name` |
+| **Purpose** | One-off, on-demand task execution | Reusable capability packaged for sharing across tools |
+| **Scope** | Single task run per invocation | Persistent capability available across sessions |
+| **Supports input variables** | Yes — `${input:varName:placeholder}` syntax | No |
+| **IDE support** | VS Code, Visual Studio, JetBrains only | VS Code, GitHub Copilot CLI, coding agent, Claude Code |
+| **Frontmatter: mode** | ✅ (`ask`, `edit`, `agent`) | ❌ |
+| **Frontmatter: tools** | ✅ | ❌ |
+| **Frontmatter: model** | ✅ | ❌ |
+| **Frontmatter: user-invocable** | ❌ | ✅ |
+| **Frontmatter: disable-model-invocation** | ❌ | ✅ |
+| **Progressive loading** | No | Yes — only `name`/`description` loaded at startup; full body loaded on demand |
+| **Generate with AI** | `/create-prompt` | `/create-skill` |
+| **Status** | Public preview | GA (open standard) |
+
+---
+
 ## All 19 Library Examples
 
 ### Custom Instructions (9 examples)
