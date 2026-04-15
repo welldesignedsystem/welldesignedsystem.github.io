@@ -19,7 +19,7 @@ The three types of Customization Instructions covered are:
 - **Prompt files** — reusable, on-demand task prompts (public preview)
 - **Custom agents** — specialized autonomous coding agents with a defined scope and tool access
 
-> **Note (VS Code):** The VS Code docs also surface two additional customization types not covered in the GitHub docs library: **Agent Skills** and **Hooks**. These are described in their own sections below.
+> **Note (VS Code):** The VS Code docs also surface two additional customization types not covered in the GitHub docs library: **Agent Skills** and **Hooks**.
 
 ---
 
@@ -264,382 +264,6 @@ CLAUDE.local.md                                ← Local-only, not committed to 
 | **Progressive loading** | No | Yes — only `name`/`description` loaded at startup; full body loaded on demand |
 | **Generate with AI** | `/create-prompt` | `/create-skill` |
 | **Status** | Public preview | GA (open standard) |
-
----
-
-## All 19 Library Examples
-
-### Custom Instructions (9 examples)
-
----
-
-#### 1. Your First Custom Instructions
-**Complexity:** Simple
-
-A minimal introduction demonstrating the impact instructions have on code generation.
-
-```markdown
-When writing functions, always:
-- Add descriptive JSDoc comments
-- Include input validation
-- Use early returns for error conditions
-- Add meaningful variable names
-- Include at least one example usage in comments
-```
-
-**How to test:** Add as personal instructions on GitHub.com (profile picture → Personal instructions), then ask: `Create a JavaScript function that calculates the area of a circle`. Without instructions you get a bare function. With them, Copilot adds JSDoc, input validation, early returns, and an example usage comment.
-
----
-
-#### 2. Concept Explainer
-**Complexity:** Simple
-
-Instructs Copilot to explain technical concepts progressively — starting from analogies, building toward technical detail, and always connecting theory to real problems.
-
-```markdown
-When explaining technical concepts:
-
-## Start Simple, Build Up
-- Begin with everyday analogies and familiar examples
-- Introduce technical terms gradually after concepts are clear
-- Build each new idea on what was already explained
-- Use concrete examples before abstract theory
-
-## Make It Practical
-- Include working code examples that demonstrate the concept
-- Show real-world applications and use cases
-- Connect theory to problems developers actually face
-- Provide step-by-step implementation when relevant
-
-## Address Common Confusion
-- Highlight misconceptions that typically trip up learners
-- Explain what NOT to do and why
-- Address edge cases that often cause problems
-- Show debugging approaches when things go wrong
-
-## Check Understanding
-- Ask questions to gauge comprehension
-- Provide simple exercises to reinforce learning
-- Break complex topics into smaller, digestible pieces
-- Adjust complexity based on the learner's responses
-
-Always prioritize clarity and practical understanding over comprehensive coverage.
-```
-
----
-
-#### 3. Debugging Tutor
-**Complexity:** Simple
-
-Tells Copilot to act as a debugging teacher — guiding users through systematic methodology rather than handing them direct answers. Builds long-term problem-solving skills.
-
-```markdown
-When helping with debugging, guide users through:
-
-## Systematic Approach
-- Start by reproducing the issue consistently
-- Read error messages carefully—they contain crucial clues
-- Use print statements or debugger to trace execution flow
-- Test one change at a time to isolate what fixes the problem
-
-## Key Debugging Questions
-- What exactly is happening vs. what you expected?
-- When did this problem start occurring?
-- What was the last change made before the issue appeared?
-- Can you create a minimal example that reproduces the problem?
-
-## Common Investigation Steps
-1. Check logs and error messages for specific details
-2. Verify inputs and outputs at each step
-3. Use debugging tools (breakpoints, step-through)
-4. Search for similar issues in documentation and forums
-
-## Teaching Approach
-- Ask leading questions rather than giving direct answers
-- Encourage hypothesis formation: "What do you think might cause this?"
-- Guide toward systematic elimination of possibilities
-- Help build understanding of the underlying problem, not just quick fixes
-- Focus on teaching debugging methodology that users can apply independently to future problems
-- Encourage defensive programming techniques to prevent common error categories
-- Teach how to build automated tests that catch regressions and edge cases
-
-## Teaching Through Debugging
-- Use debugging sessions as opportunities to reinforce programming concepts
-- Explain the reasoning behind each debugging step and decision
-- Help learners understand code execution flow and data transformations
-- Connect debugging exercises to broader software engineering principles
-- Build pattern recognition skills for common problem categories
-
-Always encourage curiosity and questioning rather than providing quick fixes, building long-term debugging skills and confidence.
-```
-
----
-
-#### 4. Code Reviewer
-**Complexity:** Simple
-
-Directs Copilot to focus code reviews on security, performance, and code quality — with constructive, reasoned feedback.
-
-```markdown
-When reviewing code, focus on:
-
-## Security Critical Issues
-- Check for hardcoded secrets, API keys, or credentials
-- Look for SQL injection and XSS vulnerabilities
-- Verify proper input validation and sanitization
-- Review authentication and authorization logic
-
-## Performance Red Flags
-- Identify N+1 database query problems
-- Spot inefficient loops and algorithmic issues
-- Check for memory leaks and resource cleanup
-- Review caching opportunities for expensive operations
-
-## Code Quality Essentials
-- Functions should be focused and appropriately sized
-- Use clear, descriptive naming conventions
-- Ensure proper error handling throughout
-
-## Review Style
-- Be specific and actionable in feedback
-- Explain the "why" behind recommendations
-- Acknowledge good patterns when you see them
-- Ask clarifying questions when code intent is unclear
-
-Always prioritize security vulnerabilities and performance issues that could impact users.
-```
-
----
-
-#### 5. GitHub Actions Helper
-**Complexity:** Simple | **Path-specific:** `.github/workflows/**/*.yml`
-
-A path-specific file that activates only when Copilot works with GitHub Actions workflow YAML files. Enforces security (secret handling, SHA-pinning), performance (caching, timeouts), and best-practice patterns.
-
-```markdown
----
-applyTo: ".github/workflows/**/*.yml"
----
-
-When generating or improving GitHub Actions workflows:
-
-## Security First
-- Use GitHub secrets for sensitive data, never hardcode credentials
-- Pin third-party actions to specific commits by using the SHA value
-  (e.g., `- uses: owner/some-action@a824008085750b8e136effc585c3cd6082bd575f`)
-- Configure minimal permissions for GITHUB_TOKEN required for the workflow
-
-## Performance Essentials
-- Cache dependencies with `actions/cache` or built-in cache options
-- Add `timeout-minutes` to prevent hung workflows
-- Use matrix strategies for multi-environment testing
-
-## Best Practices
-- Use descriptive names for workflows, jobs, and steps
-- Include appropriate triggers: `push`, `pull_request`, `workflow_dispatch`
-- Add `if: always()` for cleanup steps that must run regardless of failure
-```
-
----
-
-#### 6. Pull Request Assistant
-**Complexity:** Simple
-
-A comprehensive instructions set for both writing PR descriptions and reviewing PRs.
-
----
-
-#### 7. Issue Manager
-**Complexity:** Simple
-
-Instructions for writing well-structured GitHub issues — for bugs, feature requests, and issue responses — with clear titles, reproduction steps, acceptance criteria, and consistent triage templates.
-
----
-
-#### 8. Accessibility Auditor
-**Complexity:** Intermediate | **Path-specific:** `**/*.html`
-
-A path-specific instructions file for HTML files. Directs Copilot to evaluate code for WCAG accessibility compliance — checking ARIA attributes, keyboard navigation, color contrast, semantic HTML, screen reader compatibility — and to generate actionable remediation suggestions.
-
----
-
-#### 9. Testing Automation
-**Complexity:** Advanced | **Path-specific:** `tests/**/*.py`
-
-The most advanced custom instructions example in the library. Path-specific for Python test files. Embeds a concrete pytest code pattern directly in the instructions to teach Copilot the exact conventions to follow.
-
-```markdown
----
-applyTo: "tests/**/*.py"
----
-
-When writing Python tests:
-
-## Test Structure Essentials
-- Use pytest as the primary testing framework
-- Follow AAA pattern: Arrange, Act, Assert
-- Write descriptive test names that explain the behavior being tested
-- Keep tests focused on one specific behavior
-
-## Key Testing Practices
-- Use pytest fixtures for setup and teardown
-- Mock external dependencies (databases, APIs, file operations)
-- Use parameterized tests for testing multiple similar scenarios
-- Test edge cases and error conditions, not just happy paths
-
-## Example Test Pattern
-import pytest
-from unittest.mock import Mock, patch
-
-class TestUserService:
-    @pytest.fixture
-    def user_service(self):
-        return UserService()
-
-    @pytest.mark.parametrize("invalid_email", ["", "invalid", "@test.com"])
-    def test_should_reject_invalid_emails(self, user_service, invalid_email):
-        with pytest.raises(ValueError, match="Invalid email"):
-            user_service.create_user({"email": invalid_email})
-
-    @patch('src.user_service.email_validator')
-    def test_should_handle_validation_failure(self, mock_validator, user_service):
-        mock_validator.validate.side_effect = ConnectionError()
-
-        with pytest.raises(ConnectionError):
-            user_service.create_user({"email": "test@example.com"})
-```
-
----
-
-### Prompt Files (6 examples)
-
-All stored in `.github/prompts/*.prompt.md`. Available in VS Code, Visual Studio, and JetBrains only.
-
----
-
-#### 10. Your First Prompt File
-**Complexity:** Simple | **Filename:** `explain-code.prompt.md`
-
-```markdown
----
-mode: 'agent'
-description: 'Generate a clear code explanation with examples'
----
-
-Explain the following code in a clear, beginner-friendly way:
-
-Code to explain: ${input:code:Paste your code here}
-Target audience: ${input:audience:Who is this explanation for? (e.g., beginners, intermediate developers, etc.)}
-
-Please provide:
-
-* A brief overview of what the code does
-* A step-by-step breakdown of the main parts
-* Explanation of any key concepts or terminology
-* A simple example showing how it works
-* Common use cases or when you might use this approach
-
-Use clear, simple language and avoid unnecessary jargon.
-```
-
-**How to test:** Save the file, open Copilot Chat in VS Code, type `/explain-code`. Copilot switches to agent mode and prompts you for the `code` and `audience` variables.
-
-Key concepts demonstrated: `${input:variableName:placeholder}` syntax, `mode: 'agent'` frontmatter, the `description` field.
-
----
-
-#### 11. Create README
-**Complexity:** Simple | **Filename:** `create-readme.prompt.md`
-
-Reusable across repositories. Copilot scans the codebase and generates a structured README covering: project description, prerequisites, installation, usage examples, contributing guide, and license section.
-
----
-
-#### 12. Onboarding Plan
-**Complexity:** Simple | **Filename:** `onboarding-plan.prompt.md`
-
-Generates a personalized onboarding plan for a new team member joining a project.
-
----
-
-#### 13. Document API
-**Complexity:** Advanced | **Filename:** `document-api.prompt.md`
-
-Generates comprehensive API documentation from source code. Covers endpoint descriptions, request/response schemas, authentication requirements, error codes, and usage examples.
-
----
-
-#### 14. Review Code
-**Complexity:** Advanced | **Filename:** `review-code.prompt.md`
-
-Performs a structured code review with actionable feedback. Analyzes for correctness, performance, security vulnerabilities, readability, test coverage gaps, and adherence to conventions.
-
----
-
-#### 15. Generate Unit Tests
-**Complexity:** Intermediate | **Filename:** `generate-unit-tests.prompt.md`
-
-Takes source code as input and generates unit tests covering happy paths, edge cases, boundary conditions, and error scenarios.
-
----
-
-### Custom Agents (4 examples)
-
-All stored in `.github/agents/*.agent.md`. Must be on the **default branch**. Used at `github.com/copilot/agents`.
-
----
-
-#### 16. Your First Custom Agent — README Specialist
-**Complexity:** Simple | **Filename:** `readme-specialist.agent.md`
-
-```markdown
----
-name: readme-specialist
-description: Specialized agent for creating and improving README files and project documentation
-tools: ['read', 'search', 'edit']
----
-
-You are a documentation specialist focused primarily on README files, but you can also help with other project documentation when requested. Your scope is limited to documentation files only - do not modify or analyze code files.
-
-**Primary Focus - README Files:**
-- Create and update README.md files with clear project descriptions
-- Structure README sections logically: overview, installation, usage, contributing
-- Write scannable content with proper headings and formatting
-- Add appropriate badges, links, and navigation elements
-- Use relative links (e.g., `docs/CONTRIBUTING.md`) instead of absolute URLs for files within the repository
-- Ensure all links work when the repository is cloned
-- Use proper heading structure to enable GitHub's auto-generated table of contents
-- Keep content under 500 KiB (GitHub truncates beyond this)
-
-**Important Limitations:**
-- Do NOT modify code files or code documentation within source files
-- Do NOT analyze or change API documentation generated from code
-- Focus only on standalone documentation files
-- Ask for clarification if a task involves code modifications
-
-Always prioritize clarity and usefulness. Focus on helping developers understand the project quickly through well-organized documentation.
-```
-
----
-
-#### 17. Implementation Planner
-**Complexity:** Simple | **Filename:** `implementation-planner.agent.md`
-
-Breaks down a feature request or user story into actionable implementation tasks and creates a detailed plan. The agent focuses on planning only — it does not write code.
-
----
-
-#### 18. Bug Fix Teammate
-**Complexity:** Simple | **Filename:** `bug-fix-teammate.agent.md`
-
-Identifies critical bugs in the project and implements targeted, minimal fixes.
-
----
-
-#### 19. Cleanup Specialist
-**Complexity:** Simple | **Filename:** `cleanup-specialist.agent.md`
-
-Cleans up messy code across both code and documentation files without changing any external behavior.
 
 ---
 
@@ -1065,7 +689,383 @@ Use #tool:vscode/askQuestions to ask for the component name and fields if not pr
 
 ## Community Examples
 
-Beyond the 19 official examples, GitHub maintains a community repository with additional material:
+## All 19 Library Examples
+
+### Custom Instructions (9 examples)
+
+---
+
+#### 1. Your First Custom Instructions
+**Complexity:** Simple
+
+A minimal introduction demonstrating the impact instructions have on code generation.
+
+```markdown
+When writing functions, always:
+- Add descriptive JSDoc comments
+- Include input validation
+- Use early returns for error conditions
+- Add meaningful variable names
+- Include at least one example usage in comments
+```
+
+**How to test:** Add as personal instructions on GitHub.com (profile picture → Personal instructions), then ask: `Create a JavaScript function that calculates the area of a circle`. Without instructions you get a bare function. With them, Copilot adds JSDoc, input validation, early returns, and an example usage comment.
+
+---
+
+#### 2. Concept Explainer
+**Complexity:** Simple
+
+Instructs Copilot to explain technical concepts progressively — starting from analogies, building toward technical detail, and always connecting theory to real problems.
+
+```markdown
+When explaining technical concepts:
+
+## Start Simple, Build Up
+- Begin with everyday analogies and familiar examples
+- Introduce technical terms gradually after concepts are clear
+- Build each new idea on what was already explained
+- Use concrete examples before abstract theory
+
+## Make It Practical
+- Include working code examples that demonstrate the concept
+- Show real-world applications and use cases
+- Connect theory to problems developers actually face
+- Provide step-by-step implementation when relevant
+
+## Address Common Confusion
+- Highlight misconceptions that typically trip up learners
+- Explain what NOT to do and why
+- Address edge cases that often cause problems
+- Show debugging approaches when things go wrong
+
+## Check Understanding
+- Ask questions to gauge comprehension
+- Provide simple exercises to reinforce learning
+- Break complex topics into smaller, digestible pieces
+- Adjust complexity based on the learner's responses
+
+Always prioritize clarity and practical understanding over comprehensive coverage.
+```
+
+---
+
+#### 3. Debugging Tutor
+**Complexity:** Simple
+
+Tells Copilot to act as a debugging teacher — guiding users through systematic methodology rather than handing them direct answers. Builds long-term problem-solving skills.
+
+```markdown
+When helping with debugging, guide users through:
+
+## Systematic Approach
+- Start by reproducing the issue consistently
+- Read error messages carefully—they contain crucial clues
+- Use print statements or debugger to trace execution flow
+- Test one change at a time to isolate what fixes the problem
+
+## Key Debugging Questions
+- What exactly is happening vs. what you expected?
+- When did this problem start occurring?
+- What was the last change made before the issue appeared?
+- Can you create a minimal example that reproduces the problem?
+
+## Common Investigation Steps
+1. Check logs and error messages for specific details
+2. Verify inputs and outputs at each step
+3. Use debugging tools (breakpoints, step-through)
+4. Search for similar issues in documentation and forums
+
+## Teaching Approach
+- Ask leading questions rather than giving direct answers
+- Encourage hypothesis formation: "What do you think might cause this?"
+- Guide toward systematic elimination of possibilities
+- Help build understanding of the underlying problem, not just quick fixes
+- Focus on teaching debugging methodology that users can apply independently to future problems
+- Encourage defensive programming techniques to prevent common error categories
+- Teach how to build automated tests that catch regressions and edge cases
+
+## Teaching Through Debugging
+- Use debugging sessions as opportunities to reinforce programming concepts
+- Explain the reasoning behind each debugging step and decision
+- Help learners understand code execution flow and data transformations
+- Connect debugging exercises to broader software engineering principles
+- Build pattern recognition skills for common problem categories
+
+Always encourage curiosity and questioning rather than providing quick fixes, building long-term debugging skills and confidence.
+```
+
+---
+
+#### 4. Code Reviewer
+**Complexity:** Simple
+
+Directs Copilot to focus code reviews on security, performance, and code quality — with constructive, reasoned feedback.
+
+```markdown
+When reviewing code, focus on:
+
+## Security Critical Issues
+- Check for hardcoded secrets, API keys, or credentials
+- Look for SQL injection and XSS vulnerabilities
+- Verify proper input validation and sanitization
+- Review authentication and authorization logic
+
+## Performance Red Flags
+- Identify N+1 database query problems
+- Spot inefficient loops and algorithmic issues
+- Check for memory leaks and resource cleanup
+- Review caching opportunities for expensive operations
+
+## Code Quality Essentials
+- Functions should be focused and appropriately sized
+- Use clear, descriptive naming conventions
+- Ensure proper error handling throughout
+
+## Review Style
+- Be specific and actionable in feedback
+- Explain the "why" behind recommendations
+- Acknowledge good patterns when you see them
+- Ask clarifying questions when code intent is unclear
+
+Always prioritize security vulnerabilities and performance issues that could impact users.
+```
+
+---
+
+#### 5. GitHub Actions Helper
+**Complexity:** Simple | **Path-specific:** `.github/workflows/**/*.yml`
+
+A path-specific file that activates only when Copilot works with GitHub Actions workflow YAML files. Enforces security (secret handling, SHA-pinning), performance (caching, timeouts), and best-practice patterns.
+
+```markdown
+---
+applyTo: ".github/workflows/**/*.yml"
+---
+
+When generating or improving GitHub Actions workflows:
+
+## Security First
+- Use GitHub secrets for sensitive data, never hardcode credentials
+- Pin third-party actions to specific commits by using the SHA value
+  (e.g., `- uses: owner/some-action@a824008085750b8e136effc585c3cd6082bd575f`)
+- Configure minimal permissions for GITHUB_TOKEN required for the workflow
+
+## Performance Essentials
+- Cache dependencies with `actions/cache` or built-in cache options
+- Add `timeout-minutes` to prevent hung workflows
+- Use matrix strategies for multi-environment testing
+
+## Best Practices
+- Use descriptive names for workflows, jobs, and steps
+- Include appropriate triggers: `push`, `pull_request`, `workflow_dispatch`
+- Add `if: always()` for cleanup steps that must run regardless of failure
+```
+
+---
+
+#### 6. Pull Request Assistant
+**Complexity:** Simple
+
+A comprehensive instructions set for both writing PR descriptions and reviewing PRs.
+
+---
+
+#### 7. Issue Manager
+**Complexity:** Simple
+
+Instructions for writing well-structured GitHub issues — for bugs, feature requests, and issue responses — with clear titles, reproduction steps, acceptance criteria, and consistent triage templates.
+
+---
+
+#### 8. Accessibility Auditor
+**Complexity:** Intermediate | **Path-specific:** `**/*.html`
+
+A path-specific instructions file for HTML files. Directs Copilot to evaluate code for WCAG accessibility compliance — checking ARIA attributes, keyboard navigation, color contrast, semantic HTML, screen reader compatibility — and to generate actionable remediation suggestions.
+
+---
+
+#### 9. Testing Automation
+**Complexity:** Advanced | **Path-specific:** `tests/**/*.py`
+
+The most advanced custom instructions example in the library. Path-specific for Python test files. Embeds a concrete pytest code pattern directly in the instructions to teach Copilot the exact conventions to follow.
+
+```markdown
+---
+applyTo: "tests/**/*.py"
+---
+
+When writing Python tests:
+
+## Test Structure Essentials
+- Use pytest as the primary testing framework
+- Follow AAA pattern: Arrange, Act, Assert
+- Write descriptive test names that explain the behavior being tested
+- Keep tests focused on one specific behavior
+
+## Key Testing Practices
+- Use pytest fixtures for setup and teardown
+- Mock external dependencies (databases, APIs, file operations)
+- Use parameterized tests for testing multiple similar scenarios
+- Test edge cases and error conditions, not just happy paths
+
+## Example Test Pattern
+import pytest
+from unittest.mock import Mock, patch
+
+class TestUserService:
+    @pytest.fixture
+    def user_service(self):
+        return UserService()
+
+    @pytest.mark.parametrize("invalid_email", ["", "invalid", "@test.com"])
+    def test_should_reject_invalid_emails(self, user_service, invalid_email):
+        with pytest.raises(ValueError, match="Invalid email"):
+            user_service.create_user({"email": invalid_email})
+
+    @patch('src.user_service.email_validator')
+    def test_should_handle_validation_failure(self, mock_validator, user_service):
+        mock_validator.validate.side_effect = ConnectionError()
+
+        with pytest.raises(ConnectionError):
+            user_service.create_user({"email": "test@example.com"})
+```
+
+---
+
+### Prompt Files (6 examples)
+
+All stored in `.github/prompts/*.prompt.md`. Available in VS Code, Visual Studio, and JetBrains only.
+
+---
+
+#### 10. Your First Prompt File
+**Complexity:** Simple | **Filename:** `explain-code.prompt.md`
+
+```markdown
+---
+mode: 'agent'
+description: 'Generate a clear code explanation with examples'
+---
+
+Explain the following code in a clear, beginner-friendly way:
+
+Code to explain: ${input:code:Paste your code here}
+Target audience: ${input:audience:Who is this explanation for? (e.g., beginners, intermediate developers, etc.)}
+
+Please provide:
+
+* A brief overview of what the code does
+* A step-by-step breakdown of the main parts
+* Explanation of any key concepts or terminology
+* A simple example showing how it works
+* Common use cases or when you might use this approach
+
+Use clear, simple language and avoid unnecessary jargon.
+```
+
+**How to test:** Save the file, open Copilot Chat in VS Code, type `/explain-code`. Copilot switches to agent mode and prompts you for the `code` and `audience` variables.
+
+Key concepts demonstrated: `${input:variableName:placeholder}` syntax, `mode: 'agent'` frontmatter, the `description` field.
+
+---
+
+#### 11. Create README
+**Complexity:** Simple | **Filename:** `create-readme.prompt.md`
+
+Reusable across repositories. Copilot scans the codebase and generates a structured README covering: project description, prerequisites, installation, usage examples, contributing guide, and license section.
+
+---
+
+#### 12. Onboarding Plan
+**Complexity:** Simple | **Filename:** `onboarding-plan.prompt.md`
+
+Generates a personalized onboarding plan for a new team member joining a project.
+
+---
+
+#### 13. Document API
+**Complexity:** Advanced | **Filename:** `document-api.prompt.md`
+
+Generates comprehensive API documentation from source code. Covers endpoint descriptions, request/response schemas, authentication requirements, error codes, and usage examples.
+
+---
+
+#### 14. Review Code
+**Complexity:** Advanced | **Filename:** `review-code.prompt.md`
+
+Performs a structured code review with actionable feedback. Analyzes for correctness, performance, security vulnerabilities, readability, test coverage gaps, and adherence to conventions.
+
+---
+
+#### 15. Generate Unit Tests
+**Complexity:** Intermediate | **Filename:** `generate-unit-tests.prompt.md`
+
+Takes source code as input and generates unit tests covering happy paths, edge cases, boundary conditions, and error scenarios.
+
+---
+
+### Custom Agents (4 examples)
+
+All stored in `.github/agents/*.agent.md`. Must be on the **default branch**. Used at `github.com/copilot/agents`.
+
+---
+
+#### 16. Your First Custom Agent — README Specialist
+**Complexity:** Simple | **Filename:** `readme-specialist.agent.md`
+
+```markdown
+---
+name: readme-specialist
+description: Specialized agent for creating and improving README files and project documentation
+tools: ['read', 'search', 'edit']
+---
+
+You are a documentation specialist focused primarily on README files, but you can also help with other project documentation when requested. Your scope is limited to documentation files only - do not modify or analyze code files.
+
+**Primary Focus - README Files:**
+- Create and update README.md files with clear project descriptions
+- Structure README sections logically: overview, installation, usage, contributing
+- Write scannable content with proper headings and formatting
+- Add appropriate badges, links, and navigation elements
+- Use relative links (e.g., `docs/CONTRIBUTING.md`) instead of absolute URLs for files within the repository
+- Ensure all links work when the repository is cloned
+- Use proper heading structure to enable GitHub's auto-generated table of contents
+- Keep content under 500 KiB (GitHub truncates beyond this)
+
+**Important Limitations:**
+- Do NOT modify code files or code documentation within source files
+- Do NOT analyze or change API documentation generated from code
+- Focus only on standalone documentation files
+- Ask for clarification if a task involves code modifications
+
+Always prioritize clarity and usefulness. Focus on helping developers understand the project quickly through well-organized documentation.
+```
+
+---
+
+#### 17. Implementation Planner
+**Complexity:** Simple | **Filename:** `implementation-planner.agent.md`
+
+Breaks down a feature request or user story into actionable implementation tasks and creates a detailed plan. The agent focuses on planning only — it does not write code.
+
+---
+
+#### 18. Bug Fix Teammate
+**Complexity:** Simple | **Filename:** `bug-fix-teammate.agent.md`
+
+Identifies critical bugs in the project and implements targeted, minimal fixes.
+
+---
+
+#### 19. Cleanup Specialist
+**Complexity:** Simple | **Filename:** `cleanup-specialist.agent.md`
+
+Cleans up messy code across both code and documentation files without changing any external behavior.
+
+---
+
+Beyond these 19 official examples, GitHub maintains a community repository with additional material:
 
 - **Awesome GitHub Copilot Customizations:** https://github.com/github/awesome-copilot
   - Instructions by language/scenario: `docs/README.instructions.md`
