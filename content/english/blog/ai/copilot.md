@@ -151,6 +151,114 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 **Referencing instructions from prompt files:** Prompt files can reference instructions files using Markdown links, keeping prompts clean and avoiding duplication.
 
 ---
+## MCP Servers in GitHub Copilot
+
+MCP (Model Context Protocol) servers extend Copilot's reach beyond your codebase — letting agents interact with external services like GitHub, Jira, Slack, and more.
+
+A community registry of MCP servers is maintained at: **https://github.com/modelcontextprotocol/servers**
+
+---
+
+### Configuring MCP Servers (`mcp.json`)
+
+MCP servers are configured in `.vscode/mcp.json`. This file tells VS Code which servers to start and how to connect to them.
+
+**Syntax:**
+
+```json
+{
+  "servers": {
+    "server-name": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@scope/mcp-server-name"],
+      "env": {
+        "API_KEY": "${input:apiKey}"
+      }
+    }
+  }
+}
+```
+
+**Key fields:**
+
+| Field | Description |
+|---|---|
+| `type` | Transport type: `stdio` (local process) or `sse` (remote HTTP) |
+| `command` | The executable to run |
+| `args` | Arguments passed to the command |
+| `env` | Environment variables — use `${input:varName}` for secrets prompted at runtime, or reference VS Code secrets |
+
+**Real-world example — Airbnb MCP server** ([`mcp-server-airbnb`](https://github.com/openbnb-org/mcp-server-airbnb)):
+
+```json
+{
+  "servers": {
+    "airbnb": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@openbnb/mcp-server-airbnb", "--ignore-robots-txt"]
+    }
+  }
+}
+```
+
+Once configured, reference it in an agent's tools array using `airbnb/*` or a specific tool name like `airbnb/search_listings`.
+
+> **Note:** `mcp.json` is workspace-scoped. Commit it to version control so the whole team shares the same server configuration. Store secrets in VS Code's secret storage or as environment variables — never hardcode them.
+
+---
+
+### Exercise of Using MCP Server: Daily Standup Task File
+
+This exercise uses Copilot agent mode with the GitHub MCP server to generate a personal task file each morning.
+
+**What it does:** Queries your open PRs, assigned issues, and new repository activity — then writes a dated `Tasks.md` to your workspace.
+
+**Save as `.github/prompts/daily-tasks.prompt.md`:**
+
+~~~markdown
+---
+description: 'Generate my daily standup task list'
+mode: 'agent'
+tools: ['github', 'create_file']
+---
+
+You are acting as a Scrum Master. Use the GitHub MCP server to:
+
+1. Get all open pull requests assigned to me
+2. Get all open issues assigned to me
+3. Get issues opened in the last 24 hours in this repository
+
+Then create a file named `Tasks-${input:date:Todays date e.g. 2026-04-16}.md` with the following structure:
+
+# Daily Tasks — <date>
+
+## My Open Pull Requests
+- List each PR with title, number, and URL
+
+## My Assigned Issues
+- List each issue with title, number, priority label if present, and URL
+
+## New Issues Today
+- List each new issue with title, number, and who opened it
+
+## Focus for Today
+Based on the above, suggest the top 3 priorities in order of urgency.
+
+Keep the tone concise — this is a standup reference, not a report.
+~~~
+
+**How to run it:**
+
+1. Open Copilot Chat in VS Code
+2. Type `/daily-tasks`
+3. Enter today's date when prompted
+4. Copilot queries GitHub via MCP and writes the file
+
+> **Tip:** Pin this prompt to your VS Code toolbar or bind it to a task in `.vscode/tasks.json` so it runs with a single keystroke each morning.
+ 
+---
 
 ### Custom Agents
 
