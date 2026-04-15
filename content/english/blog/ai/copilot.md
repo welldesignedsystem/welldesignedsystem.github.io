@@ -259,6 +259,76 @@ Keep the tone concise — this is a standup reference, not a report.
 > **Tip:** Pin this prompt to your VS Code toolbar or bind it to a task in `.vscode/tasks.json` so it runs with a single keystroke each morning.
  
 ---
+### GitHub CLI and Copilot
+
+The GitHub CLI (`gh`) brings Copilot directly into your terminal — useful when you're already working in the command line and don't want to context-switch to an IDE.
+Install from here : **https://cli.github.com**
+
+---
+
+#### `gh copilot suggest`
+
+Translates a natural language description into a shell command.
+
+```bash
+gh copilot suggest "delete all merged git branches locally"
+```
+
+Copilot returns a command, explains it, and asks whether to run it, copy it, or revise it. It will not execute anything without your confirmation.
+
+Use this when:
+- You know *what* you want to do but not the exact command
+- You're working with unfamiliar CLI tools (`kubectl`, `ffmpeg`, `awk`)
+- You want a safe way to construct destructive commands before running them
+
+---
+
+#### `gh copilot explain`
+
+Explains what a shell command does in plain English.
+
+```bash
+gh copilot explain "git rebase -i HEAD~3"
+```
+
+Use this when:
+- You've inherited a script and need to understand it before running it
+- You find a command in documentation and want a plain-English breakdown
+- You're onboarding someone to your runbooks
+
+---
+
+#### Aliases for speed
+
+Both commands are verbose to type. Add aliases:
+
+```bash
+gh alias set cs 'copilot suggest'
+gh alias set ce 'copilot explain'
+```
+
+Then use:
+
+```bash
+gh cs "compress all jpg files in this folder"
+gh ce "rsync -avz --delete src/ user@host:/var/www/"
+```
+
+---
+
+#### When to use `gh copilot` vs IDE Copilot Chat
+
+| Situation | Use |
+|---|---|
+| Already in the terminal | `gh copilot suggest / explain` |
+| Need to construct a risky command safely | `gh copilot suggest` |
+| Working in a CI/CD script or runbook | `gh copilot explain` |
+| Need file edits, multi-step tasks, or context from your codebase | IDE Copilot Chat (agent mode) |
+| Running a prompt file or custom agent | IDE Copilot Chat |
+
+> **Note:** `gh copilot` works on shell commands only — it has no awareness of your codebase, open files, or MCP servers. For anything requiring code context, use the IDE.
+
+---
 
 ### Custom Agents
 
