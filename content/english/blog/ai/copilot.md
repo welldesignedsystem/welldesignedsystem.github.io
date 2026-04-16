@@ -556,6 +556,7 @@ Install from here : **https://cli.github.com**
 > **Note:** `gh copilot` works on shell commands only — it has no awareness of your codebase, open files, or MCP servers. For anything requiring code context, use the IDE.
 
 ---
+
 ### Hooks
 
 Hooks execute custom commands at specific events in the agent workflow — for automation and policy enforcement. Generate a hook file with `/create-hook` in chat.
