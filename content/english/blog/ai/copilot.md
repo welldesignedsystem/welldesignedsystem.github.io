@@ -46,6 +46,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 - The most broadly supported form — works across IDEs, GitHub.com chat and the coding agent.
 
 Use `copilot-instructions.md` for:
+
 **When to use:**
 - Setting broad project standards 
   - Technology stack and libraries
@@ -152,35 +153,34 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 ---
 
 ### Agent Skills
-
-- Agent Skills are reusable, shareable capability files that teach Copilot (and compatible tools) how to perform a specific task. 
-- Unlike prompt files, skills are **always available** and can be automatically invoked based on intent — you don't need to explicitly call them every time.
+- Standardized approach unlike prompt files [read more](https://agentskills.io/specification) 
+- Agent Skills are reusable, shareable capability files that teach compatible tools how to perform a specific task.
+- Unlike prompt files, skills can be automatically invoked based on intent — you don't need to explicitly call them every time.
 - **File location:** `skills/<skill-name>/SKILL.md`
 - **File extension:** `.md` (always named `SKILL.md`)
-- **Status:** GA (open standard)
-- **Supported in:** VS Code, GitHub Copilot CLI, coding agent, Claude Code, Jetbrains.
+- **Supported in:** Claude Code, VS Code, JetBrains, and other compatible agent implementations.
 - **Frontmatter fields:**
 
-| Field | Description |
-|---|---|
-| `name` | Display name of the skill shown in the UI |
-| `description` | Short description used for intent matching and hover display |
-| `user-invocable` | If `true`, users can manually invoke via `/skill-name` in chat |
-| `disable-model-invocation` | If `true`, prevents the model from auto-invoking this skill |
+| Field | Required | Description |
+|---|---|---|
+| `name` | Yes | Max 64 chars. Lowercase letters, numbers, and hyphens only. Must not start/end with a hyphen or contain consecutive hyphens. Must match the parent directory name. |
+| `description` | Yes | Max 1024 chars. Describes what the skill does and when to use it. Used for intent matching. |
+| `license` | No | License name or reference to a bundled license file. |
+| `compatibility` | No | Max 500 chars. Indicates environment requirements (intended product, system packages, network access, etc.). |
+| `metadata` | No | Arbitrary key-value mapping for additional metadata. |
+| `allowed-tools` | No | Space-separated string of pre-approved tools the skill may use. (Experimental) |
 
-- Skills do **not** support `mode`, `tools`, or `model` frontmatter fields — those are prompt file concepts. Skills also do not support dynamic input variables (`${input:...}`).
-- **Progressive loading:** Only the `name` and `description` frontmatter fields are loaded at startup. The full skill body is loaded on demand, keeping startup fast even across large skill libraries.
+- Skills do **not** support `mode`, `tools`, `model`, `user-invocable`, or `disable-model-invocation` frontmatter fields — those are not part of the Agent Skills spec. Skills also do not support dynamic input variables (`${input:...}`).
+- **Progressive loading:** Only the `name` and `description` frontmatter fields are loaded at startup (~100 tokens). The full skill body is loaded when the skill is activated, and any referenced files (scripts, references, assets) are loaded only when required.
 
 **How to invoke:**
-- Copilot automatically invokes a skill when your intent matches the skill's `description`.
-- If `user-invocable: true` is set, you can also manually invoke via `/skill-name` in Copilot Chat.
-
-**Generate a skill file with AI:** Type `/create-skill` in chat and describe the capability you want to package. The agent generates a `SKILL.md` file for you.
+- A compatible agent automatically invokes a skill when your intent matches the skill's `description`.
+- Manual invocation via slash commands (`/skill-name`) is not part of the Agent Skills specification — support depends on the client implementation.
 
 **When to use:**
 - Encoding reusable, shareable expertise (e.g. "how we write migrations", "our PR review checklist")
 - Capabilities that should be available across sessions without manual invocation
-- Sharing consistent workflows across team members or tools (VS Code, CLI, Claude Code)
+- Sharing consistent workflows across team members or tools
 
 **When NOT to use:**
 - For one-off tasks (use prompt files instead)
@@ -190,10 +190,15 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 **Example:**
 ```markdown
 ---
-name: 'Write Migration'
-description: 'Generates a database migration file following project conventions'
-user-invocable: true
+name: write-migration
+description: Generates a database migration file following project conventions. Use when the user asks to create a migration or database schema change.
+license: MIT
+metadata:
+  author: my-org
+  version: "1.0"
+
 ---
+
 # Write Migration
 
 When asked to create a migration:
@@ -206,13 +211,9 @@ When asked to create a migration:
 
 ### MCP Servers in GitHub Copilot
 
-MCP (Model Context Protocol) servers extend Copilot's reach beyond your codebase — letting agents interact with external services like GitHub, Jira, Slack, and more.
-
-A community registry of MCP servers is maintained at: **https://github.com/modelcontextprotocol/servers**
-
-#### Configuring MCP Servers (`mcp.json`)
-
-MCP servers are configured in `.vscode/mcp.json`. This file tells VS Code which servers to start and how to connect to them.
+- [Read More](https://welldesignedsystem.github.io/blog/ai/mcp/)
+- Configuring MCP Servers (`mcp.json`)
+  - MCP servers are configured in `.vscode/mcp.json`. This file tells VS Code which servers to start and how to connect to them.
 
 **Syntax:**
 
@@ -226,25 +227,7 @@ MCP servers are configured in `.vscode/mcp.json`. This file tells VS Code which 
       "env": {
         "API_KEY": "${input:apiKey}"
       }
-    }
-  }
-}
-```
-
-**Key fields:**
-
-| Field | Description |
-|---|---|
-| `type` | Transport type: `stdio` (local process) or `sse` (remote HTTP) |
-| `command` | The executable to run |
-| `args` | Arguments passed to the command |
-| `env` | Environment variables — use `${input:varName}` for secrets prompted at runtime, or reference VS Code secrets |
-
-**Real-world example — Airbnb MCP server** ([`mcp-server-airbnb`](https://github.com/openbnb-org/mcp-server-airbnb)):
-
-```json
-{
-  "servers": {
+    },
     "airbnb": {
       "type": "stdio",
       "command": "npx",
@@ -253,16 +236,20 @@ MCP servers are configured in `.vscode/mcp.json`. This file tells VS Code which 
   }
 }
 ```
+- Once configured, reference it in an agent's tools array using `airbnb/*` or a specific tool name like `airbnb/search_listings`.
 
-Once configured, reference it in an agent's tools array using `airbnb/*` or a specific tool name like `airbnb/search_listings`.
+**Key fields:**
+
+| Field | Description |
+|---|---|
+| `type` | Transport type: `http` (http streaming), `stdio` (local process) or `sse` (remote HTTP) |
+| `command` | The executable to run |
+| `args` | Arguments passed to the command |
+| `env` | Environment variables — use `${input:varName}` for secrets prompted at runtime, or reference VS Code secrets |
 
 > **Note:** `mcp.json` is workspace-scoped. Commit it to version control so the whole team shares the same server configuration. Store secrets in VS Code's secret storage or as environment variables — never hardcode them.
 
-#### Exercise of Using MCP Server: Daily Standup Task File
-
-This exercise uses Copilot agent mode with the GitHub MCP server to generate a personal task file each morning.
-
-**What it does:** Queries your open PRs, assigned issues, and new repository activity — then writes a dated `Tasks.md` to your workspace.
+- invoking via a prompt file. This Queries your open PRs, assigned issues, and new repository activity — then writes a dated `Tasks.md` to your workspace.
 
 **Save as `.github/prompts/daily-tasks.prompt.md`:**
 
@@ -309,85 +296,56 @@ Keep the tone concise — this is a standup reference, not a report.
  
 ---
 
-### GitHub CLI and Copilot
+### GitHub CLI + Copilot
 
 The GitHub CLI (`gh`) brings Copilot directly into your terminal — useful when you're already working in the command line and don't want to context-switch to an IDE.
 Install from here : **https://cli.github.com**
 
-#### `gh copilot suggest`
+- `gh copilot suggest`
+  - Translates a natural language description into a shell command.
+  - ```bash
+    gh copilot suggest "delete all merged git branches locally"
+    ```
+  - Copilot returns a command, explains it, and asks whether to run it, copy it, or revise it. It will not execute anything without your confirmation.
+  - Use this when:
+    - You know *what* you want to do but not the exact command
+    - You're working with unfamiliar CLI tools (`kubectl`, `ffmpeg`, `awk`)
+    - You want a safe way to construct destructive commands before running them
 
-Translates a natural language description into a shell command.
+ - `gh copilot explain`
+    - Explains what a shell command does in plain English.
+    - ```bash
+      gh copilot explain "git rebase -i HEAD~3"
+      ```
+    - Use this when:
+      - You've inherited a script and need to understand it before running it
+      - You find a command in documentation and want a plain-English breakdown
+      - You're onboarding someone to your runbooks
 
-```bash
-gh copilot suggest "delete all merged git branches locally"
-```
-
-Copilot returns a command, explains it, and asks whether to run it, copy it, or revise it. It will not execute anything without your confirmation.
-
-Use this when:
-- You know *what* you want to do but not the exact command
-- You're working with unfamiliar CLI tools (`kubectl`, `ffmpeg`, `awk`)
-- You want a safe way to construct destructive commands before running them
-
-#### `gh copilot explain`
-
-Explains what a shell command does in plain English.
-
-```bash
-gh copilot explain "git rebase -i HEAD~3"
-```
-
-Use this when:
-- You've inherited a script and need to understand it before running it
-- You find a command in documentation and want a plain-English breakdown
-- You're onboarding someone to your runbooks
-
-#### Aliases for speed
-
-Both commands are verbose to type. Add aliases:
-
-```bash
-gh alias set cs 'copilot suggest'
-gh alias set ce 'copilot explain'
-```
-
-Then use:
-
-```bash
-gh cs "compress all jpg files in this folder"
-gh ce "rsync -avz --delete src/ user@host:/var/www/"
-```
-
-#### When to use `gh copilot` vs IDE Copilot Chat
-
-| Situation | Use |
-|---|---|
-| Already in the terminal | `gh copilot suggest / explain` |
-| Need to construct a risky command safely | `gh copilot suggest` |
-| Working in a CI/CD script or runbook | `gh copilot explain` |
-| Need file edits, multi-step tasks, or context from your codebase | IDE Copilot Chat (agent mode) |
-| Running a prompt file or custom agent | IDE Copilot Chat |
-
+ - `gh alias`
+    - ```bash
+      gh alias set cs 'copilot suggest'
+      gh alias set ce 'copilot explain'
+      gh cs "compress all jpg files in this folder"
+      gh ce "rsync -avz --delete src/ user@host:/var/www/"
+    ```
 > **Note:** `gh copilot` works on shell commands only — it has no awareness of your codebase, open files, or MCP servers. For anything requiring code context, use the IDE.
 
 --- 
 
 ### Custom Agents
 
-Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, and tool access. They maintain their full configuration throughout an entire autonomous session — reading files, searching the codebase, editing files, and opening pull requests.
-
-The distinction:
-- Custom instructions shape all interactions broadly
-- Prompt files execute a one-time task
-- Custom agents are **selected for a specific task and maintain their configuration for the entire autonomous workflow**
-
-**File location:**
-- Repository agents: `.github/agents/` (must be committed to the default branch to appear in the UI at `github.com/copilot/agents`)
-- VS Code local/user agents: configured via `chat.agentFilesLocations` setting
-
-**File extension:** `.agent.md`
-
-> **Note:** Custom agents were previously called "custom chat modes" in VS Code (files named `.chatmode.md`). The terminology was updated to `.agent.md`. If you have existing `.chatmode.md` files, rename them to `.agent.md`.
+- Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, and tool access. 
+- They maintain their full configuration throughout an entire autonomous session — reading files, searching the codebase, editing files, and opening pull requests.
+- The distinction:
+  - Custom instructions shape all interactions broadly
+  - Prompt files execute a one-time task
+  - Custom agents are **selected for a specific task and maintain their configuration for the entire autonomous workflow**
+- **File location:**
+  - Repository agents: `.github/agents/` (must be committed to the default branch to appear in the UI at `github.com/copilot/agents`)
+  - VS Code local/user agents: configured via `chat.agentFilesLocations` setting
+- **File extension:** `.agent.md`
+- **Note:** Custom agents were previously called "custom chat modes" in VS Code (files named `.chatmode.md`). The terminology was updated to `.agent.md`. If you have existing `.chatmode.md` files, rename them to `.agent.md`.
 
 **Frontmatter fields:**
 
@@ -428,49 +386,117 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 
 **Generate an agent with AI:** Type `/create-agent` in chat and describe the agent's role to generate a `.agent.md` file.
 
-## Agent Plugins
+**When to use:**
+- Complex multi-step tasks requiring sustained context
+- When you need the AI to maintain a specific role throughout a workflow
+- Code review, refactoring, or development tasks that span multiple files
+- When you want to limit tool access for security or focus
 
-Agent plugins are prepackaged bundles of chat customizations that you can discover and install from plugin marketplaces in Visual Studio Code. A single plugin can provide any combination of slash commands, agent skills, custom agents, hooks, and MCP servers.
+**When NOT to use:**
+- For simple one-off tasks (use prompt files)
+- When you need broad behavioral guidance (use custom instructions)
+- For capabilities that should be shared across tools (use skills)
+- When the task doesn't require autonomy (use prompt files or skills)
 
-Plugins work alongside your locally defined customizations. When you install a plugin, its commands, skills, agents, hooks, and MCP servers appear in chat.
+**Where it works:** VS Code (local agents), GitHub.com (cloud agents via github.com/copilot/agents). Cloud agents work with the coding agent.
 
-> **Note:** Agent plugins are currently in preview. Enable or disable support for agent plugins with the `chat.plugins.enabled` setting.
+**Examples:**
+- "Code review agent" for automated PR reviews
+- "Bug fixer agent" for debugging workflows
+- "Documentation specialist" for generating docs
 
-### What plugins provide
+---
 
-An agent plugin can bundle one or more of the following customization types:
+### AGENTS.md
+- AGENTS.md is a simple, open format for guiding coding agents — think of it as a **README for agents**: a dedicated, predictable place to provide context and instructions to help AI coding agents work on your project.
+- Unlike `README.md` (which targets human contributors), AGENTS.md contains the extra detail agents need: build steps, test commands, and conventions that might clutter a README.
+- **File name:** `AGENTS.md` (placed at the repository root, or nested inside subpackages)
+- **Format:** Plain Markdown — no frontmatter, no required fields, no special syntax. Use any headings you like.
+- **Status:** Open standard, stewarded by the [Agentic AI Foundation](https://aaif.io) under the Linux Foundation.
+- **Supported in:** OpenAI Codex, Amp, Cursor, Devin, Jules (Google), Factory, Aider, goose, opencode, Zed, Warp, VS Code, JetBrains Junie, Windsurf, RooCode, Gemini CLI, GitHub Copilot coding agent, Kilo Code, Semgrep, Augment Code, UiPath, and others.
+- **No required fields.** AGENTS.md is plain Markdown. There is no frontmatter schema, no mandatory sections. You write whatever helps an agent work effectively on your project.
+- **Recommended sections to include:**
+  - Project overview
+  - Build and test commands
+  - Code style guidelines
+  - Testing instructions
+  - Security considerations
+  - Commit/PR conventions
 
-- **Slash commands**: additional commands you can invoke with `/` in chat
-- **Skills**: agent skills with instructions, scripts, and resources that load on-demand
-- **Agents**: custom agents with specialized personas and tool configurations
-- **Hooks**: hooks that execute shell commands at agent lifecycle points
-- **MCP servers**: MCP servers for external tool integrations
+- **Conflict resolution:**
+  - The closest `AGENTS.md` to the file being edited takes precedence.
+  - Explicit user chat prompts override everything.
 
-For example, a testing plugin might include a `test-runner` skill with scripts, a `test-reviewer` agent with read-only tools, and an MCP server for a test reporting dashboard.
+- **Monorepo support:** Place a separate `AGENTS.md` inside each package. Agents automatically read the nearest file in the directory tree, so each subproject can have tailored instructions.
 
-### Plugin directory structure
+- **Example:**
+```markdown
+# AGENTS.md
 
+## Setup commands
+
+- Install deps: `pnpm install`
+- Start dev server: `pnpm dev`
+- Run tests: `pnpm test`
+
+## Code style
+
+- TypeScript strict mode
+- Single quotes, no semicolons
+- Use functional patterns where possible
+
+## PR instructions
+
+- Title format: `[<project_name>] <Title>`
+- Always run `pnpm lint` and `pnpm test` before committing.
 ```
-my-testing-plugin/
-├── plugin.json              # Plugin metadata and configuration
-├── skills/
-│   └── test-runner/
-│       ├── SKILL.md         # Testing skill instructions
-│       └── run-tests.sh     # Supporting script
-├── agents/
-│   └── test-reviewer.agent.md # Code review agent
-├── hooks/
-│   └── hooks.json           # Hook configuration
-├── scripts/
-│   └── validate-tests.sh    # Hook script
-└── .mcp.json                # MCP server definitions
-```
 
-Once installed, plugin-provided customizations appear alongside your locally defined ones. For example, skills from a plugin show up in the Configure Skills menu, and MCP servers from a plugin appear in the MCP server list.
+- **When to use:**
+  - Providing project-specific context that any coding agent needs to work on your repo
+  - Encoding build, test, and style conventions once so every agent picks them up automatically
+  - Monorepos where individual packages need different instructions
 
-> **Caution:** Plugins can include hooks and MCP servers that run code on your machine. Review the plugin contents and publisher before installing, especially for plugins from community marketplaces.
+- **When NOT to use:**
+  - When you need structured, schema-validated metadata (AGENTS.md has no schema)
+  - When you need capability files that teach an agent *how* to perform a reusable task across projects (use Agent Skills / SKILL.md instead)
 
-### Discovering and installing plugins
+---
+
+### Agent Plugins
+
+- Agent plugins are prepackaged bundles of chat customizations that you can discover and install from plugin marketplaces in Visual Studio Code. A single plugin can provide any combination of slash commands, agent skills, custom agents, hooks, and MCP servers.
+- Plugins work alongside your locally defined customizations. When you install a plugin, its commands, skills, agents, hooks, and MCP servers appear in chat.
+- **Note:** Agent plugins are currently in preview. Enable or disable support for agent plugins with the `chat.plugins.enabled` setting.
+- **What plugins provide**
+  - An agent plugin can bundle one or more of the following customization types:
+    - **Slash commands**: additional commands you can invoke with `/` in chat
+    - **Skills**: agent skills with instructions, scripts, and resources that load on-demand
+    - **Agents**: custom agents with specialized personas and tool configurations
+    - **Hooks**: hooks that execute shell commands at agent lifecycle points
+    - **MCP servers**: MCP servers for external tool integrations
+  - For example, a testing plugin might include a `test-runner` skill with scripts, a `test-reviewer` agent with read-only tools, and an MCP server for a test reporting dashboard.
+  - **Plugin directory structure**
+
+      ```
+      my-testing-plugin/
+      ├── plugin.json              # Plugin metadata and configuration
+      ├── skills/
+      │   └── test-runner/
+      │       ├── SKILL.md         # Testing skill instructions
+      │       └── run-tests.sh     # Supporting script
+      ├── agents/
+      │   └── test-reviewer.agent.md # Code review agent
+      ├── hooks/
+      │   └── hooks.json           # Hook configuration
+      ├── scripts/
+      │   └── validate-tests.sh    # Hook script
+      └── .mcp.json                # MCP server definitions
+      ```
+
+  - Once installed, plugin-provided customizations appear alongside your locally defined ones. For example, skills from a plugin show up in the Configure Skills menu, and MCP servers from a plugin appear in the MCP server list.
+  - **Caution:** Plugins can include hooks and MCP servers that run code on your machine. Review the plugin contents and publisher before installing, especially for plugins from community marketplaces.
+
+#### Discovering and installing plugins
 
 1. Open the Extensions view (Ctrl+Shift+X) and enter `@agentPlugins` in the search field.
 2. Browse the list of available plugins from your configured marketplaces.
@@ -480,7 +506,7 @@ The first time you install a plugin from a new marketplace, VS Code shows a trus
 
 Alternatively, you can install a plugin directly from a Git repository URL by running **Chat: Install Plugin From Source** from the Command Palette.
 
-### Configuring plugin marketplaces
+#### Configuring plugin marketplaces
 
 By default, VS Code discovers plugins from the [copilot-plugins](https://github.com/github/copilot-plugins) and [awesome-copilot](https://github.com/github/awesome-copilot) GitHub repositories. You can add additional marketplaces with the `chat.plugins.marketplaces` setting.
 
@@ -491,7 +517,7 @@ Marketplaces are Git repositories that contain plugin definitions. You can refer
 - SCP-style git remote: SSH-style references
 - file URI: a `file:///` path to a marketplace repository already cloned on disk
 
-### Managing installed plugins
+#### Managing installed plugins
 
 The **Agent Plugins - Installed** view in the Extensions view shows the plugins you have installed. From this view, you can enable, disable, or uninstall plugins.
 
@@ -499,7 +525,7 @@ You can also manage installed plugins from the Chat view by selecting the gear i
 
 Plugins sourced from npm or PyPI never update automatically. Instead, they show an Update button in the Extensions view. Selecting the button prompts you to confirm before running the install command.
 
-### Cross-tool compatibility
+#### Cross-tool compatibility
 
 The plugin format is shared between VS Code, GitHub Copilot CLI, and Claude Code. A single plugin repository can work across all three tools.
 
@@ -562,55 +588,6 @@ CLAUDE.local.md                                ← Local-only, not committed to 
 ```
 
 ---
-
-## When to Use Each Customization Type
-
-### Custom Agents (Autonomous Workflows)
-
-**What it is:** Specialized AI personas with defined scope, tool access, and system prompts for autonomous sessions.
-
-**When to use:**
-- Complex multi-step tasks requiring sustained context
-- When you need the AI to maintain a specific role throughout a workflow
-- Code review, refactoring, or development tasks that span multiple files
-- When you want to limit tool access for security or focus
-
-**When NOT to use:**
-- For simple one-off tasks (use prompt files)
-- When you need broad behavioral guidance (use custom instructions)
-- For capabilities that should be shared across tools (use skills)
-- When the task doesn't require autonomy (use prompt files or skills)
-
-**Where it works:** VS Code (local agents), GitHub.com (cloud agents via github.com/copilot/agents). Cloud agents work with the coding agent.
-
-**Examples:**
-- "Code review agent" for automated PR reviews
-- "Bug fixer agent" for debugging workflows
-- "Documentation specialist" for generating docs
-
-### Agent Skills (Reusable Capabilities)
-
-**What it is:** Reusable capabilities packaged with instructions, scripts, and resources that load on-demand.
-
-**When to use:**
-- Creating shareable capabilities that work across different tools
-- When you want skills to be auto-invoked based on intent
-- Packaging scripts or resources with AI instructions
-- Building domain-specific expertise (e.g., testing, deployment)
-
-**When NOT to use:**
-- For one-off tasks (use prompt files)
-- When you need full autonomy (use custom agents)
-- For broad behavioral guidance (use custom instructions)
-- When the capability is tool-specific (use local customizations)
-
-**Where it works:** VS Code, GitHub Copilot CLI, coding agent, Claude Code. Cross-tool compatible.
-
-**Examples:**
-- "Test runner" skill for executing tests
-- "Code formatter" skill for style enforcement
-- "Deployment" skill for CI/CD integration
-
 ### Hooks (Lifecycle Automation)
 
 **What it is:** Shell commands that execute at specific agent lifecycle points (e.g., before/after tool use).
