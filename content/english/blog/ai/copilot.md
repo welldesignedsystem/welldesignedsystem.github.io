@@ -25,6 +25,14 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 
 --- 
 
+### Personal instructions
+
+- Set on GitHub.com under your profile picture → "Personal instructions".
+- Apply only to you, only in Copilot Chat on GitHub.com.
+- Good for quick personal testing before rolling something out to a team.
+
+--- 
+
 ### Repository-wide instructions (`.github/copilot-instructions.md`)
 
 | File                                               | Scope                                                                              |
@@ -97,7 +105,7 @@ applyTo: '**/*.py'
 - Use type hints for all function signatures.
 - Write docstrings for public functions.
 ```
-- 
+ 
 - Instructions only activate when Copilot is working with files that match the `applyTo` pattern.
 - Multiple patterns are separated by commas.
 - If both a path-specific file and `copilot-instructions.md` apply to the same file, instructions from both are used.
@@ -108,14 +116,6 @@ applyTo: '**/*.py'
 **Supported in:** 
 - Copilot Chat in VS Code, Visual Studio, and the Copilot coding agent. 
 - _(Not supported in JetBrains, Xcode, GitHub.com chat, or mobile as of April 2026.)_
-
---- 
-
-### Personal instructions
-
-- Set on GitHub.com under your profile picture → "Personal instructions".
-- Apply only to you, only in Copilot Chat on GitHub.com.
-- Good for quick personal testing before rolling something out to a team.
 
 --- 
 
@@ -152,7 +152,55 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 ---
 
 ### Agent Skills
-<TBD>
+
+- Agent Skills are reusable, shareable capability files that teach Copilot (and compatible tools) how to perform a specific task. 
+- Unlike prompt files, skills are **always available** and can be automatically invoked based on intent — you don't need to explicitly call them every time.
+- **File location:** `skills/<skill-name>/SKILL.md`
+- **File extension:** `.md` (always named `SKILL.md`)
+- **Status:** GA (open standard)
+- **Supported in:** VS Code, GitHub Copilot CLI, coding agent, Claude Code, Jetbrains.
+- **Frontmatter fields:**
+
+| Field | Description |
+|---|---|
+| `name` | Display name of the skill shown in the UI |
+| `description` | Short description used for intent matching and hover display |
+| `user-invocable` | If `true`, users can manually invoke via `/skill-name` in chat |
+| `disable-model-invocation` | If `true`, prevents the model from auto-invoking this skill |
+
+- Skills do **not** support `mode`, `tools`, or `model` frontmatter fields — those are prompt file concepts. Skills also do not support dynamic input variables (`${input:...}`).
+- **Progressive loading:** Only the `name` and `description` frontmatter fields are loaded at startup. The full skill body is loaded on demand, keeping startup fast even across large skill libraries.
+
+**How to invoke:**
+- Copilot automatically invokes a skill when your intent matches the skill's `description`.
+- If `user-invocable: true` is set, you can also manually invoke via `/skill-name` in Copilot Chat.
+
+**Generate a skill file with AI:** Type `/create-skill` in chat and describe the capability you want to package. The agent generates a `SKILL.md` file for you.
+
+**When to use:**
+- Encoding reusable, shareable expertise (e.g. "how we write migrations", "our PR review checklist")
+- Capabilities that should be available across sessions without manual invocation
+- Sharing consistent workflows across team members or tools (VS Code, CLI, Claude Code)
+
+**When NOT to use:**
+- For one-off tasks (use prompt files instead)
+- When you need dynamic user input or variables (use prompt files)
+- When you need to control mode, tools, or model settings (use prompt files)
+
+**Example:**
+```markdown
+---
+name: 'Write Migration'
+description: 'Generates a database migration file following project conventions'
+user-invocable: true
+---
+# Write Migration
+
+When asked to create a migration:
+1. Use sequential numbering in the filename: `YYYYMMDD_description.sql`
+2. Always include a rollback section.
+3. Follow the schema conventions in `docs/schema.md`.
+```
 
 ---
 
