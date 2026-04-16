@@ -168,6 +168,8 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 ### Agent Skills
 - Standardized approach unlike prompt files [read more](https://agentskills.io/specification) 
 - Agent Skills are reusable, shareable capability files that teach compatible tools how to perform a specific task.
+- Agent Plugin is like an external ability Skill is more like an internal ability.
+- If Agent skill is like a tool then Agent is like a tool box.
 - Unlike prompt files, skills can be automatically invoked based on intent — you don't need to explicitly call them every time.
 - **File location:** `skills/<skill-name>/SKILL.md`
 - **File extension:** `.md` (always named `SKILL.md`)
@@ -299,6 +301,7 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 ### AGENTS.md
 - AGENTS.md is a simple, open format for guiding coding agents — think of it as a **README for agents**: a dedicated, predictable place to provide context and instructions to help AI coding agents work on your project.
 - Unlike `README.md` (which targets human contributors), AGENTS.md contains the extra detail agents need: build steps, test commands, and conventions that might clutter a README.
+- If skill is like a tool then Agent is like a tool box.
 - **File name:** `AGENTS.md` (placed at the repository root, or nested inside subpackages)
 - **Format:** Plain Markdown — no frontmatter, no required fields, no special syntax. Use any headings you like.
 - **Status:** Open standard, stewarded by the [Agentic AI Foundation](https://aaif.io) under the Linux Foundation.
@@ -354,6 +357,7 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 ### Agent Plugins
 
 - Agent plugins are prepackaged bundles of chat customizations that you can discover and install from plugin marketplaces in Visual Studio Code. A single plugin can provide any combination of slash commands, agent skills, custom agents, hooks, and MCP servers.
+- Plugin is like an external ability Skill is more like an internal ability.
 - Plugins work alongside your locally defined customizations. When you install a plugin, its commands, skills, agents, hooks, and MCP servers appear in chat.
 - **Note:** Agent plugins are currently in preview. Enable or disable support for agent plugins with the `chat.plugins.enabled` setting.
 - **What plugins provide**
