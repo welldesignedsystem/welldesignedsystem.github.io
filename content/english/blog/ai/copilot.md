@@ -22,7 +22,15 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 - Do not affect IDE interactions.
 - Enable discovery of org-level instructions in VS Code by setting `github.copilot.chat.organizationInstructions.enabled` to `true`.
 - Learn how to add org-level instructions at the [GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions).
-
+- Usecases:
+  - coding standards
+  - use Typescript instead of javascript
+  - follow camelCase for variables, PascalCase for Components
+  - Never log sensitive user data
+  - Always Validate inputs
+  - Follow OWASP Guidelines
+  - Documentation: exaplain "why" not just "what"
+  - Tone be concise and technical, avoid beginner level explanations
 --- 
 
 ### Personal instructions
@@ -30,6 +38,11 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 - Set on GitHub.com under your profile picture → "Personal instructions".
 - Apply only to you, only in Copilot Chat on GitHub.com.
 - Good for quick personal testing before rolling something out to a team.
+- [Refer](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-personal-instructions)
+- Usecases:
+  - Always respond in Spanish.
+  - Use a helpful, collegial tone. Keep explanations brief, but provide enough context to understand the code.
+  - Always provide examples in TypeScript.
 
 --- 
 
