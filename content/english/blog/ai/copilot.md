@@ -3,66 +3,79 @@ date = '2026-04-10T13:00:00+10:00'
 draft = false
 title = 'GitHub Copilot Notes'
 tags = ['GitHub', 'Copilot', 'AI', 'Prompting', 'DevTools', 'Agents', 'LLM']
-summary = "GitHub Copilot's prompt library unlocks a structured, repeatable way to guide AI assistance across your codebase—covering custom instructions, reusable prompt files, agent mode, and extensible skills for end-to-end AI-driven workflows."
+summary = "GitHub Copilot and customization instructions together unlocks a structured, repeatable way to guide AI assistance across your codebase—covering custom instructions, reusable prompt files, agent mode, and extensible skills for end-to-end AI-driven workflows."
 +++
 
-Here we explore GitHub Copilot and its prompt library—a powerful framework for structuring and reusing prompts to get consistent, high-quality AI assistance across a codebase.
+GitHub Copilot and its customization instructions, a powerful framework for struct-ing and reusing prompts to get consistent, high-quality AI assistance across a codebase.
 
-> Source: https://docs.github.com/copilot/tutorials/customization-library
+## Reference
+- [Github Copilot Customization library](https://docs.github.com/copilot/tutorials/customization-library)
+- [Visual Studio Code Customization](https://code.visualstudio.com/docs/copilot/customization/overview)
+- [Important Cheat Sheet](https://code.visualstudio.com/docs/copilot/reference/copilot-vscode-features)
+
+## Different Levels of Customization
+
+### Organization instructions
+
+- Set in GitHub organization settings on GitHub.com.
+- Apply to all organization members in Copilot Chat on GitHub.com.
+- Do not affect IDE interactions.
+- Enable discovery of org-level instructions in VS Code by setting `github.copilot.chat.organizationInstructions.enabled` to `true`.
+- Learn how to add org-level instructions at the [GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions).
+
+--- 
+
+### Repository-wide instructions (`.github/copilot-instructions.md`)
+
+| File                                               | Scope                                                                              |
+|----------------------------------------------------|------------------------------------------------------------------------------------|
+| Repository-wide  `.github/copilot-instructions.md` | All files in the repo, all surfaces                                                |
+| `AGENTS.md`         | In workspace root or subfolders, All agents in the workspace (multi-agent support) |
+| `CLAUDE.md`, `.claude/CLAUDE.md`, `~/.claude/CLAUDE.md`, or `CLAUDE.local.md` | Claude Code compatibility                                                          |
+
+- **Always-on instructions** — automatically included in every chat request. 
+- Applies to all files in the repository.
+- The most broadly supported form — works across IDEs, GitHub.com chat and the coding agent.
+
+Use `copilot-instructions.md` for:
+**When to use:**
+- Setting broad project standards 
+  - Technology stack and libraries
+  - naming conventions that apply across project
+  - coding style
+  - architecture patterns to avoid or use
+  - security requirements
+  - error handling
+  - Documentation standards
+- Ensuring consistent behavior across all interactions
+- Defining team conventions that apply everywhere
+
+**When NOT to use:**
+- For one-off tasks (use prompt files instead)
+- When you need user input or variables (use prompt files)
+- For complex multi-step workflows (use custom agents)
+- When instructions should only apply conditionally (use path-specific or prompt files)
+
+**Where it works:** 
+- All Copilot surfaces (VS Code, GitHub.com chat, coding agent, CLI). 
+- Repository-wide and path-specific work in VS Code, Visual Studio, JetBrains, and the coding agent. 
+- Personal/organization instructions work in GitHub.com chat.
+
+**Examples:**
+- "Use TypeScript interfaces for all data structures"
+- "Follow PEP 8 style guide for Python code"
+- "Include error handling in all public functions"
 
 ---
 
-## What Are Customization Instructions?
-
-The three types of Customization Instructions covered are:
-- **Custom instructions** — persistent behavioral guidance injected into every interaction
-- **Prompt files** — reusable, on-demand task prompts (public preview)
-- **Custom agents** — specialized autonomous coding agents with a defined scope and tool access
-
-> **Note (VS Code):** The VS Code docs also surface two additional customization types not covered in the GitHub docs library: **Agent Skills** and **Hooks**.
-
----
-
-## High level:
-
-The VS Code docs distinguish two broad categories:
-
-**Always-on instructions** — automatically included in every chat request. Best for project-wide coding standards, architecture decisions, and conventions that apply to all code. There are four types:
-
-| Type | File | Scope |
-|---|---|---|
-| Repository-wide | `.github/copilot-instructions.md` | All files in the repo, all surfaces |
-| `AGENTS.md` | `AGENTS.md` in workspace root or subfolders | All agents in the workspace (multi-agent support) |
-| `CLAUDE.md` | `CLAUDE.md`, `.claude/CLAUDE.md`, `~/.claude/CLAUDE.md`, or `CLAUDE.local.md` | Claude Code compatibility |
-| Organization-level | Set in GitHub org settings | All org members in Copilot Chat on GitHub.com |
-
-**File-based instructions** — conditionally applied based on glob patterns. Best for language-specific conventions, framework patterns, or rules that only apply to certain parts of your codebase:
+### Path-specific instructions (`.instructions.md` files)
 
 | Type | File | Scope |
 |---|---|---|
 | Path-specific | `*.instructions.md` in `.github/instructions/` or custom locations | Files matching `applyTo` glob pattern |
 | User-level | `~/.copilot/instructions/` or the instructions folder of your VS Code profile | Applies across all workspaces for that user |
 
----
-## Customization Types
-
-#### 1. Repository-wide instructions (`.github/copilot-instructions.md`)
-
-- A single file at `.github/copilot-instructions.md`.
-- Applies to all files in the repository.
-- The most broadly supported form — works across IDEs, GitHub.com chat, and the coding agent.
-
-Use `copilot-instructions.md` for:
-- Coding style and naming conventions that apply across the project
-- Technology stack declarations and preferred libraries
-- Architectural patterns to follow or avoid
-- Security requirements and error handling approaches
-- Documentation standards
-
----
-
-#### 2. Path-specific instructions (`.instructions.md` files)
-
+- **File-based instructions** — conditionally applied based on glob patterns. Best for language-specific conventions, framework patterns or rules that only apply to certain parts of your codebase
 - One or more files named `NAME.instructions.md` inside the `.github/instructions/` directory (or other configured locations — see below).
 - Each file has an optional YAML frontmatter block with supported fields:
 
@@ -71,13 +84,6 @@ Use `copilot-instructions.md` for:
 | `name` | No | Display name shown in the UI. Defaults to the file name. |
 | `description` | No | Short description shown on hover in the Chat view. |
 | `applyTo` | No | Glob pattern for automatic application (e.g. `**/*.py`). If omitted, the file is not applied automatically but can be manually attached. |
-
-- Instructions only activate when Copilot is working with files that match the `applyTo` pattern.
-- Multiple patterns are separated by commas.
-- If both a path-specific file and `copilot-instructions.md` apply to the same file, instructions from both are used.
-- Avoid conflicting instructions between them — Copilot's behavior when instructions conflict is non-deterministic.
-
-**Supported in:** Copilot Chat in VS Code, Visual Studio, and the Copilot coding agent. _(Not supported in JetBrains, Xcode, GitHub.com chat, or mobile as of April 2026.)_
 
 **Example:**
 ```markdown
@@ -91,34 +97,27 @@ applyTo: '**/*.py'
 - Use type hints for all function signatures.
 - Write docstrings for public functions.
 ```
+- 
+- Instructions only activate when Copilot is working with files that match the `applyTo` pattern.
+- Multiple patterns are separated by commas.
+- If both a path-specific file and `copilot-instructions.md` apply to the same file, instructions from both are used.
+- Avoid conflicting instructions between them — Copilot's behavior when instructions conflict is non-deterministic.
+- **Referencing other files:** You can use standard Markdown links to reference other instruction files or URLs from within an instructions file (e.g. `Apply the [general coding guidelines](./general-coding.instructions.md) to all code.`).
+- **Referencing tools:** To reference agent tools in your instructions, use the `#tool:<tool-name>` syntax (e.g. `#tool:web/fetch`).
 
-**Referencing other files:** You can use standard Markdown links to reference other instruction files or URLs from within an instructions file (e.g. `Apply the [general coding guidelines](./general-coding.instructions.md) to all code.`).
+**Supported in:** 
+- Copilot Chat in VS Code, Visual Studio, and the Copilot coding agent. 
+- _(Not supported in JetBrains, Xcode, GitHub.com chat, or mobile as of April 2026.)_
 
-**Referencing tools:** To reference agent tools in your instructions, use the `#tool:<tool-name>` syntax (e.g. `#tool:web/fetch`).
+--- 
 
----
-
-#### 3. Personal instructions
+### Personal instructions
 
 - Set on GitHub.com under your profile picture → "Personal instructions".
 - Apply only to you, only in Copilot Chat on GitHub.com.
 - Good for quick personal testing before rolling something out to a team.
 
----
-
-#### 4. Organization instructions
-
-- Set in GitHub organization settings on GitHub.com.
-- Apply to all organization members in Copilot Chat on GitHub.com.
-- Do not affect IDE interactions.
-- Enable discovery of org-level instructions in VS Code by setting `github.copilot.chat.organizationInstructions.enabled` to `true`.
-- Learn how to add org-level instructions at the [GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions).
-
----
-
-
-
----
+--- 
 
 ### Prompt Files
 
@@ -151,15 +150,19 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 **Referencing instructions from prompt files:** Prompt files can reference instructions files using Markdown links, keeping prompts clean and avoiding duplication.
 
 ---
-## MCP Servers in GitHub Copilot
+
+### Agent Skills
+<TBD>
+
+---
+
+### MCP Servers in GitHub Copilot
 
 MCP (Model Context Protocol) servers extend Copilot's reach beyond your codebase — letting agents interact with external services like GitHub, Jira, Slack, and more.
 
 A community registry of MCP servers is maintained at: **https://github.com/modelcontextprotocol/servers**
 
----
-
-### Configuring MCP Servers (`mcp.json`)
+#### Configuring MCP Servers (`mcp.json`)
 
 MCP servers are configured in `.vscode/mcp.json`. This file tells VS Code which servers to start and how to connect to them.
 
@@ -207,9 +210,7 @@ Once configured, reference it in an agent's tools array using `airbnb/*` or a sp
 
 > **Note:** `mcp.json` is workspace-scoped. Commit it to version control so the whole team shares the same server configuration. Store secrets in VS Code's secret storage or as environment variables — never hardcode them.
 
----
-
-### Exercise of Using MCP Server: Daily Standup Task File
+#### Exercise of Using MCP Server: Daily Standup Task File
 
 This exercise uses Copilot agent mode with the GitHub MCP server to generate a personal task file each morning.
 
@@ -259,12 +260,11 @@ Keep the tone concise — this is a standup reference, not a report.
 > **Tip:** Pin this prompt to your VS Code toolbar or bind it to a task in `.vscode/tasks.json` so it runs with a single keystroke each morning.
  
 ---
+
 ### GitHub CLI and Copilot
 
 The GitHub CLI (`gh`) brings Copilot directly into your terminal — useful when you're already working in the command line and don't want to context-switch to an IDE.
 Install from here : **https://cli.github.com**
-
----
 
 #### `gh copilot suggest`
 
@@ -281,8 +281,6 @@ Use this when:
 - You're working with unfamiliar CLI tools (`kubectl`, `ffmpeg`, `awk`)
 - You want a safe way to construct destructive commands before running them
 
----
-
 #### `gh copilot explain`
 
 Explains what a shell command does in plain English.
@@ -295,8 +293,6 @@ Use this when:
 - You've inherited a script and need to understand it before running it
 - You find a command in documentation and want a plain-English breakdown
 - You're onboarding someone to your runbooks
-
----
 
 #### Aliases for speed
 
@@ -314,8 +310,6 @@ gh cs "compress all jpg files in this folder"
 gh ce "rsync -avz --delete src/ user@host:/var/www/"
 ```
 
----
-
 #### When to use `gh copilot` vs IDE Copilot Chat
 
 | Situation | Use |
@@ -328,7 +322,7 @@ gh ce "rsync -avz --delete src/ user@host:/var/www/"
 
 > **Note:** `gh copilot` works on shell commands only — it has no awareness of your codebase, open files, or MCP servers. For anything requiring code context, use the IDE.
 
----
+--- 
 
 ### Custom Agents
 
@@ -386,11 +380,108 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 
 **Generate an agent with AI:** Type `/create-agent` in chat and describe the agent's role to generate a `.agent.md` file.
 
+## Agent Plugins
+
+Agent plugins are prepackaged bundles of chat customizations that you can discover and install from plugin marketplaces in Visual Studio Code. A single plugin can provide any combination of slash commands, agent skills, custom agents, hooks, and MCP servers.
+
+Plugins work alongside your locally defined customizations. When you install a plugin, its commands, skills, agents, hooks, and MCP servers appear in chat.
+
+> **Note:** Agent plugins are currently in preview. Enable or disable support for agent plugins with the `chat.plugins.enabled` setting.
+
+### What plugins provide
+
+An agent plugin can bundle one or more of the following customization types:
+
+- **Slash commands**: additional commands you can invoke with `/` in chat
+- **Skills**: agent skills with instructions, scripts, and resources that load on-demand
+- **Agents**: custom agents with specialized personas and tool configurations
+- **Hooks**: hooks that execute shell commands at agent lifecycle points
+- **MCP servers**: MCP servers for external tool integrations
+
+For example, a testing plugin might include a `test-runner` skill with scripts, a `test-reviewer` agent with read-only tools, and an MCP server for a test reporting dashboard.
+
+### Plugin directory structure
+
+```
+my-testing-plugin/
+├── plugin.json              # Plugin metadata and configuration
+├── skills/
+│   └── test-runner/
+│       ├── SKILL.md         # Testing skill instructions
+│       └── run-tests.sh     # Supporting script
+├── agents/
+│   └── test-reviewer.agent.md # Code review agent
+├── hooks/
+│   └── hooks.json           # Hook configuration
+├── scripts/
+│   └── validate-tests.sh    # Hook script
+└── .mcp.json                # MCP server definitions
+```
+
+Once installed, plugin-provided customizations appear alongside your locally defined ones. For example, skills from a plugin show up in the Configure Skills menu, and MCP servers from a plugin appear in the MCP server list.
+
+> **Caution:** Plugins can include hooks and MCP servers that run code on your machine. Review the plugin contents and publisher before installing, especially for plugins from community marketplaces.
+
+### Discovering and installing plugins
+
+1. Open the Extensions view (Ctrl+Shift+X) and enter `@agentPlugins` in the search field.
+2. Browse the list of available plugins from your configured marketplaces.
+3. Select Install to install a plugin in your user profile.
+
+The first time you install a plugin from a new marketplace, VS Code shows a trust prompt. Review the marketplace source before confirming.
+
+Alternatively, you can install a plugin directly from a Git repository URL by running **Chat: Install Plugin From Source** from the Command Palette.
+
+### Configuring plugin marketplaces
+
+By default, VS Code discovers plugins from the [copilot-plugins](https://github.com/github/copilot-plugins) and [awesome-copilot](https://github.com/github/awesome-copilot) GitHub repositories. You can add additional marketplaces with the `chat.plugins.marketplaces` setting.
+
+Marketplaces are Git repositories that contain plugin definitions. You can reference them in several formats:
+
+- Shorthand: `owner/repo` for public GitHub repositories (e.g., `anthropics/claude-code`)
+- HTTPS git remote: a full URL ending in `.git`
+- SCP-style git remote: SSH-style references
+- file URI: a `file:///` path to a marketplace repository already cloned on disk
+
+### Managing installed plugins
+
+The **Agent Plugins - Installed** view in the Extensions view shows the plugins you have installed. From this view, you can enable, disable, or uninstall plugins.
+
+You can also manage installed plugins from the Chat view by selecting the gear icon > Plugins.
+
+Plugins sourced from npm or PyPI never update automatically. Instead, they show an Update button in the Extensions view. Selecting the button prompts you to confirm before running the install command.
+
+### Cross-tool compatibility
+
+The plugin format is shared between VS Code, GitHub Copilot CLI, and Claude Code. A single plugin repository can work across all three tools.
+
+Key differences to be aware of across tools:
+
+- **Hook file location**: Claude-format plugins expect hooks in `hooks/hooks.json`, while Copilot-format plugins use `hooks.json` at the root. VS Code detects the format automatically.
+- **Plugin root token**: Claude-format plugins use `${CLAUDE_PLUGIN_ROOT}` to reference files within the plugin directory. This token is not available in Copilot-format plugins.
+- **Skill naming**: All tools require plain kebab-case names in `SKILL.md`. Namespace prefixes cause silent load failures.
+
+
+**When to use:**
+- Standardized workflows you want to trigger manually
+- Tasks requiring user input or variables
+- One-off automation (code generation, refactoring, analysis)
+- When you want to share reusable task templates with your team
+
+**When NOT to use:**
+- For persistent behavior (use custom instructions)
+- When the task should run automatically (use skills or hooks)
+- For complex autonomous workflows (use custom agents)
+- When you need to package capabilities for sharing across tools (use skills or plugins)
+
+**Where it works:** VS Code, Visual Studio, JetBrains only. Not supported in GitHub.com chat or the coding agent.
+
+**Examples:**
+- "Generate unit tests for this function"
+- "Refactor this code to use async/await"
+- "Create a README for this project"
+
 ---
-
-## Default Available Tools for VS Code Custom Agents
-
-- [Important Cheat Sheet](https://code.visualstudio.com/docs/copilot/reference/copilot-vscode-features)
 
 ## File Location Reference
 
@@ -424,28 +515,150 @@ CLAUDE.local.md                                ← Local-only, not committed to 
 
 ---
 
-## Comparison of Customization Types - Prompts File vs. Agent Skills
+## When to Use Each Customization Type
 
-| Feature | Prompt File (`.prompt.md`) | Agent Skill (`SKILL.md`) |
-|---|---|---|
-| **File location** | `.github/prompts/` | `skills/<skill-name>/SKILL.md` |
-| **How it's triggered** | Manually invoked via `/filename` in chat | Auto-invoked by Copilot based on intent matching, or manually via `/skill-name` |
-| **Purpose** | One-off, on-demand task execution | Reusable capability packaged for sharing across tools |
-| **Scope** | Single task run per invocation | Persistent capability available across sessions |
-| **Supports input variables** | Yes — `${input:varName:placeholder}` syntax | No |
-| **IDE support** | VS Code, Visual Studio, JetBrains only | VS Code, GitHub Copilot CLI, coding agent, Claude Code |
-| **Frontmatter: mode** | ✅ (`ask`, `edit`, `agent`) | ❌ |
-| **Frontmatter: tools** | ✅ | ❌ |
-| **Frontmatter: model** | ✅ | ❌ |
-| **Frontmatter: user-invocable** | ❌ | ✅ |
-| **Frontmatter: disable-model-invocation** | ❌ | ✅ |
-| **Progressive loading** | No | Yes — only `name`/`description` loaded at startup; full body loaded on demand |
-| **Generate with AI** | `/create-prompt` | `/create-skill` |
-| **Status** | Public preview | GA (open standard) |
+### Custom Agents (Autonomous Workflows)
+
+**What it is:** Specialized AI personas with defined scope, tool access, and system prompts for autonomous sessions.
+
+**When to use:**
+- Complex multi-step tasks requiring sustained context
+- When you need the AI to maintain a specific role throughout a workflow
+- Code review, refactoring, or development tasks that span multiple files
+- When you want to limit tool access for security or focus
+
+**When NOT to use:**
+- For simple one-off tasks (use prompt files)
+- When you need broad behavioral guidance (use custom instructions)
+- For capabilities that should be shared across tools (use skills)
+- When the task doesn't require autonomy (use prompt files or skills)
+
+**Where it works:** VS Code (local agents), GitHub.com (cloud agents via github.com/copilot/agents). Cloud agents work with the coding agent.
+
+**Examples:**
+- "Code review agent" for automated PR reviews
+- "Bug fixer agent" for debugging workflows
+- "Documentation specialist" for generating docs
+
+### Agent Skills (Reusable Capabilities)
+
+**What it is:** Reusable capabilities packaged with instructions, scripts, and resources that load on-demand.
+
+**When to use:**
+- Creating shareable capabilities that work across different tools
+- When you want skills to be auto-invoked based on intent
+- Packaging scripts or resources with AI instructions
+- Building domain-specific expertise (e.g., testing, deployment)
+
+**When NOT to use:**
+- For one-off tasks (use prompt files)
+- When you need full autonomy (use custom agents)
+- For broad behavioral guidance (use custom instructions)
+- When the capability is tool-specific (use local customizations)
+
+**Where it works:** VS Code, GitHub Copilot CLI, coding agent, Claude Code. Cross-tool compatible.
+
+**Examples:**
+- "Test runner" skill for executing tests
+- "Code formatter" skill for style enforcement
+- "Deployment" skill for CI/CD integration
+
+### Hooks (Lifecycle Automation)
+
+**What it is:** Shell commands that execute at specific agent lifecycle points (e.g., before/after tool use).
+
+**When to use:**
+- Automating setup/cleanup around AI interactions
+- Enforcing policies or running checks
+- Integrating with external tools or workflows
+- Logging or monitoring AI usage
+
+**When NOT to use:**
+- For user-facing tasks (use prompt files or agents)
+- When you need AI decision-making (use agents or skills)
+- For persistent behavior changes (use custom instructions)
+- When the automation doesn't tie to AI lifecycle events
+
+**Where it works:** VS Code only. Not supported in other IDEs or GitHub.com chat.
+
+**Examples:**
+- Running linters after code generation
+- Setting up test environments before AI tasks
+- Committing changes after successful AI edits
+
+### MCP Servers (External Integrations)
+
+**What it is:** Servers that extend Copilot's reach to external services via the Model Context Protocol.
+
+**When to use:**
+- Integrating with external APIs or services (GitHub, Jira, Slack)
+- Providing AI access to databases, documentation, or tools
+- When you need real-time data from outside the codebase
+- Building custom integrations for your workflow
+
+**When NOT to use:**
+- For local code-only tasks (use built-in tools)
+- When the integration is simple (use hooks or scripts)
+- For AI behavioral guidance (use custom instructions)
+- When you don't need external data access
+
+**Where it works:** VS Code, GitHub Copilot CLI, coding agent. MCP is a cross-tool protocol.
+
+**Examples:**
+- GitHub MCP server for repository data
+- Database MCP server for querying data
+- Slack MCP server for team communication
+
+### Agent Plugins (Packaged Customizations)
+
+**What it is:** Prepackaged bundles of customizations (skills, agents, hooks, MCP servers) installed from marketplaces.
+
+**When to use:**
+- Installing community or team-shared customization packages
+- When you want to deploy multiple related customizations at once
+- For complex setups that combine multiple types
+- When you need cross-tool compatibility out of the box
+
+**When NOT to use:**
+- For simple single customizations (create locally)
+- When you need full control over implementation (build your own)
+- For organization-specific logic (use local files)
+- When security is critical (review plugin code before installing)
+
+**Where it works:** VS Code, GitHub Copilot CLI, Claude Code. Cross-tool compatible.
+
+**Examples:**
+- "Testing toolkit" plugin with test skills, agents, and MCP servers
+- "Code review" plugin with review agents and hooks
+- "DevOps" plugin with deployment skills and integrations
 
 ---
 
-## VS Code-Specific Customization Types (Not in the GitHub Library)
+## Comprehensive Comparison Table
+| Feature | Custom Instructions | Prompt Files | Custom Agents | Agent Skills | Hooks | MCP Servers | Agent Plugins |
+|---|---|---|---|---|---|---|---|
+| **Primary Purpose** | Persistent behavior guidance | One-off task execution | Autonomous workflows | Reusable capabilities | Lifecycle automation | External integrations | Packaged customizations |
+| **Scope** | All interactions | Single invocation | Session-based | Persistent across sessions | Event-triggered | Tool-extended | User/workspace until uninstalled |
+| **Triggering** | Automatic (always-on) | Manual (`/filename`) | Manual selection | Auto (intent) or manual (`/skill-name`) | Automatic (lifecycle events) | Via tools in agents | As per bundled components |
+| **Persistence** | Always active | Per invocation | Per session | Always available | Event-based | Always running (when enabled) | Until uninstalled |
+| **User Input Support** | No | Yes (`${input:...}`) | Via prompts | No | Via scripts | Via server config | Depends on components |
+| **Tool Access** | N/A | Configurable | Configurable | N/A | Shell commands | External APIs | As per bundled components |
+| **File Location** | `.github/copilot-instructions.md`, `*.instructions.md` | `.github/prompts/` | `.github/agents/`, local paths | `skills/<name>/SKILL.md` | `hooks.json`, workspace hooks | `.vscode/mcp.json` | Installed from marketplaces or Git repos |
+| **IDE Support** | All (VS Code, VS, JetBrains, GitHub.com, CLI, agent) | VS Code, VS, JetBrains | VS Code, GitHub.com (cloud) | VS Code, CLI, agent, Claude Code | VS Code | VS Code, CLI, agent | VS Code, CLI, Claude Code |
+| **Cross-Tool Compatibility** | High (works everywhere) | Low (IDE-only) | Medium (VS Code + GitHub) | High (all tools) | Low (VS Code-only) | High (protocol-based) | High (shared format) |
+| **Frontmatter: mode** | N/A | ✅ (`ask`, `edit`, `agent`) | N/A | ❌ | N/A | N/A | N/A |
+| **Frontmatter: tools** | N/A | ✅ | N/A | ❌ | N/A | N/A | N/A |
+| **Frontmatter: model** | N/A | ✅ | N/A | ❌ | N/A | N/A | N/A |
+| **Frontmatter: user-invocable** | N/A | ❌ | N/A | ✅ | N/A | N/A | N/A |
+| **Frontmatter: disable-model-invocation** | N/A | ❌ | N/A | ✅ | N/A | N/A | N/A |
+| **Progressive Loading** | No | No | No | Yes — only `name`/`description` at startup; full body on demand | No | No | Yes — components loaded on demand |
+| **Bundling** | N/A | Single file | N/A | Single skill | N/A | N/A | Multiple types (skills, agents, hooks, MCP servers, etc.) |
+| **Generation Method** | Manual or `/init` | `/create-prompt` | `/create-agent` | `/create-skill` | `/create-hook` | Manual config | Install from marketplace |
+| **Status** | GA | Public preview | GA | GA | GA | GA | Preview |
+| **Best For** | Standards, conventions | Quick tasks, templates | Complex workflows | Shareable expertise | Automation, policies | External data access | Team tooling, complex setups |
+| **Security Considerations** | Low (text only) | Low (local execution) | Medium (tool access) | Low (intent-based) | High (shell execution) | High (external access) | High (review before install) |
+| **Maintenance** | Update files in repo | Update prompt files | Update agent files | Update skill files | Update hook scripts | Update server config | Plugin updates via marketplace |
+
 
 The VS Code docs expose two additional customization types beyond what the 19 GitHub library examples cover.
 
@@ -1259,12 +1472,6 @@ Beyond these 19 official examples, GitHub maintains a community repository with 
 > - https://github.blog/ai-and-ml/github-copilot/5-tips-for-writing-better-custom-instructions-for-copilot/ (official GitHub Blog, September 2025)
 > - https://awesome-copilot.github.com/learning-hub/defining-custom-instructions/ (GitHub's own Awesome Copilot community hub)
 > - https://code.visualstudio.com/docs/copilot/customization/custom-instructions (VS Code official docs, March 2026)
-
----
-
-## Important caveat before reading
-
-Copilot is a probabilistic AI system. The same instructions can produce different results on different runs. The goal of all these practices is to **tilt the scales** — to make the outcome you want more likely, not to guarantee it.
 
 ---
 
