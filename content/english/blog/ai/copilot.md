@@ -980,9 +980,7 @@ Use #tool:vscode/askQuestions to ask for the component name and fields if not pr
 
 ---
 
-## Community Examples
-
-## All 19 Library Examples
+## Community Examples - 19 Library Examples
 
 ### Custom Instructions (9 examples)
 
