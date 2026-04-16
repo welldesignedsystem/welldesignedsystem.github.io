@@ -588,76 +588,6 @@ CLAUDE.local.md                                ← Local-only, not committed to 
 ```
 
 ---
-### Hooks (Lifecycle Automation)
-
-**What it is:** Shell commands that execute at specific agent lifecycle points (e.g., before/after tool use).
-
-**When to use:**
-- Automating setup/cleanup around AI interactions
-- Enforcing policies or running checks
-- Integrating with external tools or workflows
-- Logging or monitoring AI usage
-
-**When NOT to use:**
-- For user-facing tasks (use prompt files or agents)
-- When you need AI decision-making (use agents or skills)
-- For persistent behavior changes (use custom instructions)
-- When the automation doesn't tie to AI lifecycle events
-
-**Where it works:** VS Code only. Not supported in other IDEs or GitHub.com chat.
-
-**Examples:**
-- Running linters after code generation
-- Setting up test environments before AI tasks
-- Committing changes after successful AI edits
-
-### MCP Servers (External Integrations)
-
-**What it is:** Servers that extend Copilot's reach to external services via the Model Context Protocol.
-
-**When to use:**
-- Integrating with external APIs or services (GitHub, Jira, Slack)
-- Providing AI access to databases, documentation, or tools
-- When you need real-time data from outside the codebase
-- Building custom integrations for your workflow
-
-**When NOT to use:**
-- For local code-only tasks (use built-in tools)
-- When the integration is simple (use hooks or scripts)
-- For AI behavioral guidance (use custom instructions)
-- When you don't need external data access
-
-**Where it works:** VS Code, GitHub Copilot CLI, coding agent. MCP is a cross-tool protocol.
-
-**Examples:**
-- GitHub MCP server for repository data
-- Database MCP server for querying data
-- Slack MCP server for team communication
-
-### Agent Plugins (Packaged Customizations)
-
-**What it is:** Prepackaged bundles of customizations (skills, agents, hooks, MCP servers) installed from marketplaces.
-
-**When to use:**
-- Installing community or team-shared customization packages
-- When you want to deploy multiple related customizations at once
-- For complex setups that combine multiple types
-- When you need cross-tool compatibility out of the box
-
-**When NOT to use:**
-- For simple single customizations (create locally)
-- When you need full control over implementation (build your own)
-- For organization-specific logic (use local files)
-- When security is critical (review plugin code before installing)
-
-**Where it works:** VS Code, GitHub Copilot CLI, Claude Code. Cross-tool compatible.
-
-**Examples:**
-- "Testing toolkit" plugin with test skills, agents, and MCP servers
-- "Code review" plugin with review agents and hooks
-- "DevOps" plugin with deployment skills and integrations
-
----
 
 ## Comprehensive Comparison Table
 | Feature | Custom Instructions | Prompt Files | Custom Agents | Agent Skills | Hooks | MCP Servers | Agent Plugins |
@@ -687,23 +617,8 @@ CLAUDE.local.md                                ← Local-only, not committed to 
 
 The VS Code docs expose two additional customization types beyond what the 19 GitHub library examples cover.
 
-### Agent Skills
 
-Agent skills are reusable capabilities that can be packaged and shared across VS Code, GitHub Copilot CLI, and the GitHub Copilot coding agent. Generate a skill file with `/create-skill` in chat.
-
-### Hooks
-
-Hooks execute custom commands at specific events in the agent workflow — for automation and policy enforcement. Generate a hook file with `/create-hook` in chat.
-
-### VS Code Chat Customizations editor
-
-All customization types are discoverable and manageable in one place via the **Chat Customizations editor** (Preview). Open it by running **Chat: Open Chat Customizations** from the Command Palette (⇧⌘P / Ctrl+Shift+P).
-
-The editor lets you:
-- View all active instructions, prompt files, agents, skills, and hooks
-- Create new files for each type using the dropdown
-- Switch between agent types (local agents, Copilot CLI, Claude agent) to manage their customizations separately
-- View the source of any instruction file (hover over it in the list)
+## VS Code 
 
 You can also use slash commands in chat to generate any type of customization file directly:
 
@@ -715,20 +630,6 @@ You can also use slash commands in chat to generate any type of customization fi
 | `/create-agent` | `.agent.md` file |
 | `/create-skill` | Agent skill file |
 | `/create-hook` | Hook file |
-
----
-
-### AGENTS.md Files (VS Code only)
-
-VS Code automatically detects `AGENTS.md` at the workspace root and applies it to all chat requests. This is useful when you work with multiple AI agents and want a single instruction file recognized by all of them.
-
-**Features:**
-- Supports subfolder-level instructions using the experimental `chat.useNestedAgentsMdFiles` setting, which causes VS Code to search recursively in all subfolders for `AGENTS.md` files
-- Enable/disable support with the `chat.useAgentsMdFile` setting
-
-**When to use `AGENTS.md` over `copilot-instructions.md`:**
-- You work with multiple AI coding agents and want one file recognized by all of them
-- You want subfolder-level instructions in a monorepo
 
 ---
 
@@ -925,8 +826,6 @@ applyTo: '**/*.{ts,tsx}'
 
 > **`argument-hint` note:** This field is officially documented for prompt files and is used across the Copilot CLI, Claude Code, and VS Code. It provides hint text in the chat input showing the expected argument format. It is **not** the same as `${input:varName}` variable substitution — it's purely a UI label.
 
-> **`mode` vs `agent`:** The old `agent: 'agent'` frontmatter still appears in many examples but `mode` is the current official field. `mode` supports four values: `ask`, `edit`, `agent`, and a custom agent name.
-
 **Full example:**
 ```yaml
 ---
@@ -1078,28 +977,6 @@ tools: ['vscode/askQuestions', 'edit']
 ```markdown
 Use #tool:vscode/askQuestions to ask for the component name and fields if not provided.
 ```
-
----
-
-## Important Caveats
-
-**Prompt files are public preview** as of April 2026, subject to change, and only work in VS Code, Visual Studio, and JetBrains.
-
-**Path-specific instructions** (using `applyTo`) are only supported in Copilot Chat in VS Code, Visual Studio, and the coding agent. JetBrains and Xcode support only the single `copilot-instructions.md` file.
-
-**`AGENTS.md` and `CLAUDE.md`** are VS Code-specific always-on instruction formats. `AGENTS.md` is useful for multi-agent setups; `CLAUDE.md` is for Claude Code compatibility.
-
-**Custom instructions are not taken into account for inline suggestions** as you type in the editor. They only apply to Copilot Chat interactions.
-
-**Personal and organization instructions** only apply to Copilot Chat on GitHub.com. They do not affect any IDE.
-
-**Custom agents require the coding agent feature** to be enabled for your organization. The `.agent.md` file must be merged to the default branch before it appears in the UI.
-
-**Settings-based `codeGeneration` and `testGeneration` instructions are deprecated** in VS Code 1.102. Use file-based instructions instead.
-
-**When both a path-specific file and `copilot-instructions.md` apply to the same file, both sets of instructions are used.** Avoid writing conflicting instructions across them.
-
-**Base branch used for PR reviews:** Copilot code review uses instructions from the base branch of the PR (e.g. `main`), not the feature branch.
 
 ---
 
