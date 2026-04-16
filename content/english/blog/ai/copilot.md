@@ -304,7 +304,7 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 - If skill is like a tool then Agent is like a tool box.
 - **File name:** `AGENTS.md` (placed at the repository root, or nested inside subpackages)
 - **Format:** Plain Markdown — no frontmatter, no required fields, no special syntax. Use any headings you like.
-- **Status:** Open standard, stewarded by the [Agentic AI Foundation](https://aaif.io) under the Linux Foundation.
+- **Status:** Open standard, stewarded by the [Agentic AI Foundation](https://aaif.io) under the Linux Foundation. [AGENTS.md github](https://github.com/agentsmd/agents.md). [Examples](https://agents.md/#examples)
 - **Supported in:** OpenAI Codex, Amp, Cursor, Devin, Jules (Google), Factory, Aider, goose, opencode, Zed, Warp, VS Code, JetBrains Junie, Windsurf, RooCode, Gemini CLI, GitHub Copilot coding agent, Kilo Code, Semgrep, Augment Code, UiPath, and others.
 - **No required fields.** AGENTS.md is plain Markdown. There is no frontmatter schema, no mandatory sections. You write whatever helps an agent work effectively on your project.
 - **Recommended sections to include:**
