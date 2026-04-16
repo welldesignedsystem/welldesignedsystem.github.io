@@ -368,27 +368,27 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
     - **Hooks**: hooks that execute shell commands at agent lifecycle points
     - **MCP servers**: MCP servers for external tool integrations
   - For example, a testing plugin might include a `test-runner` skill with scripts, a `test-reviewer` agent with read-only tools, and an MCP server for a test reporting dashboard.
-  - **Plugin directory structure**
+- **Plugin directory structure**
 
-      ```
-      my-testing-plugin/
-      ├── plugin.json              # Plugin metadata and configuration
-      ├── skills/
-      │   └── test-runner/
-      │       ├── SKILL.md         # Testing skill instructions
-      │       └── run-tests.sh     # Supporting script
-      ├── agents/
-      │   └── test-reviewer.agent.md # Code review agent
-      ├── hooks/
-      │   └── hooks.json           # Hook configuration
-      ├── scripts/
-      │   └── validate-tests.sh    # Hook script
-      └── .mcp.json                # MCP server definitions
-      ```
+    ```
+    my-testing-plugin/
+    ├── plugin.json              # Plugin metadata and configuration
+    ├── skills/
+    │   └── test-runner/
+    │       ├── SKILL.md         # Testing skill instructions
+    │       └── run-tests.sh     # Supporting script
+    ├── agents/
+    │   └── test-reviewer.agent.md # Code review agent
+    ├── hooks/
+    │   └── hooks.json           # Hook configuration
+    ├── scripts/
+    │   └── validate-tests.sh    # Hook script
+    └── .mcp.json                # MCP server definitions
+    ```
 
-  - Once installed, plugin-provided customizations appear alongside your locally defined ones. For example, skills from a plugin show up in the Configure Skills menu, and MCP servers from a plugin appear in the MCP server list.
-  - **Caution:** Plugins can include hooks and MCP servers that run code on your machine. Review the plugin contents and publisher before installing, especially for plugins from community marketplaces.
-
+- Once installed, plugin-provided customizations appear alongside your locally defined ones. For example, skills from a plugin show up in the Configure Skills menu, and MCP servers from a plugin appear in the MCP server list.
+- **Caution:** Plugins can include hooks and MCP servers that run code on your machine. Review the plugin contents and publisher before installing, especially for plugins from community marketplaces.
+- [Creating plugin for Microsoft 365 Agent Plugin Toolkit](https://marketplace.visualstudio.com/items?itemName=TeamsDevApp.ms-teams-vscode-extension)
 #### Discovering and installing plugins
 
 1. Open the Extensions view (Ctrl+Shift+X) and enter `@agentPlugins` in the search field.
