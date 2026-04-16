@@ -209,130 +209,6 @@ When asked to create a migration:
 
 ---
 
-### MCP Servers in GitHub Copilot
-
-- [Read More](https://welldesignedsystem.github.io/blog/ai/mcp/)
-- Configuring MCP Servers (`mcp.json`)
-  - MCP servers are configured in `.vscode/mcp.json`. This file tells VS Code which servers to start and how to connect to them.
-
-**Syntax:**
-
-```json
-{
-  "servers": {
-    "server-name": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@scope/mcp-server-name"],
-      "env": {
-        "API_KEY": "${input:apiKey}"
-      }
-    },
-    "airbnb": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@openbnb/mcp-server-airbnb", "--ignore-robots-txt"]
-    }
-  }
-}
-```
-- Once configured, reference it in an agent's tools array using `airbnb/*` or a specific tool name like `airbnb/search_listings`.
-
-**Key fields:**
-
-| Field | Description |
-|---|---|
-| `type` | Transport type: `http` (http streaming), `stdio` (local process) or `sse` (remote HTTP) |
-| `command` | The executable to run |
-| `args` | Arguments passed to the command |
-| `env` | Environment variables — use `${input:varName}` for secrets prompted at runtime, or reference VS Code secrets |
-
-> **Note:** `mcp.json` is workspace-scoped. Commit it to version control so the whole team shares the same server configuration. Store secrets in VS Code's secret storage or as environment variables — never hardcode them.
-
-- invoking via a prompt file. This Queries your open PRs, assigned issues, and new repository activity — then writes a dated `Tasks.md` to your workspace.
-
-**Save as `.github/prompts/daily-tasks.prompt.md`:**
-
-~~~markdown
----
-description: 'Generate my daily standup task list'
-mode: 'agent'
-tools: ['github', 'create_file']
----
-
-You are acting as a Scrum Master. Use the GitHub MCP server to:
-
-1. Get all open pull requests assigned to me
-2. Get all open issues assigned to me
-3. Get issues opened in the last 24 hours in this repository
-
-Then create a file named `Tasks-${input:date:Todays date e.g. 2026-04-16}.md` with the following structure:
-
-# Daily Tasks — <date>
-
-## My Open Pull Requests
-- List each PR with title, number, and URL
-
-## My Assigned Issues
-- List each issue with title, number, priority label if present, and URL
-
-## New Issues Today
-- List each new issue with title, number, and who opened it
-
-## Focus for Today
-Based on the above, suggest the top 3 priorities in order of urgency.
-
-Keep the tone concise — this is a standup reference, not a report.
-~~~
-
-**How to run it:**
-
-1. Open Copilot Chat in VS Code
-2. Type `/daily-tasks`
-3. Enter today's date when prompted
-4. Copilot queries GitHub via MCP and writes the file
-
-> **Tip:** Pin this prompt to your VS Code toolbar or bind it to a task in `.vscode/tasks.json` so it runs with a single keystroke each morning.
- 
----
-
-### GitHub CLI + Copilot
-
-The GitHub CLI (`gh`) brings Copilot directly into your terminal — useful when you're already working in the command line and don't want to context-switch to an IDE.
-Install from here : **https://cli.github.com**
-
-- `gh copilot suggest`
-  - Translates a natural language description into a shell command.
-  - ```bash
-    gh copilot suggest "delete all merged git branches locally"
-    ```
-  - Copilot returns a command, explains it, and asks whether to run it, copy it, or revise it. It will not execute anything without your confirmation.
-  - Use this when:
-    - You know *what* you want to do but not the exact command
-    - You're working with unfamiliar CLI tools (`kubectl`, `ffmpeg`, `awk`)
-    - You want a safe way to construct destructive commands before running them
-
- - `gh copilot explain`
-    - Explains what a shell command does in plain English.
-    - ```bash
-      gh copilot explain "git rebase -i HEAD~3"
-      ```
-    - Use this when:
-      - You've inherited a script and need to understand it before running it
-      - You find a command in documentation and want a plain-English breakdown
-      - You're onboarding someone to your runbooks
-
- - `gh alias`
-    - ```bash
-      gh alias set cs 'copilot suggest'
-      gh alias set ce 'copilot explain'
-      gh cs "compress all jpg files in this folder"
-      gh ce "rsync -avz --delete src/ user@host:/var/www/"
-    ```
-> **Note:** `gh copilot` works on shell commands only — it has no awareness of your codebase, open files, or MCP servers. For anything requiring code context, use the IDE.
-
---- 
-
 ### Custom Agents
 
 - Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, and tool access. 
@@ -556,6 +432,135 @@ Key differences to be aware of across tools:
 - "Create a README for this project"
 
 ---
+
+### MCP Servers in GitHub Copilot
+
+- [Read More](https://welldesignedsystem.github.io/blog/ai/mcp/)
+- Configuring MCP Servers (`mcp.json`)
+  - MCP servers are configured in `.vscode/mcp.json`. This file tells VS Code which servers to start and how to connect to them.
+
+**Syntax:**
+
+```json
+{
+  "servers": {
+    "server-name": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@scope/mcp-server-name"],
+      "env": {
+        "API_KEY": "${input:apiKey}"
+      }
+    },
+    "airbnb": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@openbnb/mcp-server-airbnb", "--ignore-robots-txt"]
+    }
+  }
+}
+```
+- Once configured, reference it in an agent's tools array using `airbnb/*` or a specific tool name like `airbnb/search_listings`.
+
+**Key fields:**
+
+| Field | Description |
+|---|---|
+| `type` | Transport type: `http` (http streaming), `stdio` (local process) or `sse` (remote HTTP) |
+| `command` | The executable to run |
+| `args` | Arguments passed to the command |
+| `env` | Environment variables — use `${input:varName}` for secrets prompted at runtime, or reference VS Code secrets |
+
+> **Note:** `mcp.json` is workspace-scoped. Commit it to version control so the whole team shares the same server configuration. Store secrets in VS Code's secret storage or as environment variables — never hardcode them.
+
+- invoking via a prompt file. This Queries your open PRs, assigned issues, and new repository activity — then writes a dated `Tasks.md` to your workspace.
+
+**Save as `.github/prompts/daily-tasks.prompt.md`:**
+
+~~~markdown
+---
+description: 'Generate my daily standup task list'
+mode: 'agent'
+tools: ['github', 'create_file']
+---
+
+You are acting as a Scrum Master. Use the GitHub MCP server to:
+
+1. Get all open pull requests assigned to me
+2. Get all open issues assigned to me
+3. Get issues opened in the last 24 hours in this repository
+
+Then create a file named `Tasks-${input:date:Todays date e.g. 2026-04-16}.md` with the following structure:
+
+# Daily Tasks — <date>
+
+## My Open Pull Requests
+- List each PR with title, number, and URL
+
+## My Assigned Issues
+- List each issue with title, number, priority label if present, and URL
+
+## New Issues Today
+- List each new issue with title, number, and who opened it
+
+## Focus for Today
+Based on the above, suggest the top 3 priorities in order of urgency.
+
+Keep the tone concise — this is a standup reference, not a report.
+~~~
+
+**How to run it:**
+
+1. Open Copilot Chat in VS Code
+2. Type `/daily-tasks`
+3. Enter today's date when prompted
+4. Copilot queries GitHub via MCP and writes the file
+
+> **Tip:** Pin this prompt to your VS Code toolbar or bind it to a task in `.vscode/tasks.json` so it runs with a single keystroke each morning.
+ 
+---
+
+### GitHub CLI + Copilot
+
+The GitHub CLI (`gh`) brings Copilot directly into your terminal — useful when you're already working in the command line and don't want to context-switch to an IDE.
+Install from here : **https://cli.github.com**
+
+- `gh copilot suggest`
+  - Translates a natural language description into a shell command.
+  - ```bash
+    gh copilot suggest "delete all merged git branches locally"
+    ```
+  - Copilot returns a command, explains it, and asks whether to run it, copy it, or revise it. It will not execute anything without your confirmation.
+  - Use this when:
+    - You know *what* you want to do but not the exact command
+    - You're working with unfamiliar CLI tools (`kubectl`, `ffmpeg`, `awk`)
+    - You want a safe way to construct destructive commands before running them
+
+ - `gh copilot explain`
+    - Explains what a shell command does in plain English.
+    - ```bash
+      gh copilot explain "git rebase -i HEAD~3"
+      ```
+    - Use this when:
+      - You've inherited a script and need to understand it before running it
+      - You find a command in documentation and want a plain-English breakdown
+      - You're onboarding someone to your runbooks
+
+ - `gh alias`
+    - ```bash
+      gh alias set cs 'copilot suggest'
+      gh alias set ce 'copilot explain'
+      gh cs "compress all jpg files in this folder"
+      gh ce "rsync -avz --delete src/ user@host:/var/www/"
+    ```
+> **Note:** `gh copilot` works on shell commands only — it has no awareness of your codebase, open files, or MCP servers. For anything requiring code context, use the IDE.
+
+---
+### Hooks
+
+Hooks execute custom commands at specific events in the agent workflow — for automation and policy enforcement. Generate a hook file with `/create-hook` in chat.
+
+--- 
 
 ## File Location Reference
 
