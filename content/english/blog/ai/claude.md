@@ -6,7 +6,7 @@ tags = ['Claude']
 summary = "Claude is a family of large language models developed by Anthropic, designed to be helpful, harmless, and honest. This document provides an overview of Claude's capabilities, architecture, and applications."
 +++
 
-## 1. What is Claude?
+## What is Claude?
 
 Claude is a family of large language models developed by **Anthropic**. Focus of each: 
 - OpenAI focuses on **capability maximization** 
@@ -66,7 +66,7 @@ To understand 1 Million tokens - think of entire Harry Potter series its almost 
 | **Perplexity Sonar** | Perplexity | 200K tokens | RAG-augmented; retrieval offsets context limits |
 
 
-## 2. Constitutional AI — How Claude Thinks
+## Constitutional AI — How Claude Thinks
 
 This is the most important Claude-specific concept. Claude is not just RLHF-trained — it uses **Constitutional AI (CAI)**, Anthropic's proprietary alignment approach.
 
@@ -96,7 +96,7 @@ This is the most important Claude-specific concept. Claude is not just RLHF-trai
 
 ---
 
-## 3. Claude Model Families
+## Claude Model Families
 
 As of 2025–2026, Claude models are organized into families. The current generation is **Claude 4**.
 
@@ -131,7 +131,7 @@ Streaming chatbot, real-time features? → Haiku or Sonnet
 
 ---
 
-## 4. The Anthropic API — Deep Dive
+## The Anthropic API — Deep Dive
 
 ### Installation
 
@@ -203,7 +203,7 @@ response = client.messages.create(model="claude-sonnet-4-6", max_tokens=512, mes
 
 ---
 
-## 5. Prompt Engineering for Claude
+## Prompt Engineering for Claude
 
 Claude is specifically trained to respond well to certain prompt patterns that differ from other models.
 
@@ -315,7 +315,7 @@ user_message = f"""
 
 ---
 
-## 6. Tool Use & Function Calling
+## Tool Use & Function Calling
 
 One of Claude's most powerful features. Claude can decide to call external tools/functions and use their results.
 
@@ -400,7 +400,7 @@ tool_choice = {"type": "auto"}
 
 ---
 
-## 7. Extended Thinking
+## Extended Thinking
 
 Claude's most unique capability — it can expose its **internal reasoning chain** before answering.
 
@@ -447,7 +447,7 @@ for block in response.content:
 
 ---
 
-## 8. Vision, Images & Native PDF Support
+## Vision, Images & Native PDF Support
 
 ### Sending Images
 
@@ -518,7 +518,7 @@ response = client.messages.create(
 
 ---
 
-## 9. Prompt Caching
+## Prompt Caching
 
 A Claude-specific feature that dramatically reduces cost and latency for repeated large contexts.
 
@@ -566,7 +566,7 @@ response = client.messages.create(
 
 ---
 
-## 10. Memory & Context Management
+## Memory & Context Management
 
 Claude has **no built-in persistent memory**. You are responsible for managing context.
 
@@ -609,7 +609,7 @@ messages = [{"role": "user", "content": f"Conversation summary: {summary}"}] + n
 
 ---
 
-## 11. RAG with Claude
+## RAG with Claude
 
 Retrieval-Augmented Generation works the same way as with other LLMs, but Claude's large context window and native document support offer advantages.
 
@@ -657,7 +657,7 @@ def rag_query(user_question: str, vector_db) -> str:
 
 ---
 
-## 12. Streaming
+## Streaming
 
 Essential for any user-facing application where latency matters.
 
@@ -699,7 +699,7 @@ await stream.finalMessage();
 
 ---
 
-## 13. Batch API
+## Batch API
 
 For offline/async workloads — process up to **10,000 requests** in a single batch at ~50% reduced cost.
 
@@ -751,7 +751,7 @@ for result in client.messages.batches.results(batch.id):
 ```
 ---
 
-## 14. Claude Code & CLI
+## Claude Code & CLI
 
 Claude Code is an **agentic coding tool** that runs in your terminal and can read, write, and execute code autonomously.
 
@@ -812,7 +812,7 @@ Create a `CLAUDE.md` in your project root to give Claude persistent instructions
 
 ---
 
-## 15. MCP — Model Context Protocol
+## MCP — Model Context Protocol
 
 Anthropic's open standard for connecting Claude to external tools, data sources, and services. Think of it as a **universal plugin system** for LLMs.
 
@@ -872,7 +872,7 @@ const response = await fetch("https://api.anthropic.com/v1/messages", {
 
 ---
 
-## 16. Agents & Agentic Workflows
+## Agents & Agentic Workflows
 
 Claude is one of the best models for autonomous agentic tasks — long-horizon tasks where it must plan, act, observe, and iterate.
 
@@ -926,7 +926,7 @@ Orchestrator Claude
 
 ---
 
-## 17. Safety, Guardrails & Refusals
+## Safety, Guardrails & Refusals
 
 ### What Claude Won't Do
 
@@ -976,7 +976,7 @@ STRICT RULES:
 
 ---
 
-## 18. Production Best Practices
+## Production Best Practices
 
 ### Retry Logic
 
@@ -1046,7 +1046,7 @@ ANTHROPIC_MAX_TOKENS=2048
 
 ---
 
-## 19. Pricing & Cost Optimization
+## Pricing & Cost Optimization
 
 ### General Pricing Tiers (per million tokens)
 
@@ -1079,7 +1079,7 @@ sonnet_cost = (input_tokens * 3 + output_tokens * 15) / 1_000_000
 
 ---
 
-## 20. Claude vs Other LLMs — Key Differences
+## Claude vs Other LLMs — Key Differences
 
 | Feature | Claude (Anthropic) | GPT-4o (OpenAI) | Gemini (Google) |
 |---|---|---|---|
@@ -1116,7 +1116,7 @@ Batch:      client.messages.batches.create(requests=[...])
 
 
 
-## 1. What is Claude Code?
+## What is Claude Code?
 
 Claude Code is Anthropic's **agentic CLI tool** for software development. Unlike IDE plugins (GitHub Copilot, Cursor) that assist you as you type, Claude Code operates **autonomously** — it reads your codebase, writes files, runs commands, browses the web, calls APIs, and iterates on its own output.
 
@@ -1143,7 +1143,7 @@ Claude Code is Anthropic's **agentic CLI tool** for software development. Unlike
 
 ---
 
-## 2. Installation & Setup
+## Installation & Setup
 
 ### Requirements
 
@@ -1179,7 +1179,7 @@ claude --help
 
 ---
 
-## 3. Architecture & Mental Model
+## Architecture & Mental Model
 
 Understanding Claude Code's layered architecture is the key to mastering it.
 
@@ -1205,7 +1205,7 @@ Understanding Claude Code's layered architecture is the key to mastering it.
 
 ---
 
-## 4. CLI Commands & Flags
+## CLI Commands & Flags
 
 ### Starting Sessions
 
@@ -1259,7 +1259,7 @@ claude --worktree feature-auth   # Create isolated git worktree for this session
 
 ---
 
-## 5. In-Session Shortcuts & Commands
+## In-Session Shortcuts & Commands
 
 ### Keyboard Shortcuts
 
@@ -1297,7 +1297,7 @@ claude --worktree feature-auth   # Create isolated git worktree for this session
 
 ---
 
-## 6. CLAUDE.md — The Agent's Constitution
+## CLAUDE.md — The Agent's Constitution
 
 `CLAUDE.md` is the most important file in your Claude Code setup. It gives Claude **persistent project memory** — instructions that load automatically at the start of every session.
 
@@ -1365,7 +1365,7 @@ your-project/CLAUDE.local.md     # Local — personal overrides, NOT in Git
 
 ---
 
-## 7. Configuration & Settings Files
+## Configuration & Settings Files
 
 ### File Locations
 
@@ -1424,7 +1424,7 @@ your-project/
 
 ---
 
-## 8. Permissions & Security
+## Permissions & Security
 
 Claude Code asks for permission before performing potentially risky actions. You control this granularity.
 
@@ -1472,7 +1472,7 @@ claude --disallowedTools "Write"
 
 ---
 
-## 9. MCP — Model Context Protocol
+## MCP — Model Context Protocol
 
 MCP transforms Claude Code from a file reader/writer into a tool that can interact with **any external system** — databases, GitHub, Slack, Jira, etc.
 
@@ -1570,7 +1570,7 @@ MCP tools follow the pattern `mcp__<server>__<tool>` and work in hooks exactly l
 
 ---
 
-## 10. Hooks — Deterministic Automation
+## Hooks — Deterministic Automation
 
 Hooks are **the most powerful and underused Claude Code feature**. They execute shell commands, HTTP endpoints, or LLM prompts automatically at specific lifecycle points — regardless of what Claude decides to do.
 
@@ -1676,7 +1676,7 @@ echo '{"decision": "allow"}'
 
 ---
 
-## 11. Custom Slash Commands
+## Custom Slash Commands
 
 Create your own `/commands` that Claude executes on demand — reusable, parameterized workflows.
 
@@ -1737,7 +1737,7 @@ Steps:
 
 ---
 
-## 12. Sub-Agents (Parallel Task Delegation)
+## Sub-Agents (Parallel Task Delegation)
 
 Sub-agents are **specialized Claude instances** you can spawn for specific tasks. They run in isolated contexts, preventing context pollution and enabling parallel execution.
 
@@ -1816,7 +1816,7 @@ claude --agent security-auditor "audit the authentication module"
 
 ---
 
-## 13. Skills — Auto-Activated Expertise
+## Skills — Auto-Activated Expertise
 
 Unlike slash commands (user-triggered), **skills activate automatically** when Claude detects they're relevant to the current task.
 
@@ -1858,7 +1858,7 @@ Always run `mypy --strict` after adding type hints to verify correctness.
 
 ---
 
-## 14. Plugins
+## Plugins
 
 Plugins are **packaged collections** of hooks, commands, skills, and MCP configurations — shareable and installable as a unit.
 
@@ -1892,7 +1892,7 @@ Plugins are ideal for **distributing opinionated team configurations** — insta
 
 ---
 
-## 15. Context Management
+## Context Management
 
 Context is your most important resource in Claude Code. Managing it well is the difference between accurate autonomous work and hallucination-prone output.
 
@@ -1945,7 +1945,7 @@ ls ~/.claude/projects/my-project/
 
 ---
 
-## 16. Modes — Default, Plan, Write
+## Modes — Default, Plan, Write
 
 ### Switching Modes
 
@@ -1978,7 +1978,7 @@ SHIFT + TAB    # Cycle through modes in session
 
 ---
 
-## 17. Remote Sessions & GitHub Actions
+## Remote Sessions & GitHub Actions
 
 ### Remote Web Sessions
 
@@ -2047,17 +2047,17 @@ jobs:
 
 ---
 
-## 18. Production Best Practices
+## Production Best Practices
 
-### 1. Keep CLAUDE.md as the Source of Truth
+### Keep CLAUDE.md as the Source of Truth
 
 Treat CLAUDE.md like code. Review changes, version it, keep it accurate. The quality of Claude's output directly correlates with CLAUDE.md quality.
 
-### 2. Use Hooks for Critical Enforcement
+### Use Hooks for Critical Enforcement
 
 Don't rely on CLAUDE.md instructions for things that must never happen (writing to `.env`, deleting migrations). Use PreToolUse hooks that block — they're deterministic.
 
-### 3. Block at Commit, Not at Write
+### Block at Commit, Not at Write
 
 Blocking Claude mid-plan (on file writes) confuses it. Let it finish, then enforce at the commit stage:
 
@@ -2066,11 +2066,11 @@ Blocking Claude mid-plan (on file writes) confuses it. Let it finish, then enfor
 # This is better than blocking on every Edit/Write operation
 ```
 
-### 4. Use Sub-Agents for Exploration
+### Use Sub-Agents for Exploration
 
 When Claude needs to explore the codebase to understand something before making changes, delegate to a sub-agent. This keeps the main context clean.
 
-### 5. Model Selection by Task
+### Model Selection by Task
 
 ```bash
 # Use Haiku for cheap, fast exploration tasks
@@ -2083,7 +2083,7 @@ claude --model sonnet "refactor the payment service"
 claude --model opus "design the new event sourcing architecture"
 ```
 
-### 6. Log Everything in CI/CD
+### Log Everything in CI/CD
 
 ```bash
 claude -p "..." \
@@ -2093,7 +2093,7 @@ claude -p "..." \
 
 Review these logs periodically for common errors and use them to improve CLAUDE.md.
 
-### 7. The Meta-Loop (Advanced)
+### The Meta-Loop (Advanced)
 
 ```bash
 # Analyze what other Claude instances got stuck on, then fix it
@@ -2103,7 +2103,7 @@ cat ~/.claude/projects/*/logs/*.json | \
 
 ---
 
-## 19. Security Considerations
+## Security Considerations
 
 ### Known Risks
 
@@ -2149,7 +2149,7 @@ claude mcp list
 
 ---
 
-## 20. Quick Reference Cheat Sheet
+## Quick Reference Cheat Sheet
 
 ### CLI
 
