@@ -12,6 +12,37 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 
 ![Mindmap](https://raw.githubusercontent.com/welldesignedsystem/scaling-adventure/refs/heads/main/misc/mindmap.svg)
 
+## Todos
+- skill to find out the context left over
+- controlling Skills
+  - the permissions
+  - the Human in loop (where in workflow and what)
+  - slash command
+  - inputs to the slash commands
+  - is it possible to persist the context across runs?
+  - when to use which model
+    - different models different strengths
+    - large v/s small language model
+  - context window how to control
+  - extensions
+    - Website: ChatGPT
+    - extension: 
+      - Copilot
+      - what are kilo code and roo code?
+      - claude code (in terminal/cli)
+      - dedicated ides (no extension etc needed)
+        - cursor
+        - antigravity
+      - Codex 
+        - AI Code is written in cloud and send a request to repository
+      -  browser based (no ide)
+        - lovable
+        - bolt.new
+  - copilot modes: 
+    - local 
+    - copilot cli
+    - cloud
+
 ## Reference
 - [Github Copilot Customization library](https://docs.github.com/copilot/tutorials/customization-library)
 - [Visual Studio Code Customization](https://code.visualstudio.com/docs/copilot/customization/overview)
@@ -1717,3 +1748,4 @@ These are confirmed technical constraints, not style recommendations:
 - **Both files applied when overlap occurs**: When a path-specific `.instructions.md` file and `copilot-instructions.md` both match the same file, both sets of instructions are used. Avoid writing contradictory instructions across them.
 - **Base branch used for PR reviews**: Copilot code review uses the instructions from the base branch of the PR (e.g. `main`), not the feature branch. New instruction files must be merged before they affect reviews.
 - **Inline suggestions unaffected**: Custom instructions do not apply to inline code suggestions (autocomplete). They apply to Copilot Chat interactions only.
+
