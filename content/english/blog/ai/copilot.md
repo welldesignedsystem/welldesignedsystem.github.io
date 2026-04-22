@@ -49,7 +49,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
     - https://docs.github.com/en/copilot/reference/ai-models/model-comparison
   - simple browswer
   - checkpointing
-  
+
 
 ## Reference
 - [Github Copilot Customization library](https://docs.github.com/copilot/tutorials/customization-library)
@@ -163,7 +163,8 @@ applyTo: '**/*.py'
 - Write docstrings for public functions.
 ```
  
-- Instructions only activate when Copilot is working with files that match the `applyTo` pattern.
+- Instructions only activate when Copilot is working with files that match the `applyTo` pattern. Running `/init` or working on other files does **not** load path-specific instruction files into context.
+- **Context efficiency:** Unlike skills with progressive loading, path-specific instructions load their **full contents** into context when matched. Keep them minimal (max ~1,000 lines, ideally 200–300) to avoid overloading context. Focus only on non-obvious, project-specific conventions; skip rules already enforced by linters or formatters.
 - Multiple patterns are separated by commas.
 - If both a path-specific file and `copilot-instructions.md` apply to the same file, instructions from both are used.
 - Avoid conflicting instructions between them — Copilot's behavior when instructions conflict is non-deterministic.
