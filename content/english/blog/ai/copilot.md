@@ -42,6 +42,14 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
     - local 
     - copilot cli
     - cloud
+  - handoffs
+  - model comparison
+    - swebench.com
+    - livebench.com
+    - https://docs.github.com/en/copilot/reference/ai-models/model-comparison
+  - simple browswer
+  - checkpointing
+  
 
 ## Reference
 - [Github Copilot Customization library](https://docs.github.com/copilot/tutorials/customization-library)
