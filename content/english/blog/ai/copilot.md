@@ -48,6 +48,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
     - livebench.com
     - https://docs.github.com/en/copilot/reference/ai-models/model-comparison
   - simple browswer
+  - liveserver
   - checkpointing
 
 

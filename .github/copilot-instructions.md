@@ -1,3 +1,79 @@
+# Well Designed System Website
+
+This is a personal website and blog built with Hugo, focused on technical content about system design, software architecture, and AI development. All contributors should understand the project structure and content conventions before making changes.
+
+## Quick Start for Agents
+
+- **Dev server:** `npm run dev` (runs Hugo on `localhost:1313`)
+- **Build:** `npm run build` (production build with minification)
+- **Content format:** TOML frontmatter (not YAML) — use `+++` delimiters
+- **New blog post:** Copy the structure of existing posts in `content/english/blog/[category]/[post].md`
+- **Verify accuracy:** Always check official docs before adding technical content; cite sources explicitly
+
+---
+
+## Project Structure
+
+- **`content/english/`** — All site content organized by section
+  - `blog/` — Blog posts grouped by category (ai/, languages/, system_design/, etc.)
+  - `about/` — About page and author information
+  - `pages/` — Static pages (contact, resume sections)
+  - `authors/` — Author profiles
+- **`config/`** — Hugo configuration (languages, menus, params, modules)
+- **`assets/`** — CSS, images, JavaScript (auto-compiled via TailwindCSS)
+- **`layouts/`** — Custom Hugo templates and shortcodes
+- **`themes/hugoplate/`** — Base theme (TailwindCSS + Alpine.js)
+- **`public/`** — Generated site output (do not edit)
+
+## Build & Development Commands
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Start Hugo dev server with live reload |
+| `npm run build` | Production build with minification and metrics |
+| `npm run preview` | Preview production build locally |
+| `npm run format` | Run Prettier on all files (enforces style) |
+| `npm run update-modules` | Update Hugo modules |
+
+## Content Conventions
+
+### Frontmatter Format (TOML)
+All content files use TOML frontmatter with `+++` delimiters (not YAML):
+
+```toml
++++
+date = '2026-04-10T13:00:00+10:00'
+draft = false
+title = 'Page Title'
+tags = ['Tag1', 'Tag2', 'Tag3']
+summary = "Brief summary shown in listings"
++++
+```
+
+**Key fields:**
+- `date` — ISO 8601 format with timezone
+- `draft` — Set to `true` to hide from production
+- `title` — Human-readable title
+- `tags` — Array of tags (used for filtering and pages)
+- `summary` — One-line summary (10 words max for consistency)
+
+### Creating New Blog Posts
+
+1. **Location:** `content/english/blog/[category]/[filename].md`
+2. **Category folders:** ai/, languages/, system_design/, business-ideas/, containerization/, roadmap/, soft-skills/
+3. **Filename:** Use lowercase with hyphens (e.g., `github-copilot-notes.md`)
+4. **Structure:** Frontmatter → Brief intro → H2 sections → Code examples as needed
+
+### Content Guidelines
+
+- **Markdown links:** Use relative paths (e.g., `[text](../another-post.md)`)
+- **Images:** Store in `assets/images/` and reference from content
+- **Code blocks:** Specify language (markdown, bash, python, typescript, etc.)
+- **Headings:** Start with H2 (`##`); H1 is title from frontmatter
+- **Tables of contents:** Enabled automatically for posts with multiple H2/H3 sections (ordered by default)
+
+---
+
 ## Writing Style & Grammar
 
 Do not use Oxford comma's in the generated text. For example, instead of "I bought apples, oranges, and bananas," write "I bought apples, oranges and bananas."
