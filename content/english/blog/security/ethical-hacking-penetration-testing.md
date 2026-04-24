@@ -1,5 +1,5 @@
 +++
-date = '2026-04-25T12:00:00+00:00'
+date = '2024-04-25T12:00:00+00:00'
 draft = false
 title = 'Ethical Hacking and Penetration Testing: Comprehensive Expert Guide'
 tags = ['Security', 'Ethical Hacking', 'Penetration Testing', 'Cybersecurity']
