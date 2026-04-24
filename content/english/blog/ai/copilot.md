@@ -46,7 +46,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
   - simple browswer
   - liveserver
   - checkpointing
-
+## How to choose a model
 
 ## Reference
 - [Github Copilot Customization library](https://docs.github.com/copilot/tutorials/customization-library)
@@ -77,25 +77,20 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 - Enable discovery of org-level instructions in VS Code by setting `github.copilot.chat.organizationInstructions.enabled` to `true`.
 - Learn how to add org-level instructions at the [GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions).
 - Usecases:
-  - coding standards
-  - use Typescript instead of javascript
-  - follow camelCase for variables, PascalCase for Components
   - Never log sensitive user data
-  - Always Validate inputs
   - Follow OWASP Guidelines
-  - Documentation: exaplain "why" not just "what"
-  - Tone be concise and technical, avoid beginner level explanations
+  - comments should never secure information like - keys/passwords etc.
 --- 
 
 ### Personal instructions
 
-- Set on GitHub.com under your profile picture → "Personal instructions".
+- To make it reflect in copilot - Set on GitHub.com under your profile picture → "Personal instructions".
+- To make it reflect in vscode - use the chat to e.g. "All conversation with me must be in Spanish but use only English for any Code related stuffs like comments."
 - Apply only to you, only in Copilot Chat on GitHub.com.
-- Good for quick personal testing before rolling something out to a team.
+- Good for quick personal preferences
 - [Refer](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-personal-instructions)
 - Usecases:
-  - Always respond in Spanish.
-  - Use a helpful, collegial tone. Keep explanations brief, but provide enough context to understand the code.
+  - Always respond in particular language, tone or level of detail.
   - Always provide examples in TypeScript.
 
 --- 
