@@ -36,4 +36,3 @@ Notes
 -----
 
 - This is an editorial preference for the blog content only. It does not modify code, data files or other parts of the site.
-- If you need a stricter, automated enforcement (lint rule or CI check), I can add a Markdown lint configuration next.

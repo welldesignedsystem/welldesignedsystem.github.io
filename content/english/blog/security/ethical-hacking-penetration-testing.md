@@ -3,24 +3,24 @@ date = '2024-04-25T12:00:00+00:00'
 draft = false
 title = 'Ethical Hacking and Penetration Testing'
 tags = ['Security', 'Ethical Hacking', 'Penetration Testing', 'Cybersecurity']
-summary = "Reference covering methodology, tools, commands, classifications and the reasoning behind every step."
+summary = "Reference covering methodology, tools and reasoning."
 +++
 
 ---
 
-# How to Read This Guide
+## How to Read This Guide
 
 Each phase explains **what** you are doing, **why** it matters, and **how** to do it with real commands. The goal is not just to run tools — it is to understand what you are looking for and why attackers care about it too.
 
 ---
 
-# Part 0 — Foundational Concepts
+## Part 0 — Foundational Concepts
 
 ## How Attacks Actually Work: The Kill Chain
 
 Before learning defence or offence, understand the attack model. Lockheed Martin's **Cyber Kill Chain** is the classic framework — every real-world attack follows these steps in order:
 
-```
+```text
 1. Reconnaissance    → attacker learns about you
 2. Weaponisation     → attacker builds/selects an exploit
 3. Delivery          → exploit is sent (phishing, exposed port, etc.)
@@ -46,7 +46,7 @@ Every vulnerability you find will damage one or more of these. Always frame find
 
 **OSI Model (attacks map to these layers):**
 
-```
+```text
 Layer 7 — Application   → HTTP, DNS, SMTP (XSS, SQLi, SSRF live here)
 Layer 6 — Presentation  → SSL/TLS (cert attacks, weak ciphers)
 Layer 5 — Session       → session tokens, cookies (session hijack)
@@ -76,7 +76,7 @@ Layer 1 — Physical      → cables, hardware (beyond most pentest scope)
 
 ---
 
-# Part 1 — Prerequisites and Scoping
+## Part 1 — Prerequisites and Scoping
 
 ## Why Scoping is the Most Important Step
 
@@ -87,7 +87,7 @@ Scoping is not paperwork. It is what separates legal security testing from crimi
 
 ### Rules of Engagement (RoE) Must Cover
 
-```
+```text
 - Authorised IP ranges and domains (exact list)
 - Out-of-scope systems (e.g. third-party payment processor)
 - Permitted techniques (e.g. "no DoS attacks", "no social engineering")
@@ -109,7 +109,7 @@ Scoping is not paperwork. It is what separates legal security testing from crimi
 
 ---
 
-# Part 2 — Phase 1: Reconnaissance (Passive)
+## Part 2 — Phase 1: Reconnaissance (Passive)
 
 ## What and Why
 
@@ -230,7 +230,7 @@ shodan search "org:\"Target Company\" port:22"
 
 ---
 
-# Part 3 — Phase 2: Scanning (Active)
+## Part 3 — Phase 2: Scanning (Active)
 
 ## What and Why
 
@@ -269,7 +269,7 @@ nmap --script=dns-zone-transfer target.com -p 53       # DNS zone transfer
 ```
 
 **Understanding output:**
-```
+```text
 PORT     STATE  SERVICE  VERSION
 22/tcp   open   ssh      OpenSSH 7.6p1 Ubuntu
 80/tcp   open   http     Apache httpd 2.4.29
@@ -320,7 +320,7 @@ feroxbuster -u https://target.com -w wordlist.txt --depth 3
 
 ---
 
-# Part 4 — Phase 3: Vulnerability Classification
+## Part 4 — Phase 3: Vulnerability Classification
 
 ## The Frameworks
 
@@ -406,7 +406,7 @@ CWE is the **root cause** classification — the type of coding mistake. CVE is 
 
 ---
 
-# Part 5 — Phase 4: Exploitation
+## Part 5 — Phase 4: Exploitation
 
 ## What and Why
 
@@ -442,7 +442,7 @@ Burp Suite is the central tool for all web application testing. It acts as a pro
 | **Logger** | Full request history | Review everything sent during a session |
 
 **Practical Burp workflow for an API:**
-```
+```text
 1. Browse every endpoint in your app with Burp intercepting
 2. Review all requests in HTTP History
 3. Look for: JWTs in headers, session cookies, IDOR patterns in IDs
@@ -456,7 +456,7 @@ Burp Suite is the central tool for all web application testing. It acts as a pro
 SQL injection occurs when user input is inserted into a SQL query without sanitisation. The attacker can alter the query logic.
 
 **Manual testing — always try these first:**
-```
+```text
 '                          → syntax error means SQL is reflected
 ' OR 1=1--                 → bypass login (returns first row)
 ' OR '1'='1               → alternate bypass
@@ -570,7 +570,7 @@ hydra -L users.txt -P passwords.txt target.com http-get /admin/
 ```
 
 **Default credentials to always try:**
-```
+```text
 admin:admin
 admin:password
 admin:123456
@@ -585,7 +585,7 @@ guest:guest
 SSRF makes the server issue HTTP requests on your behalf. Because the request comes from the server, it can reach internal services that you cannot access directly.
 
 **Common injection points:**
-```
+```text
 ?url=
 ?redirect=
 ?next=
@@ -687,7 +687,7 @@ use post/multi/recon/local_exploit_suggester  # find privesc paths
 
 ---
 
-# Part 6 — Phase 5: Post-Exploitation
+## Part 6 — Phase 5: Post-Exploitation
 
 ## What and Why
 
@@ -806,7 +806,7 @@ python3 wmiexec.py domain/user:pass@target       # shell via WMI (stealthier)
 
 ---
 
-# Part 7 — Phase 6: Reporting
+## Part 7 — Phase 6: Reporting
 
 ## What and Why
 
@@ -819,7 +819,7 @@ The report is the product. Everything else — the scanning, the exploitation, t
 
 ## Finding Report Template
 
-```
+```text
 Title:          [Concise, specific name — e.g. "SQL Injection in /api/v1/users endpoint"]
 Severity:       Critical | High | Medium | Low | Informational
 CVSS Score:     9.8 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)
@@ -865,7 +865,7 @@ References:
 
 ## Full Report Structure
 
-```
+```text
 1. Cover Page
    - Client name, tester name/company, test dates, document classification
 
@@ -897,7 +897,7 @@ References:
 
 ---
 
-# Part 8 — Security Controls and Defences
+## Part 8 — Security Controls and Defences
 
 Understanding what you are supposed to be testing helps you know what to look for.
 
@@ -973,7 +973,7 @@ curl -I https://target.com
 
 ---
 
-# Part 9 — Tools Reference (Complete)
+## Part 9 — Tools Reference (Complete)
 
 ## By Category
 
