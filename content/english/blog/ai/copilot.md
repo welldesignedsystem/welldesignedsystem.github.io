@@ -43,10 +43,6 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
     - copilot cli
     - cloud
   - handoffs
-  - model comparison
-    - swebench.com
-    - livebench.com
-    - https://docs.github.com/en/copilot/reference/ai-models/model-comparison
   - simple browswer
   - liveserver
   - checkpointing
@@ -56,6 +52,20 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 - [Github Copilot Customization library](https://docs.github.com/copilot/tutorials/customization-library)
 - [Visual Studio Code Customization](https://code.visualstudio.com/docs/copilot/customization/overview)
 - [Important Cheat Sheet](https://code.visualstudio.com/docs/copilot/reference/copilot-vscode-features)
+
+## Model Selection.
+
+### Factors to consider
+- **Task Complexity:** For simple code completion or explanations, use faster, smaller models. For complex reasoning, debugging, or multi-step tasks, opt for larger models with better context understanding.
+- **Speed vs. Quality:** If you need quick responses (e.g., during coding flow), choose faster models. For higher accuracy, especially in critical code, use more capable models.
+- **Cost:** Larger models may incur higher usage costs. Check your Copilot plan limits.
+- **Specialization:** Some models excel in coding (e.g., better at specific languages or frameworks), while others are more general-purpose.
+https://docs.github.com/en/copilot/reference/ai-models/model-comparison
+
+### Benchmarks and Comparisons
+- [SWE-bench](https://www.swebench.com/): Evaluates models on software engineering tasks. Higher scores indicate better coding capabilities.
+- [LiveBench](https://livebench.ai/#/?highunseenbias=true): General AI benchmarks for reasoning, math, coding, etc.
+- [Official Comparison](https://docs.github.com/en/copilot/reference/ai-models/model-comparison): Refer to GitHub's AI Models Comparison for detailed metrics on available models.
 
 ## Different Levels of Customization
 
