@@ -1,9 +1,9 @@
 +++
 date = '2024-04-25T12:00:00+00:00'
 draft = false
-title = 'Ethical Hacking and Penetration Testing: Comprehensive Expert Guide'
+title = 'Ethical Hacking and Penetration Testing'
 tags = ['Security', 'Ethical Hacking', 'Penetration Testing', 'Cybersecurity']
-summary = "Complete expert reference covering methodology, tools, commands, classifications, and the reasoning behind every step."
+summary = "Reference covering methodology, tools, commands, classifications and the reasoning behind every step."
 +++
 
 ---
@@ -1018,6 +1018,45 @@ git clone https://github.com/danielmiessler/SecLists /usr/share/seclists
 ```
 
 ---
+
+---
+
+## Appendix — Preventing crawlers and AI models from indexing a folder
+
+If you need to keep a folder off public indexes and discourage automated crawlers or models from reading it, use one or more of these practical controls. None are a guaranteed defence against hostile crawlers; for sensitive content require authentication or keep it off public hosting.
+
+- robots.txt (advisory): add a `Disallow` rule for the folder at the site root
+
+```text
+User-agent: *
+Disallow: /private-folder/
+```
+
+- HTML meta tag: add to the page head to prevent indexing by browsers and well-behaved crawlers
+
+```html
+<meta name="robots" content="noindex, nofollow">
+```
+
+- HTTP header (server side): useful for binary files or responses without HTML
+
+Nginx example:
+
+```nginx
+add_header X-Robots-Tag "noindex, nofollow";
+```
+
+Apache example:
+
+```apache
+Header set X-Robots-Tag "noindex, nofollow"
+```
+
+- Static-site tools: for Hugo add the meta tag in your head partial or set a page param and render the `noindex` meta from your layout. For files served directly create an index.html with the meta tag and route access through authentication when needed.
+
+Notes:
+- `robots.txt`, `meta` and `X-Robots-Tag` are advisory; some crawlers or data collectors ignore them
+- For true confidentiality restrict access with authentication, remove the content from public buckets, or host it on a private network
 
 # Part 10 — Practice Labs and Learning Path
 

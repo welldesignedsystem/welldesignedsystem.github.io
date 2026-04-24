@@ -46,6 +46,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
   - simple browswer
   - liveserver
   - checkpointing
+
 ## How to choose a model
 
 ## Reference
