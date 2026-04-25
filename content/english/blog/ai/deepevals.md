@@ -1,9 +1,9 @@
 +++
-date = '2026-04-25T12:00:00+00:00'
+date = '2026-04-24T12:00:00+00:00'
 draft = false
 title = 'DeepEvals — Placeholder'
 tags = ['deepevals', 'ai']
-summary = "Placeholder post for DeepEvals."
+summary = "Evaluating LLM Applications from Development to Production using DeepEval."
 +++
 
 ## Evaluating LLM Applications from Development to Production using DeepEval
