@@ -12,27 +12,22 @@ Purpose
 
 These instructions apply to all blog markdown files in the `content/english/blog/` tree. They encode the minimal, project-wide editorial preference for generated or edited blog content.
 
-Rules
------
+## Rules
+- Oxford Comma:
+  - No Oxford comma: do not use the serial (Oxford) comma in lists. For example:
+    - Wrong: "I bought apples, oranges, and bananas."
+    - Correct: "I bought apples, oranges and bananas."
+  - This is an editorial preference for the blog content only. It does not modify code, data files or other parts of the site.
 
-- No Oxford comma: do not use the serial (Oxford) comma in lists. For example:
+## Frontmatter
+When creating a new blog post, include TOML frontmatter using +++ delimiters. Example:
 
-  - Wrong: "I bought apples, oranges, and bananas."
-  - Correct: "I bought apples, oranges and bananas."
-
-How to follow this when generating text
--------------------------------------
-
-- When producing lists of three or more items, omit the comma before the final conjunction (`and`, `or`).
-- Prefer concise sentences and avoid adding extra commas where not required by grammar.
-
-Examples/prompts to test
------------------------
-
-- "Write a short intro paragraph about [topic] using plain language and no Oxford comma."
-- "Convert the following paragraph to match the blog style: (paste paragraph). Ensure no Oxford comma is used."
-
-Notes
------
-
-- This is an editorial preference for the blog content only. It does not modify code, data files or other parts of the site.
+```frontmatter
+++
+date = '2025-12-22T12:44:47+10:00'
+draft = false
+title = 'Anomaly Detection'
+tags = ['Anomaly Detection', 'Outlier Detection', 'Machine learning']
+summary = "Comprehensive Guide to mastering Anomaly Detection in Machine Learning"
+++
+```
