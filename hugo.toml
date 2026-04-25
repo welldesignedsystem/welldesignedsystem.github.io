@@ -88,7 +88,7 @@ unsafe = true
 enable = true
 
 [markup.highlight]
-style = 'solarized-light' # see https://xyproto.github.io/splash/docs/all.html
+style = 'witchhazel' # see https://xyproto.github.io/splash/docs/all.html
 lineNumbersInTable = false
 
 [markup.tableOfContents]

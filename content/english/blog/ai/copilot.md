@@ -257,7 +257,7 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 | `allowed-tools` | No | Space-separated string of pre-approved tools the skill may use. (Experimental) |
 
 - Skills do **not** support `mode`, `tools`, `model`, `user-invocable`, or `disable-model-invocation` frontmatter fields — those are not part of the Agent Skills spec. Skills also do not support dynamic input variables (`${input:...}`).
-- **Progressive loading:** Only the `name` and `description` frontmatter fields are loaded at startup (~100 tokens). The full skill body is loaded when the skill is activated, and any referenced files (scripts, references, assets) are loaded only when required.
+- **Progressive Loading/Progressive Disclosure:** Only the `name` and `description` frontmatter fields are loaded at startup (~100 tokens). The full skill body is loaded when the skill is activated, and any referenced files (scripts, references, assets) are loaded only when required.
 
 **How to invoke:**
 - A compatible agent automatically invokes a skill when your intent matches the skill's `description`.
