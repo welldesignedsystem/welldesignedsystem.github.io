@@ -1,6 +1,6 @@
 ++
 date = '2026-04-25T12:00:00+00:00'
-draft = true
+draft = false
 title = 'DeepEvals — Placeholder'
 tags = ['deepevals', 'ai']
 summary = "Placeholder post for DeepEvals."
