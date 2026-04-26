@@ -135,6 +135,9 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from deepeval.tracing import observe, update_current_span
+from deepeval import evaluate
+from deepeval.metrics import GEval
+from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 
 load_dotenv()
 
@@ -268,7 +271,8 @@ class MeetingSummarizer:
         callers always receive a consistent type (dict) regardless of outcome.
         """
         try:
-            llm = ChatOpenAI(model=model or self.model)
+            llm = ChatOpenAI(model=model or self.model, 
+                             model_kwargs={"response_format": {"type": "json_object"}})
             messages = [
                 SystemMessage(content=self.action_item_system_prompt),
                 HumanMessage(content=transcript),
@@ -292,6 +296,42 @@ class MeetingSummarizer:
             return {"error": f"API call failed: {e}", "raw_output": ""}
 ```
 
+testing meeting summarizer
+
+```python
+# test_meeting_summarizer.py
+
+import pytest
+from meeting_summarizer import MeetingSummarizer
+
+SAMPLE_TRANSCRIPT = """
+Alice: We need to decide between using GPT-4o and Claude for the summarization pipeline.
+Bob: I ran benchmarks last week — Claude scored higher on faithfulness but GPT-4o was faster.
+Alice: Given our latency requirements, let's go with GPT-4o for now and revisit in Q3.
+Bob: Agreed. I'll update the model config and write up the benchmark results for the team.
+Alice: I'll inform the stakeholders of the decision.
+"""
+
+@pytest.fixture
+def summarizer():
+    return MeetingSummarizer()
+
+def test_summary_quality(summarizer):
+    """Fails if the summary score drops below the 0.7 threshold."""
+    summary = summarizer.get_summary(SAMPLE_TRANSCRIPT)
+    summarizer.evaluate_summary(SAMPLE_TRANSCRIPT, summary)
+
+def test_action_item_quality(summarizer):
+    """Fails if extracted action items are invented or incomplete."""
+    action_items = summarizer.get_action_items(SAMPLE_TRANSCRIPT)
+    summarizer.evaluate_action_items(SAMPLE_TRANSCRIPT, action_items)
+
+def test_full_pipeline_quality(summarizer):
+    """Single call that runs both LLM steps and evaluates both outputs."""
+    summary, action_items = summarizer.summarize_and_evaluate(SAMPLE_TRANSCRIPT)
+    assert isinstance(summary, str) and len(summary) > 0
+    assert "individual_actions" in action_items
+```
 ### Setting Up Your Evaluation Dataset
 
 Rather than maintaining a custom database, DeepEval uses `EvaluationDataset` objects populated with `Golden`s. A `Golden` stores just the `input` without requiring an `actual_output` — the output is generated at runtime.
