@@ -22,6 +22,14 @@ DeepEval is an open-source, Apache 2.0 licensed Python framework for evaluating 
 
 The framework is built around a core idea: **LLM evaluation isn't a one-time step — it's a continuous loop.** Production data sharpens development. Development precision strengthens production. DeepEval is designed to support both ends of that loop.
 
+### Who This Is For
+
+Whether you're building chatbots, summarizers, or agent systems powered by LLMs, these tutorials are designed for:
+
+- Developers shipping LLM features in real products
+- Researchers testing prompts or model variations
+- Teams optimising LLM outputs at scale
+
 ### Key Terminology
 
 Before diving in, the tutorials establish four key terms used throughout:
@@ -38,7 +46,7 @@ Before diving in, the tutorials establish four key terms used throughout:
 ### Installation
 
 ```bash
-pip install -U deepeval
+pip install -U deepeval langchain-openai langchain-community langchain-text-splitters
 ```
 
 ### Writing Your First Test
@@ -46,10 +54,13 @@ pip install -U deepeval
 Test files must be named with a `test_` prefix (e.g., `test_app.py`) for DeepEval to recognise and run them.
 
 ```python
+# test_app.py
 from deepeval import evaluate
 from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 from deepeval.metrics import GEval
 
+# threshold is set on the metric — not on evaluate() or assert_test().
+# A test passes when score >= threshold, and fails when score < threshold.
 correctness_metric = GEval(
     name="Correctness",
     criteria="Determine if the 'actual output' is correct based on the 'expected output'.",
@@ -59,8 +70,12 @@ correctness_metric = GEval(
 
 test_case = LLMTestCase(
     input="I have a persistent cough and fever. Should I be worried?",
-    actual_output="A persistent cough and fever could signal various illnesses...",
-    expected_output="A persistent cough and fever could indicate a range of illnesses..."
+    actual_output="A persistent cough and fever could signal various illnesses, from minor "
+                  "infections to more serious conditions like pneumonia or COVID-19. It's "
+                  "advisable to seek medical attention if symptoms worsen or persist.",
+    expected_output="A persistent cough and fever could indicate a range of illnesses, from "
+                    "a mild viral infection to more serious conditions like pneumonia or "
+                    "COVID-19. You should seek medical attention if symptoms worsen or persist."
 )
 
 evaluate([test_case], [correctness_metric])
@@ -78,17 +93,25 @@ Because metrics like `GEval` use LLM-as-a-judge under the hood, you'll need to s
 export OPENAI_API_KEY="your_api_key"
 ```
 
-You can also use any custom LLM as your evaluation model — DeepEval has documentation covering this option.
+You can also use any custom LLM as your evaluation model — DeepEval has [documentation covering this option](https://deepeval.com/guides/guides-using-custom-llms).
 
 ### Connecting to Confident AI
 
-DeepEval works standalone, but you can optionally connect it to **Confident AI** for cloud dashboards, result logging, dataset management, annotation, and prompt versioning. It's free to get started:
+DeepEval works standalone, but you can optionally connect it to **Confident AI** for cloud dashboards, result logging, dataset management, and prompt versioning. It's free to get started:
 
 ```bash
 deepeval login
 ```
 
-After creating an account, paste your Confident AI Project API Key. Login persists to `.env.local` by default. You can also log in programmatically or specify a custom dotenv path.
+Navigate to your Settings page, copy your Project API Key, and paste it when prompted. Login persists to `.env.local` by default. You can also log in programmatically or with a custom dotenv path:
+
+```bash
+# With a custom path
+deepeval login --confident-api-key "ck_..." --save dotenv:.env.custom
+
+# To clear saved credentials later
+deepeval logout
+```
 
 ---
 
@@ -100,88 +123,246 @@ A **meeting summarisation agent** that takes a raw meeting transcript and return
 - A concise plain-text summary of the discussion
 - A structured JSON object of action items (individual and team-wide)
 
-This mirrors how tools like Otter.ai and Circleback work.
-
 ### Building the Agent
 
-The agent is implemented as a `MeetingSummarizer` class using the OpenAI API. The key design decision is to split summarisation into two separate LLM calls with tailored system prompts — one for the summary, one for action items. This enables **component-level evaluation** later.
+The agent is implemented as a `MeetingSummarizer` class using LangChain's `ChatOpenAI`. The key design decision is to split summarisation into two separate LLM calls — one for the summary, one for action items. This enables **component-level evaluation** later.
 
-**Summary system prompt (initial):**
-```
-You are an AI assistant summarizing meeting transcripts. Provide a clear and
-concise summary of the following conversation, avoiding interpretation and
-unnecessary details. Focus on the main discussion points only. Do not include
-any action items. Respond with only the summary as plain text — no headings,
-formatting, or explanations.
-```
+```python
+# meeting_summarizer.py
+import json
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import SystemMessage, HumanMessage
+from deepeval.tracing import observe, update_current_span
 
-**Action items system prompt (initial):**
-```
-Extract all action items from the following meeting transcript. Identify individual
-and team-wide action items in the following format:
+load_dotenv()
+
+SUMMARY_PROMPT = """You are an expert meeting summarization assistant. Generate a tightly
+written, executive-style summary of the meeting transcript, focusing only on high-value
+information: key technical insights, decisions made, problems discussed, model/tool
+comparisons, and rationale behind proposals. Exclude all action items. Prioritize clarity,
+brevity, and factual precision. The summary should allow a stakeholder to fully grasp the
+discussion in under 60 seconds."""
+
+ACTION_ITEM_PROMPT = """Parse the following meeting transcript and extract only the action
+items that are explicitly stated. Organize them into individual responsibilities, team-wide
+tasks, and named entities. Respond with valid JSON only, following this exact format:
 
 {
-  "individual_actions": { "Alice": ["Task 1"] },
-  "team_actions": ["Task 1"],
-  "entities": ["Alice"]
+  "individual_actions": {
+    "Alice": ["Task 1", "Task 2"],
+    "Bob": ["Task 1"]
+  },
+  "team_actions": ["Task 1", "Task 2"],
+  "entities": ["Alice", "Bob"]
 }
 
-Only include what is explicitly mentioned. Do not infer. Respond strictly in valid JSON.
+Do not invent or infer any tasks. No natural language, notes, or extra formatting."""
+
+
+class MeetingSummarizer:
+    def __init__(
+        self,
+        model: str = "gpt-4o",
+        summary_system_prompt: str = "",
+        action_item_system_prompt: str = "",
+    ):
+        self.model = model
+        self.summary_system_prompt = summary_system_prompt or SUMMARY_PROMPT
+        self.action_item_system_prompt = action_item_system_prompt or ACTION_ITEM_PROMPT
+
+    @observe(type="agent")
+    def summarize(
+        self,
+        transcript: str,
+        summary_model: str = "gpt-4o",
+        action_item_model: str = "gpt-4-turbo",
+    ) -> tuple[str, dict]:
+        summary = self.get_summary(transcript, summary_model)
+        action_items = self.get_action_items(transcript, action_item_model)
+        return summary, action_items
+
+    @observe(name="Summary")
+    def get_summary(self, transcript: str, model: str = None) -> str:
+        try:
+            llm = ChatOpenAI(model=model or self.model)
+            messages = [
+                SystemMessage(content=self.summary_system_prompt),
+                HumanMessage(content=transcript),
+            ]
+            response = llm.invoke(messages)
+            summary = response.content.strip()
+            update_current_span(input=transcript, actual_output=summary)
+            return summary
+        except Exception as e:
+            return f"Error: Could not generate summary: {e}"
+
+    @observe(name="Action Items")
+    def get_action_items(self, transcript: str, model: str = None) -> dict:
+        try:
+            llm = ChatOpenAI(model=model or self.model)
+            messages = [
+                SystemMessage(content=self.action_item_system_prompt),
+                HumanMessage(content=transcript),
+            ]
+            response = llm.invoke(messages)
+            raw = response.content.strip()
+            action_items = json.loads(raw)
+            update_current_span(input=transcript, actual_output=str(action_items))
+            return action_items
+        except json.JSONDecodeError:
+            return {"error": "Invalid JSON returned from model", "raw_output": raw}
+        except Exception as e:
+            return {"error": f"API call failed: {e}", "raw_output": ""}
 ```
 
-The `MeetingSummarizer` class exposes `get_summary()`, `get_action_items()`, and a combined `summarize()` method returning a tuple of `(str, dict)`.
+### Setting Up Your Evaluation Dataset
+
+Rather than maintaining a custom database, DeepEval uses `EvaluationDataset` objects populated with `Golden`s. A `Golden` stores just the `input` without requiring an `actual_output` — the output is generated at runtime.
+
+```python
+# create_dataset.py
+import os
+from deepeval.dataset import Golden, EvaluationDataset
+
+documents_path = "path/to/transcripts/folder"
+goldens = []
+
+for filename in os.listdir(documents_path):
+    if filename.endswith(".txt"):
+        file_path = os.path.join(documents_path, filename)
+        with open(file_path, "r") as f:
+            transcript = f.read().strip()
+        goldens.append(Golden(input=transcript))
+
+dataset = EvaluationDataset(goldens=goldens)
+dataset.push(alias="MeetingSummarizer Dataset")
+print(f"Pushed {len(goldens)} goldens to Confident AI.")
+```
 
 ### Evaluating the Summarizer
 
-Since the agent makes two separate LLM calls, you create **two `LLMTestCase` objects per transcript**: one for the summary output and one for the action items output.
-
-**Setting up datasets with Goldens:**
-
-Rather than maintaining a custom database, DeepEval uses `EvaluationDataset` objects populated with `Golden`s. A `Golden` stores just the `input` (the transcript) without requiring an `actual_output` at creation time — the output is generated at runtime when you call your LLM.
+Pull the dataset, generate test cases at runtime, and run the evaluation. Because the agent makes two separate LLM calls, you create **two `LLMTestCase` objects per transcript**.
 
 ```python
-from deepeval.dataset import Golden, EvaluationDataset
+# evaluate_summarizer.py
+from deepeval import evaluate
+from deepeval.dataset import EvaluationDataset
+from deepeval.test_case import LLMTestCase, LLMTestCaseParams
+from deepeval.metrics import GEval
+from meeting_summarizer import MeetingSummarizer
 
-goldens = [Golden(input=transcript) for transcript in transcripts]
-dataset = EvaluationDataset(goldens=goldens)
-dataset.push(alias="MeetingSummarizer Dataset")
-```
-
-Later, pull the dataset and generate test cases on the fly:
-
-```python
+# --- Pull dataset ---
 dataset = EvaluationDataset()
 dataset.pull(alias="MeetingSummarizer Dataset")
 
+summarizer = MeetingSummarizer()
+summary_test_cases = []
+action_item_test_cases = []
+
 for golden in dataset.goldens:
     summary, action_items = summarizer.summarize(golden.input)
-    summary_test_cases.append(LLMTestCase(input=golden.input, actual_output=summary))
-    action_item_test_cases.append(LLMTestCase(input=golden.input, actual_output=str(action_items)))
-```
+    summary_test_cases.append(
+        LLMTestCase(input=golden.input, actual_output=summary)
+    )
+    action_item_test_cases.append(
+        LLMTestCase(input=golden.input, actual_output=str(action_items))
+    )
 
-**Metrics used — both are custom `GEval`:**
-
-```python
+# --- Define metrics ---
+# threshold is set on the metric constructor; a score >= 0.9 passes, < 0.9 fails
 summary_concision = GEval(
     name="Summary Concision",
-    criteria="Assess whether the summary is concise and focused only on the essential points...",
+    criteria=(
+        "Assess whether the summary is concise and focused only on the essential "
+        "points of the meeting. It should avoid repetition, irrelevant details, "
+        "and unnecessary elaboration."
+    ),
     threshold=0.9,
-    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT]
+    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT],
 )
 
 action_item_check = GEval(
     name="Action Item Accuracy",
-    criteria="Are the action items accurate, complete, and clearly reflect the key tasks...?",
+    criteria=(
+        "Are the action items accurate, complete, and clearly reflect the key tasks "
+        "or follow-ups mentioned in the meeting?"
+    ),
     threshold=0.9,
-    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT]
+    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT],
 )
+
+# --- Run evaluations separately for each component ---
+evaluate(test_cases=summary_test_cases, metrics=[summary_concision])
+evaluate(test_cases=action_item_test_cases, metrics=[action_item_check])
 ```
 
-`GEval` uses LLM-as-a-judge with chain-of-thought (CoT) reasoning to produce scores and human-readable explanations for why test cases pass or fail — making it easy to debug your application.
+`GEval` uses LLM-as-a-judge with chain-of-thought reasoning. It not only scores each test case but also explains *why* it passed or failed. A typical reason from a failing test case looks like:
 
-### Improving via Hyperparameter Iteration
+> *"The summary captures key discussion points but includes some verbose phrasing. Some sentences feel unnecessarily elaborate for an executive-style brief."*
 
-Using the evaluation scores, you can iterate over different models and prompts systematically. The tutorials show running evaluations across `gpt-3.5-turbo`, `gpt-4o`, and `gpt-4-turbo` with updated, more detailed system prompts:
+### Iterating on Hyperparameters
+
+Use the evaluation scores to loop over different models and system prompts, logging `hyperparameters` in every `evaluate()` call so every score is traceable in Confident AI.
+
+```python
+# iterate_hyperparameters.py
+from deepeval import evaluate
+from deepeval.dataset import EvaluationDataset
+from deepeval.test_case import LLMTestCase, LLMTestCaseParams
+from deepeval.metrics import GEval
+from meeting_summarizer import MeetingSummarizer, SUMMARY_PROMPT, ACTION_ITEM_PROMPT
+
+dataset = EvaluationDataset()
+dataset.pull(alias="MeetingSummarizer Dataset")
+
+summary_concision = GEval(
+    name="Summary Concision",
+    criteria="Assess whether the summary is concise and focused only on the essential points.",
+    threshold=0.9,
+    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT],
+)
+action_item_check = GEval(
+    name="Action Item Accuracy",
+    criteria="Are the action items accurate, complete, and clearly reflect the key tasks?",
+    threshold=0.9,
+    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT],
+)
+
+models = ["gpt-3.5-turbo", "gpt-4o", "gpt-4-turbo"]
+
+for model in models:
+    summarizer = MeetingSummarizer(
+        model=model,
+        summary_system_prompt=SUMMARY_PROMPT,
+        action_item_system_prompt=ACTION_ITEM_PROMPT,
+    )
+
+    summary_test_cases = []
+    action_item_test_cases = []
+
+    for golden in dataset.goldens:
+        summary, action_items = summarizer.summarize(golden.input)
+        summary_test_cases.append(
+            LLMTestCase(input=golden.input, actual_output=summary)
+        )
+        action_item_test_cases.append(
+            LLMTestCase(input=golden.input, actual_output=str(action_items))
+        )
+
+    evaluate(
+        test_cases=summary_test_cases,
+        metrics=[summary_concision],
+        hyperparameters={"model": model, "prompt": "updated-v2"},
+    )
+    evaluate(
+        test_cases=action_item_test_cases,
+        metrics=[action_item_check],
+        hyperparameters={"model": model, "prompt": "updated-v2"},
+    )
+```
+
+Results across the three models with the updated prompts:
 
 | Model | Summary Concision | Action Item Accuracy |
 |---|---|---|
@@ -189,29 +370,73 @@ Using the evaluation scores, you can iterate over different models and prompts s
 | gpt-4o | **0.9** | 0.7 |
 | gpt-4-turbo | 0.8 | **0.9** |
 
-The results show that different models can excel at different tasks. The solution presented is to use `gpt-4o` for summary generation and `gpt-4-turbo` for action items — exposing `summary_model` and `action_item_model` as separate parameters on the `summarize()` method.
-
-Pass `hyperparameters` to the `evaluate()` call to track which model and prompt produced each score in Confident AI:
-
-```python
-evaluate(
-    test_cases=summary_test_cases,
-    metrics=[summary_concision],
-    hyperparameters={"model": model},
-)
-```
+Different models excel at different tasks. The solution is to configure `gpt-4o` for summaries and `gpt-4-turbo` for action items by passing them as separate arguments to `summarize()`.
 
 ### CI/CD Integration
 
-DeepEval integrates directly with pytest and GitHub Actions. The test file uses `assert_test` with `@pytest.mark.parametrize` over your dataset goldens:
+**Pytest test file:**
 
 ```python
+# test_meeting_summarizer_quality.py
+import pytest
+from deepeval import assert_test
+from deepeval.dataset import EvaluationDataset
+from meeting_summarizer import MeetingSummarizer
+
+dataset = EvaluationDataset()
+dataset.pull(alias="MeetingSummarizer Dataset")
+
+summarizer = MeetingSummarizer()
+
 @pytest.mark.parametrize("golden", dataset.goldens)
 def test_meeting_summarizer_components(golden):
     assert_test(golden=golden, observed_callback=summarizer.summarize)
 ```
 
-The `@observe` decorator is added to agent methods for tracing, enabling component-level visibility and online metrics in production. A complete GitHub Actions YAML workflow triggers the test run on every push to `main`.
+Run it locally with:
+
+```bash
+poetry run deepeval test run test_meeting_summarizer_quality.py
+```
+
+**GitHub Actions workflow** — triggers on every push to `main`:
+
+```yaml
+# .github/workflows/deepeval-summarizer.yml
+name: Meeting Summarizer DeepEval Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install Dependencies
+        run: poetry install --no-root
+
+      - name: Run DeepEval Tests
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CONFIDENT_API_KEY: ${{ secrets.CONFIDENT_API_KEY }}
+        run: poetry run deepeval test run test_meeting_summarizer_quality.py
+```
 
 ---
 
@@ -219,102 +444,288 @@ The `@observe` decorator is added to agent methods for tracing, enabling compone
 
 ### What You'll Build
 
-A **Retrieval-Augmented Generation QA agent** built with OpenAI and LangChain. The tutorial uses a knowledge base about the fictional company Theranos as its domain, but the patterns apply to any RAG application. The agent evaluates both the **retriever** (what context is fetched) and the **generator** (how well it answers using that context) in isolation, as well as the combined pipeline.
+A **Retrieval-Augmented Generation QA agent** built with LangChain. The tutorial uses a knowledge base about the fictional company Theranos as its domain. The agent evaluates both the **retriever** and the **generator** independently, as well as the combined pipeline.
 
-### RAG-Specific Test Cases
+### Building the Agent
 
-For RAG applications, `LLMTestCase` must include a `retrieval_context` field alongside `input` and `actual_output`:
-
-```python
-test_case = LLMTestCase(
-    input="...",          # The user query
-    actual_output="...",  # The RAG agent's answer
-    retrieval_context=[], # The retrieved document chunks
-    expected_output="..."  # From the golden
-)
-```
-
-### Generating Synthetic QA Pairs (Recommended Approach)
-
-The recommended approach is to use DeepEval's `Synthesizer` to generate synthetic question-answer pairs from your knowledge base documents. This produces a dataset that covers edge cases you'd never manually think of:
+The agent uses LangChain's `ChatOpenAI` for generation, `OpenAIEmbeddings` for embeddings, and `FAISS` as the vector store. Note the modern import paths: `langchain_openai` for model and embeddings classes, `langchain_community.vectorstores` for FAISS, and `langchain_text_splitters` for the text splitter.
 
 ```python
-from deepeval.synthesizer import Synthesizer
-
-synthesizer = Synthesizer()
-goldens = synthesizer.generate_goldens_from_docs(
-    document_paths=['knowledge_base.txt', 'knowledge_base.pdf']
-)
-
-dataset = EvaluationDataset(goldens=goldens)
-dataset.push(alias="RAG QA Agent Dataset")
-```
-
-Alternatively, historical queries from your database can be used, though this approach is backward-looking and doesn't reflect your current RAG agent's capabilities.
-
-### Retriever Metrics
-
-DeepEval provides three purpose-built metrics for evaluating a retriever:
-
-- **`ContextualRelevancyMetric`** — The retrieved context must be relevant to the query
-- **`ContextualRecallMetric`** — The retrieved context must be sufficient to answer the query (requires `expected_output`)
-- **`ContextualPrecisionMetric`** — The retrieved context should be precise, without unnecessary noise (requires `expected_output`)
-
-```python
+# rag_qa_agent.py
+from langchain_community.vectorstores import FAISS
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.messages import HumanMessage
+from deepeval.tracing import observe, update_current_span
 from deepeval.metrics import (
     ContextualRelevancyMetric,
     ContextualRecallMetric,
     ContextualPrecisionMetric,
+    GEval,
 )
+from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 
-relevancy = ContextualRelevancyMetric()
-recall = ContextualRecallMetric()
-precision = ContextualPrecisionMetric()
+GENERATOR_PROMPT = """You are an AI assistant designed for factual retrieval. Using the
+context below, extract only the information needed to answer the user's query. Respond
+in strictly valid JSON using this schema:
+
+{{
+  "answer": "string — a precise, factual answer found in the context",
+  "citations": ["string — exact quotes or summaries that support the answer"]
+}}
+
+Do not fabricate information. Return only valid JSON. If no answer is found, return:
+{{"answer": "No relevant information available.", "citations": []}}
+
+Context:
+{context}
+
+Query:
+{query}"""
+
+
+class RAGAgent:
+    def __init__(self, document_paths: list[str], k: int = 4):
+        self.k = k
+        self.vector_store = self._load_vector_store(document_paths)
+
+    def _load_vector_store(self, document_paths: list[str]):
+        texts = []
+        for path in document_paths:
+            with open(path, "r") as f:
+                texts.append(f.read())
+        splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+        chunks = splitter.create_documents(texts)
+        return FAISS.from_documents(chunks, OpenAIEmbeddings())
+
+    @observe(
+        metrics=[
+            ContextualRelevancyMetric(),
+            ContextualRecallMetric(),
+            ContextualPrecisionMetric(),
+        ],
+        name="Retriever",
+    )
+    def retrieve(self, query: str) -> list[str]:
+        docs = self.vector_store.similarity_search(query, k=self.k)
+        context = [doc.page_content for doc in docs]
+        update_current_span(
+            test_case=LLMTestCase(
+                input=query,
+                actual_output="",
+                retrieval_context=context,
+            )
+        )
+        return context
+
+    @observe(
+        metrics=[
+            GEval(
+                name="Answer Correctness",
+                criteria=(
+                    "Evaluate if the actual output's 'answer' property is correct and "
+                    "complete from the input and retrieved context. Reduce score if not."
+                ),
+                evaluation_params=[
+                    LLMTestCaseParams.INPUT,
+                    LLMTestCaseParams.ACTUAL_OUTPUT,
+                    LLMTestCaseParams.RETRIEVAL_CONTEXT,
+                ],
+            ),
+            GEval(
+                name="Citation Accuracy",
+                criteria=(
+                    "Check if the citations in the actual output are correct and relevant "
+                    "based on input and retrieved context. Reduce score if not."
+                ),
+                evaluation_params=[
+                    LLMTestCaseParams.INPUT,
+                    LLMTestCaseParams.ACTUAL_OUTPUT,
+                    LLMTestCaseParams.RETRIEVAL_CONTEXT,
+                ],
+            ),
+        ],
+        name="Generator",
+    )
+    def generate(self, query: str, retrieved_docs: list[str]) -> str:
+        context = "\n".join(retrieved_docs)
+        prompt = GENERATOR_PROMPT.format(context=context, query=query)
+        llm = ChatOpenAI(model="gpt-4o")
+        response = llm.invoke([HumanMessage(content=prompt)])
+        answer = response.content
+        update_current_span(
+            test_case=LLMTestCase(
+                input=query,
+                actual_output=answer,
+                retrieval_context=retrieved_docs,
+            )
+        )
+        return answer
+
+    @observe(type="agent")
+    def answer(self, query: str) -> tuple[str, list[str]]:
+        retrieved_docs = self.retrieve(query)
+        generated_answer = self.generate(query, retrieved_docs)
+        return generated_answer, retrieved_docs
 ```
 
-### Generator Metrics
+### Generating Synthetic QA Pairs (Recommended)
 
-For the generator, custom `GEval` metrics are created for use-case-specific criteria:
+Use DeepEval's `Synthesizer` to generate question-answer pairs from your knowledge base. This creates ground truth and covers edge cases you'd never write manually.
 
 ```python
+# create_rag_dataset.py
+from deepeval.synthesizer import Synthesizer
+from deepeval.dataset import EvaluationDataset
+
+synthesizer = Synthesizer()
+goldens = synthesizer.generate_goldens_from_docs(
+    document_paths=["theranos_legacy.txt", "theranos_legacy.docx", "theranos_legacy.pdf"]
+)
+
+dataset = EvaluationDataset(goldens=goldens)
+dataset.push(alias="RAG QA Agent Dataset")
+print(f"Pushed {len(goldens)} synthetic QA pairs to Confident AI.")
+```
+
+The goldens returned by the synthesizer contain both `input` and `expected_output`, giving you a ground truth to evaluate against. `ContextualRecallMetric` and `ContextualPrecisionMetric` both require `expected_output` to be present on the test case — this is what the synthesizer provides. Using historical queries from a database is quicker but only backward-looking and may not reflect your current RAG agent's capabilities.
+
+### Evaluating the RAG Agent
+
+```python
+# evaluate_rag_agent.py
+from deepeval import evaluate
+from deepeval.dataset import EvaluationDataset
+from deepeval.test_case import LLMTestCase, LLMTestCaseParams
+from deepeval.metrics import (
+    ContextualRelevancyMetric,
+    ContextualRecallMetric,
+    ContextualPrecisionMetric,
+    GEval,
+)
+from rag_qa_agent import RAGAgent
+
+# --- Pull dataset ---
+dataset = EvaluationDataset()
+dataset.pull("RAG QA Agent Dataset")
+
+agent = RAGAgent(document_paths=["theranos_legacy.txt"])
+
+# --- Build test cases ---
+test_cases = []
+for golden in dataset.goldens:
+    retrieved_docs = agent.retrieve(golden.input)
+    response = agent.generate(golden.input, retrieved_docs)
+    test_cases.append(
+        LLMTestCase(
+            input=golden.input,
+            actual_output=str(response),
+            retrieval_context=retrieved_docs,
+            expected_output=golden.expected_output,  # from Synthesizer; required for recall and precision
+        )
+    )
+
+# --- Retriever metrics ---
+relevancy = ContextualRelevancyMetric()
+recall = ContextualRecallMetric()        # requires expected_output
+precision = ContextualPrecisionMetric()  # requires expected_output
+
+# --- Generator metrics ---
 answer_correctness = GEval(
     name="Answer Correctness",
-    criteria="Evaluate if the actual output's 'answer' is correct and complete from the input and retrieved context.",
-    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT, LLMTestCaseParams.RETRIEVAL_CONTEXT]
+    criteria=(
+        "Evaluate if the actual output's 'answer' property is correct and complete "
+        "from the input and retrieved context. Reduce score if not."
+    ),
+    evaluation_params=[
+        LLMTestCaseParams.INPUT,
+        LLMTestCaseParams.ACTUAL_OUTPUT,
+        LLMTestCaseParams.RETRIEVAL_CONTEXT,
+    ],
 )
-
 citation_accuracy = GEval(
     name="Citation Accuracy",
-    criteria="Check if the citations in the actual output are correct and relevant.",
-    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT, LLMTestCaseParams.RETRIEVAL_CONTEXT]
+    criteria=(
+        "Check if the citations in the actual output are correct and relevant "
+        "based on input and retrieved context. Reduce score if not."
+    ),
+    evaluation_params=[
+        LLMTestCaseParams.INPUT,
+        LLMTestCaseParams.ACTUAL_OUTPUT,
+        LLMTestCaseParams.RETRIEVAL_CONTEXT,
+    ],
 )
-```
 
-Retriever and generator evaluations are run separately:
-
-```python
+# --- Run separately: retriever then generator ---
 evaluate(test_cases, [relevancy, recall, precision])
 evaluate(test_cases, [answer_correctness, citation_accuracy])
 ```
 
-### RAG Hyperparameters to Iterate On
+### CI/CD Integration
 
-Unlike the summarizer, a RAG application has more tunable hyperparameters: embedding model, chunk size, chunk overlap, number of retrieved chunks (`top_k`), and the generation model. The improvement section of this tutorial demonstrates how to loop over these configurations, evaluate each combination with the same dataset, and identify the configuration that produces the best scores across all metrics.
-
-### Production Tracing for RAG
-
-In production, the `@observe` decorator is applied to the retriever component with `type="retriever"` and the `ContextualRelevancyMetric` attached inline. `update_current_span()` is called after retrieval to log the input query and the fetched contexts:
+**Pytest test file:**
 
 ```python
-@observe(metrics=[ContextualRelevancyMetric()], type="retriever")
-def retrieve(self, query: str) -> list:
-    hits = self.client.search(...)
-    contexts = [hit.payload['content'] for hit in hits]
-    update_current_span(input=query, retrieval_context=contexts)
-    return contexts
+# test_rag_qa_agent.py
+import pytest
+from deepeval import assert_test
+from deepeval.dataset import EvaluationDataset
+from rag_qa_agent import RAGAgent
+
+dataset = EvaluationDataset()
+dataset.pull(alias="RAG QA Agent Dataset")
+
+agent = RAGAgent(document_paths=["theranos_legacy.txt"])
+
+@pytest.mark.parametrize("golden", dataset.goldens)
+def test_rag_qa_agent(golden):
+    assert_test(golden=golden, observed_callback=agent.answer)
 ```
 
-CI/CD integration follows the same pytest + GitHub Actions pattern as the summarizer tutorial.
+Run it locally with:
+
+```bash
+poetry run deepeval test run test_rag_qa_agent.py
+```
+
+**GitHub Actions workflow:**
+
+```yaml
+# .github/workflows/deepeval-rag.yml
+name: RAG QA Agent DeepEval Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install Dependencies
+        run: poetry install --no-root
+
+      - name: Run DeepEval Tests
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CONFIDENT_API_KEY: ${{ secrets.CONFIDENT_API_KEY }}
+        run: poetry run deepeval test run test_rag_qa_agent.py
+```
 
 ---
 
@@ -322,112 +733,228 @@ CI/CD integration follows the same pytest + GitHub Actions pattern as the summar
 
 ### What You'll Build
 
-A **multi-turn medical chatbot** built with OpenAI, LangChain, and Qdrant. The chatbot can diagnose symptoms using a RAG pipeline over a medical encyclopedia, book appointments, and retain memory across a full conversation. This tutorial introduces **conversational test cases** — the correct way to evaluate multi-turn dialogue.
+A **multi-turn medical chatbot** built with LangChain and Qdrant. The chatbot diagnoses symptoms using a RAG pipeline over a medical encyclopedia, books appointments, and retains memory across a full conversation. This tutorial introduces **conversational test cases** — the correct way to evaluate multi-turn dialogue.
 
-### ConversationalTestCase
+### Building the Chatbot
 
-Unlike single-turn test cases, multi-turn conversations are modelled using `ConversationalTestCase` and `Turn` objects:
+```python
+# medical_chatbot.py
+from qdrant_client import QdrantClient
+from sentence_transformers import SentenceTransformer
+from langchain_openai import ChatOpenAI
+from deepeval.tracing import observe, update_current_span, update_current_trace
+from deepeval.metrics import ContextualRelevancyMetric
+
+SYSTEM_PROMPT = """You are a virtual health assistant designed to support users with
+symptom understanding and appointment management. Start every conversation by actively
+listening to the user's concerns. Ask clear follow-up questions to gather information
+like symptom duration, intensity, and relevant health history. Use available tools to
+fetch diagnostic information or manage medical appointments. Never assume a diagnosis
+unless there's enough detail, and always recommend professional medical consultation
+when appropriate."""
+
+
+class MedicalChatbot:
+    def __init__(
+        self,
+        document_path: str,
+        model: str = "gpt-4o",
+        encoder: str = "all-MiniLM-L6-v2",
+        system_prompt: str = "",
+    ):
+        self.llm = ChatOpenAI(model=model)
+        self.appointments = {}
+        self.encoder = SentenceTransformer(encoder)
+        self.client = QdrantClient(":memory:")
+        self.system_prompt = system_prompt or SYSTEM_PROMPT
+        self.store_data(document_path)
+        self.setup_agent(self.system_prompt)
+
+    def store_data(self, document_path: str):
+        # Load and embed The Gale Encyclopedia of Alternative Medicine into Qdrant
+        ...
+
+    def setup_agent(self, system_prompt: str):
+        # Build a LangChain agent with memory, tools, and the system prompt
+        ...
+
+    @observe(metrics=[ContextualRelevancyMetric()], type="retriever")
+    def query_engine(self, query: str) -> str:
+        """Tool: retrieve diagnostic data from The Gale Encyclopedia of Alternative Medicine."""
+        hits = self.client.search(
+            collection_name="gale_encyclopedia",
+            query_vector=self.encoder.encode(query).tolist(),
+            limit=3,
+        )
+        contexts = [hit.payload["content"] for hit in hits]
+        update_current_span(input=query, retrieval_context=contexts)
+        return "\n".join(contexts)
+
+    @observe(type="agent")
+    def interactive_session(self, session_id: str):
+        print("Hello! I am Baymax, your personal health care companion.")
+        print("Type 'exit' to quit.")
+
+        while True:
+            user_input = input("Your query: ")
+            if user_input.lower() == "exit":
+                break
+
+            response = self.agent_with_chat_history.invoke(
+                {"input": user_input},
+                config={"configurable": {"session_id": session_id}},
+            )
+            # Groups all turns in this session into a single conversation trace
+            update_current_trace(
+                thread_id=session_id,
+                input=user_input,
+                output=response["output"],
+            )
+            print("Baymax:", response["output"])
+```
+
+### Setting Up Conversational Test Cases
+
+Unlike single-turn test cases, multi-turn conversations are modelled with `ConversationalTestCase` and `Turn`:
 
 ```python
 from deepeval.test_case import ConversationalTestCase, Turn
 
 test_case = ConversationalTestCase(
     turns=[
-        Turn(role="user", content="I've had a sore throat for three days."),
-        Turn(role="assistant", content="I'm sorry to hear that. How severe is the pain..."),
+        Turn(role="user",      content="I've had a sore throat for three days."),
+        Turn(role="assistant", content="I'm sorry to hear that. How severe is the pain on a scale of 1–10?"),
+        Turn(role="user",      content="About a 6. I also have a slight fever."),
+        Turn(role="assistant", content="Given the duration and fever, this could indicate a bacterial infection. I recommend seeing a doctor for a throat swab."),
     ]
 )
 ```
 
-A `ConversationalTestCase` can optionally include `scenario` and `expected_outcome` fields, which are used when simulating conversations.
-
 ### Three Approaches to Testing Multi-Turn Conversations
 
-**1. Historical data** — Convert past production conversations into `ConversationalTestCase` objects. Fast to set up, but only backward-looking.
-
-**2. Manual prompting** — Interactively build conversations by running the chatbot yourself, capturing turns. Better than historical data (tests the current version), but slow and hard to scale.
-
-**3. User simulation (recommended)** — Use `ConversationSimulator` to automatically simulate entire conversations based on predefined scenarios, using `ConversationalGolden`s:
+**1. Historical data** — Fast to set up, but only backward-looking:
 
 ```python
+from deepeval.test_case import ConversationalTestCase, Turn
+
+conversations = fetch_conversations_from_db()  # your DB call here
+
+test_cases = []
+for conv in conversations:
+    turns = [Turn(role=msg["role"], content=msg["content"]) for msg in conv["messages"]]
+    test_cases.append(ConversationalTestCase(turns=turns))
+```
+
+**2. Manual prompting** — Tests the current version but is slow and hard to scale:
+
+```python
+from deepeval.test_case import ConversationalTestCase, Turn
+
+chatbot = MedicalChatbot(document_path="gale_encyclopedia.pdf")
+turns = []
+session_id = "manual-session-001"
+
+while True:
+    user_input = input("Your query: ")
+    if user_input.lower() == "exit":
+        break
+
+    response = chatbot.agent_with_memory.invoke(
+        {"input": user_input},
+        config={"configurable": {"session_id": session_id}},
+    )
+    turns.append(Turn(role="user",      content=user_input))
+    turns.append(Turn(role="assistant", content=response["output"]))
+    print("Baymax:", response["output"])
+
+test_case = ConversationalTestCase(turns=turns)
+```
+
+**3. User simulation (recommended)** — Automated, consistent, forward-looking. Define scenarios in `ConversationalGolden`s (note: `scenario` and `expected_outcome` live on the golden, not on the test case):
+
+```python
+# create_chatbot_dataset.py
 from deepeval.dataset import EvaluationDataset, ConversationalGolden
 
 goldens = [
     ConversationalGolden(
         scenario="User with a sore throat asking for paracetamol.",
-        expected_outcome="Gets a recommendation for panadol."
+        expected_outcome="Gets a recommendation for panadol.",
     ),
     ConversationalGolden(
         scenario="Frustrated user looking to rebook their appointment.",
-        expected_outcome="Gets redirected to a human agent"
+        expected_outcome="Gets redirected to a human agent.",
     ),
+    ConversationalGolden(
+        scenario="User just looking to talk to somebody.",
+        expected_outcome="Told the chatbot isn't meant for this use case.",
+    ),
+    # Include at least 20 goldens for a meaningful benchmark.
 ]
 
 dataset = EvaluationDataset(goldens=goldens)
 dataset.push(alias="Medical Chatbot Dataset")
+print(f"Pushed {len(goldens)} conversational goldens to Confident AI.")
 ```
 
-Simulate conversations by wrapping your chatbot in a callback:
+Then simulate conversations and run evaluations:
 
 ```python
+# simulate_and_evaluate.py
+from typing import List
+from deepeval.dataset import EvaluationDataset
+from deepeval.test_case import Turn
 from deepeval.simulator import ConversationSimulator
+from deepeval.metrics import TurnRelevancyMetric, TurnFaithfulnessMetric
+from deepeval import evaluate
+from medical_chatbot import MedicalChatbot
 
-def model_callback(input, turns, thread_id):
-    response = chatbot.agent.invoke({"input": turns[-1].content}, ...)
-    return Turn(role="assistant", content=response["output"])
+chatbot = MedicalChatbot(document_path="gale_encyclopedia.pdf")
+
+dataset = EvaluationDataset()
+dataset.pull(alias="Medical Chatbot Dataset")
+
+# Wrap your chatbot in the required callback signature.
+# The callback must return a plain string — the simulator constructs the Turn internally.
+def model_callback(input: str, turns: List[Turn], thread_id: str) -> str:
+    user_input = turns[-1].content
+    response = chatbot.agent_with_chat_history.invoke(
+        {"input": user_input},
+        config={"configurable": {"session_id": thread_id}},
+    )
+    return response["output"]
 
 simulator = ConversationSimulator(model_callback=model_callback)
 test_cases = simulator.simulate(goldens=dataset.goldens)
-```
 
-The tutorials recommend at least **20 goldens** for a barely-adequate evaluation dataset, since each golden produces one test case.
-
-### Conversational Metrics
-
-DeepEval provides dedicated metrics for multi-turn evaluation:
-
-**`TurnRelevancyMetric`** — A generic metric that loops through each assistant turn and uses a sliding window approach to construct historical context for evaluation. Relevancy is the most common multi-turn metric and applies to virtually any use case.
-
-**`TurnFaithfulnessMetric`** — Specific to chatbots that use external knowledge (like a RAG pipeline). It checks whether each assistant turn contradicts the retrieval context it was given.
-
-```python
-from deepeval.metrics import TurnRelevancyMetric, TurnFaithfulnessMetric
-
+# TurnRelevancyMetric: generic — loops through each assistant turn using a
+#   sliding window of historical context. Works for any conversational use case.
+# TurnFaithfulnessMetric: specific — checks whether any assistant turn
+#   contradicts the retrieval context it was given.
 relevancy = TurnRelevancyMetric()
 faithfulness = TurnFaithfulnessMetric()
 
 evaluate(
     test_cases=test_cases,
     metrics=[relevancy, faithfulness],
-    hyperparameters={"Model": MODEL, "Prompt": SYSTEM_PROMPT}
+    hyperparameters={"Model": "gpt-4o", "Prompt": "health-assistant-v2"},
 )
 ```
 
-By logging hyperparameters, every score is tied to a specific model and prompt version — making it easy to identify regressions when either parameter changes.
+### Production Online Evaluation
 
-### Production Tracing for Chatbots
-
-The `@observe(type="agent")` decorator wraps the interactive session, and `update_current_trace()` records the thread ID, input, and output on every turn. This groups individual LLM calls into a full conversation trace:
+Once deployed, trigger online evaluations using the thread ID from each live conversation and a Metric Collection defined in Confident AI:
 
 ```python
-@observe(type="agent")
-def interactive_session(self, session_id):
-    while True:
-        user_input = input("Your query: ")
-        response = self.agent_with_chat_history.invoke({"input": user_input}, ...)
-        update_current_trace(
-            thread_id=session_id,
-            input=user_input,
-            output=response["output"]
-        )
-```
-
-Online evaluation is then triggered by thread ID using `evaluate_thread()`, which runs against a **Metric Collection** defined in Confident AI:
-
-```python
+# online_eval.py
 from deepeval.tracing import evaluate_thread
 
-evaluate_thread(thread_id="your-thread-id", metric_collection="Metric Collection")
+# Called after a real production conversation ends.
+# thread_id matches the session_id passed to interactive_session().
+evaluate_thread(
+    thread_id="user-session-abc123",
+    metric_collection="Medical Chatbot Metrics",
+)
 ```
 
 ---
@@ -439,16 +966,19 @@ evaluate_thread(thread_id="your-thread-id", metric_collection="Metric Collection
 | Feature | `LLMTestCase` | `ConversationalTestCase` |
 |---|---|---|
 | Use case | Single-turn interactions | Multi-turn dialogues |
-| Key fields | `input`, `actual_output`, `retrieval_context`, `expected_output` | `turns` (list of `Turn`), `scenario`, `expected_outcome` |
+| Key fields | `input`, `actual_output`, `retrieval_context`, `expected_output` | `turns` (list of `Turn`) |
 | Typical apps | RAG agents, summarisers | Chatbots, voice assistants |
 
 ### Golden vs TestCase
 
-| Feature | `Golden` | `LLMTestCase` / `ConversationalTestCase` |
+| Feature | `Golden` / `ConversationalGolden` | `LLMTestCase` / `ConversationalTestCase` |
 |---|---|---|
 | Requires `actual_output`? | No | Yes |
 | When to use | Dataset creation, storage | At evaluation time |
 | Role | Template / input definition | Fully populated test unit |
+| Extra fields | `expected_output`, `scenario`, `expected_outcome` | — |
+
+`scenario` and `expected_outcome` are fields on `ConversationalGolden` (used when defining simulation scenarios). They are not fields on `ConversationalTestCase` itself.
 
 ### Metric Types
 
@@ -456,10 +986,11 @@ evaluate_thread(thread_id="your-thread-id", metric_collection="Metric Collection
 |---|---|---|
 | `GEval` | LLM-as-a-judge | Any custom criteria |
 | `ContextualRelevancyMetric` | RAG | Retriever quality |
-| `ContextualRecallMetric` | RAG | Retriever coverage |
-| `ContextualPrecisionMetric` | RAG | Retriever precision |
+| `ContextualRecallMetric` | RAG | Retriever coverage (needs `expected_output`) |
+| `ContextualPrecisionMetric` | RAG | Retriever precision (needs `expected_output`) |
 | `TurnRelevancyMetric` | Multi-turn | Conversational relevance |
 | `TurnFaithfulnessMetric` | Multi-turn | Grounding in retrieved context |
+| `ArenaGEval` | LLM-as-a-judge | Head-to-head model comparison |
 
 ---
 
@@ -485,13 +1016,15 @@ Every tutorial follows the same four-stage lifecycle:
 
 **Generate synthetic data for RAG.** DeepEval's `Synthesizer` creates question-answer pairs from your knowledge base documents and covers edge cases you'd never manually identify.
 
-**Simulate conversations, don't write them manually.** `ConversationSimulator` produces consistent, repeatable benchmarks far faster than interactive manual testing.
+**Simulate conversations, don't write them manually.** `ConversationSimulator` produces consistent, repeatable benchmarks far faster than interactive manual testing, and tests the current version of your system rather than past behaviour.
 
-**Log hyperparameters in every `evaluate()` call.** Scores without associated configuration data are nearly impossible to use for systematic improvement.
+**Always set `threshold` on the metric, not on `evaluate()` or `assert_test()`.** Each metric gets its own threshold via its constructor. A score >= threshold passes; below it fails. `evaluate()` and `assert_test()` simply run whatever metrics you pass in.
 
-**Choose your evaluation model carefully.** The tutorials recommend strong models like `gpt-4`, `gpt-4o`, or `claude-3-opus` for evaluation, especially for summarisation tasks. The evaluation model's quality directly affects the reliability of your scores.
+**Log hyperparameters in every `evaluate()` call.** Scores without associated configuration data are nearly impossible to use for systematic improvement. Every run should be traceable to a specific model and prompt version.
 
-**Run at least 20 goldens per evaluation run.** Fewer test cases produce noisy metrics that may not represent real performance.
+**Choose your evaluation model carefully.** The tutorials recommend strong models like `gpt-4o` or `claude-3-opus` for evaluation, especially for summarisation tasks. The evaluation model's quality directly affects the reliability of your scores.
+
+**Run at least 20 goldens per evaluation run.** Fewer test cases produce noisy, statistically unreliable metrics. Twenty is a practical minimum to distinguish a genuine regression from random variance in LLM outputs.
 
 ---
 
