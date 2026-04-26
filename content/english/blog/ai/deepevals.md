@@ -145,9 +145,6 @@ load_dotenv()
 # System Prompts
 # ---------------------------------------------------------------------------
 
-# Instructs the model to produce a concise, executive-style summary.
-# Explicitly excludes action items to keep concerns separated from
-# the ACTION_ITEM_PROMPT below.
 SUMMARY_PROMPT = """You are an expert meeting summarization assistant. Generate a tightly
 written, executive-style summary of the meeting transcript, focusing only on high-value
 information: key technical insights, decisions made, problems discussed, model/tool
@@ -155,9 +152,6 @@ comparisons, and rationale behind proposals. Exclude all action items. Prioritiz
 brevity, and factual precision. The summary should allow a stakeholder to fully grasp the
 discussion in under 60 seconds."""
 
-# Instructs the model to extract action items as strict JSON.
-# The rigid format constraint (no extra text, no inferred tasks) makes the
-# response reliably machine-parseable via json.loads().
 ACTION_ITEM_PROMPT = """Parse the following meeting transcript and extract only the action
 items that are explicitly stated. Organize them into individual responsibilities, team-wide
 tasks, and named entities. Respond with valid JSON only, following this exact format:
@@ -173,6 +167,34 @@ tasks, and named entities. Respond with valid JSON only, following this exact fo
 
 Do not invent or infer any tasks. No natural language, notes, or extra formatting."""
 
+# ---------------------------------------------------------------------------
+# Metrics
+# ---------------------------------------------------------------------------
+
+# Scores whether the summary captures the key points of the transcript
+# without hallucinating or omitting critical information.
+summary_correctness_metric = GEval(
+    name="Summary Correctness",
+    criteria=(
+        "Determine whether the actual output is an accurate and complete summary "
+        "of the input transcript. Penalise hallucinated facts and missing key decisions."
+    ),
+    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT],
+    threshold=0.7,
+)
+
+# Scores whether extracted action items match what was explicitly said —
+# no invented tasks, no omissions of clearly stated ones.
+action_item_correctness_metric = GEval(
+    name="Action Item Correctness",
+    criteria=(
+        "Determine whether the actual output contains only action items explicitly "
+        "stated in the input transcript. Penalise invented tasks and missed tasks."
+    ),
+    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT],
+    threshold=0.7,
+)
+
 
 # ---------------------------------------------------------------------------
 # MeetingSummarizer
@@ -180,14 +202,13 @@ Do not invent or infer any tasks. No natural language, notes, or extra formattin
 
 class MeetingSummarizer:
     """
-    Processes a meeting transcript into two complementary outputs:
+    Processes a meeting transcript into two outputs:
       1. A concise executive summary  (get_summary)
       2. Structured action items       (get_action_items)
 
-    Both methods are traced via DeepEval's @observe decorator, allowing
-    inputs, outputs, and latency to be captured for later evaluation.
-    Different models can be used for each task since summarization and
-    structured extraction have different quality/cost trade-offs.
+    Call summarize() to run both LLM calls in one shot.
+    Call evaluate_summary() / evaluate_action_items() to score the outputs
+    against the transcript using DeepEval GEval metrics.
     """
 
     def __init__(
@@ -196,14 +217,7 @@ class MeetingSummarizer:
         summary_system_prompt: str = "",
         action_item_system_prompt: str = "",
     ):
-        """
-        Args:
-            model:                    Fallback model if no per-call model is specified.
-            summary_system_prompt:    Overrides SUMMARY_PROMPT when provided.
-            action_item_system_prompt: Overrides ACTION_ITEM_PROMPT when provided.
-        """
         self.model = model
-        # Fall back to the module-level defaults if no custom prompts are supplied
         self.summary_system_prompt = summary_system_prompt or SUMMARY_PROMPT
         self.action_item_system_prompt = action_item_system_prompt or ACTION_ITEM_PROMPT
 
@@ -211,39 +225,69 @@ class MeetingSummarizer:
     #  Public entry point                                                  #
     # ------------------------------------------------------------------ #
 
-    @observe(type="agent")  # Marks the root span; child spans nest inside this one
+    @observe(type="agent")
     def summarize(
         self,
         transcript: str,
         summary_model: str = "gpt-4o",
         action_item_model: str = "gpt-4-turbo",
     ) -> tuple[str, dict]:
-        """
-        Orchestrates both LLM calls and returns their results together.
-        Using separate models per task lets us balance quality vs. cost:
-          - gpt-4o        → better prose for the summary
-          - gpt-4-turbo   → cheaper for the structured extraction task
-
-        Returns:
-            (summary, action_items) — plain string and parsed dict respectively.
-        """
+        """Run both LLM calls and return (summary, action_items)."""
         summary = self.get_summary(transcript, summary_model)
         action_items = self.get_action_items(transcript, action_item_model)
+        return summary, action_items
+
+    # ------------------------------------------------------------------ #
+    #  Evaluation                                                          #
+    # ------------------------------------------------------------------ #
+
+    def evaluate_summary(self, transcript: str, summary: str) -> None:
+        """
+        Score the summary against the source transcript.
+        Raises AssertionError (via DeepEval) if the score falls below the
+        threshold defined on summary_correctness_metric.
+        """
+        test_case = LLMTestCase(
+            input=transcript,
+            actual_output=summary,
+        )
+        evaluate([test_case], [summary_correctness_metric])
+
+    def evaluate_action_items(self, transcript: str, action_items: dict) -> None:
+        """
+        Score the extracted action items against the source transcript.
+        actual_output is stringified so DeepEval can process it as plain text.
+        """
+        test_case = LLMTestCase(
+            input=transcript,
+            actual_output=json.dumps(action_items, indent=2),
+        )
+        evaluate([test_case], [action_item_correctness_metric])
+
+    def summarize_and_evaluate(
+        self,
+        transcript: str,
+        summary_model: str = "gpt-4o",
+        action_item_model: str = "gpt-4-turbo",
+    ) -> tuple[str, dict]:
+        """
+        Convenience method: run summarize() then immediately evaluate both
+        outputs. Use this in CI or test suites where you want a single call
+        that produces output *and* asserts quality in one shot.
+        """
+        summary, action_items = self.summarize(
+            transcript, summary_model, action_item_model
+        )
+        self.evaluate_summary(transcript, summary)
+        self.evaluate_action_items(transcript, action_items)
         return summary, action_items
 
     # ------------------------------------------------------------------ #
     #  LLM helpers                                                         #
     # ------------------------------------------------------------------ #
 
-    @observe(name="Summary")  # Creates a named child span under the agent span above
+    @observe(name="Summary")
     def get_summary(self, transcript: str, model: str = None) -> str:
-        """
-        Sends the transcript to the model with the summary system prompt
-        and returns the cleaned response text.
-
-        update_current_span() manually attaches the prompt input and model
-        output to the active DeepEval span so they can be evaluated later.
-        """
         try:
             llm = ChatOpenAI(model=model or self.model)
             messages = [
@@ -252,24 +296,13 @@ class MeetingSummarizer:
             ]
             response = llm.invoke(messages)
             summary = response.content.strip()
-
-            # Attach I/O to the span so DeepEval can run evaluation metrics on it
             update_current_span(input=transcript, actual_output=summary)
             return summary
-
         except Exception as e:
-            # Surface the error as a readable string rather than crashing the pipeline
             return f"Error: Could not generate summary: {e}"
 
-    @observe(name="Action Items")  # Creates a second named child span
+    @observe(name="Action Items")
     def get_action_items(self, transcript: str, model: str = None) -> dict:
-        """
-        Sends the transcript to the model with the action-item system prompt
-        and parses the response as JSON.
-
-        Returns a structured dict on success, or an error dict on failure so
-        callers always receive a consistent type (dict) regardless of outcome.
-        """
         try:
             llm = ChatOpenAI(model=model or self.model, 
                              model_kwargs={"response_format": {"type": "json_object"}})
@@ -279,20 +312,12 @@ class MeetingSummarizer:
             ]
             response = llm.invoke(messages)
             raw = response.content.strip()
-
-            # The prompt enforces JSON-only output; parse it directly
             action_items = json.loads(raw)
-
-            # Attach I/O to the span for DeepEval evaluation
             update_current_span(input=transcript, actual_output=str(action_items))
             return action_items
-
         except json.JSONDecodeError:
-            # Model didn't respect the JSON-only constraint; return raw output for debugging
             return {"error": "Invalid JSON returned from model", "raw_output": raw}
-
         except Exception as e:
-            # Catch-all for network errors, auth failures, etc.
             return {"error": f"API call failed: {e}", "raw_output": ""}
 ```
 
