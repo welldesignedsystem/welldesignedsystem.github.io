@@ -129,6 +129,7 @@ The agent is implemented as a `MeetingSummarizer` class using LangChain's `ChatO
 
 ```python
 # meeting_summarizer.py
+
 import json
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -137,6 +138,13 @@ from deepeval.tracing import observe, update_current_span
 
 load_dotenv()
 
+# ---------------------------------------------------------------------------
+# System Prompts
+# ---------------------------------------------------------------------------
+
+# Instructs the model to produce a concise, executive-style summary.
+# Explicitly excludes action items to keep concerns separated from
+# the ACTION_ITEM_PROMPT below.
 SUMMARY_PROMPT = """You are an expert meeting summarization assistant. Generate a tightly
 written, executive-style summary of the meeting transcript, focusing only on high-value
 information: key technical insights, decisions made, problems discussed, model/tool
@@ -144,6 +152,9 @@ comparisons, and rationale behind proposals. Exclude all action items. Prioritiz
 brevity, and factual precision. The summary should allow a stakeholder to fully grasp the
 discussion in under 60 seconds."""
 
+# Instructs the model to extract action items as strict JSON.
+# The rigid format constraint (no extra text, no inferred tasks) makes the
+# response reliably machine-parseable via json.loads().
 ACTION_ITEM_PROMPT = """Parse the following meeting transcript and extract only the action
 items that are explicitly stated. Organize them into individual responsibilities, team-wide
 tasks, and named entities. Respond with valid JSON only, following this exact format:
@@ -160,30 +171,76 @@ tasks, and named entities. Respond with valid JSON only, following this exact fo
 Do not invent or infer any tasks. No natural language, notes, or extra formatting."""
 
 
+# ---------------------------------------------------------------------------
+# MeetingSummarizer
+# ---------------------------------------------------------------------------
+
 class MeetingSummarizer:
+    """
+    Processes a meeting transcript into two complementary outputs:
+      1. A concise executive summary  (get_summary)
+      2. Structured action items       (get_action_items)
+
+    Both methods are traced via DeepEval's @observe decorator, allowing
+    inputs, outputs, and latency to be captured for later evaluation.
+    Different models can be used for each task since summarization and
+    structured extraction have different quality/cost trade-offs.
+    """
+
     def __init__(
         self,
         model: str = "gpt-4o",
         summary_system_prompt: str = "",
         action_item_system_prompt: str = "",
     ):
+        """
+        Args:
+            model:                    Fallback model if no per-call model is specified.
+            summary_system_prompt:    Overrides SUMMARY_PROMPT when provided.
+            action_item_system_prompt: Overrides ACTION_ITEM_PROMPT when provided.
+        """
         self.model = model
+        # Fall back to the module-level defaults if no custom prompts are supplied
         self.summary_system_prompt = summary_system_prompt or SUMMARY_PROMPT
         self.action_item_system_prompt = action_item_system_prompt or ACTION_ITEM_PROMPT
 
-    @observe(type="agent")
+    # ------------------------------------------------------------------ #
+    #  Public entry point                                                  #
+    # ------------------------------------------------------------------ #
+
+    @observe(type="agent")  # Marks the root span; child spans nest inside this one
     def summarize(
         self,
         transcript: str,
         summary_model: str = "gpt-4o",
         action_item_model: str = "gpt-4-turbo",
     ) -> tuple[str, dict]:
+        """
+        Orchestrates both LLM calls and returns their results together.
+        Using separate models per task lets us balance quality vs. cost:
+          - gpt-4o        → better prose for the summary
+          - gpt-4-turbo   → cheaper for the structured extraction task
+
+        Returns:
+            (summary, action_items) — plain string and parsed dict respectively.
+        """
         summary = self.get_summary(transcript, summary_model)
         action_items = self.get_action_items(transcript, action_item_model)
         return summary, action_items
 
-    @observe(name="Summary")
+    # ------------------------------------------------------------------ #
+    #  LLM helpers                                                         #
+    # ------------------------------------------------------------------ #
+
+    @observe(name="Summary")  # Creates a named child span under the agent span above
     def get_summary(self, transcript: str, model: str = None) -> str:
+        """
+        Sends the transcript to the model with the summary system prompt
+        and returns the cleaned response text.
+
+        update_current_span() manually attaches the prompt input and model
+        output to the active DeepEval span so they can be evaluated later.
+        """
         try:
             llm = ChatOpenAI(model=model or self.model)
             messages = [
@@ -192,13 +249,24 @@ class MeetingSummarizer:
             ]
             response = llm.invoke(messages)
             summary = response.content.strip()
+
+            # Attach I/O to the span so DeepEval can run evaluation metrics on it
             update_current_span(input=transcript, actual_output=summary)
             return summary
+
         except Exception as e:
+            # Surface the error as a readable string rather than crashing the pipeline
             return f"Error: Could not generate summary: {e}"
 
-    @observe(name="Action Items")
+    @observe(name="Action Items")  # Creates a second named child span
     def get_action_items(self, transcript: str, model: str = None) -> dict:
+        """
+        Sends the transcript to the model with the action-item system prompt
+        and parses the response as JSON.
+
+        Returns a structured dict on success, or an error dict on failure so
+        callers always receive a consistent type (dict) regardless of outcome.
+        """
         try:
             llm = ChatOpenAI(model=model or self.model)
             messages = [
@@ -207,12 +275,20 @@ class MeetingSummarizer:
             ]
             response = llm.invoke(messages)
             raw = response.content.strip()
+
+            # The prompt enforces JSON-only output; parse it directly
             action_items = json.loads(raw)
+
+            # Attach I/O to the span for DeepEval evaluation
             update_current_span(input=transcript, actual_output=str(action_items))
             return action_items
+
         except json.JSONDecodeError:
+            # Model didn't respect the JSON-only constraint; return raw output for debugging
             return {"error": "Invalid JSON returned from model", "raw_output": raw}
+
         except Exception as e:
+            # Catch-all for network errors, auth failures, etc.
             return {"error": f"API call failed: {e}", "raw_output": ""}
 ```
 
