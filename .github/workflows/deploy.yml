@@ -14,35 +14,50 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  HUGO_VERSION: latest
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           fetch-depth: 0
 
       - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: 'latest'
-          extended: true
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="${HUGO_VERSION}"
+          if [[ "${version}" == "latest" ]]; then
+            version="$(curl -fsSL https://api.github.com/repos/gohugoio/hugo/releases/latest | jq -r '.tag_name')"
+          fi
+          version="${version#v}"
+
+          curl -fsSL \
+            "https://github.com/gohugoio/hugo/releases/download/v${version}/hugo_extended_${version}_linux-amd64.deb" \
+            -o /tmp/hugo.deb
+          sudo dpkg -i /tmp/hugo.deb
+          hugo version
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: hugo --minify
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./public
 
@@ -55,4 +70,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
