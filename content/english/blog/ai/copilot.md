@@ -10,7 +10,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 
 ## Overall idea
 
-![Mindmap](https://raw.githubusercontent.com/welldesignedsystem/scaling-adventure/refs/heads/main/misc/mindmap.svg)
+![Mindmap](https://raw.githubusercontent.com/welldesignedsystem/marco-polo/refs/heads/main/misc/mindmap.svg)
 
 ## Todos
 - skill to find out the context left over
