@@ -1777,11 +1777,23 @@ When you first log in, you create a **project** for your website.
 - Choose which AI engines to watch — Perplexity, ChatGPT, Google Gemini, Microsoft Copilot
 - Set how often you want the platform to check — weekly, daily, or every 6 hours
 
-> Think of this as telling the platform *"watch these questions, on these AI tools, for my website."*
+---
+
+## Step 2: Collect Business Intelligence
+
+Once you collect the name and website of the business, the platform automatically gathers information relevant to SEO, GEO, and AEO optimization.
+
+**Competitor Analysis** — identifies your main competitors in the space by analyzing who ranks for your tracked queries and who gets cited in AI answers.
+
+**Top Search Terms Discovery** — finds the most searched questions and keywords in your domain using data from Google Trends, AnswerThePublic, and AI search patterns.
+
+**Current Rankings Assessment** — checks your current SEO rankings, AEO wins (featured snippets, PAA), and GEO citations across all major AI engines for the identified terms.
+
+This intelligence forms the baseline for your optimization strategy and helps prioritize which queries to focus on first.
 
 ---
 
-## Step 2: Run Your First Audits
+## Step 3: Run Your First Audits
 
 Before optimising anything, the platform checks what's broken or blocked right now.
 
@@ -1793,7 +1805,7 @@ Before optimising anything, the platform checks what's broken or blocked right n
 
 ---
 
-## Step 3: Check Your Visibility
+## Step 4: Check Your Visibility
 
 This is your ongoing monitoring — the platform runs automatically in the background.
 
@@ -1807,7 +1819,7 @@ This is your ongoing monitoring — the platform runs automatically in the backg
 
 ---
 
-## Step 4: Read Your Scores
+## Step 5: Read Your Scores
 
 The platform turns all that monitoring into three simple numbers on your dashboard.
 
@@ -1820,7 +1832,7 @@ The platform turns all that monitoring into three simple numbers on your dashboa
 
 ---
 
-## Step 5: Fix and Optimise Your Content
+## Step 6: Fix and Optimise Your Content
 
 Now you know the gaps — here's how you fix them.
 
@@ -1840,7 +1852,7 @@ It tells you exactly what to fix and by how much.
 
 ---
 
-## Step 6: Act on Alerts
+## Step 7: Act on Alerts
 
 You don't need to log in every day. The platform watches for you and tells you when something important happens.
 
@@ -1852,7 +1864,7 @@ You don't need to log in every day. The platform watches for you and tells you w
 
 ---
 
-## Step 7: Report to Clients or Management
+## Step 8: Report to Clients or Management
 
 Once you have data, you can share it.
 
@@ -1882,14 +1894,28 @@ flowchart TD
         A1 --> A2 --> A3 --> A4
     end
 
-    subgraph S2["Step 2 — Run Initial Audits"]
+    subgraph S2["Step 2 — Collect Business Intelligence"]
+        B1["Competitor Analysis\nIdentify main competitors"]
+        B2["Top Search Terms Discovery\nFind most searched questions"]
+        B3["Current Rankings Assessment\nCheck SEO, AEO, GEO baselines"]
+        B1 --> B2 --> B3
+    end
+
+    subgraph S3["Step 3 — Run Initial Audits"]
         B1["AI Crawler Audit\nCan AI bots read your site?"]
         B2["Technical SEO Audit\nSpeed · Sitemap · Broken links"]
         B3["Content Audit\nPaste URL — get AEO + GEO score"]
         B1 --> B2 --> B3
     end
 
-    subgraph S3["Step 3 — Monitor Visibility"]
+    subgraph S3["Step 3 — Run Initial Audits"]
+        C1["AI Crawler Audit\nCan AI bots read your site?"]
+        C2["Technical SEO Audit\nSpeed · Sitemap · Broken links"]
+        C3["Content Audit\nPaste URL — get AEO + GEO score"]
+        C1 --> C2 --> C3
+    end
+
+    subgraph S4["Step 4 — Monitor Visibility"]
         C1["GEO Tracker\nAre AI engines citing you?"]
         C2["AEO Manager\nDo you own snippets and PAA boxes?"]
         C3["SEO Rank Tracker\nWhere do you rank organically?"]
@@ -1897,7 +1923,15 @@ flowchart TD
         C1 --> C2 --> C3 --> C4
     end
 
-    subgraph S4["Step 4 — Review Your Scores"]
+    subgraph S4["Step 4 — Monitor Visibility"]
+        D1["GEO Tracker\nAre AI engines citing you?"]
+        D2["AEO Manager\nDo you own snippets and PAA boxes?"]
+        D3["SEO Rank Tracker\nWhere do you rank organically?"]
+        D4["Voice Search Tracker\nAre you the spoken answer?"]
+        D1 --> D2 --> D3 --> D4
+    end
+
+    subgraph S5["Step 5 — Review Your Scores"]
         D1["GEO Visibility Score 0–100\nHow often AI engines cite you"]
         D2["AEO Win Rate %\nSnippet and PAA box wins"]
         D3["SEO Visibility Score\nOrganic ranking health"]
@@ -1905,7 +1939,15 @@ flowchart TD
         D1 --> D2 --> D3 --> D4
     end
 
-    subgraph S5["Step 5 — Optimise Content"]
+    subgraph S5["Step 5 — Review Your Scores"]
+        E1["GEO Visibility Score 0–100\nHow often AI engines cite you"]
+        E2["AEO Win Rate %\nSnippet and PAA box wins"]
+        E3["SEO Visibility Score\nOrganic ranking health"]
+        E4["Competitor AI Share\nYour citations vs competitors"]
+        E1 --> E2 --> E3 --> E4
+    end
+
+    subgraph S6["Step 6 — Optimise Content"]
         E1["Content Optimiser\nScore a page and see gaps"]
         E2["AI Brief Generator\nGenerate answer-first content brief"]
         E3["FAQ Auto-Generator\nBuild Q&As from PAA data"]
@@ -1915,7 +1957,17 @@ flowchart TD
         E1 --> E4
     end
 
-    subgraph S6["Step 6 — Act on Alerts"]
+    subgraph S6["Step 6 — Optimise Content"]
+        F1["Content Optimiser\nScore a page and see gaps"]
+        F2["AI Brief Generator\nGenerate answer-first content brief"]
+        F3["FAQ Auto-Generator\nBuild Q&As from PAA data"]
+        F4["Schema Builder\nGenerate and test JSON-LD markup"]
+        F1 --> F2
+        F1 --> F3
+        F1 --> F4
+    end
+
+    subgraph S7["Step 7 — Act on Alerts"]
         F1{"What kind\nof alert?"}
         F2["🔴 Immediate Alert\nSlack + Email\nCitation lost · Snippet stolen\nCrawler blocked"]
         F3["🟡 Daily Digest\nEmail\nModerate changes"]
@@ -1925,7 +1977,17 @@ flowchart TD
         F1 -->|Positive| F4
     end
 
-    subgraph S7["Step 7 — Report"]
+    subgraph S7["Step 7 — Act on Alerts"]
+        G1{"What kind\nof alert?"}
+        G2["🔴 Immediate Alert\nSlack + Email\nCitation lost · Snippet stolen\nCrawler blocked"]
+        G3["🟡 Daily Digest\nEmail\nModerate changes"]
+        G4["🟢 Weekly Summary\nEmail\nPositive trends and wins"]
+        G1 -->|Critical| G2
+        G1 -->|Moderate| G3
+        G1 -->|Positive| G4
+    end
+
+    subgraph S8["Step 8 — Report"]
         G1["White-label Client Reports\nBranded PDFs for each client"]
         G2["Executive Dashboard\nGEO + AEO + SEO scores at a glance"]
         G3["Export Data\nSheets · Looker Studio · BigQuery · API"]

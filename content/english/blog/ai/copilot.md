@@ -714,6 +714,7 @@ The VS Code docs expose two additional customization types beyond what the 19 Gi
 
 ## VS Code 
 
+###  `/` Slash Commands — Built-in custom instructions Actions
 You can also use slash commands in chat to generate any type of customization file directly:
 
 | Command | Output |
@@ -724,6 +725,107 @@ You can also use slash commands in chat to generate any type of customization fi
 | `/create-agent` | `.agent.md` file |
 | `/create-skill` | Agent skill file |
 | `/create-hook` | Hook file |
+
+VS Code Copilot Chat uses three special prefix characters to structure prompts. Each serves a distinct purpose.
+
+---
+
+### `/` Slash Commands — Built-in Chat Actions
+
+Slash commands are shorthand prompts for common coding tasks. Type `/` in the chat input to see the full list available in your current context. These are the **built-in** commands (separate from the file-generation commands like `/create-agent`):
+
+| Command | What it does |
+|---|---|
+| `/explain` | Explains the selected code or a concept in plain English |
+| `/fix` | Suggests a fix for a bug, error, or linting issue in the selection |
+| `/tests` | Generates unit tests for the selected function or class |
+| `/doc` | Adds documentation comments (JSDoc, docstrings, etc.) to the selected code |
+| `/new` | Scaffolds a new project or file based on your description |
+| `/newNotebook` | Creates a new Jupyter notebook based on your description |
+| `/terminal` | Explains or suggests terminal/shell commands |
+| `/search` | Searches the codebase semantically for relevant code |
+| `/clear` | Clears the current chat session |
+| `/help` | Shows available commands and how to use Copilot Chat |
+| `/compact` | Summarises the conversation history to free up context window space. You can also add custom focus instructions: `/compact focus on the database schema decisions` |
+
+> **Note:** Your custom prompt files (`.github/prompts/*.prompt.md`) also appear as slash commands — invoked as `/filename`. These appear at the top of the list when you type `/`. The file-generation commands (`/init`, `/create-agent`, etc.) listed in the customization section above are also slash commands, just scoped to creating configuration files.
+
+---
+
+### `#` Context Variables — Hash Mentions
+
+`#`-mentions let you explicitly attach specific context to your prompt. Type `#` in the chat input to see the full list. Unlike implicit context (which Copilot infers automatically), `#`-mentions give you precise control over what goes into the prompt.
+
+| Variable | What it attaches |
+|---|---|
+| `#file` | A specific file from your workspace. Opens a file picker. |
+| `#codebase` | Triggers a semantic search across your entire workspace to find the most relevant files automatically |
+| `#selection` | The current text selection in the active editor |
+| `#editor` | The entire contents of the active editor |
+| `#terminalSelection` | The current text selection in the integrated terminal |
+| `#terminalLastCommand` | The last command run in the terminal and its output |
+| `#problems` | Errors and warnings currently shown in the Problems panel |
+| `#changes` | The diff of your current uncommitted source control changes |
+| `#fetch` | Fetches content from a URL you provide and adds it as context |
+| `#symbol` | A specific code symbol (function, class, variable) — opens a symbol picker |
+| `#<filename>` | Type `#` followed by a filename directly (e.g. `#index.ts`) to attach that file |
+
+**Usage tips:**
+
+- Combine multiple `#`-mentions in a single prompt: `Refactor #file and make sure it follows the patterns in #file`
+- Use `#codebase` when you want Copilot to autonomously decide which files are relevant, rather than picking them manually
+- `#fetch` is particularly useful for referencing external docs or API specs: `Implement this endpoint following #fetch https://api.example.com/docs`
+- `#changes` is ideal for prompts like "write a commit message for #changes" or "review #changes for security issues"
+- In agent mode, Copilot automatically gathers its own context — `#`-mentions are most useful in ask/edit modes where context is not gathered autonomously
+
+---
+
+### `@` Chat Participants — Specialist Agents
+
+`@`-mentions invoke specialized chat participants — domain experts optimized for specific contexts. Type `@` in the chat input to see available participants.
+
+| Participant | Specialty |
+|---|---|
+| `@workspace` | Answers questions about your entire project — file structure, search across files, architecture questions |
+| `@vscode` | Answers questions about VS Code itself — settings, keybindings, extensions, commands |
+| `@terminal` | Helps with shell commands and explains terminal errors |
+| `@github` | GitHub-specific skills: queries PRs, issues, repositories, and runs GitHub Actions awareness. Dynamically picks the right skill based on your question |
+
+**Usage tips:**
+
+- `@workspace` is the go-to for codebase questions: `@workspace where is the authentication logic?`
+- `@vscode` for IDE help: `@vscode how do I configure the formatter to run on save?`
+- `@github` for repo-level context: `@github what issues are assigned to me?` or `@github summarize the recent PRs`
+- Third-party extensions can register their own `@` participants (e.g. `@docker`, `@databases`)
+
+---
+
+### Quick Reference
+
+```
+/command     → shorthand for a built-in task (explain, fix, tests, doc…)
+/prompt-name → invoke your custom .prompt.md file
+#item        → attach specific context (file, codebase, selection, terminal…)
+@participant → invoke a specialist (workspace, vscode, terminal, github)
+```
+
+**Combining all three in one prompt:**
+
+```
+@workspace using the patterns in #file:src/api/auth.ts, /fix the issue in #selection
+```
+
+---
+
+### Keyboard Shortcuts (VS Code)
+
+| Action | macOS | Windows / Linux |
+|---|---|---|
+| Open Chat view | `Ctrl⌘I` | `Ctrl+Alt+I` |
+| Open Inline Chat (in editor) | `⌘I` | `Ctrl+I` |
+| Open Quick Chat (floating) | `⇧⌥⌘L` | `Ctrl+Shift+Alt+L` |
+| Start new chat session | `⌘N` (in Chat view) | `Ctrl+N` |
+| Switch to agent mode | `⇧⌘I` | `Ctrl+Shift+I` |
 
 ---
 
