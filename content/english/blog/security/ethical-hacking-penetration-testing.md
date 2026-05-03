@@ -78,13 +78,6 @@ Layer 1 — Physical      → cables, hardware (beyond most pentest scope)
 
 ## Part 1 — Prerequisites and Scoping
 
-## Why Scoping is the Most Important Step
-
-Scoping is not paperwork. It is what separates legal security testing from criminal activity. A misconfigured scope can:
-- Land you in jail (testing systems you don't own without written permission)
-- Take down production systems
-- Expose real customer data you are not authorised to view
-
 ### Rules of Engagement (RoE) Must Cover
 
 ```text
