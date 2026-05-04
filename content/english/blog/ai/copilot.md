@@ -52,10 +52,30 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 ## Model Selection.
 
 ### Factors to consider
-- **Task Complexity:** For simple code completion or explanations, use faster, smaller models. For complex reasoning, debugging, or multi-step tasks, opt for larger models with better context understanding.
-- **Speed vs. Quality:** If you need quick responses (e.g., during coding flow), choose faster models. For higher accuracy, especially in critical code, use more capable models.
-- **Cost:** Larger models may incur higher usage costs. Check your Copilot plan limits.
-- **Specialization:** Some models excel in coding (e.g., better at specific languages or frameworks), while others are more general-purpose.
+### Factors to consider
+- **Task Complexity:** 
+  - use **faster, smaller models** - For **simple code completion** or **explanations**,  
+  - For **complex reasoning**, **debugging**, or **multi-step tasks**, opt for **larger models** with better context understanding.
+  - *Example: Use **Claude Haiku 4.5** to quickly rename a variable across a file, but use **Claude Opus 4.6** or **Gemini 3.1 Pro** when refactoring a **multi-layered authentication system** .*
+
+- **Speed vs. Quality:** 
+  - If you need quick responses (e.g., during coding flow), choose faster models. 
+  - For higher accuracy, especially in critical code, use more capable models.
+  - *Example: Use Gemini 3 Flash or Claude Haiku 4.5 for rapid inline suggestions while prototyping, but switch to GPT-5.4 or Claude Sonnet 4.6 when finalizing logic for a payment processing module.*
+
+- **Cost:** 
+  - Larger models may incur higher usage costs. 
+  - Check your Copilot plan limits.
+  - *Example: Using GPT-5.4 or Claude Opus 4.6 for every minor autocomplete will burn through your premium request allowance quickly — reserve them for tasks that genuinely need deep reasoning, and rely on GPT-5 mini or Raptor mini for day-to-day suggestions.*
+
+- **Specialization:** 
+  - Some models excel in coding (e.g., better at specific languages or frameworks)
+  - while others are more general-purpose.
+  - *Example: Prefer Grok Code Fast 1 or GPT-5.2-Codex for agentic code generation tasks like automated PR creation or large-scale refactors, but use GPT-5 mini or Claude Sonnet 4.6 when your task mixes code with technical writing, documentation, or architecture planning.*
+- **Usecase:**
+  - Some environments prohibit or cannot use AI-generated code entirely:
+    - Air-gapped or classified environments block access to cloud-based AI APIs such as **DO-178C / MIL-STD** certification demands formal verification, not AI-generated code.
+  
 https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 
 ### Benchmarks and Comparisons
