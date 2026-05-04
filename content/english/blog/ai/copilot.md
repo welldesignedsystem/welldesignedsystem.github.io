@@ -104,15 +104,29 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 
 Copilot agents run in three distinct environments. Understanding which type you're using determines what they can access, how they're triggered, and what VS Code features are available.
 
-| Type | Runs in | Triggered from | VS Code support |
+| Type | Runs in | Triggered from |
 |---|---|---|---|
-| **Local agent** | Your machine | Chat view (agent dropdown) | ✅ Full |
-| **Cloud agent** | GitHub infrastructure | `github.com/copilot/agents` | ✅ Via browser |
-| **Background agent** | GitHub infrastructure (async) | GitHub.com or VS Code | ✅ Preview |
+| **Local agent** | Your machine | Chat view (agent dropdown) |
+| **Cloud agent** | GitHub infrastructure | `github.com/copilot/agents` |
+| **Background agent** | GitHub infrastructure (async) | GitHub.com or VS Code |
 
-- **Local agents** run entirely inside VS Code. They have access to your local filesystem, open editor state, and any MCP servers defined in `.vscode/mcp.json`. Configured via `.agent.md` files in locations set by `chat.agentFilesLocations`. Selected from the agents dropdown in the Chat view. Tool access, model preferences, and handoffs all work here.
-- **Cloud agents (Coding agent)** run on GitHub's infrastructure, not your machine. They operate autonomously — reading files, making changes across the repo, and opening a pull request when done. Triggered from `github.com/copilot/agents`. The `.agent.md` file must be committed to the **default branch** to appear in the UI. `handoffs` and local MCP servers from `.vscode/mcp.json` are **not available** here; use `mcp-servers` in the agent frontmatter instead.
-- **Background agents** are an asynchronous evolution of the cloud agent. Once triggered, they continue working independently — you don't need to stay in the session. They notify you (via GitHub or VS Code) when the task is complete or when they need input. Triggered from GitHub.com or from within VS Code (currently in preview). Best suited for longer-running tasks like refactoring across many files, dependency upgrades, or generating test suites.
+- **Local agents** 
+  - Run inside VS Code
+  - Full access to workspace, tools, MCP servers
+  - Configured via .agent.md
+  - Interactive or semi‑autonomousrun entirely inside VS Code. 
+  - Selected from the agents dropdown in the Chat view. 
+  - Tool access, model preferences, and handoffs all work here.
+- **Cloud agents (Coding agent)** r
+  - Run on GitHub’s infrastructure
+  - Fully autonomous; create PRs
+  - .agent.md must be in default branch
+  - No access to local MCP servers; use mcp-servers in frontmatter
+- **Background agents** 
+  - Run locally but outside VS Code
+  - Persist after VS Code closes
+  - Ideal for long‑running or parallel tasks
+  - Can hand off to cloud agents
 
 **Note:** autonomous PRs, use a cloud or background agent.
 
