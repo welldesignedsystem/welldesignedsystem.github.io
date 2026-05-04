@@ -112,21 +112,27 @@ Copilot agents run in three distinct environments. Understanding which type you'
 
 - **Local agents** 
   - Run inside VS Code
-  - Full access to workspace, tools, MCP servers
-  - Configured via .agent.md
-  - Interactive or semi‑autonomousrun entirely inside VS Code. 
-  - Selected from the agents dropdown in the Chat view. 
-  - Tool access, model preferences, and handoffs all work here.
-- **Cloud agents (Coding agent)** r
-  - Run on GitHub’s infrastructure
-  - Fully autonomous; create PRs
-  - .agent.md must be in default branch
-  - No access to local MCP servers; use mcp-servers in frontmatter
-- **Background agents** 
-  - Run locally but outside VS Code
-  - Persist after VS Code closes
-  - Ideal for long‑running or parallel tasks
-  - Can hand off to cloud agents
+  - Full access to your local workspace, tools, and local MCP servers
+  - Configured via .agent.md files
+  - Can be interactive or semi‑autonomous
+  - Selected from the Agents dropdown in the VS Code Chat view
+  - Can use tools, follow model preferences, and hand off to other local agents
+  - Do NOT create branches automatically unless a tool explicitly does so
+- **Cloud agents (Coding agent)** 
+  - Run on GitHub’s infrastructure, not locally
+  - Fully autonomous: can edit files, create commits, and open PRs
+  - .agent.md must be on the default branch (usually main)
+  - No access to local MCP servers
+  - Must use mcp-servers: in frontmatter to specify cloud‑reachable servers
+  - Always works through branches + pull requests
+  - Ideal for large refactors, documentation updates, or repo‑wide changes
+- **Copilot CLI** 
+  - Runs locally, outside VS Code
+  - Continues running even if VS Code closes
+  - Can create temporary worktrees to isolate changes
+  - Some commands may hand off to the cloud agent, which then creates a branch + PR
+  - Ideal for long‑running tasks, automation, or scripting
+  - Can trigger pushes if the command requires syncing or PR creation
 
 **Note:** autonomous PRs, use a cloud or background agent.
 
