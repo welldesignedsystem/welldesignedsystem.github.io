@@ -137,7 +137,6 @@ Copilot agents run in three distinct environments. Understanding which type you'
 **Note:** autonomous PRs, use a cloud or background agent.
 
 
-
 ## Different Levels of Customization
 
 ### Organization instructions
@@ -156,6 +155,7 @@ Copilot agents run in three distinct environments. Understanding which type you'
 ### Personal instructions
 
 - To make it reflect in copilot - Set on GitHub.com under your profile picture → "Personal instructions".
+- alternately just tell it to create a personal isntruction (in my case got created as - ~/.config/Code/User/prompts/communication.instructions.md)
 - To make it reflect in vscode - use the chat to e.g. "All conversation with me must be in Spanish but use only English for any Code related stuffs like comments."
 - Apply only to you, only in Copilot Chat on GitHub.com.
 - Good for quick personal preferences
