@@ -154,15 +154,14 @@ Copilot agents run in three distinct environments. Understanding which type you'
 
 ### Personal instructions
 
+- Apply only to you, only, Good for quick personal preferences
+- use the copilot chat to ask it to create a personal instruction (e.g. "All conversation with me must be in Spanish but use only English for any Code related stuffs like comments." a file got created - ~/.config/Code/User/prompts/communication.instructions.md)
 - To make it reflect in copilot - Set on GitHub.com under your profile picture → "Personal instructions".
-- alternately just tell it to create a personal isntruction (in my case got created as - ~/.config/Code/User/prompts/communication.instructions.md)
-- To make it reflect in vscode - use the chat to e.g. "All conversation with me must be in Spanish but use only English for any Code related stuffs like comments."
-- Apply only to you, only in Copilot Chat on GitHub.com.
-- Good for quick personal preferences
 - [Refer](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-personal-instructions)
 - Usecases:
   - Always respond in particular language, tone or level of detail.
   - Always provide examples in TypeScript.
+  - Add happy emoji to end of conversations alone.
 
 --- 
 
