@@ -181,7 +181,7 @@ Use `copilot-instructions.md` for:
 
 **When to use:**
 - Setting broad project standards 
-  - Technology stack and libraries
+  - Technology stack and libraries - to avoid or use
   - naming conventions that apply across project
   - coding style
   - architecture patterns to avoid or use
