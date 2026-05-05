@@ -696,9 +696,352 @@ Install from here : **https://cli.github.com**
 
 ### Hooks
 
-Hooks execute custom commands at specific events in the agent workflow — for automation and policy enforcement. Generate a hook file with `/create-hook` in chat.
+Hooks provide deterministic, code-driven automation. Unlike instructions or custom prompts that guide agent behavior, hooks execute your code at specific lifecycle points with guaranteed outcomes.
+
+Hooks enable you to execute custom shell commands at strategic points in an agent's workflow, such as when an agent session starts or ends, or before and after a prompt is entered or a tool is called. Hooks receive detailed information about agent actions via JSON input, enabling context-aware automation.
+
+The key distinction from instructions: writing _"please don't run dangerous commands"_ in a `.instructions.md` file is guidance. Returning `deny` from a `preToolUse` hook is enforcement — it fires every time, regardless of how the agent was prompted.
+
+Generate a hook file with `/create-hook` in chat.
+
+---
+
+#### File Location
+
+Copilot agents support hooks stored in JSON files in your repository at `.github/hooks/*.json`. The hooks configuration file must be present on your repository's default branch to be used by Copilot cloud agent. For GitHub Copilot CLI, hooks are loaded from your current working directory.
+
+You can have multiple hook files — all `*.json` files in `.github/hooks/` are loaded. This lets you split hooks by concern (e.g. `security.json`, `formatting.json`, `audit.json`).
+
+**Supported in:** Copilot cloud agent, Copilot CLI, VS Code (Preview).
+
+> **Note (VS Code):** VS Code uses PascalCase for hook event names (`PreToolUse`, `PostToolUse`) while the CLI and cloud agent use camelCase (`preToolUse`, `postToolUse`). VS Code automatically converts between the two formats when reading CLI-format hook files.
+
+---
+
+#### Hook Triggers
+
+| Hook | When it fires | Primary use |
+|---|---|---|
+| `sessionStart` | When a new agent session begins or an existing one resumes | Initialize environments, validate project state, log session starts for auditing |
+| `sessionEnd` | When the agent session completes or is terminated | Clean up temp resources, archive session logs, send notifications |
+| `userPromptSubmitted` | When the user submits a prompt to the agent | Log requests for auditing and usage analysis |
+| `preToolUse` | **Before** the agent uses any tool (`bash`, `edit`, `view`, etc.) | Block dangerous commands, enforce security policies, require approval for sensitive operations |
+| `postToolUse` | **After** the agent uses a tool | Run formatters/linters after edits, validate outputs, trigger external integrations |
+
+> `preToolUse` is the most powerful hook — it is the only one that can **approve or deny** a tool execution before it happens.
+
+---
+
+#### Configuration Format
+
+Each hook file follows this structure:
+
+```json
+{
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "./scripts/my-hook.sh",
+        "powershell": "./scripts/my-hook.ps1",
+        "cwd": "scripts",
+        "timeoutSec": 30
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "./scripts/post-edit.sh"
+      }
+    ]
+  }
+}
+```
+
+**Key fields:**
+
+| Field | Description |
+|---|---|
+| `type` | Always `"command"` |
+| `bash` | Shell script path for macOS/Linux |
+| `powershell` | Script path for Windows |
+| `cwd` | Working directory for the script (relative to repo root) |
+| `timeoutSec` | Max seconds before the hook is killed (prevents hung sessions) |
+
+---
+
+#### Input: What Hooks Receive
+
+Every hook script receives a JSON object on `stdin`. The shape varies by hook type, but `preToolUse` — the most commonly used — provides:
+
+```json
+{
+  "timestamp": 1704614400000,
+  "cwd": "/path/to/project",
+  "toolName": "bash",
+  "toolArgs": "{\"command\": \"rm -rf ./dist\"}"
+}
+```
+
+Read it in your script with:
+
+```bash
+INPUT=$(cat)
+TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName')
+TOOL_ARGS=$(echo "$INPUT" | jq -r '.toolArgs')
+```
+
+---
+
+#### Output: How Hooks Control the Agent
+
+Hooks communicate back to the agent via `stdout` as JSON. All hooks support these top-level fields:
+
+| Field | Type | Effect |
+|---|---|---|
+| `continue` | `boolean` | `false` stops the entire agent session |
+| `stopReason` | `string` | Message shown to the user explaining why the session stopped |
+| `systemMessage` | `string` | Injected into the model's context (e.g. to provide extra info) |
+
+`preToolUse` additionally supports:
+
+| Field | Type | Effect |
+|---|---|---|
+| `permissionDecision` | `"approve"` \| `"deny"` | Explicitly approve or block the tool call |
+| `permissionDecisionReason` | `string` | Shown to the model when the decision is `"deny"` |
+
+**Exit codes** are the simplest control mechanism:
+- Exit `0` — hook passed, agent continues normally
+- Exit `2` — blocks the operation; `stderr` is shown to the model as context. No JSON output needed.
+- Any non-zero exit — treated as an error
+
+---
+
+#### Example: Block Dangerous Shell Commands
+
+```bash
+#!/bin/bash
+INPUT=$(cat)
+TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName')
+TOOL_ARGS=$(echo "$INPUT" | jq -r '.toolArgs')
+
+if [ "$TOOL_NAME" = "bash" ]; then
+  # Block rm -rf on root or important dirs
+  if echo "$TOOL_ARGS" | grep -qE 'rm -rf /(etc|usr|home|root)'; then
+    echo '{"permissionDecision":"deny","permissionDecisionReason":"Refusing to delete system directories."}'
+    exit 0
+  fi
+fi
+```
+
+#### Example: Auto-format After Every File Edit
+
+```bash
+#!/bin/bash
+INPUT=$(cat)
+TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName')
+
+if [ "$TOOL_NAME" = "edit" ] || [ "$TOOL_NAME" = "create" ]; then
+  npx prettier --write .
+fi
+```
+
+#### Example: Audit Log Every Tool Call
+
+```bash
+#!/bin/bash
+INPUT=$(cat)
+TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName')
+TIMESTAMP=$(echo "$INPUT" | jq -r '.timestamp')
+USER=${USER:-unknown}
+
+echo "$TIMESTAMP,$USER,$TOOL_NAME" >> /var/log/copilot/usage.csv
+```
+
+#### Example: Run Linter Before Edits
+
+```bash
+#!/bin/bash
+INPUT=$(cat)
+TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName')
+
+if [ "$TOOL_NAME" = "edit" ] || [ "$TOOL_NAME" = "create" ]; then
+  npm run lint-staged
+  if [ $? -ne 0 ]; then
+    echo '{"permissionDecision":"deny","permissionDecisionReason":"Code does not pass linting."}'
+  fi
+fi
+```
+
+---
+
+#### Testing Hooks Locally
+
+Before committing, validate your hook by piping test input directly:
+
+```bash
+# Pipe a test preToolUse payload into your script
+echo '{"timestamp":1704614400000,"cwd":"/tmp","toolName":"bash","toolArgs":"{\"command\":\"ls\"}"}' | ./scripts/my-hook.sh
+
+# Check the exit code
+echo $?
+
+# Validate the output is valid JSON
+./scripts/my-hook.sh | jq .
+```
+
+Enable debug output in the script itself during development:
+
+```bash
+#!/bin/bash
+set -x  # print every command as it runs
+INPUT=$(cat)
+echo "DEBUG: $INPUT" >&2
+```
+
+---
+
+#### When to use
+
+- **Security enforcement** — block commands like `rm -rf`, `DROP TABLE`, or writes to production config files before they execute
+- **Compliance and auditing** — log every tool call, command, or file edit for traceability
+- **Code quality gates** — run formatters or linters automatically after every file modification
+- **Context injection** — add project-specific environment variables or state to the agent's context at session start
+- **Approval workflows** — automatically approve safe operations and require human confirmation for sensitive ones
+
+#### When NOT to use
+
+- For guidance and conventions — use custom instructions or `copilot-instructions.md` instead
+- For reusable task workflows — use prompt files or agent skills instead
+- For simple one-off tasks where a prompt is sufficient
+
+---
+
+#### Security Considerations
+
+Hooks execute shell commands with the same permissions as VS Code. Review hook configurations carefully, especially when using hooks from untrusted sources.
+
+- **Review all hook scripts** before enabling them, especially in shared repositories
+- **Use least privilege** — hooks should only access what they need
+- **Validate and sanitize input** — hook scripts receive JSON from the agent; treat it as untrusted input
+- **Never hardcode secrets** in hook scripts — use environment variables or secret storage
+- Hooks committed to the repo go through code review like any other code. Rollbacks are a single `git revert`.
+
+---
+
+**Reference:** [About hooks](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-hooks) · [Hooks configuration reference](https://docs.github.com/en/copilot/reference/hooks-configuration) · [Agent hooks in VS Code](https://code.visualstudio.com/docs/copilot/customization/hooks)
 
 --- 
+### Copilot Spaces *(formerly Knowledge Bases)*
+
+> **Note:** GitHub Copilot Knowledge Bases were retired on November 1, 2025 and fully replaced by Copilot Spaces. If you have existing knowledge bases, they can be migrated using the "Convert to Space" button under each knowledge base in your organization settings.
+
+Copilot Spaces let you organize the context that Copilot uses to answer your questions. Spaces can include repositories, code, pull requests, issues, free-text content like transcripts or notes, images, and file uploads. You can ask Copilot questions grounded in that context, or share the space with your team to support collaboration and knowledge sharing.
+
+Unlike instruction files which shape *how* Copilot behaves, Spaces control *what Copilot knows* for a specific task or topic.
+
+Anyone with a Copilot license, including Copilot Free, can create and use Spaces.
+
+---
+
+#### Creating a Space
+
+To create a space, go to `https://github.com/copilot/spaces` and click **Create space**. Give your space a name, then choose whether the space is owned by you or by an organization you belong to.
+
+Each space has two configuration fields:
+
+- **Instructions** — Free text telling Copilot what to focus on within this space: its areas of expertise, what kinds of tasks it should help with, and what it should avoid.
+- **Sources** — The context Copilot searches when answering questions.
+
+---
+
+#### What You Can Add as Sources
+
+You can add files, folders, and entire GitHub repositories. You can also paste URLs of GitHub content including pull requests and issues, upload files directly from your local machine (images, text files, rich documents, spreadsheets), or type or paste free-text content such as transcripts or notes.
+
+#### Two Source Attachment Strategies
+
+How you attach a source significantly affects response quality:
+
+| Strategy | How it works | Best for |
+|---|---|---|
+| **Attach a repository** | Copilot doesn't load the entire project into memory — it searches the repository and retrieves only the most relevant content for your question. | Large-scale use cases, answering questions across all documentation |
+| **Attach individual files** | The file's full contents are loaded into Copilot's context window and considered for every query in that space. | When you want Copilot to consistently prioritize a specific document |
+
+> **Tip:** You can add files to a space directly from the code view on GitHub without breaking your flow — at the top of any file, click the dropdown and select the space you want to add it to.
+
+---
+
+#### Keeping Spaces Up to Date
+
+Your spaces stay in sync as your project evolves. GitHub files and other GitHub-based sources added to a space are automatically updated as they change, making Copilot an evergreen expert in your project. Uploaded local files are not auto-synced and need to be refreshed manually.
+
+---
+
+#### Sharing Model
+
+| Space type | Sharing options |
+|---|---|
+| **Personal** | Private, shared publicly, or shared with specific GitHub users |
+| **Organization-owned** | Admin, editor, or viewer access for org members — or hidden entirely |
+
+Organization-owned spaces can be shared with other organization members, and you decide which level of access to grant. Alternatively, you can choose to grant "No access" to organization members and keep the space hidden.
+
+---
+
+#### Using Spaces in Your IDE
+
+You can leverage Copilot Spaces in your IDE using the GitHub MCP server to access context from your spaces. This allows you to leverage your curated context while coding without switching between your IDE and the web interface.
+
+Spaces can only be used in **agent mode** in your IDE, since spaces are accessed via the GitHub MCP server. Open Copilot Chat, select **Agent** from the agent dropdown, then confirm that the `get_copilot_space` and `list_copilot_spaces` tools are listed and enabled under the GitHub MCP server entry.
+
+Then reference your space naturally in a prompt:
+
+```
+Using the Copilot space 'Checkout Flow Redesign' owned by myorganization, summarize the implementation plan.
+```
+
+> **Note:** When using Spaces in your IDE, repository context and uploaded files are not supported. You will have access to text content, GitHub files, issues, pull requests, and space instructions.
+
+---
+
+#### Use Cases
+
+Create a space when you start working on a specific feature. Add the relevant code, a product specification, and any supporting materials such as notes from a design review or mockup images.
+
+Other strong use cases:
+
+- **Standardize repetitive tasks** — Document the logic for tasks like tracking telemetry events once, then share it through a space to keep everyone consistent.
+- **Scale institutional knowledge** — Create a space for topics where people tend to ask similar questions, such as how authentication or search works in your project.
+- **Onboarding** — Give new team members instant access to curated project knowledge without requiring them to dig through repos.
+- **Sharing best practices** — Generate code that follows security patterns, API standards, and team preferences, or share SQL/KQL queries and telemetry schemas.
+
+---
+
+#### When to use
+
+- Grounding Copilot in context that lives **outside** your current working files
+- Knowledge that needs to be **shared across team members** without relying on repo files
+- **Task-specific context** you want to assemble once and reuse (e.g. a feature redesign space with the spec, relevant code, and meeting notes)
+- Answering recurring questions about a subsystem (auth, payments, search)
+
+#### When NOT to use
+
+- When the context is already in your open workspace — use `#codebase` or `#file` instead
+- For behavioral rules and coding conventions — use `copilot-instructions.md` or `.instructions.md` instead
+- For reusable task workflows — use prompt files or agent skills instead
+
+---
+
+#### Billing Note
+
+Questions you submit in a space count as Copilot Chat requests. If you're a Copilot Free user, this usage counts toward your monthly chat limit. If you use Spaces with a premium model, this usage counts toward your premium usage quota.
+
+---
+
+**Reference:** [About GitHub Copilot Spaces](https://docs.github.com/en/copilot/concepts/context/spaces) · [Creating a Space](https://docs.github.com/en/copilot/how-tos/provide-context/use-copilot-spaces/create-copilot-spaces) · [Using Spaces in your IDE](https://docs.github.com/en/copilot/how-tos/provide-context/use-copilot-spaces/use-copilot-spaces)
+
+---
 
 ## File Location Reference
 
