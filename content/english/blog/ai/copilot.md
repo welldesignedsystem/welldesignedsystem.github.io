@@ -345,8 +345,9 @@ When asked to create a migration:
 ---
 
 ### Custom Agents
-
-- Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, and tool access. 
+- Main differentiator is when you dont have a well defined structured series of step. 
+- Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, memory and tool access. 
+- ability to iterate, decide, select and use tools, use memory, Reason 
 - They maintain their full configuration throughout an entire autonomous session — reading files, searching the codebase, editing files, and opening pull requests.
 - The distinction:
   - Custom instructions shape all interactions broadly
