@@ -74,7 +74,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
   - *Example: Prefer Grok Code Fast 1 or GPT-5.2-Codex for agentic code generation tasks like automated PR creation or large-scale refactors, but use GPT-5 mini or Claude Sonnet 4.6 when your task mixes code with technical writing, documentation, or architecture planning.*
 - **Usecase:**
   - Some environments prohibit or cannot use AI-generated code entirely:
-    - Air-gapped or classified environments block access to cloud-based AI APIs such as **DO-178C / MIL-STD** certification demands formal verification, not AI-generated code.
+    - Air-gapped or classified environments block access to cloud-based AI APIs when it involves certification standards like **DO-178C / MIL-STD** which demands formal verifiable code.
   
 https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 
