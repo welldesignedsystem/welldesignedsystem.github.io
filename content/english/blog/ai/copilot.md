@@ -52,7 +52,6 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 ## Model Selection.
 
 ### Factors to consider
-### Factors to consider
 - **Task Complexity:** 
   - use **faster, smaller models** - For **simple code completion** or **explanations**,  
   - For **complex reasoning**, **debugging**, or **multi-step tasks**, opt for **larger models** with better context understanding.
@@ -105,7 +104,7 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 Copilot agents run in three distinct environments. Understanding which type you're using determines what they can access, how they're triggered, and what VS Code features are available.
 
 | Type | Runs in | Triggered from |
-|---|---|---|---|
+|---|---|---|
 | **Local agent** | Your machine | Chat view (agent dropdown) |
 | **Cloud agent** | GitHub infrastructure | `github.com/copilot/agents` |
 | **Background agent** | GitHub infrastructure (async) | GitHub.com or VS Code |
@@ -248,8 +247,8 @@ applyTo: '**/*.py'
 - **Referencing tools:** To reference agent tools in your instructions, use the `#tool:<tool-name>` syntax (e.g. `#tool:web/fetch`).
 
 **Supported in:** 
-- Copilot Chat in VS Code, Visual Studio, and the Copilot coding agent. 
-- _(Not supported in JetBrains, Xcode, GitHub.com chat, or mobile as of April 2026.)_
+- Copilot Chat in VS Code, Visual Studio, JetBrains, Xcode, and the Copilot coding agent.
+- _(Not supported in GitHub.com chat or mobile as of April 2026.)_
 
 --- 
 
@@ -265,13 +264,13 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 
 | Field | Description |
 |---|---|
-| `mode` | `'ask'` (default chat), `'edit'` (edit mode), or `'agent'` (agent mode) |
+| `agent` | `'ask'` (default chat), `'agent'` (agent mode), `'plan'` (planning mode), or the name of a custom agent |
 | `description` | A human-readable label shown in the IDE |
 | `tools` | Array of tools available to the prompt when running in agent mode |
 
-> **Note:** The original GitHub docs library used `agent: 'agent'` in the frontmatter. The current VS Code docs use `mode: 'agent'` (or `'ask'`/`'edit'`). Use `mode` in new files.
+> **Note:** Some older examples use `mode`, but the current VS Code prompt-file docs use `agent` (for example, `agent: 'agent'` or `agent: 'ask'`). Use `agent` in new files.
 
-**Dynamic input variables** use this syntax: `${input:variableName:placeholder text}`. When you invoke the prompt, Copilot pauses to ask you for each variable before running.
+**Dynamic input variables** commonly use this syntax: `${input:variableName:placeholder text}`. Most models understand this convention and ask for the missing values; for stricter interactive input, use the `vscode/askQuestion` tool.
 
 **How to invoke in VS Code:**
 - Open Copilot Chat, type `/filename` (the filename without `.prompt.md`).
@@ -291,9 +290,9 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 - Agent Plugin is like an external ability Skill is more like an internal ability.
 - If Agent skill is like a tool then Agent is like a tool box.
 - Unlike prompt files, skills can be automatically invoked based on intent — you don't need to explicitly call them every time.
-- **File location:** `skills/<skill-name>/SKILL.md`
+- **File location:** project skills live under `.github/skills/<skill-name>/SKILL.md`, `.claude/skills/<skill-name>/SKILL.md`, or `.agents/skills/<skill-name>/SKILL.md`; personal skills live under `~/.copilot/skills/<skill-name>/SKILL.md` or `~/.agents/skills/<skill-name>/SKILL.md`
 - **File extension:** `.md` (always named `SKILL.md`)
-- **Supported in:** Claude Code, VS Code, JetBrains, and other compatible agent implementations.
+- **Supported in:** GitHub Copilot cloud agent, Copilot CLI, VS Code agent mode, Claude Code, and other compatible agent implementations.
 - **Frontmatter fields:**
 
 | Field | Required | Description |
@@ -304,8 +303,10 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 | `compatibility` | No | Max 500 chars. Indicates environment requirements (intended product, system packages, network access, etc.). |
 | `metadata` | No | Arbitrary key-value mapping for additional metadata. |
 | `allowed-tools` | No | Space-separated string of pre-approved tools the skill may use. (Experimental) |
+| `user-invocable` | No | Controls whether the skill appears in the slash command menu. |
+| `disable-model-invocation` | No | Prevents automatic skill invocation based on intent matching when set to `true`. |
 
-- Skills do **not** support `mode`, `tools`, `model`, `user-invocable`, or `disable-model-invocation` frontmatter fields — those are not part of the Agent Skills spec. Skills also do not support dynamic input variables (`${input:...}`).
+- Skills do **not** support prompt-file fields such as `agent`, `mode`, `tools`, or `model`. Skills also do not support dynamic input variables (`${input:...}`).
 - **Progressive Loading/Progressive Disclosure:** Only the `name` and `description` frontmatter fields are loaded at startup (~100 tokens). The full skill body is loaded when the skill is activated, and any referenced files (scripts, references, assets) are loaded only when required.
 
 **How to invoke:**
@@ -618,7 +619,7 @@ Key differences to be aware of across tools:
 ~~~markdown
 ---
 description: 'Generate my daily standup task list'
-mode: 'agent'
+agent: 'agent'
 tools: ['github', 'create_file']
 ---
 
@@ -715,7 +716,7 @@ You can have multiple hook files — all `*.json` files in `.github/hooks/` are 
 
 **Supported in:** Copilot cloud agent, Copilot CLI, VS Code (Preview).
 
-> **Note (VS Code):** VS Code uses PascalCase for hook event names (`PreToolUse`, `PostToolUse`) while the CLI and cloud agent use camelCase (`preToolUse`, `postToolUse`). VS Code automatically converts between the two formats when reading CLI-format hook files.
+> **Note (VS Code):** VS Code uses PascalCase hook event names, while the CLI and cloud agent use camelCase names. VS Code automatically converts between the two formats when reading CLI-format hook files.
 
 ---
 
@@ -723,13 +724,15 @@ You can have multiple hook files — all `*.json` files in `.github/hooks/` are 
 
 | Hook | When it fires | Primary use |
 |---|---|---|
-| `sessionStart` | When a new agent session begins or an existing one resumes | Initialize environments, validate project state, log session starts for auditing |
-| `sessionEnd` | When the agent session completes or is terminated | Clean up temp resources, archive session logs, send notifications |
-| `userPromptSubmitted` | When the user submits a prompt to the agent | Log requests for auditing and usage analysis |
-| `preToolUse` | **Before** the agent uses any tool (`bash`, `edit`, `view`, etc.) | Block dangerous commands, enforce security policies, require approval for sensitive operations |
-| `postToolUse` | **After** the agent uses a tool | Run formatters/linters after edits, validate outputs, trigger external integrations |
+| `sessionStart` / `SessionStart` | When a new agent session begins or an existing one resumes | Initialize environments, validate project state, log session starts for auditing |
+| `sessionEnd` / `Stop` | When the agent session completes or is terminated | Clean up temp resources, archive session logs, send notifications |
+| `userPromptSubmitted` / `UserPromptSubmit` | When the user submits a prompt to the agent | Log requests for auditing and usage analysis |
+| `preToolUse` / `PreToolUse` | **Before** the agent uses any tool (`bash`, `edit`, `view`, etc.) | Block dangerous commands, enforce security policies, require approval for sensitive operations |
+| `postToolUse` / `PostToolUse` | **After** the agent uses a tool | Run formatters/linters after edits, validate outputs, trigger external integrations |
+| `PreCompact` | Before VS Code compacts the chat context | Inject or preserve important context |
+| `SubagentStart` / `SubagentStop` | When a VS Code subagent starts or stops | Log or coordinate multi-agent work |
 
-> `preToolUse` is the most powerful hook — it is the only one that can **approve or deny** a tool execution before it happens.
+> `preToolUse` / `PreToolUse` is the most powerful hook — it is the one that can **allow, deny, or ask** before a tool execution happens.
 
 ---
 
@@ -739,6 +742,7 @@ Each hook file follows this structure:
 
 ```json
 {
+  "version": 1,
   "hooks": {
     "preToolUse": [
       {
@@ -808,8 +812,10 @@ Hooks communicate back to the agent via `stdout` as JSON. All hooks support thes
 
 | Field | Type | Effect |
 |---|---|---|
-| `permissionDecision` | `"approve"` \| `"deny"` | Explicitly approve or block the tool call |
+| `permissionDecision` | `"allow"` \| `"deny"` \| `"ask"` | Explicitly allow, block, or ask before the tool call |
 | `permissionDecisionReason` | `string` | Shown to the model when the decision is `"deny"` |
+
+> **Cloud-agent note:** GitHub's cloud-agent hook reference currently emphasizes `deny` as the supported enforcement decision for `preToolUse`; VS Code and Copilot CLI document `allow`, `deny`, and `ask`.
 
 **Exit codes** are the simplest control mechanism:
 - Exit `0` — hook passed, agent continues normally
@@ -1085,10 +1091,10 @@ CLAUDE.local.md                                ← Local-only, not committed to 
 | **Persistence** | Always active | Per invocation | Per session | Always available | Event-based | Always running (when enabled) | Until uninstalled |
 | **User Input Support** | No | Yes (`${input:...}`) | Via prompts | No | Via scripts | Via server config | Depends on components |
 | **Tool Access** | N/A | Configurable | Configurable | N/A | Shell commands | External APIs | As per bundled components |
-| **File Location** | `.github/copilot-instructions.md`, `*.instructions.md` | `.github/prompts/` | `.github/agents/`, local paths | `skills/<name>/SKILL.md` | `hooks.json`, workspace hooks | `.vscode/mcp.json` | Installed from marketplaces or Git repos |
+| **File Location** | `.github/copilot-instructions.md`, `*.instructions.md` | `.github/prompts/` | `.github/agents/`, local paths | `.github/skills/<name>/SKILL.md`, `.claude/skills/<name>/SKILL.md`, `.agents/skills/<name>/SKILL.md`, or user skill folders | `hooks.json`, workspace hooks | `.vscode/mcp.json` | Installed from marketplaces or Git repos |
 | **IDE Support** | All (VS Code, VS, JetBrains, GitHub.com, CLI, agent) | VS Code, VS, JetBrains | VS Code, GitHub.com (cloud) | VS Code, CLI, agent, Claude Code | VS Code | VS Code, CLI, agent | VS Code, CLI, Claude Code |
 | **Cross-Tool Compatibility** | High (works everywhere) | Low (IDE-only) | Medium (VS Code + GitHub) | High (all tools) | Low (VS Code-only) | High (protocol-based) | High (shared format) |
-| **Frontmatter: mode** | N/A | ✅ (`ask`, `edit`, `agent`) | N/A | ❌ | N/A | N/A | N/A |
+| **Frontmatter: agent** | N/A | ✅ (`ask`, `agent`, `plan`, or custom agent name) | N/A | ❌ | N/A | N/A | N/A |
 | **Frontmatter: tools** | N/A | ✅ | N/A | ❌ | N/A | N/A | N/A |
 | **Frontmatter: model** | N/A | ✅ | N/A | ❌ | N/A | N/A | N/A |
 | **Frontmatter: user-invocable** | N/A | ❌ | N/A | ✅ | N/A | N/A | N/A |
@@ -1409,7 +1415,7 @@ applyTo: '**/*.{ts,tsx}'
 | `description` | No | Short description shown in the IDE picker. |
 | `name` | No | The slash command name used after `/` in chat. Defaults to the filename without `.prompt.md`. |
 | `argument-hint` | No | Hint text shown in the chat input field to guide users on how to interact with the prompt (e.g. `component-name`). |
-| `mode` | No | The agent mode: `ask` (default chat), `edit` (edits mode), `agent` (full agent mode), or the name of a custom agent. Defaults to current mode; defaults to `agent` if `tools` are specified. **Note:** older examples used `agent: 'agent'` — `mode` is the current field name. |
+| `agent` | No | The agent used for running the prompt: `ask` (default chat), `agent` (full agent mode), `plan`, or the name of a custom agent. Defaults to the current agent; defaults to `agent` if `tools` are specified. |
 | `model` | No | The language model to use (e.g. `GPT-4o`, `Claude Sonnet 4.5 (copilot)`). Defaults to the model currently selected in the model picker. |
 | `tools` | No | Array of tool names available for this prompt. Can include built-in tools, tool sets, MCP tools, or extension-contributed tools. To include all tools from an MCP server, use `<server-name>/*` format. If a listed tool is unavailable, it is ignored. |
 
@@ -1421,9 +1427,9 @@ applyTo: '**/*.{ts,tsx}'
 name: create-component
 description: 'Generate a new React form component'
 argument-hint: component-name
-mode: agent
+agent: agent
 model: GPT-4o
-tools: ['search/codebase', 'vscode/askQuestions', 'edit']
+tools: ['search/codebase', 'vscode/askQuestion', 'edit']
 ---
 ```
 
@@ -1533,7 +1539,7 @@ disable-model-invocation: false
 | `name` | ✅ | ✅ | ✅ | ✅ | ✅ (required, must match dir) |
 | `description` | ✅ | ✅ | ✅ | ✅ | ✅ (required) |
 | `applyTo` | ✅ | — | — | — | — |
-| `mode` | — | ✅ | — | — | — |
+| `agent` | — | ✅ | — | — | — |
 | `model` | — | ✅ | ✅ | — | — |
 | `tools` | — | ✅ | ✅ | ✅ | — |
 | `argument-hint` | — | ✅ | ⚠️ CLI/Claude only | ❌ ignored | — |
@@ -1557,14 +1563,14 @@ Used in the body of `.prompt.md` files (and supported in instruction bodies). Wh
 Explain ${input:code:Paste your code here} to a ${input:audience:beginner or expert}.
 ```
 
-**2. `vscode/askQuestions` tool**
-An alternative approach: add `vscode/askQuestions` to the `tools` array in frontmatter, then reference `#tool:vscode/askQuestions` in the body to ask the user for input interactively during execution.
+**2. `vscode/askQuestion` tool**
+An alternative approach: add `vscode/askQuestion` to the `tools` array in frontmatter, then reference `#tool:vscode/askQuestion` in the body to ask the user for input interactively during execution.
 
 ```yaml
-tools: ['vscode/askQuestions', 'edit']
+tools: ['vscode/askQuestion', 'edit']
 ```
 ```markdown
-Use #tool:vscode/askQuestions to ask for the component name and fields if not provided.
+Use #tool:vscode/askQuestion to ask for the component name and fields if not provided.
 ```
 
 ---
@@ -1824,7 +1830,7 @@ All stored in `.github/prompts/*.prompt.md`. Available in VS Code, Visual Studio
 
 ```markdown
 ---
-mode: 'agent'
+agent: 'agent'
 description: 'Generate a clear code explanation with examples'
 ---
 
@@ -1846,7 +1852,7 @@ Use clear, simple language and avoid unnecessary jargon.
 
 **How to test:** Save the file, open Copilot Chat in VS Code, type `/explain-code`. Copilot switches to agent mode and prompts you for the `code` and `audience` variables.
 
-Key concepts demonstrated: `${input:variableName:placeholder}` syntax, `mode: 'agent'` frontmatter, the `description` field.
+Key concepts demonstrated: `${input:variableName:placeholder}` syntax, `agent: 'agent'` frontmatter, the `description` field.
 
 ---
 
@@ -2279,4 +2285,3 @@ These are confirmed technical constraints, not style recommendations:
 - **Both files applied when overlap occurs**: When a path-specific `.instructions.md` file and `copilot-instructions.md` both match the same file, both sets of instructions are used. Avoid writing contradictory instructions across them.
 - **Base branch used for PR reviews**: Copilot code review uses the instructions from the base branch of the PR (e.g. `main`), not the feature branch. New instruction files must be merged before they affect reviews.
 - **Inline suggestions unaffected**: Custom instructions do not apply to inline code suggestions (autocomplete). They apply to Copilot Chat interactions only.
-
