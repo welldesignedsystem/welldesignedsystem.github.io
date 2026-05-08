@@ -291,7 +291,16 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 - Agent Plugin is like an external ability Skill is more like an internal ability.
 - If Agent skill is like a tool then Agent is like a tool box.
 - Unlike prompt files, skills can be automatically invoked based on intent — you don't need to explicitly call them every time.
-- **File location:** project skills live under `.github/skills/<skill-name>/SKILL.md`, `.claude/skills/<skill-name>/SKILL.md`, or `.agents/skills/<skill-name>/SKILL.md`; personal skills live under `~/.copilot/skills/<skill-name>/SKILL.md` or `~/.agents/skills/<skill-name>/SKILL.md`
+- **File location:** project skills live under 
+- Project Specific
+  - .github/skills/<skill-name>/SKILL.md
+  - .claude/skills/<skill-name>/SKILL.md
+  - .agents/skills/<skill-name>/SKILL.md
+- Personal (Global)
+  - ~/.copilot/skills/<skill-name>/SKILL.md
+  - ~/.claude/skills/<skill-name>/SKILL.md
+  - ~/.agents/skills/<skill-name>/SKILL.md
+  ```
 - **File extension:** `.md` (always named `SKILL.md`)
 - **Supported in:** GitHub Copilot cloud agent, Copilot CLI, VS Code agent mode, Claude Code, and other compatible agent implementations.
 - **Frontmatter fields:**
