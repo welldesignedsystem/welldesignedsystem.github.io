@@ -6,6 +6,24 @@ tags: ['SEO', 'GEO', 'AEO']
 summary: "aeo-app.ai — unified SEO, AEO & GEO intelligence platform"
 ---
 
+## Ideas
+lets plan - i want to build the following - a portal that will 
+1. show me the top 10 competitors for my business 
+2. our market share - based on various factor you can find e.g. revenue info in the net, traffic etc.. (you can suggest the full list) 
+3. traffic, usage from organic and paid for the business based on website. (differentiate paid channels) 
+4. usage/popularity among customers based on country for the business 
+5. top 20 keywords and prompts to target for this business after comparing with top competitors in the business 
+7. Find out how can i improve my rankings / visibility for those 20 keywords
+8. Find out my profiles in linkedin, fb, insta, x, and major platforms and suggest the improvements
+9. Based on the finding automate task to improve my ranking
+10. Back links - identify related sites / blogs and put comment / add links to my product
+11. compare and use results from all SEO,AEO and GEO  - google.com, bing, chatgpt, copilot etc. 
+12. analyse my current website and generate a report.  
+
+lets build a plan, roadmap,  tell me the modules for this project. in markdown. I am planning to do it in AI using agents skills etc... and make it a portal
+
+
+
 ## 1. The Problem
 
 > *The Unified SEO · AEO · GEO Intelligence Platform*

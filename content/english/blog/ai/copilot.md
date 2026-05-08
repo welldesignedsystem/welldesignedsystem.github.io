@@ -23,6 +23,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
     - Website: ChatGPT
     - extension: 
       - Copilot
+      - opencode (VS Code extension / IDE extension)
       - what are kilo code and roo code?
       - claude code (in terminal/cli)
       - dedicated ides (no extension etc needed)
@@ -1112,6 +1113,12 @@ The VS Code docs expose two additional customization types beyond what the 19 Gi
 
 
 ## VS Code 
+
+### Other VS Code AI Coding Tips
+
+- Install the [opencode](https://opencode.ai/) extension if you want a Copilot-adjacent agent inside VS Code that can also run from the terminal or desktop app.
+- opencode includes access to free models through OpenCode Zen and can also connect to many providers, including local models. Treat the exact free model list as changeable, but it is useful when you want to experiment without burning through Copilot premium requests.
+- Good workflow: use Copilot for tight VS Code integration and quick inline help, then use opencode when you want a model-agnostic coding agent, parallel sessions, or provider flexibility.
 
 ###  `/` Slash Commands — Built-in custom instructions Actions
 You can also use slash commands in chat to generate any type of customization file directly:
