@@ -949,6 +949,7 @@ Hooks execute shell commands with the same permissions as VS Code. Review hook c
 **Reference:** [About hooks](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-hooks) · [Hooks configuration reference](https://docs.github.com/en/copilot/reference/hooks-configuration) · [Agent hooks in VS Code](https://code.visualstudio.com/docs/copilot/customization/hooks)
 
 ---
+
 ### Copilot Spaces *(formerly Knowledge Bases)*
 
 > **Note:** GitHub Copilot Knowledge Bases were retired on November 1, 2025 and fully replaced by Copilot Spaces. If you have existing knowledge bases, they can be migrated using the "Convert to Space" button under each knowledge base in your organization settings.
