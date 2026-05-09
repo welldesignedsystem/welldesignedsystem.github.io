@@ -54,12 +54,9 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 
 ### Factors to consider
 - **Speed v/s Quality/Task Complexity:** 
-  - use **faster/smaller models** -> For **faster response**, **suggestion**, **simple code completion** or **explanations**  
-  - use **larger models** with better context understanding -> For **higher accuracy**, **complex reasoning**, **debugging**, or **multi-step tasks**  
-  - *Examples:*
-
-    - 🟢 **Fast** — **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**, **Auto mode**
-      - Variable rename, boilerplate, simple autocomplete
+    - 🟢 **Fast/smaller models** — **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**, **Auto mode**
+      -  **general code completition**, **suggestion**, or **explanations**  
+      - renaming Variables, boilerplate, simple autocomplete
       - Day-to-day coding, quick explanations, routine suggestions
 
     - 🟡 **Balanced** — **Claude Sonnet 4.6**, **GPT-5.4**, **Gemini 3.1 Pro**
@@ -67,24 +64,21 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
       - Moderate refactors, writing tests for existing code
 
     - 🔴 **Quality** — **GPT-5.4/5.5**, **Claude Opus 4.6**, **Gemini 3.1 Pro**
+      - **higher accuracy**, **complex reasoning**, **debugging**, or **multi-step tasks**  
       - Complex refactor (e.g. multi-layered auth system)
       - High-stakes logic (e.g. payment / charge processing module)
       - Multi-step debugging, cross-file reasoning, system design
 
 - **Cost/Premium Tokens:** 
-  - Larger models may incur higher usage costs. 
-  - Check your Copilot plan limits.
-  - *Examples:*
-
-    - 🟢 **Free / Low Cost** — **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**
-      - Minor autocomplete, variable rename, boilerplate
-      - Day-to-day suggestions, quick explanations, routine coding
+    - 🟢 **Free / Low Cost** — **Auto mode**, **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**
+      - Day-to-day use, explanations, suggestions, routine coding
 
     - 🟡 **Balanced Cost** — **Claude Sonnet 4.6**, **GPT-5.4**, **Gemini 3.1 Pro**
       - Moderate refactors, feature additions, fixing known bugs
-      - Multimodal tasks (image, PDF) — *Gemini 3.1 Pro is same price as Gemini 3 Pro*
+      - **Multimodal tasks** (image, PDF) — *Gemini 3.1 Pro (superior model for most usecases 2x better for reasoning) is same price as Gemini 3 Pro (2M token context)*
 
     - 🔴 **Premium** — **GPT-5.5**, **Claude Opus 4.6**, **Gemini 3.1 Pro**
+      - Larger model incur highes cost
       - Complex refactor, multi-step debugging, architecture decisions
       - High-stakes logic (e.g. payment processing, auth systems)
       - *Don't use cheaper models here — false economy, more retries = more tokens spent*
