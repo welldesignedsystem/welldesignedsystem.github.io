@@ -1093,30 +1093,32 @@ CLAUDE.local.md                                ← Local-only, not committed to 
 ---
 
 ## Comprehensive Comparison Table
-| Feature | Custom Instructions | Prompt Files | Custom Agents | Agent Skills | Hooks | MCP Servers | Agent Plugins |
-|---|---|---|---|---|---|---|---|
-| **Primary Purpose** | Persistent behavior guidance | One-off task execution | Autonomous workflows | Reusable capabilities | Lifecycle automation | External integrations | Packaged customizations |
-| **Scope** | All interactions | Single invocation | Session-based | Persistent across sessions | Event-triggered | Tool-extended | User/workspace until uninstalled |
-| **Triggering** | Automatic (always-on) | Manual (`/filename`) | Manual selection | Auto (intent) or manual (`/skill-name`) | Automatic (lifecycle events) | Via tools in agents | As per bundled components |
-| **Persistence** | Always active | Per invocation | Per session | Always available | Event-based | Always running (when enabled) | Until uninstalled |
-| **User Input Support** | No | Yes (`${input:...}`) | Via prompts | No | Via scripts | Via server config | Depends on components |
-| **Tool Access** | N/A | Configurable | Configurable | N/A | Shell commands | External APIs | As per bundled components |
-| **File Location** | `.github/copilot-instructions.md`, `*.instructions.md` | `.github/prompts/` | `.github/agents/`, local paths | `.github/skills/<name>/SKILL.md`, `.claude/skills/<name>/SKILL.md`, `.agents/skills/<name>/SKILL.md`, or user skill folders | `hooks.json`, workspace hooks | `.vscode/mcp.json` | Installed from marketplaces or Git repos |
-| **IDE Support** | All (VS Code, VS, JetBrains, GitHub.com, CLI, agent) | VS Code, VS, JetBrains | VS Code, GitHub.com (cloud) | VS Code, CLI, agent, Claude Code | VS Code | VS Code, CLI, agent | VS Code, CLI, Claude Code |
-| **Cross-Tool Compatibility** | High (works everywhere) | Low (IDE-only) | Medium (VS Code + GitHub) | High (all tools) | Low (VS Code-only) | High (protocol-based) | High (shared format) |
-| **Frontmatter: agent** | N/A | ✅ (`ask`, `agent`, `plan`, or custom agent name) | N/A | ❌ | N/A | N/A | N/A |
-| **Frontmatter: tools** | N/A | ✅ | N/A | ❌ | N/A | N/A | N/A |
-| **Frontmatter: model** | N/A | ✅ | N/A | ❌ | N/A | N/A | N/A |
-| **Frontmatter: user-invocable** | N/A | ❌ | N/A | ✅ | N/A | N/A | N/A |
-| **Frontmatter: disable-model-invocation** | N/A | ❌ | N/A | ✅ | N/A | N/A | N/A |
-| **Progressive Loading** | No | No | No | Yes — only `name`/`description` at startup; full body on demand | No | No | Yes — components loaded on demand |
-| **Bundling** | N/A | Single file | N/A | Single skill | N/A | N/A | Multiple types (skills, agents, hooks, MCP servers, etc.) |
-| **Generation Method** | Manual or `/init` | `/create-prompt` | `/create-agent` | `/create-skill` | `/create-hook` | Manual config | Install from marketplace |
-| **Status** | GA | Public preview | GA | GA | GA | GA | Preview |
-| **Best For** | Standards, conventions | Quick tasks, templates | Complex workflows | Shareable expertise | Automation, policies | External data access | Team tooling, complex setups |
-| **Security Considerations** | Low (text only) | Low (local execution) | Medium (tool access) | Low (intent-based) | High (shell execution) | High (external access) | High (review before install) |
-| **Maintenance** | Update files in repo | Update prompt files | Update agent files | Update skill files | Update hook scripts | Update server config | Plugin updates via marketplace |
+| Feature | Custom Instructions | AGENTS.md | Prompt Files | Custom Agents | Agent Skills | Hooks | MCP Servers | Agent Plugins |
+|---|---|---|---|---|---|---|---|---|
+| **Primary Purpose** | Persistent Copilot behavior guidance | Portable project guidance for coding agents | One-off task execution | Autonomous workflows | Reusable capabilities | Lifecycle automation | External integrations | Packaged customizations |
+| **Scope** | All interactions, or files matched by `applyTo` | Workspace-wide from root; folder-specific with nested files | Single invocation | Session-based | Persistent across sessions | Event-triggered | Tool-extended | User/workspace until uninstalled |
+| **Triggering** | Automatic (always-on or path-matched) | Automatic when supported and enabled | Manual (`/filename`) | Manual selection | Auto (intent) or manual (`/skill-name`) | Automatic (lifecycle events) | Via tools in agents | As per bundled components |
+| **Persistence** | Always active when matched | Always active for matching workspace/folder context | Per invocation | Per session | Always available | Event-based | Always running (when enabled) | Until uninstalled |
+| **User Input Support** | No | No | Yes (`${input:...}`) | Via prompts | No | Via scripts | Via server config | Depends on components |
+| **Tool Access** | N/A | N/A | Configurable | Configurable | N/A | Shell commands | External APIs | As per bundled components |
+| **File Location** | `.github/copilot-instructions.md`, `*.instructions.md` | `AGENTS.md` at workspace/repo root; nested `AGENTS.md` for subfolders when supported | `.github/prompts/` | `.github/agents/`, local paths | `.github/skills/<name>/SKILL.md`, `.claude/skills/<name>/SKILL.md`, `.agents/skills/<name>/SKILL.md`, or user skill folders | `hooks.json`, workspace hooks | `.vscode/mcp.json` | Installed from marketplaces or Git repos |
+| **IDE Support** | VS Code, Visual Studio, JetBrains, GitHub.com, CLI, coding agent | VS Code, Copilot CLI, coding agent; also supported by many non-Copilot coding agents | VS Code, VS, JetBrains | VS Code, GitHub.com (cloud) | VS Code, CLI, agent, Claude Code | VS Code | VS Code, CLI, agent | VS Code, CLI, Claude Code |
+| **Cross-Tool Compatibility** | Medium-high (strongest inside Copilot surfaces) | High (open Markdown convention) | Low (IDE-only) | Medium (VS Code + GitHub) | High (all tools) | Low (VS Code-only) | High (protocol-based) | High (shared format) |
+| **Frontmatter: agent** | N/A | ❌ | ✅ (`ask`, `agent`, `plan`, or custom agent name) | N/A | ❌ | N/A | N/A | N/A |
+| **Frontmatter: tools** | N/A | ❌ | ✅ | N/A | ❌ | N/A | N/A | N/A |
+| **Frontmatter: model** | N/A | ❌ | ✅ | N/A | ❌ | N/A | N/A | N/A |
+| **Frontmatter: user-invocable** | N/A | ❌ | ❌ | N/A | ✅ | N/A | N/A | N/A |
+| **Frontmatter: disable-model-invocation** | N/A | ❌ | ❌ | N/A | ✅ | N/A | N/A | N/A |
+| **Progressive Loading** | No | No | No | No | Yes — only `name`/`description` at startup; full body on demand | No | No | Yes — components loaded on demand |
+| **Bundling** | N/A | Single Markdown file per scope | Single file | N/A | Single skill | N/A | N/A | Multiple types (skills, agents, hooks, MCP servers, etc.) |
+| **Generation Method** | Manual or `/init` | Manual | `/create-prompt` | `/create-agent` | `/create-skill` | `/create-hook` | Manual config | Install from marketplace |
+| **Status** | GA | Open standard / supported instruction file | Public preview | GA | GA | GA | GA | Preview |
+| **Best For** | Standards, conventions | Build/test commands and conventions shared across multiple AI agents | Quick tasks, templates | Complex workflows | Shareable expertise | Automation, policies | External data access | Team tooling, complex setups |
+| **Security Considerations** | Low (text only) | Low (text only; can influence commands an agent chooses to run) | Low (local execution) | Medium (tool access) | Low (intent-based) | High (shell execution) | High (external access) | High (review before install) |
+| **Maintenance** | Update files in repo | Update nearest relevant `AGENTS.md` | Update prompt files | Update agent files | Update skill files | Update hook scripts | Update server config | Plugin updates via marketplace |
 
+
+**AGENTS.md sources checked:** [VS Code custom instructions](https://code.visualstudio.com/docs/copilot/customization/custom-instructions), [GitHub Copilot CLI custom instructions](https://docs.github.com/en/copilot/how-tos/copilot-cli/add-custom-instructions), and [agents.md FAQ](https://agents.md/).
 
 The VS Code docs expose two additional customization types beyond what the 19 GitHub library examples cover.
 
