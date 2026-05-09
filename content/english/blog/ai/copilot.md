@@ -150,7 +150,7 @@ Copilot agents run in three distinct environments. Understanding which type you'
   - Never log sensitive user data
   - Follow OWASP Guidelines
   - comments should never secure information like - keys/passwords etc.
---- 
+---
 
 ### Personal instructions
 
@@ -163,7 +163,7 @@ Copilot agents run in three distinct environments. Understanding which type you'
   - Always provide examples in TypeScript.
   - Add happy emoji to end of conversations alone.
 
---- 
+---
 
 ### Repository-wide instructions (`.github/copilot-instructions.md`)
 
@@ -251,7 +251,7 @@ applyTo: '**/*.py'
 - Copilot Chat in VS Code, Visual Studio, JetBrains, Xcode, and the Copilot coding agent.
 - _(Not supported in GitHub.com chat or mobile as of April 2026.)_
 
---- 
+---
 
 ### Prompt Files
 
@@ -948,7 +948,7 @@ Hooks execute shell commands with the same permissions as VS Code. Review hook c
 
 **Reference:** [About hooks](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-hooks) · [Hooks configuration reference](https://docs.github.com/en/copilot/reference/hooks-configuration) · [Agent hooks in VS Code](https://code.visualstudio.com/docs/copilot/customization/hooks)
 
---- 
+---
 ### Copilot Spaces *(formerly Knowledge Bases)*
 
 > **Note:** GitHub Copilot Knowledge Bases were retired on November 1, 2025 and fully replaced by Copilot Spaces. If you have existing knowledge bases, they can be migrated using the "Convert to Space" button under each knowledge base in your organization settings.
