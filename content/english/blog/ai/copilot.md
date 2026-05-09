@@ -53,25 +53,79 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 ## Model Selection.
 
 ### Factors to consider
-- **Task Complexity:** 
-  - use **faster, smaller models** - For **simple code completion** or **explanations**,  
-  - For **complex reasoning**, **debugging**, or **multi-step tasks**, opt for **larger models** with better context understanding.
-  - *Example: Use **Claude Haiku 4.5** to quickly rename a variable across a file, but use **Claude Opus 4.6** or **Gemini 3.1 Pro** when refactoring a **multi-layered authentication system** .*
+- **Speed v/s Quality/Task Complexity:** 
+  - use **faster/smaller models** -> For **faster response**, **suggestion**, **simple code completion** or **explanations**  
+  - use **larger models** with better context understanding -> For **higher accuracy**, **complex reasoning**, **debugging**, or **multi-step tasks**  
+  - *Examples:*
 
-- **Speed vs. Quality:** 
-  - If you need quick responses (e.g., during coding flow), choose faster models. 
-  - For higher accuracy, especially in critical code, use more capable models.
-  - *Example: Use Gemini 3 Flash or Claude Haiku 4.5 for rapid inline suggestions while prototyping, but switch to GPT-5.4 or Claude Sonnet 4.6 when finalizing logic for a payment processing module.*
+    - 🟢 **Fast** — **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**, **Auto mode**
+      - Variable rename, boilerplate, simple autocomplete
+      - Day-to-day coding, quick explanations, routine suggestions
 
-- **Cost:** 
+    - 🟡 **Balanced** — **Claude Sonnet 4.6**, **GPT-5.4**, **Gemini 3.1 Pro**
+      - Adding a new feature, fixing a known bug
+      - Moderate refactors, writing tests for existing code
+
+    - 🔴 **Quality** — **GPT-5.4/5.5**, **Claude Opus 4.6**, **Gemini 3.1 Pro**
+      - Complex refactor (e.g. multi-layered auth system)
+      - High-stakes logic (e.g. payment / charge processing module)
+      - Multi-step debugging, cross-file reasoning, system design
+
+- **Cost/Premium Tokens:** 
   - Larger models may incur higher usage costs. 
   - Check your Copilot plan limits.
-  - *Example: Using GPT-5.4 or Claude Opus 4.6 for every minor autocomplete will burn through your premium request allowance quickly — reserve them for tasks that genuinely need deep reasoning, and rely on GPT-5 mini or Raptor mini for day-to-day suggestions.*
+  - *Examples:*
+
+    - 🟢 **Free / Low Cost** — **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**
+      - Minor autocomplete, variable rename, boilerplate
+      - Day-to-day suggestions, quick explanations, routine coding
+
+    - 🟡 **Balanced Cost** — **Claude Sonnet 4.6**, **GPT-5.4**, **Gemini 3.1 Pro**
+      - Moderate refactors, feature additions, fixing known bugs
+      - Multimodal tasks (image, PDF) — *Gemini 3.1 Pro is same price as Gemini 3 Pro*
+
+    - 🔴 **Premium** — **GPT-5.5**, **Claude Opus 4.6**, **Gemini 3.1 Pro**
+      - Complex refactor, multi-step debugging, architecture decisions
+      - High-stakes logic (e.g. payment processing, auth systems)
+      - *Don't use cheaper models here — false economy, more retries = more tokens spent*
+
+    - 💡 **Quota Tip:** set your editor's **default/auto model** to a 🟢 smaller model,
+      and only switch up manually when the task genuinely demands it.
 
 - **Specialization:** 
   - Some models excel in coding (e.g., better at specific languages or frameworks)
   - while others are more general-purpose.
-  - *Example: Prefer Grok Code Fast 1 or GPT-5.2-Codex for agentic code generation tasks like automated PR creation or large-scale refactors, but use GPT-5 mini or Claude Sonnet 4.6 when your task mixes code with technical writing, documentation, or architecture planning.*
+  - *Examples:*
+
+    - 🤖 **Agentic / Code-Specialized** — **GPT-5.4-Codex**, **Grok Code Fast 1**
+      - Agentic code generation, automated PR creation
+      - Large-scale refactors, long-horizon coding tasks
+
+    - 📝 **Code + General Purpose** — **Claude Sonnet 4.6**, **GPT-5.4 mini**
+      - Code mixed with technical writing or documentation
+      - Architecture planning, code reviews, README generation
+
+    - 🖼️ **Text + Image** — **Claude Sonnet 4.6**, **GPT-5.4/5.5**, **Grok 4**
+      - Screenshot → reproduce or debug as code
+      - Diagram → generate tickets or architecture docs
+
+    - 📄 **Text + PDF / Docs / Slides** — **Gemini 3.1 Pro**
+      - Scanned documents, slide decks, multi-page PDFs
+      - Extract structured data from charts or forms
+
+    - 🎥 **Text + Video** — **Gemini 3.1 Pro**
+      - Summarize a recorded standup or demo
+      - Analyze a video walkthrough and generate action items
+
+    - 🎨 **Image / Video Generation** — **Grok Imagine**, **GPT-5.4** (with DALL·E)
+      - Product teasers, demo clips, UI mockup visuals
+
+    - 🧩 **Mixed Multimodal** (text + image + video + code) — **Gemini 3.1 Pro**
+      - Complex tasks spanning multiple input types simultaneously
+
+    - ⚠️ *Avoid* text-only models (**GPT-5.4 mini**, **Gemini 3 Flash**, **Claude Haiku 4.5**)
+      for multimodal tasks — they'll silently drop or mishandle non-text input.
+
 - **Usecase:**
   - Some environments prohibit or cannot use AI-generated code entirely:
     - Air-gapped or classified environments block access to cloud-based AI APIs when it involves certification standards like **DO-178C / MIL-STD** which demands formal verifiable code.
