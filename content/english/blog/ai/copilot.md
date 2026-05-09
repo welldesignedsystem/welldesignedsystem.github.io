@@ -148,6 +148,7 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 | **GDPval-AA** (GDP = Gross Domestic Product; val = validation/evaluation; AA = Artificial Analysis) | Agentic | Measures overall agentic capability — planning, tool use, multi-step task completion. Score is an aggregate index, not a percentage. | Comparing models holistically for autonomous agent deployments. |
 | **MMMU-Pro** (Massive Multi-discipline Multimodal Understanding, the Pro version) | Vision | College-level questions requiring both image understanding and reasoning — charts, diagrams, scientific figures. | Document analysis, research assistants, any product where the model reads images alongside text. |
 | **HLE** (Humanity's Last Exam) | Reasoning | Humanity's Last Exam — extremely hard questions across all domains, near-impossible even for top human experts. Tests the ceiling of model intelligence. | Frontier model comparisons, research tasks requiring the absolute highest level of reasoning. |
+
 ## Types of Agents in IDE
 
 ### Agent Execution Environments
