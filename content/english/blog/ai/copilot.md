@@ -92,7 +92,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
   - *Examples:*
 
     - 🤖 **Agentic / Code-Specialized** — **GPT-5.4-Codex**, **Grok Code Fast 1**
-      - Agentic code generation, automated PR creation
+      - **Agentic usecases**/**Agentic Code Generation**, **automated PR creation**
       - Large-scale refactors, long-horizon coding tasks
 
     - 📝 **Code + General Purpose** — **Claude Sonnet 4.6**, **GPT-5.4 mini**
@@ -133,19 +133,21 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 
 ### AI Benchmark Types
 
+> Known acronym expansions are shown in parentheses where available. Some benchmark names are proper names rather than strict acronyms.
+
 | Benchmark | Type | What it checks | When it matters |
 |---|---|---|---|
-| **SWE-bench Verified** | Coding | Can the model fix real GitHub bugs? Patches are applied and actual test suites run — pass/fail, no subjectivity. | Choosing a model for software engineering agents, autonomous bug fixing, or code generation at scale. |
-| **Terminal-Bench 2.0** | Agentic | Can the model operate in a real terminal — running shell commands, navigating file systems, executing scripts — to complete tasks end-to-end? | DevOps automation, CLI agents, any task where the model needs to operate a computer rather than just write code. |
-| **τ²-bench Retail / Telecom** | Agentic | Can the model act as a customer service agent while a simulated user actively participates? Tests policy compliance, tool use, and back-and-forth coordination. | Customer support bots, helpdesk agents, any product where the AI must guide a real human through a multi-step process. |
-| **MCP-Atlas** | Agentic | Can the model correctly use external tools and APIs via the Model Context Protocol? Tests whether it picks the right tool, uses it correctly, and handles the response. | Evaluating models for integration with real-world services — calendars, databases, search, etc. |
-| **OSWorld-Verified** | Agentic | Can the model control a real desktop GUI — clicking, typing, navigating apps — to complete tasks a human would do on a computer? | Computer-use agents, RPA, browser and desktop automation. |
-| **ARC-AGI-2** | Reasoning | Can the model solve novel visual pattern puzzles it has never seen before? Designed to resist memorisation — tests raw general reasoning, not learned answers. | Measuring true generalisation ability. Hard to fake with training data. |
-| **GPQA Diamond** | Knowledge | Expert-level science questions (physics, chemistry, biology) written by PhD researchers — hard enough that most domain experts get them wrong. | Scientific research assistants, medical/legal tools, any use case requiring deep expert knowledge. |
-| **MMMLU** | Knowledge | Broad knowledge across 57 subjects in multiple languages. Tests general world knowledge and multilingual ability. | General-purpose assistants, multilingual products, baseline knowledge capability comparisons. |
-| **GDPval-AA** | Agentic | Measures overall agentic capability — planning, tool use, multi-step task completion. Score is an aggregate index, not a percentage. | Comparing models holistically for autonomous agent deployments. |
-| **MMMUPro** | Vision | College-level questions requiring both image understanding and reasoning — charts, diagrams, scientific figures. | Document analysis, research assistants, any product where the model reads images alongside text. |
-| **HLE** | Reasoning | Humanity's Last Exam — extremely hard questions across all domains, near-impossible even for top human experts. Tests the ceiling of model intelligence. | Frontier model comparisons, research tasks requiring the absolute highest level of reasoning. |
+| **SWE-bench Verified** (SWE = Software Engineering; benchmark) | Coding | Can the model fix real GitHub bugs? Patches are applied and actual test suites run — pass/fail, no subjectivity. | Choosing a model for software engineering agents, autonomous bug fixing, or code generation at scale. |
+| **Terminal-Bench 2.0** (Terminal Environment Benchmark) | Agentic | Can the model operate in a real terminal — running shell commands, navigating file systems, executing scripts — to complete tasks end-to-end? | DevOps automation, CLI agents, any task where the model needs to operate a computer rather than just write code. |
+| **τ²-bench Retail / Telecom** (Tau-squared Bench) | Agentic | Can the model act as a customer service agent while a simulated user actively participates? Tests policy compliance, tool use, and back-and-forth coordination. | Customer support bots, helpdesk agents, any product where the AI must guide a real human through a multi-step process. |
+| **MCP-Atlas** (MCP = Model Context Protocol; Atlas is the benchmark name) | Agentic | Can the model correctly use external tools and APIs via the Model Context Protocol? Tests whether it picks the right tool, uses it correctly, and handles the response. | Evaluating models for integration with real-world services — calendars, databases, search, etc. |
+| **OSWorld-Verified** (Operating System World; verified split) | Agentic | Can the model control a real desktop GUI — clicking, typing, navigating apps — to complete tasks a human would do on a computer? | Computer-use agents, RPA, browser and desktop automation. |
+| **ARC-AGI-2** (Abstraction and Reasoning Corpus for Artificial General Intelligence, version 2) | Reasoning | Can the model solve novel visual pattern puzzles it has never seen before? Designed to resist memorisation — tests raw general reasoning, not learned answers. | Measuring true generalisation ability. Hard to fake with training data. |
+| **GPQA Diamond** (Graduate-Level Google-Proof Q&A; Diamond is the hardest subset) | Knowledge | Expert-level science questions (physics, chemistry, biology) written by PhD researchers — hard enough that most domain experts get them wrong. | Scientific research assistants, medical/legal tools, any use case requiring deep expert knowledge. |
+| **MMMLU** (Multilingual Massive Multitask Language Understanding) | Knowledge | Broad knowledge across 57 subjects in multiple languages. Tests general world knowledge and multilingual ability. | General-purpose assistants, multilingual products, baseline knowledge capability comparisons. |
+| **GDPval-AA** (GDP = Gross Domestic Product; val = validation/evaluation; AA = Artificial Analysis) | Agentic | Measures overall agentic capability — planning, tool use, multi-step task completion. Score is an aggregate index, not a percentage. | Comparing models holistically for autonomous agent deployments. |
+| **MMMU-Pro** (Massive Multi-discipline Multimodal Understanding, the Pro version) | Vision | College-level questions requiring both image understanding and reasoning — charts, diagrams, scientific figures. | Document analysis, research assistants, any product where the model reads images alongside text. |
+| **HLE** (Humanity's Last Exam) | Reasoning | Humanity's Last Exam — extremely hard questions across all domains, near-impossible even for top human experts. Tests the ceiling of model intelligence. | Frontier model comparisons, research tasks requiring the absolute highest level of reasoning. |
 ## Types of Agents in IDE
 
 ### Agent Execution Environments
