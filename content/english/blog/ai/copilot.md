@@ -153,7 +153,7 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 
 ### Agent Execution Environments
 
-Copilot agents run in three distinct environments. Understanding which type you're using determines what they can access, how they're triggered, and what VS Code features are available.
+Copilot agents run in three distinct environments. 
 
 | Type | Runs in | Triggered from |
 |---|---|---|
@@ -344,14 +344,13 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 - Unlike prompt files, skills can be automatically invoked based on intent — you don't need to explicitly call them every time.
 - **File location:** project skills live under 
 - Project Specific
-  - .github/skills/<skill-name>/SKILL.md
-  - .claude/skills/<skill-name>/SKILL.md
-  - .agents/skills/<skill-name>/SKILL.md
+  - .github/skills/<<skill-name>>/SKILL.md
+  - .claude/skills/<<skill-name>>/SKILL.md
+  - .agents/skills/<<skill-name>>/SKILL.md
 - Personal (Global)
-  - ~/.copilot/skills/<skill-name>/SKILL.md
-  - ~/.claude/skills/<skill-name>/SKILL.md
-  - ~/.agents/skills/<skill-name>/SKILL.md
-  ```
+  - ~/.copilot/skills/<<skill-name>>/SKILL.md
+  - ~/.claude/skills/<<skill-name>>/SKILL.md
+  - ~/.agents/skills/<<skill-name>>/SKILL.md
 - **File extension:** `.md` (always named `SKILL.md`)
 - **Supported in:** GitHub Copilot cloud agent, Copilot CLI, VS Code agent mode, Claude Code, and other compatible agent implementations.
 - **Frontmatter fields:**
@@ -1153,7 +1152,7 @@ CLAUDE.local.md                                ← Local-only, not committed to 
 | **Persistence** | Always active when matched | Always active for matching workspace/folder context | Per invocation | Per session | Always available | Event-based | Always running (when enabled) | Until uninstalled |
 | **User Input Support** | No | No | Yes (`${input:...}`) | Via prompts | No | Via scripts | Via server config | Depends on components |
 | **Tool Access** | N/A | N/A | Configurable | Configurable | N/A | Shell commands | External APIs | As per bundled components |
-| **File Location** | `.github/copilot-instructions.md`, `*.instructions.md` | `AGENTS.md` at workspace/repo root; nested `AGENTS.md` for subfolders when supported | `.github/prompts/` | `.github/agents/`, local paths | `.github/skills/<name>/SKILL.md`, `.claude/skills/<name>/SKILL.md`, `.agents/skills/<name>/SKILL.md`, or user skill folders | `hooks.json`, workspace hooks | `.vscode/mcp.json` | Installed from marketplaces or Git repos |
+| **File Location** | `.github/copilot-instructions.md`, `*.instructions.md` | `AGENTS.md` at workspace/repo root; nested `AGENTS.md` for subfolders when supported | `.github/prompts/` | `.github/agents/`, local paths | `.github/skills/<<name>>/SKILL.md`, `.claude/skills/<<name>>/SKILL.md`, `.agents/skills/<<name>>/SKILL.md`, or user skill folders | `hooks.json`, workspace hooks | `.vscode/mcp.json` | Installed from marketplaces or Git repos |
 | **IDE Support** | VS Code, Visual Studio, JetBrains, GitHub.com, CLI, coding agent | VS Code, Copilot CLI, coding agent; also supported by many non-Copilot coding agents | VS Code, VS, JetBrains | VS Code, GitHub.com (cloud) | VS Code, CLI, agent, Claude Code | VS Code | VS Code, CLI, agent | VS Code, CLI, Claude Code |
 | **Cross-Tool Compatibility** | Medium-high (strongest inside Copilot surfaces) | High (open Markdown convention) | Low (IDE-only) | Medium (VS Code + GitHub) | High (all tools) | Low (VS Code-only) | High (protocol-based) | High (shared format) |
 | **Frontmatter: agent** | N/A | ❌ | ✅ (`ask`, `agent`, `plan`, or custom agent name) | N/A | ❌ | N/A | N/A | N/A |
@@ -1490,7 +1489,7 @@ applyTo: '**/*.{ts,tsx}'
 | `argument-hint` | No | Hint text shown in the chat input field to guide users on how to interact with the prompt (e.g. `component-name`). |
 | `agent` | No | The agent used for running the prompt: `ask` (default chat), `agent` (full agent mode), `plan`, or the name of a custom agent. Defaults to the current agent; defaults to `agent` if `tools` are specified. |
 | `model` | No | The language model to use (e.g. `GPT-4o`, `Claude Sonnet 4.5 (copilot)`). Defaults to the model currently selected in the model picker. |
-| `tools` | No | Array of tool names available for this prompt. Can include built-in tools, tool sets, MCP tools, or extension-contributed tools. To include all tools from an MCP server, use `<server-name>/*` format. If a listed tool is unavailable, it is ignored. |
+| `tools` | No | Array of tool names available for this prompt. Can include built-in tools, tool sets, MCP tools, or extension-contributed tools. To include all tools from an MCP server, use `<server-name>>/*` format. If a listed tool is unavailable, it is ignored. |
 
 > **`argument-hint` note:** This field is officially documented for prompt files and is used across the Copilot CLI, Claude Code, and VS Code. It provides hint text in the chat input showing the expected argument format. It is **not** the same as `${input:varName}` variable substitution — it's purely a UI label.
 
