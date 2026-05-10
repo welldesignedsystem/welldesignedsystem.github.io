@@ -3,7 +3,7 @@ date = '2026-04-10T13:00:00+10:00'
 draft = false
 title = 'GitHub Copilot Notes'
 tags = ['GitHub', 'Copilot', 'AI', 'Prompting', 'DevTools', 'Agents', 'LLM']
-summary = "GitHub Copilot and customization instructions together unlocks a structured, repeatable way to guide AI assistance across your codebase—covering custom instructions, reusable prompt files, agent mode, and extensible skills for end-to-end AI-driven workflows."
+summary = "GitHub Copilot and customization instructions together unlocks a structured, repeatable way to guide AI assistance across your codebase—covering custom instructions, reusable prompt files, agent mode and extensible skills for end-to-end AI-driven workflows."
 +++
 
 GitHub Copilot and its customization instructions, a powerful framework for struct-ing and reusing prompts to get consistent, high-quality AI assistance across a codebase.
@@ -137,12 +137,12 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 
 | Benchmark | Type | What it checks | When it matters |
 |---|---|---|---|
-| [**SWE-bench Verified**](https://www.swebench.com/) (SWE = Software Engineering; benchmark) | Coding | Can the model **fix real GitHub bugs**? Patches are applied and actual test suites run — pass/fail, no subjectivity. | Choosing a model for software engineering agents, autonomous bug fixing, or code generation at scale. |
-| [**Terminal-Bench 2.0**](https://www.tbench.ai/) (Terminal Environment Benchmark) | Agentic | Can the model operate in a real terminal — running shell commands, navigating file systems, executing scripts — to complete tasks end-to-end? | DevOps automation, CLI agents, any task where the model needs to operate a computer rather than just write code. |
-| [**τ²-bench Retail / Telecom**](https://github.com/sierra-research/tau2-bench) (Tau-squared Bench) | Agentic | Can the model act as a customer service agent while a simulated user actively participates? Tests policy compliance, tool use, and back-and-forth coordination. | Customer support bots, helpdesk agents, any product where the AI must guide a real human through a multi-step process. |
-| [**MCP-Atlas**](https://labs.scale.com/leaderboard/mcp_atlas) (MCP = Model Context Protocol; Atlas is the benchmark name) | Agentic | Can the model correctly use external tools and APIs via the Model Context Protocol? Tests whether it picks the right tool, uses it correctly, and handles the response. | Evaluating models for integration with real-world services — calendars, databases, search, etc. |
-| [**OSWorld-Verified**](https://os-world.github.io/) (Operating System World; verified split) | Agentic | Can the model control a real desktop GUI — clicking, typing, navigating apps — to complete tasks a human would do on a computer? | Computer-use agents, RPA, browser and desktop automation. |
-| [**ARC-AGI-2**](https://arcprize.org/arc-agi-2) (Abstraction and Reasoning Corpus for Artificial General Intelligence, version 2) | Reasoning | Can the model solve novel visual pattern puzzles it has never seen before? Designed to resist memorisation — tests raw general reasoning, not learned answers. | Measuring true generalisation ability. Hard to fake with training data. |
+| [**SWE-bench Verified**](https://www.swebench.com/) (SWE = Software Engineering; benchmark) | Coding | **1.** Can the model **fix real GitHub bugs**? **2.** Patches are applied and actual test suites run — pass/fail, no subjectivity. | Choosing a model for software engineering agents, autonomous bug fixing, or code generation at scale. |
+| [**Terminal-Bench**](https://www.tbench.ai/) (Terminal Environment Benchmark) | Agentic | Can the model operate in a real terminal — running shell commands, navigating file systems, executing scripts — to complete tasks end-to-end? | DevOps automation, CLI agents, any task where the model needs to operate a computer rather than just write code. |
+| [**τ²-bench Retail / Telecom**](https://github.com/sierra-research/tau2-bench) (Tau-squared Bench) | Agentic | **1.** Can the model act as a customer service agent while a simulated user actively participates? **2.** Tests policy compliance, tool use and back-and-forth coordination. | Customer support bots, helpdesk agents, any product where the AI must guide a real human through a multi-step process. |
+| [**MCP-Atlas**](https://labs.scale.com/leaderboard/mcp_atlas) (MCP = Model Context Protocol; Atlas is the benchmark name) | Agentic | **1.** Can the model correctly use external tools and APIs via the Model Context Protocol? **2.** Tests whether it picks the right tool, uses it correctly and handles the response. | Evaluating models for integration with real-world services — calendars, databases, search, etc. |
+| [**OSWorld-Verified**](https://os-world.github.io/) (Operating System World; verified split) | Agentic | **1.** Can the model control a real desktop GUI — clicking, typing, navigating apps — to complete tasks a human would do on a computer? | Computer-use agents, RPA, browser and desktop automation. |
+| [**ARC-AGI-2**](https://arcprize.org/arc-agi-2) (Abstraction and Reasoning Corpus for Artificial General Intelligence, version 2) | Reasoning | **1.** Can the model solve novel visual pattern puzzles it has never seen before? **2.** Designed to resist memorisation — tests raw general reasoning, not learned answers. | Measuring true generalisation ability. Hard to fake with training data. |
 | [**GPQA Diamond**](https://github.com/idavidrein/gpqa) (Graduate-Level Google-Proof Q&A; Diamond is the hardest subset) | Knowledge | Expert-level science questions (physics, chemistry, biology) written by PhD researchers — hard enough that most domain experts get them wrong. | Scientific research assistants, medical/legal tools, any use case requiring deep expert knowledge. |
 | [**MMMLU**](https://huggingface.co/datasets/openai/MMMLU) (Multilingual Massive Multitask Language Understanding) | Knowledge | Broad knowledge across 57 subjects in multiple languages. Tests general world knowledge and multilingual ability. | General-purpose assistants, multilingual products, baseline knowledge capability comparisons. |
 | [**GDPval-AA**](https://artificialanalysis.ai/evaluations) (GDP = Gross Domestic Product; val = validation/evaluation; AA = Artificial Analysis) | Agentic | Measures overall agentic capability — planning, tool use, multi-step task completion. Score is an aggregate index, not a percentage. | Comparing models holistically for autonomous agent deployments. |
@@ -163,15 +163,15 @@ Copilot agents run in three distinct environments.
 
 - **Local agents** 
   - Run inside VS Code
-  - Full access to your local workspace, tools, and local MCP servers
+  - Full access to your local workspace, tools and local MCP servers
   - Configured via .agent.md files
   - Can be interactive or semi‑autonomous
   - Selected from the Agents dropdown in the VS Code Chat view
-  - Can use tools, follow model preferences, and hand off to other local agents
+  - Can use tools, follow model preferences and hand off to other local agents
   - Do NOT create branches automatically unless a tool explicitly does so
 - **Cloud agents (Coding agent)** 
   - Run on GitHub’s infrastructure, not locally
-  - Fully autonomous: can edit files, create commits, and open PRs
+  - Fully autonomous: can edit files, create commits and open PRs
   - .agent.md must be on the default branch (usually main)
   - No access to local MCP servers
   - Must use mcp-servers: in frontmatter to specify cloud‑reachable servers
@@ -250,7 +250,7 @@ Use `copilot-instructions.md` for:
 
 **Where it works:** 
 - All Copilot surfaces (VS Code, GitHub.com chat, coding agent, CLI). 
-- Repository-wide and path-specific work in VS Code, Visual Studio, JetBrains, and the coding agent. 
+- Repository-wide and path-specific work in VS Code, Visual Studio, JetBrains and the coding agent. 
 - Personal/organization instructions work in GitHub.com chat.
 
 **Examples:**
@@ -299,7 +299,7 @@ applyTo: '**/*.py'
 - **Referencing tools:** To reference agent tools in your instructions, use the `#tool:<tool-name>` syntax (e.g. `#tool:web/fetch`).
 
 **Supported in:** 
-- Copilot Chat in VS Code, Visual Studio, JetBrains, Xcode, and the Copilot coding agent.
+- Copilot Chat in VS Code, Visual Studio, JetBrains, Xcode and the Copilot coding agent.
 - _(Not supported in GitHub.com chat or mobile as of April 2026.)_
 
 ---
@@ -352,12 +352,12 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
   - ~/.claude/skills/<<skill-name>>/SKILL.md
   - ~/.agents/skills/<<skill-name>>/SKILL.md
 - **File extension:** `.md` (always named `SKILL.md`)
-- **Supported in:** GitHub Copilot cloud agent, Copilot CLI, VS Code agent mode, Claude Code, and other compatible agent implementations.
+- **Supported in:** GitHub Copilot cloud agent, Copilot CLI, VS Code agent mode, Claude Code and other compatible agent implementations.
 - **Frontmatter fields:**
 
 | Field | Required | Description |
 |---|---|---|
-| `name` | Yes | Max 64 chars. Lowercase letters, numbers, and hyphens only. Must not start/end with a hyphen or contain consecutive hyphens. Must match the parent directory name. |
+| `name` | Yes | Max 64 chars. Lowercase letters, numbers and hyphens only. Must not start/end with a hyphen or contain consecutive hyphens. Must match the parent directory name. |
 | `description` | Yes | Max 1024 chars. Describes what the skill does and when to use it. Used for intent matching. |
 | `license` | No | License name or reference to a bundled license file. |
 | `compatibility` | No | Max 500 chars. Indicates environment requirements (intended product, system packages, network access, etc.). |
@@ -367,7 +367,7 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 | `disable-model-invocation` | No | Prevents automatic skill invocation based on intent matching when set to `true`. |
 
 - Skills do **not** support prompt-file fields such as `agent`, `mode`, `tools`, or `model`. Skills also do not support dynamic input variables (`${input:...}`).
-- **Progressive Loading/Progressive Disclosure:** Only the `name` and `description` frontmatter fields are loaded at startup (~100 tokens). The full skill body is loaded when the skill is activated, and any referenced files (scripts, references, assets) are loaded only when required.
+- **Progressive Loading/Progressive Disclosure:** Only the `name` and `description` frontmatter fields are loaded at startup (~100 tokens). The full skill body is loaded when the skill is activated and any referenced files (scripts, references, assets) are loaded only when required.
 
 **How to invoke:**
 - A compatible agent automatically invokes a skill when your intent matches the skill's `description`.
@@ -409,7 +409,7 @@ When asked to create a migration:
 - Main differentiator is when you dont have a well defined structured series of step. 
 - Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, memory and tool access. 
 - ability to iterate, decide, select and use tools, use memory, Reason 
-- They maintain their full configuration throughout an entire autonomous session — reading files, searching the codebase, editing files, and opening pull requests.
+- They maintain their full configuration throughout an entire autonomous session — reading files, searching the codebase, editing files and opening pull requests.
 - The distinction:
   - Custom instructions shape all interactions broadly
   - Prompt files execute a one-time task
@@ -444,17 +444,17 @@ handoffs:                                  # Optional: transition to another age
 | `model` | Optional. Specify preferred model(s) in priority order. |
 | `handoffs` | Optional. Define transitions to other agents. `send: true` auto-submits the handoff prompt; `send: false` pre-fills it for the user to review. |
 
-The body of the file is the agent's system prompt. It defines the agent's role, capabilities, and explicit limitations. A well-designed agent profile always includes a clear "do NOT" section to prevent scope creep.
+The body of the file is the agent's system prompt. It defines the agent's role, capabilities and explicit limitations. A well-designed agent profile always includes a clear "do NOT" section to prevent scope creep.
 
 **How to use a custom agent (GitHub cloud agent):**
 1. Commit the `.agent.md` file to the default branch
 2. Go to `https://github.com/copilot/agents`
-3. Select your repository, branch, and agent from the dropdowns
+3. Select your repository, branch and agent from the dropdowns
 4. Type a task and press Enter — the agent runs autonomously and creates a PR
 5. Track progress in real time via the session view
 
 **How to use a custom agent (GitHub cloud agent) or VS Code:**
-- **GitHub cloud agent:** Commit the `.agent.md` file to the default branch, go to `https://github.com/copilot/agents`, select your repository, branch, and agent from the dropdowns, then type a task and press Enter.
+- **GitHub cloud agent:** Commit the `.agent.md` file to the default branch, go to `https://github.com/copilot/agents`, select your repository, branch and agent from the dropdowns, then type a task and press Enter.
 - **VS Code:** Select the agent from the agents dropdown in the Chat view, then type a task and start the session.
 
 **Generate an agent with AI:** Type `/create-agent` in chat and describe the agent's role to generate a `.agent.md` file.
@@ -482,12 +482,12 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 
 ### AGENTS.md
 - AGENTS.md is a simple, open format for guiding coding agents — think of it as a **README for agents**: a dedicated, predictable place to provide context and instructions to help AI coding agents work on your project.
-- Unlike `README.md` (which targets human contributors), AGENTS.md contains the extra detail agents need: build steps, test commands, and conventions that might clutter a README.
+- Unlike `README.md` (which targets human contributors), AGENTS.md contains the extra detail agents need: build steps, test commands and conventions that might clutter a README.
 - If skill is like a tool then Agent is like a tool box.
 - **File name:** `AGENTS.md` (placed at the repository root, or nested inside subpackages)
 - **Format:** Plain Markdown — no frontmatter, no required fields, no special syntax. Use any headings you like.
 - **Status:** Open standard, stewarded by the [Agentic AI Foundation](https://aaif.io) under the Linux Foundation. [AGENTS.md github](https://github.com/agentsmd/agents.md). [Examples](https://agents.md/#examples)
-- **Supported in:** OpenAI Codex, Amp, Cursor, Devin, Jules (Google), Factory, Aider, goose, opencode, Zed, Warp, VS Code, JetBrains Junie, Windsurf, RooCode, Gemini CLI, GitHub Copilot coding agent, Kilo Code, Semgrep, Augment Code, UiPath, and others.
+- **Supported in:** OpenAI Codex, Amp, Cursor, Devin, Jules (Google), Factory, Aider, goose, opencode, Zed, Warp, VS Code, JetBrains Junie, Windsurf, RooCode, Gemini CLI, GitHub Copilot coding agent, Kilo Code, Semgrep, Augment Code, UiPath and others.
 - **No required fields.** AGENTS.md is plain Markdown. There is no frontmatter schema, no mandatory sections. You write whatever helps an agent work effectively on your project.
 - **Recommended sections to include:**
   - Project overview
@@ -527,7 +527,7 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 
 - **When to use:**
   - Providing project-specific context that any coding agent needs to work on your repo
-  - Encoding build, test, and style conventions once so every agent picks them up automatically
+  - Encoding build, test and style conventions once so every agent picks them up automatically
   - Monorepos where individual packages need different instructions
 
 - **When NOT to use:**
@@ -538,18 +538,18 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 
 ### Agent Plugins
 
-- Agent plugins are prepackaged bundles of chat customizations that you can discover and install from plugin marketplaces in Visual Studio Code. A single plugin can provide any combination of slash commands, agent skills, custom agents, hooks, and MCP servers.
+- Agent plugins are prepackaged bundles of chat customizations that you can discover and install from plugin marketplaces in Visual Studio Code. A single plugin can provide any combination of slash commands, agent skills, custom agents, hooks and MCP servers.
 - Plugin is like an external ability Skill is more like an internal ability.
-- Plugins work alongside your locally defined customizations. When you install a plugin, its commands, skills, agents, hooks, and MCP servers appear in chat.
+- Plugins work alongside your locally defined customizations. When you install a plugin, its commands, skills, agents, hooks and MCP servers appear in chat.
 - **Note:** Agent plugins are currently in preview. Enable or disable support for agent plugins with the `chat.plugins.enabled` setting.
 - **What plugins provide**
   - An agent plugin can bundle one or more of the following customization types:
     - **Slash commands**: additional commands you can invoke with `/` in chat
-    - **Skills**: agent skills with instructions, scripts, and resources that load on-demand
+    - **Skills**: agent skills with instructions, scripts and resources that load on-demand
     - **Agents**: custom agents with specialized personas and tool configurations
     - **Hooks**: hooks that execute shell commands at agent lifecycle points
     - **MCP servers**: MCP servers for external tool integrations
-  - For example, a testing plugin might include a `test-runner` skill with scripts, a `test-reviewer` agent with read-only tools, and an MCP server for a test reporting dashboard.
+  - For example, a testing plugin might include a `test-runner` skill with scripts, a `test-reviewer` agent with read-only tools and an MCP server for a test reporting dashboard.
 - **Plugin directory structure**
 
     ```
@@ -568,7 +568,7 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
     └── .mcp.json                # MCP server definitions
     ```
 
-- Once installed, plugin-provided customizations appear alongside your locally defined ones. For example, skills from a plugin show up in the Configure Skills menu, and MCP servers from a plugin appear in the MCP server list.
+- Once installed, plugin-provided customizations appear alongside your locally defined ones. For example, skills from a plugin show up in the Configure Skills menu and MCP servers from a plugin appear in the MCP server list.
 - **Caution:** Plugins can include hooks and MCP servers that run code on your machine. Review the plugin contents and publisher before installing, especially for plugins from community marketplaces.
 - [Creating plugin for Microsoft 365 Agent Plugin Toolkit](https://marketplace.visualstudio.com/items?itemName=TeamsDevApp.ms-teams-vscode-extension)
 #### Discovering and installing plugins
@@ -602,7 +602,7 @@ Plugins sourced from npm or PyPI never update automatically. Instead, they show 
 
 #### Cross-tool compatibility
 
-The plugin format is shared between VS Code, GitHub Copilot CLI, and Claude Code. A single plugin repository can work across all three tools.
+The plugin format is shared between VS Code, GitHub Copilot CLI and Claude Code. A single plugin repository can work across all three tools.
 
 Key differences to be aware of across tools:
 
@@ -672,7 +672,7 @@ Key differences to be aware of across tools:
 
 > **Note:** `mcp.json` is workspace-scoped. Commit it to version control so the whole team shares the same server configuration. Store secrets in VS Code's secret storage or as environment variables — never hardcode them.
 
-- invoking via a prompt file. This Queries your open PRs, assigned issues, and new repository activity — then writes a dated `Tasks.md` to your workspace.
+- invoking via a prompt file. This Queries your open PRs, assigned issues and new repository activity — then writes a dated `Tasks.md` to your workspace.
 
 **Save as `.github/prompts/daily-tasks.prompt.md`:**
 
@@ -694,13 +694,13 @@ Then create a file named `Tasks-${input:date:Todays date e.g. 2026-04-16}.md` wi
 # Daily Tasks — <date>
 
 ## My Open Pull Requests
-- List each PR with title, number, and URL
+- List each PR with title, number and URL
 
 ## My Assigned Issues
-- List each issue with title, number, priority label if present, and URL
+- List each issue with title, number, priority label if present and URL
 
 ## New Issues Today
-- List each new issue with title, number, and who opened it
+- List each new issue with title, number and who opened it
 
 ## Focus for Today
 Based on the above, suggest the top 3 priorities in order of urgency.
@@ -729,7 +729,7 @@ Install from here : **https://cli.github.com**
   - ```bash
     gh copilot suggest "delete all merged git branches locally"
     ```
-  - Copilot returns a command, explains it, and asks whether to run it, copy it, or revise it. It will not execute anything without your confirmation.
+  - Copilot returns a command, explains it and asks whether to run it, copy it, or revise it. It will not execute anything without your confirmation.
   - Use this when:
     - You know *what* you want to do but not the exact command
     - You're working with unfamiliar CLI tools (`kubectl`, `ffmpeg`, `awk`)
@@ -865,7 +865,7 @@ Hooks communicate back to the agent via `stdout` as JSON. All hooks support thes
 | `permissionDecision` | `"allow"` \| `"deny"` \| `"ask"` | Explicitly allow, block, or ask before the tool call |
 | `permissionDecisionReason` | `string` | Shown to the model when the decision is `"deny"` |
 
-> **Cloud-agent note:** GitHub's cloud-agent hook reference currently emphasizes `deny` as the supported enforcement decision for `preToolUse`; VS Code and Copilot CLI document `allow`, `deny`, and `ask`.
+> **Cloud-agent note:** GitHub's cloud-agent hook reference currently emphasizes `deny` as the supported enforcement decision for `preToolUse`; VS Code and Copilot CLI document `allow`, `deny` and `ask`.
 
 **Exit codes** are the simplest control mechanism:
 - Exit `0` — hook passed, agent continues normally
@@ -984,7 +984,7 @@ Hooks execute shell commands with the same permissions as VS Code. Review hook c
 
 > **Note:** GitHub Copilot Knowledge Bases were retired on November 1, 2025 and fully replaced by Copilot Spaces. If you have existing knowledge bases, they can be migrated using the "Convert to Space" button under each knowledge base in your organization settings.
 
-Copilot Spaces let you organize the context that Copilot uses to answer your questions. Spaces can include repositories, code, pull requests, issues, free-text content like transcripts or notes, images, and file uploads. You can ask Copilot questions grounded in that context, or share the space with your team to support collaboration and knowledge sharing.
+Copilot Spaces let you organize the context that Copilot uses to answer your questions. Spaces can include repositories, code, pull requests, issues, free-text content like transcripts or notes, images and file uploads. You can ask Copilot questions grounded in that context, or share the space with your team to support collaboration and knowledge sharing.
 
 Unlike instruction files which shape *how* Copilot behaves, Spaces control *what Copilot knows* for a specific task or topic.
 
@@ -996,12 +996,12 @@ To create a space, go to `https://github.com/copilot/spaces` and click **Create 
 
 Each space has two configuration fields:
 
-- **Instructions** — Free text telling Copilot what to focus on within this space: its areas of expertise, what kinds of tasks it should help with, and what it should avoid.
+- **Instructions** — Free text telling Copilot what to focus on within this space: its areas of expertise, what kinds of tasks it should help with and what it should avoid.
 - **Sources** — The context Copilot searches when answering questions.
 
 #### What You Can Add as Sources
 
-You can add files, folders, and entire GitHub repositories. You can also paste URLs of GitHub content including pull requests and issues, upload files directly from your local machine (images, text files, rich documents, spreadsheets), or type or paste free-text content such as transcripts or notes.
+You can add files, folders and entire GitHub repositories. You can also paste URLs of GitHub content including pull requests and issues, upload files directly from your local machine (images, text files, rich documents, spreadsheets), or type or paste free-text content such as transcripts or notes.
 
 #### Two Source Attachment Strategies
 
@@ -1025,7 +1025,7 @@ Your spaces stay in sync as your project evolves. GitHub files and other GitHub-
 | **Personal** | Private, shared publicly, or shared with specific GitHub users |
 | **Organization-owned** | Admin, editor, or viewer access for org members — or hidden entirely |
 
-Organization-owned spaces can be shared with other organization members, and you decide which level of access to grant. Alternatively, you can choose to grant "No access" to organization members and keep the space hidden.
+Organization-owned spaces can be shared with other organization members and you decide which level of access to grant. Alternatively, you can choose to grant "No access" to organization members and keep the space hidden.
 
 #### Using Spaces in Your IDE
 
@@ -1039,24 +1039,24 @@ Then reference your space naturally in a prompt:
 Using the Copilot space 'Checkout Flow Redesign' owned by myorganization, summarize the implementation plan.
 ```
 
-> **Note:** When using Spaces in your IDE, repository context and uploaded files are not supported. You will have access to text content, GitHub files, issues, pull requests, and space instructions.
+> **Note:** When using Spaces in your IDE, repository context and uploaded files are not supported. You will have access to text content, GitHub files, issues, pull requests and space instructions.
 
 #### Use Cases
 
-Create a space when you start working on a specific feature. Add the relevant code, a product specification, and any supporting materials such as notes from a design review or mockup images.
+Create a space when you start working on a specific feature. Add the relevant code, a product specification and any supporting materials such as notes from a design review or mockup images.
 
 Other strong use cases:
 
 - **Standardize repetitive tasks** — Document the logic for tasks like tracking telemetry events once, then share it through a space to keep everyone consistent.
 - **Scale institutional knowledge** — Create a space for topics where people tend to ask similar questions, such as how authentication or search works in your project.
 - **Onboarding** — Give new team members instant access to curated project knowledge without requiring them to dig through repos.
-- **Sharing best practices** — Generate code that follows security patterns, API standards, and team preferences, or share SQL/KQL queries and telemetry schemas.
+- **Sharing best practices** — Generate code that follows security patterns, API standards and team preferences, or share SQL/KQL queries and telemetry schemas.
 
 #### When to use
 
 - Grounding Copilot in context that lives **outside** your current working files
 - Knowledge that needs to be **shared across team members** without relying on repo files
-- **Task-specific context** you want to assemble once and reuse (e.g. a feature redesign space with the spec, relevant code, and meeting notes)
+- **Task-specific context** you want to assemble once and reuse (e.g. a feature redesign space with the spec, relevant code and meeting notes)
 - Answering recurring questions about a subsystem (auth, payments, search)
 
 #### When NOT to use
@@ -1128,7 +1128,7 @@ CLAUDE.local.md                                ← Local-only, not committed to 
 | **Maintenance** | Update files in repo | Update nearest relevant `AGENTS.md` | Update prompt files | Update agent files | Update skill files | Update hook scripts | Update server config | Plugin updates via marketplace |
 
 
-**AGENTS.md sources checked:** [VS Code custom instructions](https://code.visualstudio.com/docs/copilot/customization/custom-instructions), [GitHub Copilot CLI custom instructions](https://docs.github.com/en/copilot/how-tos/copilot-cli/add-custom-instructions), and [agents.md FAQ](https://agents.md/).
+**AGENTS.md sources checked:** [VS Code custom instructions](https://code.visualstudio.com/docs/copilot/customization/custom-instructions), [GitHub Copilot CLI custom instructions](https://docs.github.com/en/copilot/how-tos/copilot-cli/add-custom-instructions) and [agents.md FAQ](https://agents.md/).
 
 The VS Code docs expose two additional customization types beyond what the 19 GitHub library examples cover.
 
@@ -1219,7 +1219,7 @@ Slash commands are shorthand prompts for common coding tasks. Type `/` in the ch
 | `@workspace` | Answers questions about your entire project — file structure, search across files, architecture questions |
 | `@vscode` | Answers questions about VS Code itself — settings, keybindings, extensions, commands |
 | `@terminal` | Helps with shell commands and explains terminal errors |
-| `@github` | GitHub-specific skills: queries PRs, issues, repositories, and runs GitHub Actions awareness. Dynamically picks the right skill based on your question |
+| `@github` | GitHub-specific skills: queries PRs, issues, repositories and runs GitHub Actions awareness. Dynamically picks the right skill based on your question |
 
 **Usage tips:**
 
@@ -1367,7 +1367,7 @@ Use the chat customization diagnostics view to see all loaded instruction files 
 
 ### Generating Instructions with AI (VS Code)
 
-**Generate workspace-wide instructions:** Type `/init` in the chat input to analyze your workspace and generate a `.github/copilot-instructions.md` tailored to your project. VS Code discovers existing AI conventions, analyzes your project structure, and generates comprehensive instructions.
+**Generate workspace-wide instructions:** Type `/init` in the chat input to analyze your workspace and generate a `.github/copilot-instructions.md` tailored to your project. VS Code discovers existing AI conventions, analyzes your project structure and generates comprehensive instructions.
 
 **Generate a targeted instructions file:** Type `/create-instruction` and describe the convention you want to enforce (e.g. "always use tabs and single quotes in this project"). The agent asks clarifying questions and generates an `.instructions.md` file with the appropriate `applyTo` pattern.
 
@@ -1399,7 +1399,7 @@ Ensure you include the following:
 
 ## Steps to follow
 - Perform a comprehensive inventory of the codebase. Search for and view:
-  - README.md, CONTRIBUTING.md, and all other documentation files.
+  - README.md, CONTRIBUTING.md and all other documentation files.
   - Search the codebase for indications of workarounds like 'HACK', 'TODO', etc.
 - All scripts, particularly those pertaining to build and repo or environment setup.
 - All project files.
@@ -1414,7 +1414,7 @@ learnings from any failures or errors to further refine the instructions file.
 
 ## Complete Frontmatter Field Reference
 
-Every customization file type uses YAML frontmatter. Here is the full verified reference for all fields across all file types, sourced from the official VS Code docs, GitHub Docs, and the Agent Skills spec.
+Every customization file type uses YAML frontmatter. Here is the full verified reference for all fields across all file types, sourced from the official VS Code docs, GitHub Docs and the Agent Skills spec.
 
 ---
 
@@ -1450,7 +1450,7 @@ applyTo: '**/*.{ts,tsx}'
 | `model` | No | The language model to use (e.g. `GPT-4o`, `Claude Sonnet 4.5 (copilot)`). Defaults to the model currently selected in the model picker. |
 | `tools` | No | Array of tool names available for this prompt. Can include built-in tools, tool sets, MCP tools, or extension-contributed tools. To include all tools from an MCP server, use `<server-name>>/*` format. If a listed tool is unavailable, it is ignored. |
 
-> **`argument-hint` note:** This field is officially documented for prompt files and is used across the Copilot CLI, Claude Code, and VS Code. It provides hint text in the chat input showing the expected argument format. It is **not** the same as `${input:varName}` variable substitution — it's purely a UI label.
+> **`argument-hint` note:** This field is officially documented for prompt files and is used across the Copilot CLI, Claude Code and VS Code. It provides hint text in the chat input showing the expected argument format. It is **not** the same as `${input:varName}` variable substitution — it's purely a UI label.
 
 **Full example:**
 ```yaml
@@ -1506,7 +1506,7 @@ handoffs:
 
 ### `.agent.md` — Custom Agents (GitHub.com Cloud Agent)
 
-The GitHub Docs define a separate set of fields for `.agent.md` files used on GitHub.com (at `github.com/copilot/agents`). These differ from VS Code in two key ways: `mcp-servers` is supported, and `argument-hint`/`handoffs` are not.
+The GitHub Docs define a separate set of fields for `.agent.md` files used on GitHub.com (at `github.com/copilot/agents`). These differ from VS Code in two key ways: `mcp-servers` is supported and `argument-hint`/`handoffs` are not.
 
 | Field | Required | Description |
 |---|---|---|
@@ -1549,7 +1549,7 @@ mcp-servers:
 
 > **Progressive disclosure:** At startup, only `name` and `description` are loaded (level 1). When relevant, the full SKILL.md body is loaded (level 2). Additional files in the skill directory are only loaded if referenced in the body (level 3). This keeps context usage efficient regardless of how many skills are installed.
 
-> **Open standard:** Skills work across GitHub Copilot in VS Code, GitHub Copilot CLI, the Copilot coding agent, and Claude Code.
+> **Open standard:** Skills work across GitHub Copilot in VS Code, GitHub Copilot CLI, the Copilot coding agent and Claude Code.
 
 **Full example:**
 ```yaml
@@ -1626,14 +1626,14 @@ When writing functions, always:
 - Include at least one example usage in comments
 ```
 
-**How to test:** Add as personal instructions on GitHub.com (profile picture → Personal instructions), then ask: `Create a JavaScript function that calculates the area of a circle`. Without instructions you get a bare function. With them, Copilot adds JSDoc, input validation, early returns, and an example usage comment.
+**How to test:** Add as personal instructions on GitHub.com (profile picture → Personal instructions), then ask: `Create a JavaScript function that calculates the area of a circle`. Without instructions you get a bare function. With them, Copilot adds JSDoc, input validation, early returns and an example usage comment.
 
 ---
 
 #### 2. Concept Explainer
 **Complexity:** Simple
 
-Instructs Copilot to explain technical concepts progressively — starting from analogies, building toward technical detail, and always connecting theory to real problems.
+Instructs Copilot to explain technical concepts progressively — starting from analogies, building toward technical detail and always connecting theory to real problems.
 
 ```markdown
 When explaining technical concepts:
@@ -1717,7 +1717,7 @@ Always encourage curiosity and questioning rather than providing quick fixes, bu
 #### 4. Code Reviewer
 **Complexity:** Simple
 
-Directs Copilot to focus code reviews on security, performance, and code quality — with constructive, reasoned feedback.
+Directs Copilot to focus code reviews on security, performance and code quality — with constructive, reasoned feedback.
 
 ```markdown
 When reviewing code, focus on:
@@ -1753,7 +1753,7 @@ Always prioritize security vulnerabilities and performance issues that could imp
 #### 5. GitHub Actions Helper
 **Complexity:** Simple | **Path-specific:** `.github/workflows/**/*.yml`
 
-A path-specific file that activates only when Copilot works with GitHub Actions workflow YAML files. Enforces security (secret handling, SHA-pinning), performance (caching, timeouts), and best-practice patterns.
+A path-specific file that activates only when Copilot works with GitHub Actions workflow YAML files. Enforces security (secret handling, SHA-pinning), performance (caching, timeouts) and best-practice patterns.
 
 ```markdown
 ---
@@ -1774,7 +1774,7 @@ When generating or improving GitHub Actions workflows:
 - Use matrix strategies for multi-environment testing
 
 ## Best Practices
-- Use descriptive names for workflows, jobs, and steps
+- Use descriptive names for workflows, jobs and steps
 - Include appropriate triggers: `push`, `pull_request`, `workflow_dispatch`
 - Add `if: always()` for cleanup steps that must run regardless of failure
 ```
@@ -1791,7 +1791,7 @@ A comprehensive instructions set for both writing PR descriptions and reviewing 
 #### 7. Issue Manager
 **Complexity:** Simple
 
-Instructions for writing well-structured GitHub issues — for bugs, feature requests, and issue responses — with clear titles, reproduction steps, acceptance criteria, and consistent triage templates.
+Instructions for writing well-structured GitHub issues — for bugs, feature requests and issue responses — with clear titles, reproduction steps, acceptance criteria and consistent triage templates.
 
 ---
 
@@ -1852,7 +1852,7 @@ class TestUserService:
 
 ### Prompt Files (6 examples)
 
-All stored in `.github/prompts/*.prompt.md`. Available in VS Code, Visual Studio, and JetBrains only.
+All stored in `.github/prompts/*.prompt.md`. Available in VS Code, Visual Studio and JetBrains only.
 
 ---
 
@@ -1890,7 +1890,7 @@ Key concepts demonstrated: `${input:variableName:placeholder}` syntax, `agent: '
 #### 11. Create README
 **Complexity:** Simple | **Filename:** `create-readme.prompt.md`
 
-Reusable across repositories. Copilot scans the codebase and generates a structured README covering: project description, prerequisites, installation, usage examples, contributing guide, and license section.
+Reusable across repositories. Copilot scans the codebase and generates a structured README covering: project description, prerequisites, installation, usage examples, contributing guide and license section.
 
 ---
 
@@ -1904,21 +1904,21 @@ Generates a personalized onboarding plan for a new team member joining a project
 #### 13. Document API
 **Complexity:** Advanced | **Filename:** `document-api.prompt.md`
 
-Generates comprehensive API documentation from source code. Covers endpoint descriptions, request/response schemas, authentication requirements, error codes, and usage examples.
+Generates comprehensive API documentation from source code. Covers endpoint descriptions, request/response schemas, authentication requirements, error codes and usage examples.
 
 ---
 
 #### 14. Review Code
 **Complexity:** Advanced | **Filename:** `review-code.prompt.md`
 
-Performs a structured code review with actionable feedback. Analyzes for correctness, performance, security vulnerabilities, readability, test coverage gaps, and adherence to conventions.
+Performs a structured code review with actionable feedback. Analyzes for correctness, performance, security vulnerabilities, readability, test coverage gaps and adherence to conventions.
 
 ---
 
 #### 15. Generate Unit Tests
 **Complexity:** Intermediate | **Filename:** `generate-unit-tests.prompt.md`
 
-Takes source code as input and generates unit tests covering happy paths, edge cases, boundary conditions, and error scenarios.
+Takes source code as input and generates unit tests covering happy paths, edge cases, boundary conditions and error scenarios.
 
 ---
 
@@ -1944,7 +1944,7 @@ You are a documentation specialist focused primarily on README files, but you ca
 - Create and update README.md files with clear project descriptions
 - Structure README sections logically: overview, installation, usage, contributing
 - Write scannable content with proper headings and formatting
-- Add appropriate badges, links, and navigation elements
+- Add appropriate badges, links and navigation elements
 - Use relative links (e.g., `docs/CONTRIBUTING.md`) instead of absolute URLs for files within the repository
 - Ensure all links work when the repository is cloned
 - Use proper heading structure to enable GitHub's auto-generated table of contents
@@ -2023,7 +2023,7 @@ Copilot processes well-structured Markdown better than narrative prose. Use:
 ```
 When you're reviewing code, it would be good if you could try to look for
 situations where developers might have accidentally left in sensitive
-information like passwords or API keys, and also check for security issues.
+information like passwords or API keys and also check for security issues.
 ```
 
 **Write this instead:**
@@ -2086,7 +2086,7 @@ From the official docs, the following types of instructions are **not currently 
 
 ### 8. Don't let perfect be the enemy of good
 
-An "imperfect" instructions file delivers far more impact than no file at all. Instruction files should evolve over time, just like documentation. Experiment, iterate, and don't overthink the initial version.
+An "imperfect" instructions file delivers far more impact than no file at all. Instruction files should evolve over time, just like documentation. Experiment, iterate and don't overthink the initial version.
 
 ---
 
@@ -2102,7 +2102,7 @@ The header of your instructions file should be the elevator pitch for your proje
 # Contoso Companions
 
 This is a website to support pet adoption agencies. Agencies can manage their
-locations, available pets, and publicize events. Potential adopters can search
+locations, available pets and publicize events. Potential adopters can search
 for pets in their area and submit adoption applications.
 ```
 
@@ -2157,13 +2157,13 @@ List what's in each directory. This saves Copilot exploration time.
 - client/     : Astro/Svelte frontend
   - src/components/ : Reusable Svelte components
   - src/pages/      : Astro pages and routes
-- scripts/    : Development, deployment, and testing scripts
+- scripts/    : Development, deployment and testing scripts
 - docs/       : Project documentation — kept in sync at all times
 ```
 
 ### Section 5: Available resources and tools
 
-Point Copilot to scripts, MCP servers, and other tools it can use.
+Point Copilot to scripts, MCP servers and other tools it can use.
 
 ```markdown
 ## Resources
@@ -2181,7 +2181,7 @@ Point Copilot to scripts, MCP servers, and other tools it can use.
 
 ### Pattern: Repository-wide + path-specific split
 
-Use `copilot-instructions.md` for concerns that apply to the **entire codebase**, and path-specific `*.instructions.md` files for **language- or directory-specific** rules.
+Use `copilot-instructions.md` for concerns that apply to the **entire codebase** and path-specific `*.instructions.md` files for **language- or directory-specific** rules.
 
 Recommended layout:
 
