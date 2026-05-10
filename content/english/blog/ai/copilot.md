@@ -200,7 +200,7 @@ Copilot agents run in three distinct environments.
 - Usecases:
   - Never log sensitive user data
   - Follow OWASP Guidelines
-  - comments should have personal information e.g. prompt - one customer Joe is an exception his year of birth is 1926 hence a specific logic.
+  - comments should have personal information e.g. prompt produces -> // one customer Joe is an exception his D0B is 29 Feb 1980.
 ---
 
 ### Personal instructions
