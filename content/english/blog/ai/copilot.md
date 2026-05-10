@@ -159,7 +159,7 @@ Copilot agents run in three distinct environments.
 |---|---|---|
 | **Local agent** | Your machine | Chat view (agent dropdown) |
 | **Cloud agent** | GitHub infrastructure | `github.com/copilot/agents` |
-| **Background agent** | GitHub infrastructure (async) | GitHub.com or VS Code |
+| **Copilot CLI** | GitHub infrastructure (async) | GitHub.com or VS Code |
 
 - **Local agents** 
   - Run inside VS Code
@@ -192,10 +192,10 @@ Copilot agents run in three distinct environments.
 
 ### Organization instructions
 
-- Set in GitHub organization settings on GitHub.com.
-- Apply to all organization members in Copilot Chat on GitHub.com.
-- Do not affect IDE interactions.
+- Setup by **GitHub admin** at **organization settings** on GitHub.com.
+- Apply to **all organization members** in Copilot Chat on GitHub.com.
 - Enable discovery of org-level instructions in VS Code by setting `github.copilot.chat.organizationInstructions.enabled` to `true`.
+- You might enforce VS Code settings via policy (MDM - Mobile Device Management -> Microsoft intune, Jamf, group policy, etc.)
 - Learn how to add org-level instructions at the [GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions).
 - Usecases:
   - Never log sensitive user data
