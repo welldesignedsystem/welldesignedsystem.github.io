@@ -195,12 +195,12 @@ Copilot agents run in three distinct environments.
 - Setup by **GitHub admin** at **organization settings** on GitHub.com.
 - Apply to **all organization members** in Copilot Chat on GitHub.com.
 - Enable discovery of org-level instructions in VS Code by setting `github.copilot.chat.organizationInstructions.enabled` to `true`.
-- You might enforce VS Code settings via policy (MDM - Mobile Device Management -> Microsoft intune, Jamf, group policy, etc.)
-- Learn how to add org-level instructions at the [GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions).
+- You might enforce VS Code settings via policy (Mobile Device Management(MDM) like Microsoft intune, Jamf, group policy, etc.)
+- [Refer GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions).
 - Usecases:
   - Never log sensitive user data
   - Follow OWASP Guidelines
-  - comments should never secure information like - keys/passwords etc.
+  - comments should have personal information e.g. prompt - one customer Joe is an exception his year of birth is 1926 hence a specific logic.
 ---
 
 ### Personal instructions
