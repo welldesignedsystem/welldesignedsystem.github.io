@@ -55,23 +55,23 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 ### Factors to consider
 - **Speed v/s Quality/Task Complexity:** 
     - 🟢 **Fast/smaller models** — **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**, **Auto mode**
-      -  **general code completition**, **suggestion**, or **explanations**  
+      - **situations:** Day-to-day coding, quick explanations, routine suggestions 
+      - general code completition, suggestion, or explanations  
       - renaming Variables, boilerplate, simple autocomplete
-      - Day-to-day coding, quick explanations, routine suggestions
 
     - 🟡 **Balanced** — **Claude Sonnet 4.6**, **GPT-5.4**, **Gemini 3.1 Pro**
-      - Adding a new feature, fixing a known bug
-      - Moderate refactors, writing tests for existing code
+      - **situations:**Adding a new feature, fixing a known bug
+      - Moderate refactors, writing tests for existing code from A/Cs.
 
-    - 🔴 **Quality** — **GPT-5.4/5.5**, **Claude Opus 4.6**, **Gemini 3.1 Pro**
-      - **higher accuracy**, **complex reasoning**, **debugging**, or **multi-step tasks**  
-      - Complex refactor (e.g. multi-layered auth system)
+    - 🔴 **Quality** — **GPT-5.4/5.5**, **Claude Opus 4.6/4.7**, **Gemini 3.1 Pro**
+      - **situations:** higher accuracy, complex reasoning, debugging or multi-step tasks  
+      - very Complex refactoring (e.g. multi-layered auth system)
       - High-stakes logic (e.g. payment / charge processing module)
       - Multi-step debugging, cross-file reasoning, system design
 
 - **Cost/Premium Tokens:** 
     - 🟢 **Free / Low Cost** — **Auto mode**, **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**
-      - Day-to-day use, explanations, suggestions, routine coding
+    - Day-to-day use, explanations, suggestions, routine coding
 
     - 🟡 **Balanced Cost** — **Claude Sonnet 4.6**, **GPT-5.4**, **Gemini 3.1 Pro**
       - Moderate refactors, feature additions, fixing known bugs
