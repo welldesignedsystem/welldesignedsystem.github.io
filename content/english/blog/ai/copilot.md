@@ -137,17 +137,17 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 
 | Benchmark | Type | What it checks | When it matters |
 |---|---|---|---|
-| **SWE-bench Verified** (SWE = Software Engineering; benchmark) | Coding | Can the model fix real GitHub bugs? Patches are applied and actual test suites run — pass/fail, no subjectivity. | Choosing a model for software engineering agents, autonomous bug fixing, or code generation at scale. |
-| **Terminal-Bench 2.0** (Terminal Environment Benchmark) | Agentic | Can the model operate in a real terminal — running shell commands, navigating file systems, executing scripts — to complete tasks end-to-end? | DevOps automation, CLI agents, any task where the model needs to operate a computer rather than just write code. |
-| **τ²-bench Retail / Telecom** (Tau-squared Bench) | Agentic | Can the model act as a customer service agent while a simulated user actively participates? Tests policy compliance, tool use, and back-and-forth coordination. | Customer support bots, helpdesk agents, any product where the AI must guide a real human through a multi-step process. |
-| **MCP-Atlas** (MCP = Model Context Protocol; Atlas is the benchmark name) | Agentic | Can the model correctly use external tools and APIs via the Model Context Protocol? Tests whether it picks the right tool, uses it correctly, and handles the response. | Evaluating models for integration with real-world services — calendars, databases, search, etc. |
-| **OSWorld-Verified** (Operating System World; verified split) | Agentic | Can the model control a real desktop GUI — clicking, typing, navigating apps — to complete tasks a human would do on a computer? | Computer-use agents, RPA, browser and desktop automation. |
-| **ARC-AGI-2** (Abstraction and Reasoning Corpus for Artificial General Intelligence, version 2) | Reasoning | Can the model solve novel visual pattern puzzles it has never seen before? Designed to resist memorisation — tests raw general reasoning, not learned answers. | Measuring true generalisation ability. Hard to fake with training data. |
-| **GPQA Diamond** (Graduate-Level Google-Proof Q&A; Diamond is the hardest subset) | Knowledge | Expert-level science questions (physics, chemistry, biology) written by PhD researchers — hard enough that most domain experts get them wrong. | Scientific research assistants, medical/legal tools, any use case requiring deep expert knowledge. |
-| **MMMLU** (Multilingual Massive Multitask Language Understanding) | Knowledge | Broad knowledge across 57 subjects in multiple languages. Tests general world knowledge and multilingual ability. | General-purpose assistants, multilingual products, baseline knowledge capability comparisons. |
-| **GDPval-AA** (GDP = Gross Domestic Product; val = validation/evaluation; AA = Artificial Analysis) | Agentic | Measures overall agentic capability — planning, tool use, multi-step task completion. Score is an aggregate index, not a percentage. | Comparing models holistically for autonomous agent deployments. |
-| **MMMU-Pro** (Massive Multi-discipline Multimodal Understanding, the Pro version) | Vision | College-level questions requiring both image understanding and reasoning — charts, diagrams, scientific figures. | Document analysis, research assistants, any product where the model reads images alongside text. |
-| **HLE** (Humanity's Last Exam) | Reasoning | Humanity's Last Exam — extremely hard questions across all domains, near-impossible even for top human experts. Tests the ceiling of model intelligence. | Frontier model comparisons, research tasks requiring the absolute highest level of reasoning. |
+| [**SWE-bench Verified**](https://www.swebench.com/) (SWE = Software Engineering; benchmark) | Coding | Can the model fix real GitHub bugs? Patches are applied and actual test suites run — pass/fail, no subjectivity. | Choosing a model for software engineering agents, autonomous bug fixing, or code generation at scale. |
+| [**Terminal-Bench 2.0**](https://www.tbench.ai/) (Terminal Environment Benchmark) | Agentic | Can the model operate in a real terminal — running shell commands, navigating file systems, executing scripts — to complete tasks end-to-end? | DevOps automation, CLI agents, any task where the model needs to operate a computer rather than just write code. |
+| [**τ²-bench Retail / Telecom**](https://github.com/sierra-research/tau2-bench) (Tau-squared Bench) | Agentic | Can the model act as a customer service agent while a simulated user actively participates? Tests policy compliance, tool use, and back-and-forth coordination. | Customer support bots, helpdesk agents, any product where the AI must guide a real human through a multi-step process. |
+| [**MCP-Atlas**](https://labs.scale.com/leaderboard/mcp_atlas) (MCP = Model Context Protocol; Atlas is the benchmark name) | Agentic | Can the model correctly use external tools and APIs via the Model Context Protocol? Tests whether it picks the right tool, uses it correctly, and handles the response. | Evaluating models for integration with real-world services — calendars, databases, search, etc. |
+| [**OSWorld-Verified**](https://os-world.github.io/) (Operating System World; verified split) | Agentic | Can the model control a real desktop GUI — clicking, typing, navigating apps — to complete tasks a human would do on a computer? | Computer-use agents, RPA, browser and desktop automation. |
+| [**ARC-AGI-2**](https://arcprize.org/arc-agi-2) (Abstraction and Reasoning Corpus for Artificial General Intelligence, version 2) | Reasoning | Can the model solve novel visual pattern puzzles it has never seen before? Designed to resist memorisation — tests raw general reasoning, not learned answers. | Measuring true generalisation ability. Hard to fake with training data. |
+| [**GPQA Diamond**](https://github.com/idavidrein/gpqa) (Graduate-Level Google-Proof Q&A; Diamond is the hardest subset) | Knowledge | Expert-level science questions (physics, chemistry, biology) written by PhD researchers — hard enough that most domain experts get them wrong. | Scientific research assistants, medical/legal tools, any use case requiring deep expert knowledge. |
+| [**MMMLU**](https://huggingface.co/datasets/openai/MMMLU) (Multilingual Massive Multitask Language Understanding) | Knowledge | Broad knowledge across 57 subjects in multiple languages. Tests general world knowledge and multilingual ability. | General-purpose assistants, multilingual products, baseline knowledge capability comparisons. |
+| [**GDPval-AA**](https://artificialanalysis.ai/evaluations) (GDP = Gross Domestic Product; val = validation/evaluation; AA = Artificial Analysis) | Agentic | Measures overall agentic capability — planning, tool use, multi-step task completion. Score is an aggregate index, not a percentage. | Comparing models holistically for autonomous agent deployments. |
+| [**MMMU-Pro**](https://mmmu-benchmark.github.io/) (Massive Multi-discipline Multimodal Understanding, the Pro version) | Vision | College-level questions requiring both image understanding and reasoning — charts, diagrams, scientific figures. | Document analysis, research assistants, any product where the model reads images alongside text. |
+| [**HLE**](https://lastexam.ai/) (Humanity's Last Exam) | Reasoning | Extremely hard questions across all domains, near-impossible even for top human experts. Tests the ceiling of model intelligence. | Frontier model comparisons, research tasks requiring the absolute highest level of reasoning. |
 
 ## Types of Agents in IDE
 
@@ -751,7 +751,7 @@ Install from here : **https://cli.github.com**
       gh alias set ce 'copilot explain'
       gh cs "compress all jpg files in this folder"
       gh ce "rsync -avz --delete src/ user@host:/var/www/"
-    ```
+      ```
 > **Note:** `gh copilot` works on shell commands only — it has no awareness of your codebase, open files, or MCP servers. For anything requiring code context, use the IDE.
 
 ---
@@ -766,8 +766,6 @@ The key distinction from instructions: writing _"please don't run dangerous comm
 
 Generate a hook file with `/create-hook` in chat.
 
----
-
 #### File Location
 
 Copilot agents support hooks stored in JSON files in your repository at `.github/hooks/*.json`. The hooks configuration file must be present on your repository's default branch to be used by Copilot cloud agent. For GitHub Copilot CLI, hooks are loaded from your current working directory.
@@ -777,8 +775,6 @@ You can have multiple hook files — all `*.json` files in `.github/hooks/` are 
 **Supported in:** Copilot cloud agent, Copilot CLI, VS Code (Preview).
 
 > **Note (VS Code):** VS Code uses PascalCase hook event names, while the CLI and cloud agent use camelCase names. VS Code automatically converts between the two formats when reading CLI-format hook files.
-
----
 
 #### Hook Triggers
 
@@ -793,8 +789,6 @@ You can have multiple hook files — all `*.json` files in `.github/hooks/` are 
 | `SubagentStart` / `SubagentStop` | When a VS Code subagent starts or stops | Log or coordinate multi-agent work |
 
 > `preToolUse` / `PreToolUse` is the most powerful hook — it is the one that can **allow, deny, or ask** before a tool execution happens.
-
----
 
 #### Configuration Format
 
@@ -833,8 +827,6 @@ Each hook file follows this structure:
 | `cwd` | Working directory for the script (relative to repo root) |
 | `timeoutSec` | Max seconds before the hook is killed (prevents hung sessions) |
 
----
-
 #### Input: What Hooks Receive
 
 Every hook script receives a JSON object on `stdin`. The shape varies by hook type, but `preToolUse` — the most commonly used — provides:
@@ -855,8 +847,6 @@ INPUT=$(cat)
 TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName')
 TOOL_ARGS=$(echo "$INPUT" | jq -r '.toolArgs')
 ```
-
----
 
 #### Output: How Hooks Control the Agent
 
@@ -881,8 +871,6 @@ Hooks communicate back to the agent via `stdout` as JSON. All hooks support thes
 - Exit `0` — hook passed, agent continues normally
 - Exit `2` — blocks the operation; `stderr` is shown to the model as context. No JSON output needed.
 - Any non-zero exit — treated as an error
-
----
 
 #### Example: Block Dangerous Shell Commands
 
@@ -940,8 +928,6 @@ if [ "$TOOL_NAME" = "edit" ] || [ "$TOOL_NAME" = "create" ]; then
 fi
 ```
 
----
-
 #### Testing Hooks Locally
 
 Before committing, validate your hook by piping test input directly:
@@ -966,8 +952,6 @@ INPUT=$(cat)
 echo "DEBUG: $INPUT" >&2
 ```
 
----
-
 #### When to use
 
 - **Security enforcement** — block commands like `rm -rf`, `DROP TABLE`, or writes to production config files before they execute
@@ -982,8 +966,6 @@ echo "DEBUG: $INPUT" >&2
 - For reusable task workflows — use prompt files or agent skills instead
 - For simple one-off tasks where a prompt is sufficient
 
----
-
 #### Security Considerations
 
 Hooks execute shell commands with the same permissions as VS Code. Review hook configurations carefully, especially when using hooks from untrusted sources.
@@ -993,8 +975,6 @@ Hooks execute shell commands with the same permissions as VS Code. Review hook c
 - **Validate and sanitize input** — hook scripts receive JSON from the agent; treat it as untrusted input
 - **Never hardcode secrets** in hook scripts — use environment variables or secret storage
 - Hooks committed to the repo go through code review like any other code. Rollbacks are a single `git revert`.
-
----
 
 **Reference:** [About hooks](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-hooks) · [Hooks configuration reference](https://docs.github.com/en/copilot/reference/hooks-configuration) · [Agent hooks in VS Code](https://code.visualstudio.com/docs/copilot/customization/hooks)
 
@@ -1010,8 +990,6 @@ Unlike instruction files which shape *how* Copilot behaves, Spaces control *what
 
 Anyone with a Copilot license, including Copilot Free, can create and use Spaces.
 
----
-
 #### Creating a Space
 
 To create a space, go to `https://github.com/copilot/spaces` and click **Create space**. Give your space a name, then choose whether the space is owned by you or by an organization you belong to.
@@ -1020,8 +998,6 @@ Each space has two configuration fields:
 
 - **Instructions** — Free text telling Copilot what to focus on within this space: its areas of expertise, what kinds of tasks it should help with, and what it should avoid.
 - **Sources** — The context Copilot searches when answering questions.
-
----
 
 #### What You Can Add as Sources
 
@@ -1038,13 +1014,9 @@ How you attach a source significantly affects response quality:
 
 > **Tip:** You can add files to a space directly from the code view on GitHub without breaking your flow — at the top of any file, click the dropdown and select the space you want to add it to.
 
----
-
 #### Keeping Spaces Up to Date
 
 Your spaces stay in sync as your project evolves. GitHub files and other GitHub-based sources added to a space are automatically updated as they change, making Copilot an evergreen expert in your project. Uploaded local files are not auto-synced and need to be refreshed manually.
-
----
 
 #### Sharing Model
 
@@ -1054,8 +1026,6 @@ Your spaces stay in sync as your project evolves. GitHub files and other GitHub-
 | **Organization-owned** | Admin, editor, or viewer access for org members — or hidden entirely |
 
 Organization-owned spaces can be shared with other organization members, and you decide which level of access to grant. Alternatively, you can choose to grant "No access" to organization members and keep the space hidden.
-
----
 
 #### Using Spaces in Your IDE
 
@@ -1071,8 +1041,6 @@ Using the Copilot space 'Checkout Flow Redesign' owned by myorganization, summar
 
 > **Note:** When using Spaces in your IDE, repository context and uploaded files are not supported. You will have access to text content, GitHub files, issues, pull requests, and space instructions.
 
----
-
 #### Use Cases
 
 Create a space when you start working on a specific feature. Add the relevant code, a product specification, and any supporting materials such as notes from a design review or mockup images.
@@ -1083,8 +1051,6 @@ Other strong use cases:
 - **Scale institutional knowledge** — Create a space for topics where people tend to ask similar questions, such as how authentication or search works in your project.
 - **Onboarding** — Give new team members instant access to curated project knowledge without requiring them to dig through repos.
 - **Sharing best practices** — Generate code that follows security patterns, API standards, and team preferences, or share SQL/KQL queries and telemetry schemas.
-
----
 
 #### When to use
 
@@ -1099,17 +1065,11 @@ Other strong use cases:
 - For behavioral rules and coding conventions — use `copilot-instructions.md` or `.instructions.md` instead
 - For reusable task workflows — use prompt files or agent skills instead
 
----
-
 #### Billing Note
 
 Questions you submit in a space count as Copilot Chat requests. If you're a Copilot Free user, this usage counts toward your monthly chat limit. If you use Spaces with a premium model, this usage counts toward your premium usage quota.
 
----
-
 **Reference:** [About GitHub Copilot Spaces](https://docs.github.com/en/copilot/concepts/context/spaces) · [Creating a Space](https://docs.github.com/en/copilot/how-tos/provide-context/use-copilot-spaces/create-copilot-spaces) · [Using Spaces in your IDE](https://docs.github.com/en/copilot/how-tos/provide-context/use-copilot-spaces/use-copilot-spaces)
-
----
 
 ## File Location Reference
 
@@ -1140,7 +1100,6 @@ CLAUDE.md                                      ← Claude Code compatibility (wo
 .claude/CLAUDE.md                              ← Alternative Claude.md location
 CLAUDE.local.md                                ← Local-only, not committed to version control
 ```
-
 ---
 
 ## Comprehensive Comparison Table
