@@ -99,7 +99,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
       - Code mixed with technical writing or documentation
       - Architecture planning, code reviews, README generation
 
-    - 🖼️ **Text + Image** — **Claude Sonnet 4.6**, **GPT-5.4/5.5**, **Grok 4**
+    - 🖼️ **Text + Image** — **Claude Sonnet 4.6**, **GPT-5.4/5.5**, **Gemini 3.1 Pro**, **Grok 4**
       - Screenshot → reproduce or debug as code
       - Diagram → generate tickets or architecture docs
 
