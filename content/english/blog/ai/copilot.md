@@ -73,7 +73,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
     - 🟢 **Free / Low Cost** — **Auto mode**, **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**
     - Day-to-day use, explanations, suggestions, routine coding
 
-    - 🟡 **Balanced Cost** — **Claude Sonnet 4.6**, **GPT-5.4**, **Gemini 3.1 Pro**
+    - 🟡 **Balanced Cost** — **Claude Sonnet 4.6**, **GPT-5.4 mini**, **Gemini 3.1 Pro**
       - Moderate refactors, feature additions, fixing known bugs
       - **Multimodal tasks** (image, PDF) — *Gemini 3.1 Pro (superior model for most usecases 2x better for reasoning) is same price as Gemini 3 Pro (2M token context)*
 
