@@ -54,7 +54,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 
 ### Factors to consider
 - **Speed v/s Quality/Task Complexity:** 
-    - 🟢 **Fast/smaller models** — **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**, **Auto mode**
+    - 🟢 **Fast/smaller models** — **Claude Haiku 4.5**, **GPT-4.1/5.4 mini**, **Gemini 3 Flash**, **Auto mode**
       - **situations:** Day-to-day coding, quick explanations, routine suggestions 
       - general code completition, suggestion, or explanations  
       - renaming Variables, boilerplate, simple autocomplete
