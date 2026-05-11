@@ -60,7 +60,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
       - renaming Variables, boilerplate, simple autocomplete
 
     - 🟡 **Balanced** — **Claude Sonnet 4.6**, **GPT-5.4**, **Gemini 3.1 Pro**
-      - **situations:**Adding a new feature, fixing a known bug
+      - **situations:** Adding a new feature, fixing a known bug
       - Moderate refactors, writing tests for existing code from A/Cs.
 
     - 🔴 **Quality** — **GPT-5.4/5.5**, **Claude Opus 4.6/4.7**, **Gemini 3.1 Pro**
