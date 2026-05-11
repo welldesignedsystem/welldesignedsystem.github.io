@@ -53,7 +53,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 ## Model Selection.
 
 ### Factors to consider
-- **Speed v/s Quality/Task Complexity:** 
+- **Speed v/s Quality/Task Complexity v/s Cost:** 
     - 🟢 **Fast/smaller models** — **Claude Haiku 4.5**, **GPT-4.1/5.4 mini**, **Gemini 3 Flash**, **Auto mode**
       - **situations:** Day-to-day coding, quick explanations, routine suggestions 
       - general code completition, renaming Variables, boilerplate, simple autocomplete
@@ -63,23 +63,12 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
       - Moderate refactors, writing tests for existing code from A/Cs.
 
     - 🔴 **Quality** — **GPT-5.4/5.5**, **Claude Opus 4.6/4.7**, **Gemini 3.1 Pro**
-      - **situations:** higher accuracy, complex reasoning, debugging or multi-step tasks  
+      - **situations:** higher accuracy, complex reasoning, debugging or multi-step tasks
+      - Larger model incur highes cost
       - very Complex refactoring (e.g. multi-layered auth system)
       - High-stakes logic (e.g. payment / charge processing module)
       - Multi-step debugging, cross-file reasoning, system design
-
-- **Cost/Premium Tokens:** 
-    - 🟢 **Free / Low Cost** — **Auto mode**, **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**
-      - Day-to-day use, explanations, suggestions, routine coding
-
-    - 🟡 **Balanced Cost** — **Claude Sonnet 4.6**, **GPT-5.4 mini**, **Gemini 3.1 Pro**
-      - Moderate refactors, feature additions, fixing known bugs
-      - **Multimodal tasks** (image, PDF) — *Gemini 3.1 Pro (superior model for most usecases 2x better for reasoning) is same price as Gemini 3 Pro (2M token context)*
-
-    - 🔴 **Premium** — **GPT-5.5**, **Claude Opus 4.6**, **Gemini 3.1 Pro**
-      - Larger model incur highes cost
-      - Complex refactor, multi-step debugging, architecture decisions
-      - High-stakes logic (e.g. payment processing, auth systems)
+      - 3am bug fixing.
       - *Don't use cheaper models here — false economy, more retries = more tokens spent*
 
     - 💡 **Quota Tip:** set your editor's **default/auto model** to a 🟢 smaller model,
@@ -103,6 +92,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
       - Diagram → generate tickets or architecture docs
 
     - 📄 **Text + PDF / Docs / Slides** — **Gemini 3.1 Pro**
+      — *Gemini 3.1 Pro (superior model for most usecases 2x better for reasoning) is same price as Gemini 3 Pro (2M token context)*
       - Scanned documents, slide decks, multi-page PDFs
       - Extract structured data from charts or forms
 
