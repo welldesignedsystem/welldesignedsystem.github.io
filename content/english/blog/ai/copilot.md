@@ -56,8 +56,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 - **Speed v/s Quality/Task Complexity:** 
     - 🟢 **Fast/smaller models** — **Claude Haiku 4.5**, **GPT-4.1/5.4 mini**, **Gemini 3 Flash**, **Auto mode**
       - **situations:** Day-to-day coding, quick explanations, routine suggestions 
-      - general code completition, suggestion, or explanations  
-      - renaming Variables, boilerplate, simple autocomplete
+      - general code completition, renaming Variables, boilerplate, simple autocomplete
 
     - 🟡 **Balanced** — **Claude Sonnet 4.6**, **GPT-5.4**, **Gemini 3.1 Pro**
       - **situations:** Adding a new feature, fixing a known bug
@@ -71,7 +70,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 
 - **Cost/Premium Tokens:** 
     - 🟢 **Free / Low Cost** — **Auto mode**, **Claude Haiku 4.5**, **GPT-5.4 mini**, **Gemini 3 Flash**
-    - Day-to-day use, explanations, suggestions, routine coding
+      - Day-to-day use, explanations, suggestions, routine coding
 
     - 🟡 **Balanced Cost** — **Claude Sonnet 4.6**, **GPT-5.4 mini**, **Gemini 3.1 Pro**
       - Moderate refactors, feature additions, fixing known bugs
