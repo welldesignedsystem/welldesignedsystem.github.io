@@ -189,7 +189,8 @@ Copilot agents run in three distinct environments.
 - Usecases:
   - Never log sensitive user data
   - Follow OWASP Guidelines
-  - comments should have personal information e.g. prompt produces -> // one customer Joe is an exception his D0B is 29 Feb 1980.
+  - comments should have personal information e.g. PII leak - vibe fix produces comment // fix for customer Joe whose birthday is on D0B is 29 Feb 1980 (leapyear).
+ 
 ---
 
 ### Personal instructions
@@ -200,8 +201,7 @@ Copilot agents run in three distinct environments.
 - [Refer](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-personal-instructions)
 - Usecases:
   - Always respond in particular language, tone or level of detail.
-  - Always provide examples in TypeScript.
-  - Add happy emoji to end of conversations alone.
+  - I am new to team give definition in brackets when you use a jargon.
 
 ---
 
@@ -209,8 +209,8 @@ Copilot agents run in three distinct environments.
 
 | File                                               | Scope                                                                              |
 |----------------------------------------------------|------------------------------------------------------------------------------------|
-| Repository-wide  `.github/copilot-instructions.md` | All files in the repo, all surfaces                                                |
-| `AGENTS.md`         | In workspace root or subfolders, All agents in the workspace (multi-agent support) |
+| Repository-wide  `.github/copilot-instructions.md` | All files in the repo                                               |
+| `AGENTS.md`         | In workspace root or subfolders, All agents in the workspace (multi-agent support). BIG PICTURE GUIDE about AGENTS involved |
 | `CLAUDE.md`, `.claude/CLAUDE.md`, `~/.claude/CLAUDE.md`, or `CLAUDE.local.md` | Claude Code compatibility                                                          |
 
 - **Always-on instructions** — automatically included in every chat request. 
