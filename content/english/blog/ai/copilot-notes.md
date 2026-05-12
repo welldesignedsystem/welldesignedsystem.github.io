@@ -132,7 +132,7 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 
 | File                                               | Scope                                                                              |
 |----------------------------------------------------|------------------------------------------------------------------------------------|
-| Repository-wide  `.github/copilot-instructions.md` | All files in the repo                                               |
+| Repository-wide  `.github/copilot-instructions.md`  and/or `~/.copilot/copilot-instructions.md`| All files in the repo                                               |
 | `AGENTS.md`         | In workspace root or subfolders, All agents in the workspace (multi-agent support). BIG PICTURE GUIDE about AGENTS involved |
 | `CLAUDE.md`, `.claude/CLAUDE.md`, `~/.claude/CLAUDE.md`, or `CLAUDE.local.md` | Claude Code compatibility                                                          |
 
@@ -143,31 +143,27 @@ Use `copilot-instructions.md` for:
 
 **When to use:**
 - Setting broad project standards 
+  - security requirements
   - Technology stack and libraries - to avoid or use
   - naming conventions that apply across project
   - coding style
   - architecture patterns to avoid or use
-  - security requirements
   - error handling
   - Documentation standards
 - Ensuring consistent behavior across all interactions
-- Defining team conventions that apply everywhere
 
 **When NOT to use:**
-- For one-off tasks (use prompt files instead)
-- When you need user input or variables (use prompt files)
-- For complex multi-step workflows (use custom agents)
+- For one-off tasks (use prompt files instead/skills/agents)
+- This get carried in all conversations kept in context, keep it minimal
 - When instructions should only apply conditionally (use path-specific or prompt files)
 
-**Where it works:** 
-- All Copilot surfaces (VS Code, GitHub.com chat, coding agent, CLI). 
-- Repository-wide and path-specific work in VS Code, Visual Studio, JetBrains and the coding agent. 
-- Personal/organization instructions work in GitHub.com chat.
-
 **Examples:**
-- "Use TypeScript interfaces for all data structures"
-- "Follow PEP 8 style guide for Python code"
-- "Include error handling in all public functions"
+- Injection Attacks: Always parameterize SQL queries — never concatenate user input into query strings
+- XSS (Cross-Site Scripting): Never use `innerHTML`, `outerHTML`, or `document.write()` with user-supplied data
+-  PII & Sensitive Data - Never log PII — no emails, names, phone numbers, IP addresses
+- "Follow coding standards"
+  - PEP 8 style guide for Python code
+  - Google Java Style guide: google.github.io/styleguide/javaguide.html
 
 ---
 
@@ -178,8 +174,8 @@ Use `copilot-instructions.md` for:
 | Path-specific | `*.instructions.md` in `.github/instructions/` or custom locations | Files matching `applyTo` glob pattern |
 | User-level | `~/.copilot/instructions/` or the instructions folder of your VS Code profile | Applies across all workspaces for that user |
 
-- **File-based instructions** — conditionally applied based on glob patterns. Best for language-specific conventions, framework patterns or rules that only apply to certain parts of your codebase
-- One or more files named `NAME.instructions.md` inside the `.github/instructions/` directory (or other configured locations — see below).
+- **File-based instructions** — conditionally applied based on **glob patterns** *(simpler regex alternative - string with wildcard characters like * and ? used to match file paths or strings)*. 
+
 - Each file has an optional YAML frontmatter block with supported fields:
 
 | Field | Required | Description |
@@ -202,10 +198,11 @@ applyTo: '**/*.py'
 ```
  
 - Instructions only activate when Copilot is working with files that match the `applyTo` pattern. Running `/init` or working on other files does **not** load path-specific instruction files into context.
-- **Context efficiency:** Unlike skills with progressive loading, path-specific instructions load their **full contents** into context when matched. Keep them minimal (max ~1,000 lines, ideally 200–300) to avoid overloading context. Focus only on non-obvious, project-specific conventions; skip rules already enforced by linters or formatters.
+- **Context efficiency:** path-specific instructions load their **full contents** into context when matched and once the conversation continues copilot will not inject the instructions if it doesnt apply anymore. 
+- Keep them minimal (max ~1,000 lines, ideally 200–300) to avoid overloading context. Focus only on non-obvious, project-specific conventions; *skip rules already enforced* by **linters** or **formatters**.
 - Multiple patterns are separated by commas.
 - If both a path-specific file and `copilot-instructions.md` apply to the same file, instructions from both are used.
-- Avoid conflicting instructions between them — Copilot's behavior when instructions conflict is non-deterministic.
+- **Avoid conflicting instructions** between them — Copilot's behavior when instructions conflict is **non-deterministic.**
 - **Referencing other files:** You can use standard Markdown links to reference other instruction files or URLs from within an instructions file (e.g. `Apply the [general coding guidelines](./general-coding.instructions.md) to all code.`).
 - **Referencing tools:** To reference agent tools in your instructions, use the `#tool:<tool-name>` syntax (e.g. `#tool:web/fetch`).
 
