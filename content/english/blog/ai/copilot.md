@@ -81,7 +81,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 
     - 🤖 **Agentic / Code-Specialized** — **GPT-5.4-Codex**, **Grok Code Fast 1**
       - **Agentic usecases**/**Agentic Code Generation**, **automated PR creation**
-      - Large-scale refactors, long-horizon coding tasks
+      - Large-scale refactors
 
     - 📝 **Code + General Purpose** — **Claude Sonnet 4.6**, **GPT-5.4 mini**
       - Code mixed with technical writing or documentation
@@ -93,7 +93,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 
     - 📄 **Text + PDF / Docs / Slides** — **Gemini 3.1 Pro**
       — *Gemini 3.1 Pro (superior model for most usecases 2x better for reasoning) is same price as Gemini 3 Pro (2M token context)*
-      - Scanned documents, slide decks, multi-page PDFs
+      - invoice documents, Scanned documents, ppt slides, multi-page PDFs,
       - Extract structured data from charts or forms
 
     - 🎥 **Text + Video** — **Gemini 3.1 Pro**
@@ -122,11 +122,9 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 
 ### AI Benchmark Types
 
-> Known acronym expansions are shown in parentheses where available. Some benchmark names are proper names rather than strict acronyms.
-
 | Benchmark | Type | What it checks | When it matters |
 |---|---|---|---|
-| [**SWE-bench Verified**](https://www.swebench.com/) (SWE = Software Engineering; benchmark) | Coding | **1.** Can the **model fix real GitHub bugs**?<br/>  **2.** **Patches are applied and actual test suites run** — pass/fail, no subjectivity. | Choosing a model for software engineering agents, autonomous bug fixing, or code generation at scale. |
+| [**SWE-bench Verified Leadersboard**](https://www.swebench.com/) (SWE = Software Engineering; benchmark) | Coding | **1.** Can the **model fix real GitHub bugs**?<br/>  **2.** **Patches are applied and actual test suites run** — pass/fail, no subjectivity. | Choosing a model for software engineering agents, autonomous bug fixing, or code generation at scale. |
 | [**Terminal-Bench**](https://www.tbench.ai/) (Terminal Environment Benchmark) | Agentic | Can the **model operate in a real terminal** — running shell commands, navigating file systems, executing scripts — to complete tasks end-to-end? | DevOps automation, CLI agents, any task where the model needs to operate a computer rather than just write code. |
 | [**τ²-bench Retail / Telecom**](https://github.com/sierra-research/tau2-bench) (Tau-squared Bench) | Agentic | **1.** Can the **model act as a customer service agent** while a **simulated user actively participates**? <br/> **2.** **Tests** -> **policy compliance**, **tool use** and **back-and-forth coordination**. | Customer support bots, helpdesk agents, any product where the AI must guide a real human through a multi-step process. |
 | [**MCP-Atlas**](https://labs.scale.com/leaderboard/mcp_atlas) (MCP = Model Context Protocol; Atlas is the benchmark name) | Agentic | **1.** Can the model correctly use external tools and APIs via the Model Context Protocol? <br/> **2.** Tests whether it picks the right tool, uses it correctly and handles the response. | Evaluating models for integration with real-world services — calendars, databases, search, etc. |
