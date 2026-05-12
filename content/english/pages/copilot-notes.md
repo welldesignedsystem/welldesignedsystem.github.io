@@ -206,15 +206,11 @@ applyTo: '**/*.py'
 - **Referencing other files:** You can use standard Markdown links to reference other instruction files or URLs from within an instructions file (e.g. `Apply the [general coding guidelines](./general-coding.instructions.md) to all code.`).
 - **Referencing tools:** To reference agent tools in your instructions, use the `#tool:<tool-name>` syntax (e.g. `#tool:web/fetch`).
 
-**Supported in:** 
-- Copilot Chat in VS Code, Visual Studio, JetBrains, Xcode and the Copilot coding agent.
-- _(Not supported in GitHub.com chat or mobile as of April 2026.)_
-
 ---
 
 ### Prompt Files
 
-Prompt files (currently **public preview**, subject to change) are reusable, on-demand task prompts stored in your repository. Unlike custom instructions, they only run when you explicitly invoke them.
+Prompt files are reusable, on-demand task prompts stored in your repository. Unlike custom instructions, they only run when you explicitly invoke them.
 
 - **File location:** `.github/prompts/`
 - **File extension:** `.prompt.md`
@@ -227,8 +223,6 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 | `agent` | `'ask'` (default chat), `'agent'` (agent mode), `'plan'` (planning mode), or the name of a custom agent |
 | `description` | A human-readable label shown in the IDE |
 | `tools` | Array of tools available to the prompt when running in agent mode |
-
-> **Note:** Some older examples use `mode`, but the current VS Code prompt-file docs use `agent` (for example, `agent: 'agent'` or `agent: 'ask'`). Use `agent` in new files.
 
 **Dynamic input variables** commonly use this syntax: `${input:variableName:placeholder text}`. Most models understand this convention and ask for the missing values; for stricter interactive input, use the `vscode/askQuestion` tool.
 
