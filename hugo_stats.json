@@ -3,6 +3,7 @@
     "tags": [
       "a",
       "article",
+      "base",
       "blockquote",
       "body",
       "br",
@@ -45,7 +46,6 @@
       "pre",
       "script",
       "section",
-      "skill-name",
       "source",
       "span",
       "strong",

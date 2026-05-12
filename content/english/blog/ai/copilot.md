@@ -75,38 +75,34 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
       and only switch up manually when the task genuinely demands it.
 
 - **Specialization:** 
-  - Some models are better at some specific tasks than other in certain tasks.
+  - Some models are better at some specific tasks than others.
   - *Examples:*
 
-    - 🤖 **Agentic / Code-Specialized** — **GPT-5.4-Codex**, **Grok Code Fast 1**
-      - **Agentic usecases**/**Agentic Code Generation**, **automated PR creation**
-      - Large-scale refactors
-
-    - 📝 **Code + General Purpose** — **Claude Sonnet 4.6**, **GPT-5.4 mini**
+    - 📝 **General Purpose & Coding** — **Claude Sonnet 4.6**, **GPT-5.4 mini**
       - Code mixed with technical writing or documentation
       - Architecture planning, code reviews, README generation
+  
+    - 🤖 **Agentic usecases** — **GPT-5.4-Codex**, **Grok Code Fast 1**
+      - **automated PR creation**, Large-scale refactors
 
-    - 🖼️ **Text + Image** — **Claude Sonnet 4.6**, **GPT-5.4/5.5**, **Gemini 3.1 Pro**, **Grok 4**
+    - 🖼️ **Text & Image** — **Claude Sonnet 4.6**, **GPT-5.4/5.5**, **Gemini 3.1 Pro**, **Grok 4**
       - Screenshot → reproduce or debug as code
       - Diagram → generate tickets or architecture docs
 
-    - 📄 **Text + PDF / Docs / Slides** — **Gemini 3.1 Pro**
+    - 📄 **Text & PDF / Docs / Slides** — **Gemini 3.1 Pro**
       — *Gemini 3.1 Pro (superior model for most usecases 2x better for reasoning) is same price as Gemini 3 Pro (2M token context)*
       - invoice documents, Scanned documents, ppt slides, multi-page PDFs,
       - Extract structured data from charts or forms
 
-    - 🎥 **Text + Video** — **Gemini 3.1 Pro**
+    - 🎥 **Text & Video** — **Gemini 3.1 Pro**
       - Summarize a recorded standup or demo
       - Analyze a video walkthrough and generate action items
 
-    - 🎨 **Image / Video Generation** — **Grok Imagine**, **GPT-5.4** (with DALL·E)
+    - 🎨 **Image & Video Generation** — **Grok Imagine**, **GPT-5.4** (with DALL·E)
       - Product teasers, demo clips, UI mockup visuals
 
     - 🧩 **Mixed Multimodal** (text + image + video + code) — **Gemini 3.1 Pro**
       - Complex tasks spanning multiple input types simultaneously
-
-    - ⚠️ *Avoid* text-only models (**GPT-5.4 mini**, **Gemini 3 Flash**, **Claude Haiku 4.5**)
-      for multimodal tasks — they'll silently drop or mishandle non-text input.
 
 - **Usecase:**
   - Some environments prohibit or cannot use AI-generated code entirely:
