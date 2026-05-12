@@ -1,6 +1,6 @@
 +++
 date = '2026-04-10T13:00:00+10:00'
-draft = false
+draft = true
 title = 'GitHub Copilot Notes'
 tags = ['GitHub', 'Copilot', 'AI', 'Prompting', 'DevTools', 'Agents', 'LLM']
 summary = "GitHub Copilot and customization instructions together unlocks a structured, repeatable way to guide AI assistance across your codebase—covering custom instructions, reusable prompt files, agent mode and extensible skills for end-to-end AI-driven workflows."
@@ -59,14 +59,14 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
       - general code completition, renaming Variables, boilerplate, simple autocomplete
 
     - 🟡 **Balanced** — **Claude Sonnet 4.6**, **GPT-5.4**, **Gemini 3.1 Pro**
-      - **situations:** Adding a new feature, fixing a known bug
+      - **situations:** Adding a new feature based on KnowledgeBases, fixing a reasonably hard bug
       - Moderate refactors, writing tests for existing code from A/Cs.
 
     - 🔴 **Quality** — **GPT-5.4/5.5**, **Claude Opus 4.6/4.7**, **Gemini 3.1 Pro**
       - **situations:** higher accuracy, complex reasoning, debugging or multi-step tasks
       - Larger model incur highes cost
       - very Complex refactoring (e.g. multi-layered auth system)
-      - High-stakes logic (e.g. payment / charge processing module)
+      - High-stakes logic (e.g. Charge processing module)
       - Multi-step debugging, cross-file reasoning, system design
       - 3am bug fixing.
       - *Don't use cheaper models here — false economy, more retries = more tokens spent*
