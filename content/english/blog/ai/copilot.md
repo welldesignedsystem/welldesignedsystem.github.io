@@ -66,8 +66,8 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
       - **situations:** higher accuracy, complex reasoning, debugging or multi-step tasks
       - Larger model incur highes cost
       - very Complex refactoring (e.g. multi-layered auth system)
-      - High-stakes logic (e.g. Charge processing module)
-      - Multi-step debugging, cross-file reasoning, system design
+      - High-stakes logic (e.g. Debugging a Charge Processing module)
+      - Multi-step debugging with cross-file reasoning
       - 3am bug fixing.
       - *Don't use cheaper models here — false economy, more retries = more tokens spent*
 
