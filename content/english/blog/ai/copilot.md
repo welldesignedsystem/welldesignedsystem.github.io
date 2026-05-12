@@ -75,8 +75,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
       and only switch up manually when the task genuinely demands it.
 
 - **Specialization:** 
-  - Some models excel in coding (e.g., better at specific languages or frameworks)
-  - while others are more general-purpose.
+  - Some models are better at some specific tasks than other in certain tasks.
   - *Examples:*
 
     - 🤖 **Agentic / Code-Specialized** — **GPT-5.4-Codex**, **Grok Code Fast 1**
