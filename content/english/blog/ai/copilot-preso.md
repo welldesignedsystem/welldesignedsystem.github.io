@@ -306,6 +306,63 @@ When asked to create a migration:
 
 ---
 
+### AGENTS.md
+- AGENTS.md is a simple, open format for guiding coding agents — think of it as a **README for agents**: a dedicated, predictable place to provide context and instructions to help AI coding agents work on your project.
+- its not the actual agent itself its just the blue print for the agent. github's custom agent is the actual agent.
+- Unlike `README.md` (which targets human contributors), AGENTS.md contains the extra detail agents need: build steps, test commands and conventions that might clutter a README.
+- If skill is like a tool then Agent is like a tool box.
+- **File name:** `AGENTS.md` (placed at the repository root, or nested inside subpackages)
+- - **No required fields.** AGENTS.md is plain Markdown. There is no frontmatter schema, no mandatory sections. You write whatever helps an agent work effectively on your project. Use any headings you like.
+- **Status:** Open standard, [AGENTS.md](https://agents.md/) Agentic AI Foundation, under the Linux Foundation. [AGENTS.md github](https://github.com/agentsmd/agents.md). [Examples](https://agents.md/#examples)
+- **Supported in:** OpenAI Codex, Amp, Cursor, Devin, Jules (Google), Factory, Aider, goose, opencode, Zed, Warp, VS Code, JetBrains Junie, Windsurf, RooCode, Gemini CLI, GitHub Copilot coding agent, Kilo Code, Semgrep, Augment Code, UiPath and others.
+- Agent
+- **Recommended sections to include:**
+  - Project overview
+  - Build and test commands
+  - Code style guidelines
+  - Testing instructions
+  - Security considerations
+  - Commit/PR conventions
+
+- **Conflict resolution:**
+  - The closest `AGENTS.md` to the file being edited takes precedence.
+  - Explicit user chat prompts override everything.
+
+- **Monorepo support:** Place a separate `AGENTS.md` inside each package. Agents automatically read the nearest file in the directory tree, so each subproject can have tailored instructions.
+
+- **Example:**
+```markdown
+# AGENTS.md
+
+## Setup commands
+
+- Install deps: `pnpm install`
+- Start dev server: `pnpm dev`
+- Run tests: `pnpm test`
+
+## Code style
+
+- TypeScript strict mode
+- Single quotes, no semicolons
+- Use functional patterns where possible
+
+## PR instructions
+
+- Title format: `[<project_name>] <Title>`
+- Always run `pnpm lint` and `pnpm test` before committing.
+```
+
+- **When to use:**
+  - Providing project-specific context that any coding agent needs to work on your repo
+  - Encoding build, test and style conventions once so every agent picks them up automatically
+  - Monorepos where individual packages need different instructions
+
+- **When NOT to use:**
+  - When you need structured, schema-validated metadata (AGENTS.md has no schema)
+  - When you need capability files that teach an agent *how* to perform a reusable task across projects (use Agent Skills / SKILL.md instead)
+
+---
+
 ### Custom Agents
 - Main differentiator is when you dont have a well defined structured series of step. 
 - Custom agents are specialized versions of the Copilot coding agent, *configured with* a **defined persona**, **scope**, **memory** and **tool access**. 
@@ -377,63 +434,6 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 - "Code review agent" for automated PR reviews
 - "Bug fixer agent" for debugging workflows
 - "Documentation specialist" for generating docs
-
----
-
-### AGENTS.md
-- AGENTS.md is a simple, open format for guiding coding agents — think of it as a **README for agents**: a dedicated, predictable place to provide context and instructions to help AI coding agents work on your project.
-- its not the actual agent itself its just the blue print for the agent. github's custom agent is the actual agent.
-- Unlike `README.md` (which targets human contributors), AGENTS.md contains the extra detail agents need: build steps, test commands and conventions that might clutter a README.
-- If skill is like a tool then Agent is like a tool box.
-- **File name:** `AGENTS.md` (placed at the repository root, or nested inside subpackages)
-- - **No required fields.** AGENTS.md is plain Markdown. There is no frontmatter schema, no mandatory sections. You write whatever helps an agent work effectively on your project. Use any headings you like.
-- **Status:** Open standard, [AGENTS.md](https://agents.md/) Agentic AI Foundation, under the Linux Foundation. [AGENTS.md github](https://github.com/agentsmd/agents.md). [Examples](https://agents.md/#examples)
-- **Supported in:** OpenAI Codex, Amp, Cursor, Devin, Jules (Google), Factory, Aider, goose, opencode, Zed, Warp, VS Code, JetBrains Junie, Windsurf, RooCode, Gemini CLI, GitHub Copilot coding agent, Kilo Code, Semgrep, Augment Code, UiPath and others.
-- Agent
-- **Recommended sections to include:**
-  - Project overview
-  - Build and test commands
-  - Code style guidelines
-  - Testing instructions
-  - Security considerations
-  - Commit/PR conventions
-
-- **Conflict resolution:**
-  - The closest `AGENTS.md` to the file being edited takes precedence.
-  - Explicit user chat prompts override everything.
-
-- **Monorepo support:** Place a separate `AGENTS.md` inside each package. Agents automatically read the nearest file in the directory tree, so each subproject can have tailored instructions.
-
-- **Example:**
-```markdown
-# AGENTS.md
-
-## Setup commands
-
-- Install deps: `pnpm install`
-- Start dev server: `pnpm dev`
-- Run tests: `pnpm test`
-
-## Code style
-
-- TypeScript strict mode
-- Single quotes, no semicolons
-- Use functional patterns where possible
-
-## PR instructions
-
-- Title format: `[<project_name>] <Title>`
-- Always run `pnpm lint` and `pnpm test` before committing.
-```
-
-- **When to use:**
-  - Providing project-specific context that any coding agent needs to work on your repo
-  - Encoding build, test and style conventions once so every agent picks them up automatically
-  - Monorepos where individual packages need different instructions
-
-- **When NOT to use:**
-  - When you need structured, schema-validated metadata (AGENTS.md has no schema)
-  - When you need capability files that teach an agent *how* to perform a reusable task across projects (use Agent Skills / SKILL.md instead)
 
 ---
 
