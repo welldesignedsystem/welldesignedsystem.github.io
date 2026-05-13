@@ -1,5 +1,5 @@
 +++
-date = '2026-04-10T13:00:00+10:00'
+date = '2026-04-11T13:00:00+10:00'
 draft = false
 title = 'GitHub Copilot Preso'
 tags = ['GitHub', 'Copilot', 'AI', 'Prompting', 'DevTools', 'Agents', 'LLM']
