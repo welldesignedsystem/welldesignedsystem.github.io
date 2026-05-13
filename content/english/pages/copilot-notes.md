@@ -1,6 +1,6 @@
 +++
 date = '2026-04-10T13:00:00+10:00'
-draft = true
+draft = false
 title = 'GitHub Copilot Notes'
 tags = ['GitHub', 'Copilot', 'AI', 'Prompting', 'DevTools', 'Agents', 'LLM']
 summary = "GitHub Copilot and customization instructions together unlocks a structured, repeatable way to guide AI assistance across your codebase—covering custom instructions, reusable prompt files, agent mode and extensible skills for end-to-end AI-driven workflows."
