@@ -26,10 +26,10 @@ weight = 2
 # name = "Ach-Iyy"
 # url = "/resume/ach-iyy"
 
-#[[main]]
-#name = "Elements"
-#url = "/elements"
-#weight = 3
+# [[main]]
+# name = "Elements"
+# url = "/elements"
+# weight = 3
 
 [[main]]
 weight = 4
@@ -50,10 +50,10 @@ parent = "Pages"
 name = "Categories"
 url = "/categories"
 
-#[[main]]
-#parent = "Pages"
-#name = "404 Page"
-#url = "/404"
+# [[main]]
+# parent = "Pages"
+# name = "404 Page"
+# url = "/404"
 
 # footer menu
 [[footer]]
