@@ -241,8 +241,8 @@ Prompt files are reusable, on-demand task prompts stored in your repository. Unl
 ### Agent Skills
 - Standardized approach unlike prompt files [read more](https://agentskills.io/specification) 
 - Agent Skills are reusable, shareable capability files that teach compatible tools how to perform a specific task.
-- Agent Plugin is like an external ability Skill is more like an internal ability.
-- If Agent skill is like a tool then Agent is like a tool box.
+- Agent Plugin is like an External Ability, Skill is more like an internal ability.
+- If Agent Skill is like a tool then Agent is like a tool box.
 - Unlike prompt files, skills can be automatically invoked based on intent — you don't need to explicitly call them every time.
 - **File location:** project skills live under 
 - Project Specific
