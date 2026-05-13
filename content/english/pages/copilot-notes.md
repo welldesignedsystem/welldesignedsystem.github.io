@@ -275,13 +275,13 @@ Prompt files are reusable, on-demand task prompts stored in your repository. Unl
 - Manual invocation via slash commands (`/skill-name`) is not part of the Agent Skills specification — support depends on the client implementation.
 
 **When to use:**
-- Encoding reusable, shareable expertise (e.g. "how we write migrations", "our PR review checklist")
+- Encoding reusable, shareable expertise (e.g. "how we write migrations (mainframe cobol)", "our PR review checklist")
 - Capabilities that should be available across sessions without manual invocation
 - Sharing consistent workflows across team members or tools
 
 **When NOT to use:**
 - For one-off tasks (use prompt files instead)
-- When you need dynamic user input or variables (use prompt files)
+- When you need dynamic user input or variables (use prompt files) - otherwise it depends on the client implementation.
 - When you need to control mode, tools, or model settings (use prompt files)
 
 **Example:**
@@ -387,7 +387,7 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 - If skill is like a tool then Agent is like a tool box.
 - **File name:** `AGENTS.md` (placed at the repository root, or nested inside subpackages)
 - **Format:** Plain Markdown — no frontmatter, no required fields, no special syntax. Use any headings you like.
-- **Status:** Open standard, stewarded by the [Agentic AI Foundation](https://aaif.io) under the Linux Foundation. [AGENTS.md github](https://github.com/agentsmd/agents.md). [Examples](https://agents.md/#examples)
+- **Status:** Open standard, [AGENTS.md](https://agents.md/) Agentic AI Foundation, under the Linux Foundation. [AGENTS.md github](https://github.com/agentsmd/agents.md). [Examples](https://agents.md/#examples)
 - **Supported in:** OpenAI Codex, Amp, Cursor, Devin, Jules (Google), Factory, Aider, goose, opencode, Zed, Warp, VS Code, JetBrains Junie, Windsurf, RooCode, Gemini CLI, GitHub Copilot coding agent, Kilo Code, Semgrep, Augment Code, UiPath and others.
 - **No required fields.** AGENTS.md is plain Markdown. There is no frontmatter schema, no mandatory sections. You write whatever helps an agent work effectively on your project.
 - **Recommended sections to include:**
