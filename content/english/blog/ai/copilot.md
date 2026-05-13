@@ -390,7 +390,6 @@ When asked to create a migration:
 ### AGENTS.md
 - AGENTS.md is a simple, open format for guiding coding agents — think of it as a **README for agents**: a dedicated, predictable place to provide context and instructions to help AI coding agents work on your project.
 - Unlike `README.md` (which targets human contributors), AGENTS.md contains the extra detail agents need: build steps, test commands and conventions that might clutter a README.
-- If skill is like a tool then Agent is like a tool box.
 - **File name:** `AGENTS.md` (placed at the repository root, or nested inside subpackages)
 - **Format:** Plain Markdown — no frontmatter, no required fields, no special syntax. Use any headings you like.
 - **Status:** Open standard, stewarded by the [Agentic AI Foundation](https://aaif.io) under the Linux Foundation. [AGENTS.md github](https://github.com/agentsmd/agents.md). [Examples](https://agents.md/#examples)
@@ -444,6 +443,7 @@ When asked to create a migration:
 ---
 
 ### Custom Agents
+- If skill is like a tool then Agent is like a tool box.
 - Main differentiator is when you dont have a well defined structured series of step. 
 - Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, memory and tool access. 
 - ability to iterate, decide, select and use tools, use memory, Reason 
