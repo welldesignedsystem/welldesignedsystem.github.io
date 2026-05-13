@@ -382,13 +382,14 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 
 ### AGENTS.md
 - AGENTS.md is a simple, open format for guiding coding agents — think of it as a **README for agents**: a dedicated, predictable place to provide context and instructions to help AI coding agents work on your project.
+- its not the actual agent itself its just the blue print for the agent. github's custom agent is the actual agent.
 - Unlike `README.md` (which targets human contributors), AGENTS.md contains the extra detail agents need: build steps, test commands and conventions that might clutter a README.
 - If skill is like a tool then Agent is like a tool box.
 - **File name:** `AGENTS.md` (placed at the repository root, or nested inside subpackages)
-- **Format:** Plain Markdown — no frontmatter, no required fields, no special syntax. Use any headings you like.
+- - **No required fields.** AGENTS.md is plain Markdown. There is no frontmatter schema, no mandatory sections. You write whatever helps an agent work effectively on your project. Use any headings you like.
 - **Status:** Open standard, [AGENTS.md](https://agents.md/) Agentic AI Foundation, under the Linux Foundation. [AGENTS.md github](https://github.com/agentsmd/agents.md). [Examples](https://agents.md/#examples)
 - **Supported in:** OpenAI Codex, Amp, Cursor, Devin, Jules (Google), Factory, Aider, goose, opencode, Zed, Warp, VS Code, JetBrains Junie, Windsurf, RooCode, Gemini CLI, GitHub Copilot coding agent, Kilo Code, Semgrep, Augment Code, UiPath and others.
-- **No required fields.** AGENTS.md is plain Markdown. There is no frontmatter schema, no mandatory sections. You write whatever helps an agent work effectively on your project.
+- Agent
 - **Recommended sections to include:**
   - Project overview
   - Build and test commands
