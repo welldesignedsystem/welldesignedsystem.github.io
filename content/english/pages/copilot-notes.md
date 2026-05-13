@@ -239,20 +239,19 @@ Prompt files are reusable, on-demand task prompts stored in your repository. Unl
 ---
 
 ### Agent Skills
-- Standardized approach unlike prompt files [read more](https://agentskills.io/specification) 
-- Agent Skills are reusable, shareable capability files that teach compatible tools how to perform a specific task.
-- Agent Plugin is like an External Ability, Skill is more like an internal ability.
+- Standardized approach, find the spec in [agentskills.io](https://agentskills.io/specification) 
+- Agent Skills are reusable **capability files** that **teach compatible tools how to perform a specific task**.
 - If Agent Skill is like a tool then Agent is like a tool box.
-- Unlike prompt files, skills can be automatically invoked based on intent — you don't need to explicitly call them every time.
-- **File location:** project skills live under 
-- Project Specific
-  - .github/skills/<<skill-name>>/SKILL.md
-  - .claude/skills/<<skill-name>>/SKILL.md
-  - .agents/skills/<<skill-name>>/SKILL.md
-- Personal (Global)
-  - ~/.copilot/skills/<<skill-name>>/SKILL.md
-  - ~/.claude/skills/<<skill-name>>/SKILL.md
-  - ~/.agents/skills/<<skill-name>>/SKILL.md
+- Unlike prompt files, **skills can be automatically invoked based on intent** — **you don't need to explicitly call them every time**.
+- **File location:** 
+  - **Project Specific**
+    - .github/skills/<<skill-name>>/SKILL.md
+    - .claude/skills/<<skill-name>>/SKILL.md
+    - .agents/skills/<<skill-name>>/SKILL.md
+  - **Personal (Global)**
+    - ~/.copilot/skills/<<skill-name>>/SKILL.md
+    - ~/.claude/skills/<<skill-name>>/SKILL.md
+    - ~/.agents/skills/<<skill-name>>/SKILL.md
 - **File extension:** `.md` (always named `SKILL.md`)
 - **Supported in:** GitHub Copilot cloud agent, Copilot CLI, VS Code agent mode, Claude Code and other compatible agent implementations.
 - **Frontmatter fields:**
@@ -268,7 +267,7 @@ Prompt files are reusable, on-demand task prompts stored in your repository. Unl
 | `user-invocable` | No | Controls whether the skill appears in the slash command menu. |
 | `disable-model-invocation` | No | Prevents automatic skill invocation based on intent matching when set to `true`. |
 
-- Skills do **not** support prompt-file fields such as `agent`, `mode`, `tools`, or `model`. Skills also do not support dynamic input variables (`${input:...}`).
+- Skills do **not** support prompt-file fields such as `agent`, `mode` or `model`. Skills also do not support dynamic input variables (`${input:...}`).
 - **Progressive Loading/Progressive Disclosure:** Only the `name` and `description` frontmatter fields are loaded at startup (~100 tokens). The full skill body is loaded when the skill is activated and any referenced files (scripts, references, assets) are loaded only when required.
 
 **How to invoke:**
