@@ -308,9 +308,9 @@ When asked to create a migration:
 
 ### Custom Agents
 - Main differentiator is when you dont have a well defined structured series of step. 
-- Custom agents are specialized versions of the Copilot coding agent, configured with a defined persona, scope, memory and tool access. 
-- ability to iterate, decide, select and use tools, use memory, Reason 
-- They maintain their full configuration throughout an entire autonomous session — reading files, searching the codebase, editing files and opening pull requests.
+- Custom agents are specialized versions of the Copilot coding agent, *configured with* a **defined persona**, **scope**, **memory** and **tool access**. 
+- ability to **iterate**, **decide**, **select and use tools**, **use memory**, **Reason** 
+- They maintain their **full configuration throughout an entire autonomous session** — reading files, searching the codebase, editing files and opening pull requests.
 - The distinction:
   - Custom instructions shape all interactions broadly
   - Prompt files execute a one-time task
@@ -319,7 +319,6 @@ When asked to create a migration:
   - Repository agents: `.github/agents/` (must be committed to the default branch to appear in the UI at `github.com/copilot/agents`)
   - VS Code local/user agents: configured via `chat.agentFilesLocations` setting
 - **File extension:** `.agent.md`
-- **Note:** Custom agents were previously called "custom chat modes" in VS Code (files named `.chatmode.md`). The terminology was updated to `.agent.md`. If you have existing `.chatmode.md` files, rename them to `.agent.md`.
 
 **Frontmatter fields:**
 
@@ -345,7 +344,7 @@ handoffs:                                  # Optional: transition to another age
 | `model` | Optional. Specify preferred model(s) in priority order. |
 | `handoffs` | Optional. Define transitions to other agents. `send: true` auto-submits the handoff prompt; `send: false` pre-fills it for the user to review. |
 
-The body of the file is the agent's system prompt. It defines the agent's role, capabilities and explicit limitations. A well-designed agent profile always includes a clear "do NOT" section to prevent scope creep.
+The body of the file is the agent's system prompt. It defines the agent's role, capabilities and explicit limitations. A well-designed agent profile **always includes a clear "do NOT" section to prevent scope creep.**
 
 **How to use a custom agent (GitHub cloud agent):**
 1. Commit the `.agent.md` file to the default branch
@@ -438,8 +437,8 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
 ---
 
 ### Agent Plugins
-
-- Agent plugins are prepackaged bundles of chat customizations that you can discover and install from plugin marketplaces in Visual Studio Code. A single plugin can provide any combination of slash commands, agent skills, custom agents, hooks and MCP servers.
+- instructions [here](https://code.visualstudio.com/docs/copilot/customization/agent-plugins#_configure-plugin-marketplaces)
+- Agent plugins are prepackaged bundles of chat customizations that you can discover and install from [plugin marketplaces in Visual Studio Code](https://github.com/github/copilot-plugins). A single plugin can provide any combination of slash commands, agent skills, custom agents, hooks and MCP servers.
 - Plugin is like an external ability Skill is more like an internal ability.
 - Plugins work alongside your locally defined customizations. When you install a plugin, its commands, skills, agents, hooks and MCP servers appear in chat.
 - **Note:** Agent plugins are currently in preview. Enable or disable support for agent plugins with the `chat.plugins.enabled` setting.
@@ -469,8 +468,6 @@ The body of the file is the agent's system prompt. It defines the agent's role, 
     └── .mcp.json                # MCP server definitions
     ```
 
-- Once installed, plugin-provided customizations appear alongside your locally defined ones. For example, skills from a plugin show up in the Configure Skills menu and MCP servers from a plugin appear in the MCP server list.
-- **Caution:** Plugins can include hooks and MCP servers that run code on your machine. Review the plugin contents and publisher before installing, especially for plugins from community marketplaces.
 - [Creating plugin for Microsoft 365 Agent Plugin Toolkit](https://marketplace.visualstudio.com/items?itemName=TeamsDevApp.ms-teams-vscode-extension)
 #### Discovering and installing plugins
 
@@ -492,25 +489,6 @@ Marketplaces are Git repositories that contain plugin definitions. You can refer
 - HTTPS git remote: a full URL ending in `.git`
 - SCP-style git remote: SSH-style references
 - file URI: a `file:///` path to a marketplace repository already cloned on disk
-
-#### Managing installed plugins
-
-The **Agent Plugins - Installed** view in the Extensions view shows the plugins you have installed. From this view, you can enable, disable, or uninstall plugins.
-
-You can also manage installed plugins from the Chat view by selecting the gear icon > Plugins.
-
-Plugins sourced from npm or PyPI never update automatically. Instead, they show an Update button in the Extensions view. Selecting the button prompts you to confirm before running the install command.
-
-#### Cross-tool compatibility
-
-The plugin format is shared between VS Code, GitHub Copilot CLI and Claude Code. A single plugin repository can work across all three tools.
-
-Key differences to be aware of across tools:
-
-- **Hook file location**: Claude-format plugins expect hooks in `hooks/hooks.json`, while Copilot-format plugins use `hooks.json` at the root. VS Code detects the format automatically.
-- **Plugin root token**: Claude-format plugins use `${CLAUDE_PLUGIN_ROOT}` to reference files within the plugin directory. This token is not available in Copilot-format plugins.
-- **Skill naming**: All tools require plain kebab-case names in `SKILL.md`. Namespace prefixes cause silent load failures.
-
 
 **When to use:**
 - Standardized workflows you want to trigger manually
