@@ -319,7 +319,7 @@ Prompt files (currently **public preview**, subject to change) are reusable, on-
 ---
 
 ### Agent Skills
-- Standardized approach unlike prompt files [read more](https://agentskills.io/specification) 
+- Standardized approach unlike prompt files [agentskills.io](https://agentskills.io/specification) 
 - Agent Skills are reusable, shareable capability files that teach compatible tools how to perform a specific task.
 - Agent Plugin is like an external ability Skill is more like an internal ability.
 - If Agent skill is like a tool then Agent is like a tool box.
