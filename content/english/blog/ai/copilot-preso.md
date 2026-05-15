@@ -373,8 +373,7 @@ When asked to create a migration:
 - Main differentiator is when you dont have a well defined structured series of step. 
 - Custom agents are specialized versions of the Copilot coding agent, *configured with* a **defined persona**, **scope**, **memory** and **tool access**. 
 - ability to **iterate**, **decide**, **select and use tools**, **use memory**, **Reason** 
-- They maintain their **full configuration throughout an entire autonomous session** — reading files, searching the codebase, editing files and opening pull requests.
-  - Custom agents are **selected for a specific task and maintain their configuration for the entire autonomous workflow**
+- - they are **selected for a specific task and maintain their configuration for the entire autonomous workflow**
 - **File location:**
   - Repository agents: `.github/agents/` (must be committed to the default branch to appear in the UI at `github.com/copilot/agents`)
   - VS Code local/user agents: configured via `chat.agentFilesLocations` setting
