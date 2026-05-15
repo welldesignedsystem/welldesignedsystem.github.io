@@ -107,7 +107,7 @@ https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 
 ## Different Levels of Customization
 
-Custom instructions are structured guidance that tells GitHub Copilot how to behave for a team, an individual, or a repository. They are not prompts for a single response; they are persistent preferences and rules that shape the assistant across sessions.
+Custom instructions are structured guidance that tells GitHub Copilot how to behave for a team, an individual, or a repository. Context Engineering.
 
 ### Organization instructions
 
@@ -126,7 +126,7 @@ Custom instructions are structured guidance that tells GitHub Copilot how to beh
 ### Personal instructions
 
 - Applies to only you and helps quick personal preferences
-- use the copilot chat to ask it to create a personal instruction (e.g. "All conversation with me must be in Spanish but use only English for any Code related stuffs like comments." a file got created - ~/.config/Code/User/prompts/communication.instructions.md)
+- "All conversation with me must be in Spanish but use only English for any Code related stuffs like comments." a file got created - ~/.config/Code/User/prompts/communication.instructions.md
 - To make it reflect in copilot - Set on GitHub.com under your profile picture → "Personal instructions".
 - [Refer](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-personal-instructions)
 - Usecases:
