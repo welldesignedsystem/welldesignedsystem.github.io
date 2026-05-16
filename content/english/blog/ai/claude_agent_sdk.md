@@ -1,12 +1,10 @@
 +++
-date = '2026-05-17T12:00:00+10:00'
+date = '2026-05-16T12:01:00+10:00'
 draft = false
 title = 'Claude Agent SDK'
 tags = ['LLM', 'AI', 'Anthropic', 'Claude', 'Agent SDK', 'Design Patterns']
-summary = "Comprehensive reference for building production AI agents with the Claude Agent SDK — covering the agent loop, sessions, tools, MCP, hooks, subagents, permissions, context management, structured output, streaming, and deployment."
+summary = "Reference for building production AI agents with the Claude Agent SDK, the agent loop, sessions, tools, MCP, hooks, subagents, permissions, context management, structured output, streaming and deployment."
 +++
-
-The Claude Agent SDK lets you embed Claude Code's autonomous agent loop directly into your own Python or TypeScript applications. It gives you the same tools, context management and execution model that power Claude Code — programmatically, with full control over permissions, cost limits, sessions and output.
 
 ---
 
@@ -16,16 +14,13 @@ Before the Agent SDK, connecting Claude to real-world tasks meant implementing y
 
 The SDK is available at:
 - **Python:** `pip install claude-agent-sdk` — [GitHub](https://github.com/anthropics/claude-agent-sdk-python)
-- **TypeScript:** `npm install @anthropic-ai/claude-agent-sdk` — [GitHub](https://github.com/anthropics/claude-agent-sdk-typescript)
-
-> **Billing note (from June 15, 2026):** Agent SDK and `claude -p` usage on subscription plans draws from a separate monthly Agent SDK credit, distinct from interactive usage limits.
 
 ---
 
 ## Core Concepts
 
 ### What the Agent SDK Is
-- The SDK is a **library** you import into your application — your process runs the agent loop.
+- SDK is a **library** you import into your application — your process runs the agent loop.
 - It packages the same execution model that powers the Claude Code CLI as a programmable API.
 - It is distinct from **Managed Agents**, where Anthropic's infrastructure runs the agent and your app talks to it over REST.
 
@@ -56,9 +51,6 @@ A session is the conversation history accumulated during an agent run. The SDK w
 ```bash
 # Python
 pip install claude-agent-sdk
-
-# TypeScript (bundles a native Claude Code binary)
-npm install @anthropic-ai/claude-agent-sdk
 ```
 
 **Authentication:**
