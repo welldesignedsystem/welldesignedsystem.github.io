@@ -6,7 +6,7 @@ tags: ['SHM', 'DNV', 'ABS', 'Structural Health Monitoring', 'Vessel Monitoring',
 summary: "Smart Structural Health Monitoring "
 ---
 
-# ABS Smart Structural Health Monitoring  Tier Description:
+## Sensor-Based Structural Health Monitoring - ABS Smart Structural Health Monitoring  Tier Description:
 
 A vessel-specific load and operation-based structural health estimation. The following are the requirements for, data collection and analysis to be employed:
 
