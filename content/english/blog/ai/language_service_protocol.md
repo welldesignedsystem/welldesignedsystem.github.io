@@ -13,6 +13,16 @@ Specification: [microsoft.github.io/language-server-protocol](https://microsoft.
 
 ---
 
+## LSP vs MCP: How They Work
+
+LSP acts as a universal translator between your editor and the programming language you are using. Before LSP, every text editor had to be explicitly coded to understand every language. With LSP, if a language such as Rust provides an LSP server, any editor that supports LSP can offer Rust auto-complete, go-to-definition, diagnostics, formatting and other language-aware features.
+
+MCP acts as a universal translator for AI agents. Before MCP, each AI application had to be custom-coded to connect with specific APIs, databases, file systems or developer tools. With MCP, an AI agent such as Claude can discover and query any service that runs an MCP server, using standardised instructions for actions like browsing files, running tests, fetching data or calling external tools.
+
+The key difference is the user of the protocol. **LSP helps editors understand code. MCP helps AI agents understand and act on external systems.**
+
+---
+
 ## The M×N Problem
 
 ### Before LSP
