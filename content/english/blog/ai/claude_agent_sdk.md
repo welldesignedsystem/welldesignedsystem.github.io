@@ -1,5 +1,5 @@
 +++
-date = '2026-05-16T12:01:00+10:00'
+date = '2026-05-16T11:01:00+10:00'
 draft = false
 title = 'Claude Agent SDK'
 tags = ['LLM', 'AI', 'Anthropic', 'Claude', 'Agent SDK', 'Design Patterns']
@@ -94,18 +94,6 @@ async def main():
 asyncio.run(main())
 ```
 
-```typescript
-// TypeScript
-import { query } from "@anthropic-ai/claude-agent-sdk";
-
-for await (const message of query({
-  prompt: "Find and fix the bug in auth.py",
-  options: { allowedTools: ["Read", "Edit", "Bash"] }
-})) {
-  console.log(message);
-}
-```
-
 ---
 
 ## Built-in Tools
@@ -133,7 +121,7 @@ The SDK ships with all the tools that power Claude Code. No implementation requi
 
 ## ClaudeAgentOptions — Full Reference
 
-All agent behaviour is configured via `ClaudeAgentOptions` (Python) or `Options` (TypeScript).
+All agent behaviour is configured via `ClaudeAgentOptions` (Python).
 
 ```python
 options = ClaudeAgentOptions(
