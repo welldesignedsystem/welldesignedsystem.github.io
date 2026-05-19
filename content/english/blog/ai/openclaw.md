@@ -14,7 +14,11 @@ The AI that actually does things. A complete guide to OpenClaw — what it is, h
 
 OpenClaw is not a chatbot wrapper. It is a full agent runtime: a persistent, self-hosted Node.js process that turns an LLM into a stateful, tool-using assistant. It runs as a daemon on your machine, connects to 24+ messaging platforms, executes real actions (shell commands, file writes, browser automation, API calls), and maintains memory across every conversation.
 
-Written in TypeScript (with a Swift component for native macOS/iOS), licensed MIT, hosted at `github.com/openclaw/openclaw`. As of May 2026 the repository has **369K+ stars**, 76K+ forks, and 136 releases — making it one of the fastest-growing open-source repositories in GitHub history. The project was created by Austrian developer **Peter Steinberger** as a personal side project in November 2025, originally under the name **Clawdbot** (a pun on Claude that Anthropic's legal team took issue with). It was briefly renamed **Moltbot** in late January 2026 before settling on **OpenClaw**. In February 2026, Steinberger joined OpenAI, and a non-profit foundation was announced to steward the project going forward.
+Written in TypeScript (with a Swift component for native macOS/iOS), licensed MIT, hosted at `github.com/openclaw/openclaw`. 
+- As of May 2026 the repository has **369K+ stars**, 76K+ forks, and 136 releases — making it one of the fastest-growing open-source repositories in GitHub history. 
+- The project was created by Austrian developer **Peter Steinberger** as a personal side project in November 2025, originally under the name **Clawdbot** (a pun on Claude that Anthropic's legal team took issue with). 
+- It was briefly renamed **Moltbot** in late January 2026 before settling on **OpenClaw**. 
+- In February 2026, Steinberger joined OpenAI, and a non-profit foundation was announced to steward the project going forward.
 
 ---
 
@@ -125,13 +129,32 @@ Approved senders go on a local allowlist. Public inbound DMs require explicit op
 
 Each bridge translates platform-specific events into a normalized internal envelope. The Gateway holds exactly one session per platform per host.
 
-| Platform | Protocol / SDK |
-|---|---|
-| WhatsApp | Baileys (web protocol) |
-| Telegram | grammY |
-| Discord, Slack, Signal, iMessage | Respective SDKs |
-| WebChat | Static UI over Gateway WS API |
-| Matrix, Nostr, IRC, Mattermost, Teams, Google Chat, LINE, WeChat, QQ, Zalo, Zalo Personal, Feishu, Nextcloud Talk, Synology Chat, Tlon, Twitch | Various |
+| Platform | What it is | Protocol / SDK |
+|---|---|---|
+| WhatsApp | Chat/messaging via WhatsApp | **Baileys** — a WhatsApp Web protocol client library for Node.js |
+| Telegram | Chat/messaging via Telegram | **grammY** — modern TypeScript/Node.js Telegram bot framework |
+| Discord | Community chat and voice platform | discord.js / similar — popular Node.js Discord libraries |
+| Slack | Team collaboration and chat platform | **@slack/web-api** / Bolt — official Slack SDKs for bots and apps |
+| Signal | Encrypted messaging service | signal-cli or community bridges — CLI/bridge tools for Signal bots |
+| iMessage | Apple messaging on macOS/iOS | macOS native integrations / community bridges |
+| WebChat | Browser-based chat UI | Static UI over Gateway WS API |
+| Matrix | Open standard decentralised chat | matrix-bot-sdk / matrix-js-sdk |
+| Nostr | Decentralised pub/sub social/chat protocol | Nostr client libraries |
+| IRC | Classic chat network protocol | IRC client libraries / adapters |
+| Mattermost | Open source team chat platform | Mattermost SDKs / drivers |
+| Teams | Microsoft team collaboration and chat | Microsoft Bot Framework / Teams SDK |
+| Google Chat | Google Workspace chat service | Google Chat API / SDKs |
+| LINE | Asian messaging platform | LINE Messaging API SDKs |
+| WeChat | Chinese messaging and social platform | WeChat SDKs / web protocol bridges |
+| QQ | Chinese messaging platform | QQ SDKs or community bridges |
+| Zalo | Vietnamese chat and social app | Zalo SDKs |
+| Zalo Personal | Personal version of Zalo chat | Personal Zalo bridges / community tools |
+| Feishu | Chinese enterprise collaboration platform | Feishu (Lark) SDKs |
+| Nextcloud Talk | Self-hosted chat/video meetings | Nextcloud Talk APIs / adapters |
+| Synology Chat | Synology NAS chat application | Synology Chat APIs |
+| Tlon | Specialized or emerging chat protocols | Platform-specific adapters |
+| Twitch | Live streaming chat | tmi.js / Twitch chat adapters |
+| Other | Miscellaneous chat platforms and bridges | Various official or community SDKs and protocol adapters |
 
 ---
 
