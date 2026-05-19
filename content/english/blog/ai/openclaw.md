@@ -31,7 +31,7 @@ Everything flows through a single long-lived Node.js Gateway process. No microse
 ### Gateway Subsystems
 
 The Gateway runs eight core subsystems in parallel:
-**(HHASPCCC)**
+**(H-HAS-CCCP)**
 - **Channel Bridges** — persistent connections to each messaging platform
 - **Session Manager** — owns all conversation state and DM scope rules
 - **Command Queue** — lane-aware FIFO that prevents concurrent agent collisions
@@ -44,7 +44,7 @@ The Gateway runs eight core subsystems in parallel:
 ### Agent Runtime (pi-mono)
 
 The embedded runtime that does the actual inference work (pi-mono was contributed by Mario Zechner):
-**(PTCMSSSS)**
+**(CM-PT-SSSS)**
 - **Prompt Assembly** — builds a dynamic system prompt from many sources each run
 - **Tool Execution** — runs tools between inference rounds (the agentic loop)
 - **Compaction Pipeline** — manages context window as conversations grow
