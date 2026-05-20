@@ -1170,6 +1170,7 @@
       "dns",
       "dns-enumeration",
       "docker",
+      "docker--telegram-setup",
       "docker-architecture",
       "docker-commands-reference",
       "dockerfile-instructions",

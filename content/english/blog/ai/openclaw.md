@@ -80,6 +80,67 @@ openclaw onboard --install-daemon
 
 The `onboard` wizard: gateway setup → workspace creation → channel pairing → initial skill install.
 
+## Docker + Telegram setup
+
+This section shows a pragmatic, example-based way to run OpenClaw in Docker and connect a Telegram bot. Replace the placeholders below with the official image name, environment keys, and configuration values from the OpenClaw docs for production use.
+
+1) Create a Telegram bot
+- Open a chat with BotFather in Telegram.
+- Run `/newbot`, follow the prompts and copy the bot token (looks like `123456:ABC-DEF...`).
+
+2) Prepare environment variables
+- Create a file named `.env` next to your `docker-compose.yml` with at least these variables (use strong tokens):
+
+```env
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token-here
+OPENCLAW_GATEWAY_TOKEN=generate-a-strong-token-here
+TZ=UTC
+```
+
+3) Example `docker-compose.yml` (template)
+- This example uses the official Node image to install `openclaw` at container start. If an official `openclaw` image exists, prefer that instead and remove the install step.
+
+```yaml
+version: "3.8"
+services:
+  openclaw:
+    image: node:20
+    container_name: openclaw
+    restart: unless-stopped
+    volumes:
+      - ./openclaw_workspace:/root/.openclaw/workspace
+    env_file: .env
+    working_dir: /workspace
+    command: /bin/sh -c "npm install -g openclaw@latest && openclaw onboard --install-daemon || openclaw daemon restart"
+    ports:
+      - "18789:18789" # Gateway WS (loopback-only recommended behind a proxy)
+```
+
+4) Start the container
+
+```bash
+docker compose up -d
+# view logs
+docker compose logs -f openclaw
+```
+
+5) Pair Telegram and finish onboarding
+- Run the interactive onboard flow (recommended):
+
+```bash
+docker compose exec openclaw openclaw onboard
+```
+
+- When prompted, choose "Telegram" and paste the `TELEGRAM_BOT_TOKEN` created earlier. The wizard will guide you through webhook vs polling options and pairing codes.
+
+If you prefer non-interactive setup, place the `TELEGRAM_BOT_TOKEN` in your `agent.yaml` or environment (matching the key the OpenClaw release expects) and restart the container. Use the `openclaw pairing approve <channel> <code>` command for inbound approvals when required.
+
+Notes and hardening
+- Use an official OpenClaw Docker image if available (faster startup, smaller surface).
+- Run the container with a non-root user where possible and mount a read-only workspace for skill code if you need extra isolation.
+- Avoid exposing the Gateway port publicly; use a reverse proxy and allowlist domains / IPs.
+- Review `agent.yaml` egress policy and `OPENCLAW_GATEWAY_TOKEN` usage before production.
+
 ---
 
 ## The Gateway Protocol (WebSocket)
