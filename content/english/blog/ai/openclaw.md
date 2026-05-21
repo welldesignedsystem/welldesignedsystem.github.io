@@ -101,10 +101,10 @@ TZ=UTC
 - This example uses the official Node image to install `openclaw` at container start. If an official `openclaw` image exists, prefer that instead and remove the install step.
 
 ```yaml
-version: "3.8"
+version: "3.10"
 services:
   openclaw:
-    image: node:20
+    image: node:22
     container_name: openclaw
     restart: unless-stopped
     volumes:

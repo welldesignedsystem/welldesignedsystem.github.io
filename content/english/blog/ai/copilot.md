@@ -10,7 +10,7 @@ GitHub Copilot and its customization instructions, a powerful framework for stru
 
 ## Overall idea
 
-![Mindmap](https://raw.githubusercontent.com/welldesignedsystem/marco-polo/refs/heads/main/misc/mindmap.svg)
+![Mindmap](https://raw.githubusercontent.com/welldesignedsystem/literate-dollop/refs/heads/main/misc/mindmap.svg)
 
 ## Introduction
 
