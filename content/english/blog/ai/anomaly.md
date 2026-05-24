@@ -6,6 +6,21 @@ tags = ['Anomaly Detection', 'Outlier Detection', 'Machine learning']
 summary = "Comprehensive Guide to mastering Anomaly Detection in Machine Learning"
 +++
 
+## Terminology
+
+| Term | Meaning |
+|------|---------|
+| **Spread / Dispersion** | How far data points are from the center or each other. Low spread = tight cluster, high spread = wide scatter. Measured by variance, std dev, IQR, MAD. |
+| **Outlier / Anomaly** | A data point that differs significantly from the rest — unusual enough to warrant investigation. |
+| **Normal Distribution** | Bell-shaped, symmetric curve where mean = median = mode. Many statistical methods assume this. |
+| **Skewed Distribution** | Asymmetric tail on one side. Mean shifts toward the tail; median is a better center measure. |
+| **Robust** | Not overly affected by outliers or non-normal data. Median and MAD are robust; mean and std dev are not. |
+| **Univariate** | Analyzing one variable at a time (e.g., checking each column for outliers separately). |
+| **Multivariate** | Analyzing multiple variables together — an outlier may only appear unusual when you consider relationships between variables. |
+| **Percentile** | The value below which a given percentage of data falls (e.g., 95th percentile means 95% of values are below it). |
+| **Z-score** | How many standard deviations a value is from the mean. Used to flag outliers when data is normal. |
+| **Standardization / Normalization** | Scaling features so they're comparable — critical when using distance-based methods like kNN, LOF. |
+
 ## Statistical Measures - Descriptive Statistics
 
 ### Mean
