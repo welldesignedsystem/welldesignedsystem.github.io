@@ -130,7 +130,7 @@ The below is used for univariate outlier detection and spread measurement when d
 - [Andrews curves](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/andrews.ipynb) - multivariate data as curves
 
 ### **Distribution Comparison**
-- [Empirical CDF plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/empherical_cdf.ipynb)  - compare distributions
+- [Empirical CDF plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/empirical_cdf.ipynb)  - compare distributions
 - [Kernel Density Estimation (KDE)](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/kde.ipynb) ⭐ - smooth distribution view
 - [Lag plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/lag.ipynb) - time series autocorrelation patterns
 
