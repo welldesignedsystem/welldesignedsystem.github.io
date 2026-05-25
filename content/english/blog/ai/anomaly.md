@@ -105,9 +105,21 @@ The below is used for univariate outlier detection and spread measurement when d
 ## Visualization
 
 ### **Univariate Visualization**
-- [Histograms](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/histogram.ipynb) ⭐ - spot distribution shape, outliers at tails. 
+- [Histograms](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/histogram.ipynb) ⭐ - spot distribution shape, outliers at tails.
+  - **Matplotlib** `plt.hist()` — low-level control, manual styling, more code
+  - **Seaborn** `sns.histplot()` — built-in KDE, pretty defaults, DataFrame/hue support, less code
+  - **Plotly** `px.histogram()` — interactive, hover tooltips, zoom, web-ready
+  - **Pandas** `df.hist()` — quick one-liner from DataFrame, minimal config
+  - **NumPy** `np.histogram()` — compute bin counts/edges only, no plotting; use with Matplotlib
+  - **`np.random.normal(loc, scale, size)`** — `loc` = mean, `scale` = std dev, `size` = sample count. Generates normally distributed random data for testing.
 - [Box plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/boxplot.ipynb) ⭐ - immediate visual of IQR outlier
+  - **Box** = IQR (Q1 to Q3), **line inside** = median
+  - **Whiskers** = extend to furthest point within 1.5×IQR from box edges
+  - **Circles/dots** = outliers beyond the whiskers (Tukey's fences)
 - [Violin plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/boxplot.ipynb) - density + outliers combined
+  - **Violin shape** = mirrored KDE showing full distribution (peaks, skew, gaps)
+  - **Inner lines** = box plot summary (median, IQR) inside the violin
+  - **Reveals what box plots miss** — bimodality, multi-modal distributions, density variations
 - [Q-Q](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/qq.ipynb) plots - check normality assumptions
 - [Time series plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/timeseries.ipynb) ⭐ - contextual anomalies, trends, seasonality
 
