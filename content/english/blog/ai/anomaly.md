@@ -23,6 +23,8 @@ summary = "Comprehensive Guide to mastering Anomaly Detection in Machine Learnin
 
 ## Distribution Types
 
+[Distribution types notebook](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/distribution_types.ipynb) — interactive code for all four distributions below.
+
 | Distribution | Shape | Properties | Used When |
 |-------------|-------|------------|-----------|
 | **Uniform** | Flat, constant height | Every value equally likely, no peaks | Random sampling, simulations, baseline comparisons |
