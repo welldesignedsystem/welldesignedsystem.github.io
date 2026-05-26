@@ -21,6 +21,15 @@ summary = "Comprehensive Guide to mastering Anomaly Detection in Machine Learnin
 | **Z-score** | How many standard deviations a value is from the mean. Used to flag outliers when data is normal. |
 | **Standardization / Normalization** | Scaling features so they're comparable — critical when using distance-based methods like kNN, LOF. |
 
+## Distribution Types
+
+| Distribution | Shape | Properties | Used When |
+|-------------|-------|------------|-----------|
+| **Uniform** | Flat, constant height | Every value equally likely, no peaks | Random sampling, simulations, baseline comparisons |
+| **Normal** | Bell-shaped, symmetric | Mean = median = mode, 68-95-99.7 rule | Natural measurements (height, error), most statistical methods assume this |
+| **Exponential** | Starts high, decays right | Positive skew, memoryless, models waiting times | Time between events (arrivals, failures, requests) |
+| **Lognormal** | Right-skewed, long tail | Logarithm is normal, values are positive | Income, stock prices, property values — cluster low but can spike high |
+
 ## Statistical Measures - Descriptive Statistics
 
 ### Mean
@@ -134,14 +143,14 @@ The below is used for univariate outlier detection and spread measurement when d
 - [Kernel Density Estimation (KDE)](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/kde.ipynb) ⭐ - smooth distribution view
 - [Lag plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/lag.ipynb) - time series autocorrelation patterns
 
-### **Advanced Visual Techniques**
-- Control charts ⭐⭐ (Shewhart, CUSUM, EWMA)
+### Advanced Visual Techniques
+- [Control charts](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/advanced_visual_techniques.ipynb) ⭐⭐ (Shewhart, CUSUM, EWMA)
   - Used extensively in manufacturing
   - Real-time visual monitoring
   - Statistical control limits
-- Mahalanobis distance plots - multivariate outliers
-- Cook's distance - influence plots for regression
-- Residual plots - model-based anomaly visualization
+- [Mahalanobis distance plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/advanced_visual_techniques.ipynb) - multivariate outliers
+- [Cook's distance](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/advanced_visual_techniques.ipynb) - influence plots for regression
+- [Residual plots](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/advanced_visual_techniques.ipynb) - model-based anomaly visualization
 
 ### **Dimensionality Reduction for Visualization**
 - [PCA projection (2D/3D)](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/pca.ipynb)  - visualize high-dimensional outliers
