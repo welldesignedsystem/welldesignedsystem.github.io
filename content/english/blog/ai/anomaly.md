@@ -38,21 +38,33 @@ summary = "Comprehensive Guide to mastering Anomaly Detection in Machine Learnin
 - **What:** Average of all values (sum ÷ count)
 - **Use when:** Normal distributions, no outliers, need interpretability
 - **Don't use when:** Outliers present, skewed data (income, response times)
+- **Formula:**
+
+![mean.png](../img/mean.png)
 
 ### Median
 - **What:** Middle value when sorted (50th percentile)
 - **Use when:** Outliers exist, skewed distributions, need robust center
 - **Don't use when:** Perfect normal data, need mathematical operations, very small samples
+- **Formula:**
+
+![median.png](../img/median.png)
 
 ### Variance
 - **What:** Average squared distance from mean
 - **Use when:** Measuring spread, normal data, statistical modeling
 - **Don't use when:** Outliers present, need interpretable units, heavy-tailed distributions
+- **Formula:**
+
+![variance.png](../img/variance.png)
 
 ### Percentiles
 - **What:** Value below which X% of data falls (e.g., 25th, 95th)
 - **Use when:** Setting thresholds, skewed data, SLA monitoring (p99 latency)
 - **Don't use when:** Small datasets (<30), need smooth math properties
+- **Formula:**
+
+![percentile.png](../img/percentile.png)
 
 ---
 
