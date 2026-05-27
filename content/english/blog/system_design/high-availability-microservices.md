@@ -291,14 +291,18 @@ An idempotent service promises that each request is processed exactly once, such
 
 Transform hard dependencies into soft dependencies where possible. A hard dependency is one whose failure directly causes your service to fail. A soft dependency is one whose failure is compensated for in the application — the workload degrades gracefully but continues to serve its core function.
 
-```go
-func GetRecommendations(ctx context.Context, userID string) (*Recommendations, error) {
-    recs, err := recommendationClient.Fetch(ctx, userID)
-    if err != nil {
-        // Fall back to popular items instead of failing
-        return getPopularItems(ctx, 10)
+```java
+@Service
+public class RecommendationService {
+    private final RecommendationClient recommendationClient;
+
+    public Recommendations getRecommendations(String userId) {
+        try {
+            return recommendationClient.fetch(userId);
+        } catch (Exception e) {
+            return getPopularItems(10); // fall back to popular items
+        }
     }
-    return recs, nil
 }
 ```
 
@@ -340,25 +344,13 @@ When a request fails, the client must decide whether to retry. The retry strateg
 
 **Exponential back-off with jitter.** Back off with progressively longer delays between retries, and add randomised jitter to avoid retry storms (the thundering herd problem).
 
-```go
-func RetryWithBackoff(ctx context.Context, maxRetries int, fn func() error) error {
-    for i := 0; i <= maxRetries; i++ {
-        err := fn()
-        if err == nil {
-            return nil
-        }
-        if i == maxRetries {
-            return err
-        }
-        // Exponential back-off with jitter
-        wait := time.Duration(100*(1<<i)+rand.Intn(50)) * time.Millisecond
-        select {
-        case <-ctx.Done():
-            return ctx.Err()
-        case <-time.After(wait):
-        }
-    }
-    return nil
+```java
+@Retryable(
+    retryFor = {TransientException.class},
+    maxAttempts = 4,
+    backoff = @Backoff(delay = 100, multiplier = 2, jitter = 50))
+public Result callService(String input) {
+    return client.fetch(input);
 }
 ```
 
@@ -449,47 +441,60 @@ Use CloudWatch anomaly detection on call error rates, SLO latency metrics, and l
 
 Prevent cascading failures by failing fast when a downstream service is unhealthy:
 
-```go
-type CircuitBreaker struct {
-    mu            sync.Mutex
-    state         int // 0=closed, 1=open, 2=half-open
-    failureCount  int
-    threshold     int
-    timeout       time.Duration
-    lastFailure   time.Time
-}
+```java
+public class CircuitBreaker {
+    private final Lock lock = new ReentrantLock();
+    private int state = 0; // 0=closed, 1=open, 2=half-open
+    private int failureCount;
+    private final int threshold;
+    private final long timeoutMs;
+    private long lastFailureTime;
 
-func (cb *CircuitBreaker) Call(fn func() (interface{}, error)) (interface{}, error) {
-    cb.mu.Lock()
-    if cb.state == 1 { // open
-        if time.Since(cb.lastFailure) > cb.timeout {
-            cb.state = 2 // half-open
-        } else {
-            cb.mu.Unlock()
-            return nil, errors.New("circuit breaker open")
+    public CircuitBreaker(int threshold, long timeoutMs) {
+        this.threshold = threshold;
+        this.timeoutMs = timeoutMs;
+    }
+
+    public <T> T call(Supplier<T> fn) throws Exception {
+        lock.lock();
+        try {
+            if (state == 1) { // open
+                if (System.currentTimeMillis() - lastFailureTime > timeoutMs) {
+                    state = 2; // half-open
+                } else {
+                    throw new RuntimeException("circuit breaker open");
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+
+        try {
+            T result = fn.get();
+            lock.lock();
+            try {
+                failureCount = 0;
+                if (state == 2) {
+                    state = 0; // reset to closed
+                }
+            } finally {
+                lock.unlock();
+            }
+            return result;
+        } catch (Exception e) {
+            lock.lock();
+            try {
+                failureCount++;
+                if (failureCount >= threshold) {
+                    state = 1; // open
+                    lastFailureTime = System.currentTimeMillis();
+                }
+            } finally {
+                lock.unlock();
+            }
+            throw e;
         }
     }
-    cb.mu.Unlock()
-
-    result, err := fn()
-    if err != nil {
-        cb.mu.Lock()
-        cb.failureCount++
-        if cb.failureCount >= cb.threshold {
-            cb.state = 1
-            cb.lastFailure = time.Now()
-        }
-        cb.mu.Unlock()
-        return nil, err
-    }
-
-    cb.mu.Lock()
-    cb.failureCount = 0
-    if cb.state == 2 {
-        cb.state = 0 // reset to closed
-    }
-    cb.mu.Unlock()
-    return result, nil
 }
 ```
 
@@ -636,23 +641,32 @@ Store session data in external caches instead of local memory:
 - **Amazon Cognito** to decouple user identity and profile data from application code.
 - **AWS Secrets Manager** to decouple secrets from application code.
 
-```go
-// Example: session middleware using Redis
-func SessionMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        token := r.Header.Get("X-Session-Token")
-        if token == "" {
-            http.Error(w, "missing session", http.StatusUnauthorized)
-            return
+```java
+@Component
+public class SessionInterceptor implements HandlerInterceptor {
+    private final StringRedisTemplate redis;
+
+    public SessionInterceptor(StringRedisTemplate redis) {
+        this.redis = redis;
+    }
+
+    @Override
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response,
+                             Object handler) throws Exception {
+        String token = request.getHeader("X-Session-Token");
+        if (token == null || token.isEmpty()) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "missing session");
+            return false;
         }
-        data, err := redisClient.Get(ctx, "session:"+token).Result()
-        if err != nil {
-            http.Error(w, "invalid session", http.StatusUnauthorized)
-            return
+        String data = redis.opsForValue().get("session:" + token);
+        if (data == null) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "invalid session");
+            return false;
         }
-        ctx := context.WithValue(r.Context(), "session", data)
-        next.ServeHTTP(w, r.WithContext(ctx))
-    })
+        request.setAttribute("session", data);
+        return true;
+    }
 }
 ```
 
@@ -726,19 +740,32 @@ You cannot operate a highly available system without deep observability.
 
 Every service must expose a `/health` endpoint that checks its critical dependencies:
 
-```go
-func HealthHandler(db *sql.DB, redis *redis.Client) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-        if err := db.PingContext(r.Context()); err != nil {
-            http.Error(w, "db unhealthy", http.StatusServiceUnavailable)
-            return
+```java
+@Component
+public class HealthCheck implements HealthIndicator {
+    private final DataSource dataSource;
+    private final StringRedisTemplate redis;
+
+    public HealthCheck(DataSource dataSource, StringRedisTemplate redis) {
+        this.dataSource = dataSource;
+        this.redis = redis;
+    }
+
+    @Override
+    public Health health() {
+        try (Connection c = dataSource.getConnection()) {
+            if (!c.isValid(1)) {
+                return Health.down().withDetail("db", "unhealthy").build();
+            }
+        } catch (Exception e) {
+            return Health.down().withDetail("db", e.getMessage()).build();
         }
-        if err := redis.Ping(r.Context()).Err(); err != nil {
-            http.Error(w, "cache unhealthy", http.StatusServiceUnavailable)
-            return
+        try {
+            redis.opsForValue().get("health");
+        } catch (Exception e) {
+            return Health.down().withDetail("cache", e.getMessage()).build();
         }
-        w.WriteHeader(http.StatusOK)
-        w.Write([]byte(`{"status":"healthy"}`))
+        return Health.up().build();
     }
 }
 ```
@@ -791,14 +818,14 @@ resource "aws_cloudwatch_metric_alarm" "high_errors" {
 
 ### Distributed Tracing with AWS X-Ray
 
-```go
-import "github.com/aws/aws-xray-sdk-go/xray"
+```java
+@Configuration
+public class XRayConfig {
 
-func main() {
-    xray.Configure(xray.Config{
-        ServiceVersion: "1.2.3",
-    })
-    http.Handle("/orders", xray.Handler(xray.NewFixedSegmentNamer("orders-svc"), orderHandler))
+    @Bean
+    public Filter tracingFilter() {
+        return new AWSXRayServletFilter("orders-svc");
+    }
 }
 ```
 
