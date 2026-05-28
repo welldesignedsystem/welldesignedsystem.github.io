@@ -25,20 +25,20 @@ The AWS Well-Architected Reliability Pillar identifies five design principles fo
 
 **1. Automatically recover from failure.** Monitor KPIs that measure business value (not just technical metrics). Run automation when a threshold is breached. With more sophisticated automation it is possible to anticipate and remediate failures before they occur.
 
-For example, in telecom and fintech the business-value KPIs that matter go beyond CPU and error rates. The TM Forum Revenue Management domain defines the standard sub-functions:
+For example, in telecom and fintech the business-value KPIs that matter go beyond CPU and error rates. The table below uses TM Forum's Revenue Management process names:
 
-| TM Forum domain | TMF sub-function | KPI | What it measures | Why it is a business value KPI |
-|---|---|---|---|---|---|
-| **Revenue Management** | Rating & Discounting | Rating completion rate | Percentage of usage events rated within SLA (e.g. < 100ms for online, < 1h for offline) | Unrated events mean unbilled revenue directly |
-| | Balance Management | Online charging success rate | Real-time credit control requests that complete without failure | A failed credit check means the subscriber gets free service |
-| | Bill Management | Invoice generation success rate | Invoices generated on schedule / total expected invoices | Missed invoices delay revenue recognition and upset customers |
-| | | Dispute ratio | Invoices disputed / total invoices issued | Rising disputes indicate billing errors or unclear charges |
-| | Payment Management | Payment authorization rate | Authorised transactions / total attempted transactions | Each declined auth is lost revenue and poor customer experience |
-| | | Settlement latency | Time from transaction capture to funds available | Delayed settlements impact cash flow and partner payouts |
-| | Collection Management | Collection effectiveness index (CEI) | Amount collected / amount due | Direct measure of revenue recovery performance |
-| | | Promise-to-pay hit rate | Customers who met their payment promise / total promises made | Indicates whether recovery strategies are working |
-| | Revenue Assurance | Journal posting lag | Time from transaction event to journal entry posted | Delayed bookkeeping hides financial position and delays reconciliation |
-| | | Suspense account balance | Value of transactions that could not be automatically posted | Growing suspense means automation gaps that require manual effort |
+| Sub-function | KPI | What it measures | Why it is a business value KPI |
+|---|---|---|---|---|
+| **Rating & Discounting** (TMF 677) | Rating completion rate | Percentage of usage events rated within SLA (e.g. < 100ms for online, < 1h for offline) | Unrated events mean unbilled revenue directly |
+| **Balance Management** (TMF 654) | Online charging success rate | Real-time credit control requests that complete without failure | A failed credit check means the subscriber gets free service |
+| **Bill Management** (TMF 678) | Invoice generation success rate | Invoices generated on schedule / total expected invoices | Missed invoices delay revenue recognition and upset customers |
+| | Dispute ratio | Invoices disputed / total invoices issued | Rising disputes indicate billing errors or unclear charges |
+| **Payment Management** (TMF 676) | Payment authorization rate | Authorised transactions / total attempted transactions | Each declined auth is lost revenue and poor customer experience |
+| | Settlement latency | Time from transaction capture to funds available | Delayed settlements impact cash flow and partner payouts |
+| **Collection Management** | Collection effectiveness index (CEI) | Amount collected / amount due | Direct measure of revenue recovery performance |
+| | Promise-to-pay hit rate | Customers who met their payment promise / total promises made | Indicates whether recovery strategies are working |
+| **Revenue Assurance** | Journal posting lag | Time from transaction event to journal entry posted | Delayed bookkeeping hides financial position and delays reconciliation |
+| | Suspense account balance | Value of transactions that could not be automatically posted | Growing suspense means automation gaps that require manual effort |
 
 The difference from technical metrics: a 99.9% API uptime means nothing if the rating engine is processing usage at the wrong rate. Business KPIs tell you whether the system is actually delivering value, not just whether it is technically alive.
 
