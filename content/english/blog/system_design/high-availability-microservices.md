@@ -6,7 +6,7 @@ tags = ['High Availability', 'Microservices', 'AWS', 'System Design', 'Resilienc
 summary = 'Designing highly available microservices on AWS using multi-AZ deployment, stateless services, circuit breakers, and chaos engineering.'
 +++
 
-High availability (HA) is the ability of a system to remain operational and accessible despite failures in its components. In a microservices architecture on AWS, HA must be designed at every layer: compute, data, networking, and the application itself. This post covers the key patterns and AWS services that enable highly available microservices.
+High availability (HA) is the ability of a system to remain operational and accessible despite failures in its components. In a microservices architecture on AWS, HA must be designed at every layer: **compute**, **data**, **networking** and the **application** itself.
 
 ---
 
@@ -14,15 +14,33 @@ High availability (HA) is the ability of a system to remain operational and acce
 
 ### Reliability vs Resiliency
 
-Reliability is the ability of a workload to perform its intended function correctly and consistently when expected to — including the ability to operate and test the workload through its total lifecycle. Reliability depends on several factors, the primary of which is **Resiliency**: the ability to recover from infrastructure or service disruptions, dynamically acquire computing resources to meet demand, and mitigate disruptions such as misconfigurations or transient network issues.
+- **Reliability**: is the ability of a workload to perform its intended function correctly and consistently when expected to — including the ability to operate and test the workload through its total lifecycle. Reliability depends on several factors, the primary of which is Resiliency.
+- **Resiliency**: the ability to recover from infrastructure or service disruptions, dynamically acquire computing resources to meet demand, and mitigate disruptions such as misconfigurations or transient network issues.
 
 The other reliability factors are Operational Excellence (automation of changes, playbooks, Operational Readiness Reviews), Security (preventing harm to data or infrastructure), Performance Efficiency (maximising request rates, minimising latency), and Cost Optimization (trade-offs such as static stability vs auto-scaling).
 
 ### Design Principles
 
-The Well-Architected Reliability Pillar identifies five design principles for cloud reliability:
+The AWS Well-Architected Reliability Pillar identifies five design principles for cloud reliability:
 
 **1. Automatically recover from failure.** Monitor KPIs that measure business value (not just technical metrics). Run automation when a threshold is breached. With more sophisticated automation it is possible to anticipate and remediate failures before they occur.
+
+For example, in telecom and fintech the business-value KPIs that matter go beyond CPU and error rates. The TM Forum Revenue Management domain defines the standard sub-functions:
+
+| TM Forum domain | TMF sub-function | KPI | What it measures | Why it is a business value KPI |
+|---|---|---|---|---|---|
+| **Revenue Management** | Rating & Discounting | Rating completion rate | Percentage of usage events rated within SLA (e.g. < 100ms for online, < 1h for offline) | Unrated events mean unbilled revenue directly |
+| | Balance Management | Online charging success rate | Real-time credit control requests that complete without failure | A failed credit check means the subscriber gets free service |
+| | Bill Management | Invoice generation success rate | Invoices generated on schedule / total expected invoices | Missed invoices delay revenue recognition and upset customers |
+| | | Dispute ratio | Invoices disputed / total invoices issued | Rising disputes indicate billing errors or unclear charges |
+| | Payment Management | Payment authorization rate | Authorised transactions / total attempted transactions | Each declined auth is lost revenue and poor customer experience |
+| | | Settlement latency | Time from transaction capture to funds available | Delayed settlements impact cash flow and partner payouts |
+| | Collection Management | Collection effectiveness index (CEI) | Amount collected / amount due | Direct measure of revenue recovery performance |
+| | | Promise-to-pay hit rate | Customers who met their payment promise / total promises made | Indicates whether recovery strategies are working |
+| | Revenue Assurance | Journal posting lag | Time from transaction event to journal entry posted | Delayed bookkeeping hides financial position and delays reconciliation |
+| | | Suspense account balance | Value of transactions that could not be automatically posted | Growing suspense means automation gaps that require manual effort |
+
+The difference from technical metrics: a 99.9% API uptime means nothing if the rating engine is processing usage at the wrong rate. Business KPIs tell you whether the system is actually delivering value, not just whether it is technically alive.
 
 **2. Test recovery procedures.** In the cloud you can test how your workload fails and validate your recovery procedures. Use automation to simulate different failures or recreate failure scenarios. This exposes failure pathways that can be fixed before a real event occurs.
 
@@ -98,7 +116,35 @@ Availability (%) = (Available Time / Total Time) × 100
 Availability (%) = (Successful Requests / Total Requests) × 100
 ```
 
+Or equivalently, from the failure rate:
+
+```
+Availability (%) = (1 − Failed Requests / Total Requests) × 100
+```
+
+This form is often more practical — monitoring systems natively track error rates, and SLIs are commonly defined as the fraction of requests that fail. For quick reference:
+
+| Error rate (failed / total) | Availability |
+|---|---|
+| 0.001% (1 in 100,000) | 99.999% |
+| 0.01% (1 in 10,000) | 99.99% |
+| 0.1% (1 in 1,000) | 99.9% |
+| 1% (1 in 100) | 99% |
+
 This is typically measured over one-minute or five-minute periods and averaged into a monthly uptime percentage. If no requests are received in a given period it counts as 100% available.
+
+**What counts as a failure.** The answer depends on your SLI definition, but the industry convention (used by AWS, Google SRE, and most SRE frameworks) is:
+
+| Response category | Counts as failure? | Reason |
+|---|---|---|
+| 5xx (server error) | Yes | The server failed to process a valid request |
+| 4xx (client error) | No | The server correctly rejected an invalid request — validation errors, auth failures, 404s are the server functioning correctly |
+| Timeout | Yes | The server did not respond within the configured timeout |
+| 429 (throttled) | Debatable | Some count it (user didn't get service), some don't (server was protecting itself). AWS SLA documents exclude throttled requests within configured limits. Decide and document your policy |
+| Retry succeeded | The original attempt still counts as a failure | Each attempt is an independent measurement. A retry that succeeds on the second attempt means 50% availability during that interval, not 100% |
+| Scheduled maintenance | Debatable | AWS SLAs exclude it. For your own SLO, decide whether users care. If users are affected, count it |
+
+The key rule: **a failure is any request where the client does not receive a successful response within the expected time, regardless of why.** 5xx errors, timeouts, and connectivity failures always count. 4xx errors do not — the service is working correctly by refusing an invalid request. Be explicit about what you include and exclude in your SLI definition so your numbers are reproducible.
 
 **Calculating availability with hard dependencies.** Where an interruption in a dependent system directly translates to an interruption of the invoking system, the invoking system's availability is the **product** of the dependent systems' availabilities:
 
@@ -1364,3 +1410,4 @@ Deploy changes using immutable infrastructure, fault-isolated zonal rollouts, an
 Validate your architecture with load testing and chaos experiments. Run game days to build team muscle memory for responding to failures. Define RTO and RPO for every workload, implement the appropriate DR strategy, and test it.
 
 The goal is not to eliminate failure — that is impossible. It is to design systems that degrade gracefully, recover automatically, and give teams the observability and runbooks needed to respond consistently and confidently when failure inevitably occurs.
+
