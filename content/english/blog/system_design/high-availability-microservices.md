@@ -35,9 +35,9 @@ For example, in telecom and fintech the business-value KPIs that matter go beyon
 | | Dispute ratio | Invoices disputed / total invoices issued | Rising disputes indicate billing errors or unclear charges |
 | **Payment Management** (TMF 676) | Payment authorization rate | Authorised transactions / total attempted transactions | Each declined auth is lost revenue and poor customer experience |
 | | Settlement latency | Time from transaction capture to funds available | Delayed settlements impact cash flow and partner payouts |
-| **Collection Management** | Collection effectiveness index (CEI) | Amount collected / amount due | Direct measure of revenue recovery performance |
+| **Collection Management** (TMF 728) | Collection effectiveness index (CEI) | Amount collected / amount due | Direct measure of revenue recovery performance |
 | | Promise-to-pay hit rate | Customers who met their payment promise / total promises made | Indicates whether recovery strategies are working |
-| **Revenue Assurance** | Journal posting lag | Time from transaction event to journal entry posted | Delayed bookkeeping hides financial position and delays reconciliation |
+| **Revenue Assurance** (GB941) | Journal posting lag | Time from transaction event to journal entry posted | Delayed bookkeeping hides financial position and delays reconciliation |
 | | Suspense account balance | Value of transactions that could not be automatically posted | Growing suspense means automation gaps that require manual effort |
 
 The difference from technical metrics: a 99.9% API uptime means nothing if the rating engine is processing usage at the wrong rate. Business KPIs tell you whether the system is actually delivering value, not just whether it is technically alive.
