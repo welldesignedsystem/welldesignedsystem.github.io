@@ -261,6 +261,23 @@ Microservices allow you to differentiate the availability required by different 
 
 **Strangler Fig pattern.** When refactoring a monolith, gradually replace specific application components with new applications and services. AWS Migration Hub Refactor Spaces acts as the starting point for incremental application refactoring.
 
+| Tier | Component | What it does | If unavailable | Source |
+|------|-----------|--------------|----------------|--------|
+| 🔴 Tier 1 — Critical | Price | Displays current purchase price and currency | Customer cannot make an informed purchase decision | AWS Well-Architected Reliability Pillar (explicit) |
+| 🔴 Tier 1 — Critical | Product details | Title, description, specs, dimensions, ASIN, item condition | Customer doesn't know what they're buying | AWS Well-Architected Reliability Pillar (explicit) |
+| 🔴 Tier 1 — Critical | Add to Cart / Buy Now | The Buy Box — primary purchase action button | No purchase path exists | Implied by AWS guidance |
+| 🔴 Tier 1 — Critical | Inventory / stock status | Whether the item is in stock and available to ship | Customer can't know if purchase will succeed | Implied by AWS guidance |
+| 🟡 Tier 2 — Important but degradable | Product photos | Images of the item from multiple angles | Section left blank; purchase still possible | AWS Well-Architected Reliability Pillar (explicit) |
+| 🟡 Tier 2 — Important but degradable | Customer reviews & ratings | Star ratings and written reviews from buyers | Section omitted; purchase still possible | AWS Well-Architected Reliability Pillar (explicit) |
+| 🟡 Tier 2 — Important but degradable | Shipping estimates | Estimated delivery date and speed options | Customer loses delivery info but can still order | Implied by AWS guidance |
+| 🟡 Tier 2 — Important but degradable | Seller information | Seller rating and fulfillment method details | Default seller shown or section omitted | Implied by AWS guidance |
+| 🟢 Tier 3 — Non-critical | Personalised recommendations | "Customers who bought this also bought" carousels | Section hidden; no purchase impact | Werner Vogels talks; implied by AWS guidance |
+| 🟢 Tier 3 — Non-critical | Sponsored product ads | Paid placements from other sellers on the page | Ads omitted; revenue impact only | Standard Amazon page anatomy; implied by AWS guidance |
+| 🟢 Tier 3 — Non-critical | A+ content | Brand-enhanced visuals, comparison charts, infographics | Falls back to standard product description | Standard Amazon page anatomy; implied by AWS guidance |
+| 🟢 Tier 3 — Non-critical | Q&A section | Customer questions and answers about the product | Section omitted; no purchase impact | Standard Amazon page anatomy; implied by AWS guidance |
+| 🟢 Tier 3 — Non-critical | Product videos | Seller or brand-uploaded video demos | Section hidden; no purchase impact | Standard Amazon page anatomy; implied by AWS guidance |
+| 🟢 Tier 3 — Non-critical | Best Sellers Rank | Category ranking badge e.g. "#1 in Kitchen" | Badge omitted; no purchase impact | Standard Amazon page anatomy; implied by AWS guidance 
+
 ### Service Contracts per API
 
 Each service should provide a versioned contract per API. A service contract is a documented agreement between a service and its consumers specifying the request format, response format, error codes, and SLA. Versioning allows the service to evolve without breaking existing consumers.
