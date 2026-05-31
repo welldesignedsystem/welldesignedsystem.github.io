@@ -6,13 +6,13 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 
 | Command | Purpose |
 |---------|---------|
-| `npm run dev` | Hugo dev server (localhost:1313, live reload) |
+| `npm run dev` | Hugo dev server (localhost:1313, live reload; **no drafts** — use `hugo server -D` for drafts) |
 | `npm run build` | Production build (gc, minify, template metrics) |
 | `npm run preview` | Dev server, production env, template metrics |
 | `npm run format` | Prettier only — **no linter, no typecheck** |
 | `npm run update-modules` | Update all Hugo module deps |
 
-**CI note:** deploy.yml runs `hugo --gc --minify --baseURL "$URL"` directly (not `npm run build`) so GitHub Pages can inject the deployment URL.
+**CI note:** deploy.yml runs `hugo --gc --minify --baseURL "$URL"` directly (not `npm run build`) so GitHub Pages can inject the deployment URL. Uses `npm ci` — `package-lock.json` is tracked despite `.gitignore`.
 
 ## Content conventions
 
@@ -33,7 +33,6 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 ## CI / deploy
 
 - Push to `main` → GitHub Actions (Hugo + Node 24) → GitHub Pages.
-- Uses `npm ci`, not `npm install`.
 
 ## Reference files
 
