@@ -21,14 +21,19 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 - Categories: `ai/`, `business-ideas/`, `containerization/`, `languages/`, `legacy/`, `roadmap/`, `security/`, `soft-skills/`, `system_design/`.
 - No Oxford comma in blog text (see `.github/instructions/blog.instructions.md`).
 - New posts: copy frontmatter from an existing post, use ISO 8601 date with timezone.
+- `summaryLength = 10` in `hugo.toml` — excerpt summaries truncate at 10 words.
+- Goldmark renders raw HTML in markdown (`unsafe = true`).
+- Code highlighting uses `guessSyntax = true` with `solarized-light` style.
 
 ## Architecture
 
 - **Theme**: `github.com/zeon-studio/hugoplate` (Hugo module, not submodule). Config in `config/_default/`.
 - **Asset pipeline**: TailwindCSS v4 via `@tailwindcss/cli` (CSS config, no `tailwind.config.js`).
+- **Custom Tailwind plugins**: `tailwind-plugin/` (tw-bs-grid.js, tw-theme.js).
 - **Required**: Hugo **extended** (>= 0.151.0). Go and Node.js needed locally.
 - **Custom layouts**: only `layouts/shortcodes/` (`iframe`, `include`) — everything else inherited.
 - **Build output**: `public/` — generated, not committed.
+- **Module quirk**: `hugo_stats.json` is mounted with `disableWatch = true` — CSS rebuilds won't trigger on stat changes alone.
 
 ## CI / deploy
 
@@ -37,7 +42,6 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 ## Reference files
 
 - `.github/copilot-instructions.md` — agent guidance, writing style, anti-hallucination rules
-- `.github/instructions/blog.instructions.md` — blog editorial rules (Copilot workspace rules file)
+- `.github/instructions/blog.instructions.md` — blog editorial rules
 - `.github/commit-instructions.md` — commit message format
-- `.github/agents/commit-reviewer.agent.md` — commit review agent definition
-- `.github/agents/research.agent.md` — research agent definition
+- `.github/agents/commit-reviewer.agent.md` and `research.agent.md` — local agent definitions

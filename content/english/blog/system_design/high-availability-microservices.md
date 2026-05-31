@@ -3,7 +3,7 @@ date = '2025-05-27T10:00:00+10:00'
 draft = false
 title = 'High Availability in Microservices'
 tags = ['High Availability', 'Microservices', 'AWS', 'System Design', 'Resilience']
-summary = 'Designing highly available microservices on AWS using multi-AZ deployment, stateless services, circuit breakers, and chaos engineering.'
+summary = 'Designing highly available microservices on AWS using multi-AZ deployment, stateless services, circuit breakers and chaos engineering.'
 +++
 
 High availability (HA) is the ability of a system to remain operational and accessible despite failures in its components. In a microservices architecture on AWS, HA must be designed at every layer: **compute**, **data**, **networking** and the **application** itself.
@@ -15,9 +15,9 @@ High availability (HA) is the ability of a system to remain operational and acce
 ### Reliability vs Resiliency
 
 - **Reliability**: is the ability of a workload to perform its intended function correctly and consistently when expected to — including the ability to operate and test the workload through its total lifecycle. Reliability depends on several factors, the primary of which is Resiliency.
-- **Resiliency**: the ability to recover from infrastructure or service disruptions, dynamically acquire computing resources to meet demand, and mitigate disruptions such as misconfigurations or transient network issues.
+- **Resiliency**: the ability to recover from infrastructure or service disruptions, dynamically acquire computing resources to meet demand and mitigate disruptions such as misconfigurations or transient network issues.
 
-The other reliability factors are Operational Excellence (automation of changes, playbooks, Operational Readiness Reviews), Security (preventing harm to data or infrastructure), Performance Efficiency (maximising request rates, minimising latency), and Cost Optimization (trade-offs such as static stability vs auto-scaling).
+The other reliability factors are Operational Excellence (automation of changes, playbooks, Operational Readiness Reviews), Security (preventing harm to data or infrastructure), Performance Efficiency (maximising request rates, minimising latency) and Cost Optimization (trade-offs such as static stability vs auto-scaling).
 
 ### Design Principles
 
@@ -66,7 +66,7 @@ Each additional nine imposes significantly more architectural complexity and cos
 
 ### AWS Service SLAs
 
-Every AWS service publishes its own SLA. These are not uniform — architectural choices (multi-AZ vs single-AZ, standard vs global replication tier) change the commitment. The table below covers the services most relevant to microservices architectures. AWS measures Monthly Uptime Percentage per region, calculates it over 5-minute intervals, and excludes scheduled maintenance and force majeure. Service credits (the sole remedy) scale with severity and must be claimed within two billing cycles.
+Every AWS service publishes its own SLA. These are not uniform — architectural choices (multi-AZ vs single-AZ, standard vs global replication tier) change the commitment. The table below covers the services most relevant to microservices architectures. AWS measures Monthly Uptime Percentage per region, calculates it over 5-minute intervals and excludes scheduled maintenance and force majeure. Service credits (the sole remedy) scale with severity and must be claimed within two billing cycles.
 
 | Category | Service | SLA commitment | Conditions |
 |---|---|---|---|
@@ -90,7 +90,7 @@ Every AWS service publishes its own SLA. These are not uniform — architectural
 | | Aurora Single-AZ | 99.5% | |
 | | DynamoDB (standard) | 99.99% | Standard tables |
 | | DynamoDB (Global Tables) | 99.999% | Active-active multi-region |
-| | ElastiCache (Serverless) | 99.99% | Valkey, Memcached, or Redis OSS |
+| | ElastiCache (Serverless) | 99.99% | Valkey, Memcached or Redis OSS |
 | | ElastiCache (Multi-AZ) | 99.99% | Valkey / Redis OSS with auto-failover |
 | | ElastiCache (Single-AZ) | 99.5% | |
 | **Messaging** | SQS | 99.9% | Standard queues |
@@ -122,7 +122,7 @@ Or equivalently, from the failure rate:
 Availability (%) = (1 − Failed Requests / Total Requests) × 100
 ```
 
-This form is often more practical — monitoring systems natively track error rates, and SLIs are commonly defined as the fraction of requests that fail. For quick reference:
+This form is often more practical — monitoring systems natively track error rates and SLIs are commonly defined as the fraction of requests that fail. For quick reference:
 
 | Error rate (failed / total) | Availability |
 |---|---|
@@ -133,7 +133,7 @@ This form is often more practical — monitoring systems natively track error ra
 
 This is typically measured over one-minute or five-minute periods and averaged into a monthly uptime percentage. If no requests are received in a given period it counts as 100% available.
 
-**What counts as a failure.** The answer depends on your SLI definition, but the industry convention (used by AWS, Google SRE, and most SRE frameworks) is:
+**What counts as a failure.** The answer depends on your SLI definition, but the industry convention (used by AWS, Google SRE and most SRE frameworks) is:
 
 | Response category | Counts as failure? | Reason |
 |---|---|---|
@@ -144,7 +144,7 @@ This is typically measured over one-minute or five-minute periods and averaged i
 | Retry succeeded | The original attempt still counts as a failure | Each attempt is an independent measurement. A retry that succeeds on the second attempt means 50% availability during that interval, not 100% |
 | Scheduled maintenance | Debatable | AWS SLAs exclude it. For your own SLO, decide whether users care. If users are affected, count it |
 
-The key rule: **a failure is any request where the client does not receive a successful response within the expected time, regardless of why.** 5xx errors, timeouts, and connectivity failures always count. 4xx errors do not — the service is working correctly by refusing an invalid request. Be explicit about what you include and exclude in your SLI definition so your numbers are reproducible.
+The key rule: **a failure is any request where the client does not receive a successful response within the expected time, regardless of why.** 5xx errors, timeouts and connectivity failures always count. 4xx errors do not — the service is working correctly by refusing an invalid request. Be explicit about what you include and exclude in your SLI definition so your numbers are reproducible.
 
 **Calculating availability with hard dependencies.** Where an interruption in a dependent system directly translates to an interruption of the invoking system, the invoking system's availability is the **product** of the dependent systems' availabilities:
 
@@ -178,31 +178,35 @@ Example: MTBF = 150 days, MTTR = 1 hour → 99.97%
 
 ### Costs for Availability
 
-Designing for higher availability typically increases cost. High levels of availability impose stricter requirements for testing and validation under exhaustive failure scenarios, automation for recovery from all manner of failures, and require that all aspects of system operations be built and tested to the same standards. At very high availability goals, innovation suffers because of the need to move more slowly. The guidance is to be thorough in applying standards and to consider the appropriate availability target for the entire lifecycle of the system.
+Designing for higher availability increases cost across every lifecycle phase:
 
-At higher availability design goals, the set of software or services that can be chosen as dependencies diminishes based on which services have received the necessary engineering investment. As the goal increases it is typical to find fewer multi-purpose services (such as a relational database) and more purpose-built services.
+- **Build**: Redundant infrastructure (multi-AZ, cross-region), purpose-built services over general-purpose ones, additional testing harnesses for chaos/load/DR testing and the engineering time to implement circuit breakers, idempotency, bulkheads and automated recovery.
+- **Operation**: Idle capacity for static stability and failover headroom, inter-AZ data transfer charges, duplicate environments for blue/green or warm standby and the monitoring/alerting infrastructure needed to detect degradation before users notice.
+- **Maintenance**: Ongoing game days, DR drills, runbook updates, post-incident reviews, dependency upgrades across redundant paths and the overhead of keeping staging environments in sync with production.
+- **Choice**: At very high availability goals, the set of eligible dependencies shrinks — fewer services have received the engineering investment needed for that target.
+- **Velocity**: Innovation slows because every change must be tested more exhaustively and moved more cautiously to avoid breaching the target.
 
-### Costs for Availability
+The right target is the lowest one that meets the business need. Be thorough in applying standards and consider the appropriate availability target for the entire lifecycle of the system.
 
 ### Understanding Availability Needs
 
 It is common to initially think of an application's availability as a single target for the whole application. However, upon closer inspection, different aspects of an application often have different availability requirements:
 
-- Some systems prioritise the ability to receive and store new data ahead of retrieving existing data.
-- Some prioritise real-time operations over configuration operations.
+- Some systems prioritise the ability to receive and store new data ahead of retrieving existing data e.g. Order ingestion system.
+- Some prioritise real-time operations over configuration operations. e.g. updating routing rules, provisioning resources.
 - Services may have very high availability requirements during certain hours of the day but can tolerate much longer disruption outside those hours.
 
-Decompose a single application into constituent parts and evaluate the availability requirements for each. This focuses effort (and expense) on availability according to specific needs, rather than engineering the whole system to the strictest requirement.
+**Decompose** a single **application into constituent parts** and evaluate the availability requirements for each. This focuses effort (and expense) on availability according to specific needs, rather than engineering the whole system to the strictest requirement.
 
-**Data plane vs control plane.** Within AWS, the data plane delivers real-time service (EC2 instances serving traffic, RDS database read/write, DynamoDB table operations) while the control plane configures the environment (launching new EC2 instances, creating RDS databases, adding DynamoDB table metadata). Data planes typically have higher availability design goals than control planes. Workloads with high availability requirements should avoid run-time dependency on control plane operations.
+e.g. **Data plane vs control plane.** Within AWS, the data plane delivers real-time service (EC2 instances serving traffic, RDS database read/write, DynamoDB table operations) while the control plane configures the environment (launching new EC2 instances, creating RDS databases, adding DynamoDB table metadata). Data planes typically have higher availability design goals than control planes. Workloads with high availability requirements should avoid run-time dependency on control plane operations.
 
 ### Shared Responsibility Model
 
 AWS secures the cloud; you secure what you run in it. For HA this means:
 
-AWS owns: AZ independence, physical infrastructure, hypervisor isolation, inter-AZ high-bandwidth low-latency networking (all AZ traffic is encrypted), and making services available to their published SLAs.
+**AWS owns**: AZ independence, physical infrastructure, hypervisor isolation, inter-AZ high-bandwidth low-latency networking (all AZ traffic is encrypted) and making services available to their published SLAs.
 
-You own: multi-AZ deployment, auto-scaling, data replication, retry logic, circuit breakers, deployment strategies, backup and recovery, service quota management, and network topology planning.
+**You own**: multi-AZ deployment, auto-scaling, data replication, retry logic, circuit breakers, deployment strategies, backup and recovery, service quota management and network topology planning.
 
 ---
 
@@ -214,7 +218,7 @@ For cloud-based workload architectures there are service quotas (also called ser
 
 **Common anti-patterns to avoid:**
 - Deploying a workload without understanding hard or soft quotas and their limits.
-- Assuming cloud services have no limits and can be used without consideration of rates, counts, or quantities.
+- Assuming cloud services have no limits and can be used without consideration of rates, counts or quantities.
 - Assuming quotas will automatically be increased.
 - Not knowing the process and timeline of quota increase requests.
 - Assuming default quotas are identical across all regions.
@@ -223,7 +227,7 @@ For cloud-based workload architectures there are service quotas (also called ser
 
 **Key practices:**
 
-Use the **AWS Service Quotas console** to look up quota values, request increases, and track quota increase requests for over 250 AWS services. **AWS Trusted Advisor** provides alerts at 80% and 90% threshold breaches.
+Use the **AWS Service Quotas console** to look up quota values, request increases and track quota increase requests for over 250 AWS services. **AWS Trusted Advisor** provides alerts at 80% and 90% threshold breaches.
 
 Manage quotas across accounts and regions. Service quota limits are per-account and per-region. The same named quota can have a different value in different regions; reconcile these differences continuously. Passive DR regions must have equivalent quotas to the active region — game days rarely test at peak capacity and often miss quota discrepancies between regions. This is referred to as **service quota drift** and must be actively tracked and remediated.
 
@@ -255,7 +259,7 @@ Build highly scalable and reliable workloads using a service-oriented architectu
 
 Microservices allow you to differentiate the availability required by different services, focusing investment more specifically on the microservices that have the greatest availability needs. For example, on Amazon product detail pages, hundreds of microservices build discrete portions of the page. While a few services must be available to show price and product details, the vast majority of page content can simply be excluded if a service is unavailable — even photos and reviews are not required for a customer to complete a purchase.
 
-**Key trade-offs.** Smaller services can introduce additional latency, more complex debugging, and increased operational burden. One primary trade-off is that distributed compute can make it harder to achieve latency requirements and adds complexity in debugging and tracing. Use AWS X-Ray to address the tracing complexity.
+**Key trade-offs.** Smaller services can introduce additional latency, more complex debugging and increased operational burden. One primary trade-off is that distributed compute can make it harder to achieve latency requirements and adds complexity in debugging and tracing. Use AWS X-Ray to address the tracing complexity.
 
 **The microservice Death Star anti-pattern.** A situation in which atomic components become so highly interdependent that the failure of one results in a much larger failure, making the components as rigid and fragile as a monolith. Avoid this by enforcing loose coupling between services.
 
@@ -280,7 +284,7 @@ Microservices allow you to differentiate the availability required by different 
 
 ### Service Contracts per API
 
-Each service should provide a versioned contract per API. A service contract is a documented agreement between a service and its consumers specifying the request format, response format, error codes, and SLA. Versioning allows the service to evolve without breaking existing consumers.
+Each service should provide a versioned contract per API. A service contract is a documented agreement between a service and its consumers specifying the request format, response format, error codes and SLA. Versioning allows the service to evolve without breaking existing consumers.
 
 Key elements of a service contract:
 - API version in the URL path or header (e.g., `/v1/orders`)
@@ -305,7 +309,7 @@ Loose coupling isolates the behaviour of a component from the components that de
 
 **Message queues.** Use **Amazon SQS** to decouple distributed systems. A producer writes a message to a queue; the consumer reads from the queue when it is ready. The queue absorbs spikes in message arrival rate and decouples producer throughput from consumer throughput.
 
-**Orchestrated workflows.** Use **AWS Step Functions** to coordinate multiple AWS services into flexible workflows. Step Functions handles retries, error handling, and branching logic, removing this complexity from individual services.
+**Orchestrated workflows.** Use **AWS Step Functions** to coordinate multiple AWS services into flexible workflows. Step Functions handles retries, error handling and branching logic, removing this complexity from individual services.
 
 **Publish-subscribe.** Use **Amazon SNS** for fan-out scenarios where a single event must be delivered to multiple consumers.
 
@@ -325,7 +329,7 @@ An idempotent service promises that each request is processed exactly once, such
 
 **How idempotency tokens work.** Clients issue API requests with an idempotency token. When the service receives a request with a token it has already seen, it returns the same response as the first time rather than processing the request again.
 
-**When to apply idempotency.** Idempotency is most important for mutating operations: HTTP POST, PUT, and DELETE; database inserts, updates, and deletes. Read-only queries generally do not need idempotency unless they have side effects.
+**When to apply idempotency.** Idempotency is most important for mutating operations: HTTP POST, PUT and DELETE; database inserts, updates and deletes. Read-only queries generally do not need idempotency unless they have side effects.
 
 **Common anti-patterns:**
 - Using timestamps as idempotency keys (inaccurate due to clock skew or multiple clients using the same timestamp).
@@ -344,7 +348,7 @@ An idempotent service promises that each request is processed exactly once, such
 5. **Expire old tokens** — use TTL values to automatically remove old tokens from the datastore. The likelihood of token reuse diminishes over time.
 6. **Propagate tokens downstream** — services and consumers should pass the received idempotency token to any downstream services they call. Every downstream service in the processing chain is responsible for idempotency.
 
-**Idempotency in event-driven architectures.** Message queues such as SQS, Kinesis, and MSK can deliver a message more than once under certain conditions. When a publisher generates and includes idempotency tokens in messages, consumers must keep track of each token received and ignore messages containing duplicate tokens.
+**Idempotency in event-driven architectures.** Message queues such as SQS, Kinesis and MSK can deliver a message more than once under certain conditions. When a publisher generates and includes idempotency tokens in messages, consumers must keep track of each token received and ignore messages containing duplicate tokens.
 
 ---
 
@@ -405,7 +409,7 @@ Token bucket:
 
 When a request fails, the client must decide whether to retry. The retry strategy must be carefully controlled to avoid compounding the problem.
 
-**Exponential back-off with jitter.** Back off with progressively longer delays between retries, and add randomised jitter to avoid retry storms (the thundering herd problem).
+**Exponential back-off with jitter.** Back off with progressively longer delays between retries and add randomised jitter to avoid retry storms (the thundering herd problem).
 
 ```java
 @Retryable(
@@ -418,7 +422,7 @@ public Result callService(String input) {
 ```
 
 **Anti-patterns:**
-- Implementing retries without back-off, jitter, and a maximum retry count. Uncontrolled retries at common intervals create artificial traffic spikes.
+- Implementing retries without back-off, jitter and a maximum retry count. Uncontrolled retries at common intervals create artificial traffic spikes.
 - Retrying non-idempotent operations (can cause unexpected side effects like duplicated records).
 - Retrying at multiple layers of the application stack (compounds retry attempts in a retry storm — implement retries at only one layer).
 - Retrying errors that are clearly non-transient (permission errors, configuration errors) that will never succeed without manual intervention.
@@ -498,7 +502,7 @@ Set both a **connection timeout** (time to establish the TCP/TLS connection) and
 - **App Mesh Envoy**: provides built-in timeout and circuit breaker capabilities at the sidecar level.
 - **AWS Step Functions**: build low-code circuit breakers for remote service calls where calling AWS-native SDK integrations.
 
-Use CloudWatch anomaly detection on call error rates, SLO latency metrics, and latency outliers to provide insight into whether timeouts are too aggressive or too permissive.
+Use CloudWatch anomaly detection on call error rates, SLO latency metrics and latency outliers to provide insight into whether timeouts are too aggressive or too permissive.
 
 ### Circuit Breaker
 
@@ -569,14 +573,14 @@ Isolate service resources to prevent a failure in one partition from taking down
 
 - Separate ECS task definitions per service, each with its own CPU/memory limits.
 - Dedicated DynamoDB tables per service to avoid throttling contention.
-- Separate RDS or Aurora clusters for different domains (e.g., orders vs users).
+- Separate RDS or Aurora clusters for different domains (e.g. orders vs users).
 - Thread pool isolation in JVM-based services.
 
 ### Implement Emergency Levers
 
-Emergency levers are rapid processes that can mitigate availability impact on your workload. They work by disabling, throttling, or changing the behaviour of components or dependencies using known and tested mechanisms.
+Emergency levers are rapid processes that can mitigate availability impact on your workload. They work by disabling, throttling or changing the behaviour of components or dependencies using known and tested mechanisms.
 
-**When to use emergency levers.** Emergency levers address resource exhaustion due to unexpected demand spikes, and failures in non-critical components that would otherwise impact the availability of critical ones.
+**When to use emergency levers.** Emergency levers address resource exhaustion due to unexpected demand spikes and failures in non-critical components that would otherwise impact the availability of critical ones.
 
 **Implementation steps:**
 1. **Identify critical components** — map each technical component to its business function and classify as critical or non-critical.
@@ -598,7 +602,7 @@ Emergency levers are rapid processes that can mitigate availability impact on yo
 
 ## Multi-AZ Deployment
 
-Every microservice should run across at least three Availability Zones in an AWS Region. An AZ is one or more discrete data centres with independent power, cooling, and networking. Despite being physically separated, AZs in the same Region are connected via high-throughput, low-latency (single-digit millisecond) networking, making synchronous replication feasible.
+Every microservice should run across at least three Availability Zones in an AWS Region. An AZ is one or more discrete data centres with independent power, cooling and networking. Despite being physically separated, AZs in the same Region are connected via high-throughput, low-latency (single-digit millisecond) networking, making synchronous replication feasible.
 
 ### Compute Layer
 
@@ -691,7 +695,7 @@ resource "aws_elasticache_replication_group" "cache" {
 
 ## Stateless Services
 
-Stateless services are the foundation of HA. Any instance can handle any request, which lets you add or remove instances freely, route traffic to any healthy instance, and recover from failures by replacing instances with no data loss.
+Stateless services are the foundation of HA. Any instance can handle any request, which lets you add or remove instances freely, route traffic to any healthy instance and recover from failures by replacing instances with no data loss.
 
 ### Session State
 
@@ -835,7 +839,7 @@ public class HealthCheck implements HealthIndicator {
 
 ### Amazon CloudWatch
 
-**Metrics.** Collect CPU, memory, request count, latency, error rate, and throttled requests from both application and infrastructure. Define business-level KPI metrics alongside technical metrics. Use **CloudWatch custom metrics** to publish application-specific indicators.
+**Metrics.** Collect CPU, memory, request count, latency, error rate and throttled requests from both application and infrastructure. Define business-level KPI metrics alongside technical metrics. Use **CloudWatch custom metrics** to publish application-specific indicators.
 
 **Metric aggregation.** Define and calculate meaningful aggregate metrics. P99 and P99.9 latency percentiles reveal tail latency that averages hide. Error rate as a percentage of total requests is more meaningful than an absolute error count.
 
@@ -865,11 +869,11 @@ resource "aws_cloudwatch_metric_alarm" "high_errors" {
 }
 ```
 
-**Automated responses.** Configure alarms to trigger automated remediation via **Amazon EventBridge** rules that invoke **AWS Lambda** functions. Examples: automatically scale out tasks when error rate rises, trigger a failover when primary database health deteriorates, or post to a Slack/Teams channel when any threshold is breached.
+**Automated responses.** Configure alarms to trigger automated remediation via **Amazon EventBridge** rules that invoke **AWS Lambda** functions. Examples: automatically scale out tasks when error rate rises, trigger a failover when primary database health deteriorates or post to a Slack/Teams channel when any threshold is breached.
 
 **Log analysis.** Use structured JSON logs with correlation IDs that span service boundaries. Use **CloudWatch Logs Insights** to run queries across large volumes of structured log data. Use **CloudWatch Log Metric Filters** to extract metrics from log patterns (for example, count occurrences of `"level":"ERROR"` per minute).
 
-**Regularly review monitoring scope.** As workloads evolve, monitoring scope must be reviewed to ensure that new components are instrumented, that retired components are removed from dashboards, and that alarm thresholds are still appropriate.
+**Regularly review monitoring scope.** As workloads evolve, monitoring scope must be reviewed to ensure that new components are instrumented, that retired components are removed from dashboards and that alarm thresholds are still appropriate.
 
 **AWS Health notifications.** Create AWS Health event notifications to e-mail and chat channels through AWS User Notifications. Integrate programmatically through Amazon EventBridge to react to service degradations that may affect your workload.
 
@@ -877,7 +881,7 @@ resource "aws_cloudwatch_metric_alarm" "high_errors" {
 
 **Synthetic canaries** are configurable scripts that run on a schedule to monitor endpoints and APIs. They verify availability and latency from external vantage points, independent of your application's own metrics. Configure canaries with X-Ray tracing to include client-interaction telemetry in the end-to-end trace analysis.
 
-**CloudWatch RUM** instruments web application clients to capture real-user performance data including load times, Core Web Vitals, JavaScript errors, and backend call latency as experienced by actual users. Use this alongside synthetic canaries to accurately evaluate performance against SLAs.
+**CloudWatch RUM** instruments web application clients to capture real-user performance data including load times, Core Web Vitals, JavaScript errors and backend call latency as experienced by actual users. Use this alongside synthetic canaries to accurately evaluate performance against SLAs.
 
 ### Distributed Tracing with AWS X-Ray
 
@@ -892,17 +896,17 @@ public class XRayConfig {
 }
 ```
 
-All application components should be included in request traces: service clients, middleware gateways and event buses, compute components, storage, key-value stores, and databases. Enable X-Ray on all supported native services (S3, Lambda, API Gateway) using configuration toggles via IaC or the Console.
+All application components should be included in request traces: service clients, middleware gateways and event buses, compute components, storage, key-value stores and databases. Enable X-Ray on all supported native services (S3, Lambda, API Gateway) using configuration toggles via IaC or the Console.
 
-Use **CloudWatch ServiceLens** to integrate traces with metrics, logs, and alarms, providing a single view of service health.
+Use **CloudWatch ServiceLens** to integrate traces with metrics, logs and alarms, providing a single view of service health.
 
-Use **AWS Distro for OpenTelemetry** to instrument applications that are not native AWS services, or to forward trace telemetry to third-party tools (Datadog, New Relic, Dynatrace) while also sending to X-Ray.
+Use **AWS Distro for OpenTelemetry** to instrument applications that are not native AWS services or to forward trace telemetry to third-party tools (Datadog, New Relic, Dynatrace) while also sending to X-Ray.
 
-The benefits of end-to-end tracing: teams alerted to issues can see a full picture of component interactions including correlation to logs, performance, and failures. Decisions like when to invoke DR failover or where to implement self-healing strategies are improved by analysing system traces, ultimately improving customer satisfaction.
+The benefits of end-to-end tracing: teams alerted to issues can see a full picture of component interactions including correlation to logs, performance and failures. Decisions like when to invoke DR failover or where to implement self-healing strategies are improved by analysing system traces, ultimately improving customer satisfaction.
 
 ### AWS Resilience Hub
 
-AWS Resilience Hub provides a central place to define, validate, and track the resiliency of AWS applications. It analyses your workload against a resiliency policy you define (RTO and RPO targets) and produces a report identifying gaps. It also generates AWS FIS experiment templates that you can use directly for chaos testing. Run Resilience Hub assessments after any significant architectural change.
+AWS Resilience Hub provides a central place to define, validate and track the resiliency of AWS applications. It analyses your workload against a resiliency policy you define (RTO and RPO targets) and produces a report identifying gaps. It also generates AWS FIS experiment templates that you can use directly for chaos testing. Run Resilience Hub assessments after any significant architectural change.
 
 ---
 
@@ -952,7 +956,7 @@ One of the most important rules for production deployments is to avoid touching 
 
 ### Immutable Infrastructure
 
-Immutable infrastructure is a model that mandates that no updates, security patches, or configuration changes happen in-place on production workloads. When a change is needed, new infrastructure is built and deployed into production.
+Immutable infrastructure is a model that mandates that no updates, security patches or configuration changes happen in-place on production workloads. When a change is needed, new infrastructure is built and deployed into production.
 
 **Benefits:**
 - **Increased consistency** — no differences in infrastructure across environments; testing is simplified.
@@ -965,7 +969,7 @@ Immutable infrastructure is a model that mandates that no updates, security patc
 **Implementation:**
 - Use infrastructure as code (AWS CloudFormation, AWS CDK, Terraform) to define all infrastructure declaratively.
 - Pre-bake Amazon Machine Images (AMIs) using EC2 Image Builder to speed up launch times.
-- Use AWS Elastic Beanstalk, AWS CodeDeploy, or AWS Proton to automate immutable deployments.
+- Use AWS Elastic Beanstalk, AWS CodeDeploy or AWS Proton to automate immutable deployments.
 - Use AWS Config to detect drift from the expected infrastructure state and alert when changes are made outside of the deployment pipeline.
 
 ### Functional and Resiliency Testing in the Deployment Pipeline
@@ -976,13 +980,13 @@ Integrate resiliency testing into the deployment pipeline as well. Run a subset 
 
 ### Operational Readiness Reviews (ORRs)
 
-AWS performs Operational Readiness Reviews that evaluate the completeness of testing, the ability to monitor, and the ability to audit application performance against SLAs. A formal ORR is conducted prior to initial production deployment and repeated periodically (once per year or before critical performance periods) to ensure no drift from operational expectations has occurred. Consider adopting a similar practice: define a checklist of reliability, observability, and operational criteria that must be satisfied before a service is approved for production launch.
+AWS performs Operational Readiness Reviews that evaluate the completeness of testing, the ability to monitor and the ability to audit application performance against SLAs. A formal ORR is conducted prior to initial production deployment and repeated periodically (once per year or before critical performance periods) to ensure no drift from operational expectations has occurred. Consider adopting a similar practice: define a checklist of reliability, observability and operational criteria that must be satisfied before a service is approved for production launch.
 
 ---
 
 ## Back Up Data
 
-Back up data, applications, and configuration to meet your RTO and RPO requirements.
+Back up data, applications and configuration to meet your RTO and RPO requirements.
 
 ### Identify and Back Up All Data
 
@@ -992,12 +996,12 @@ Most AWS data stores offer backup capabilities:
 - **Amazon RDS** and **Amazon DynamoDB** support automated backup with point-in-time recovery (PITR), allowing restore to any time up to five minutes before the current time.
 - **Amazon DynamoDB** on-demand backup captures a full snapshot at any time with no performance impact.
 - **Amazon EBS** snapshots capture point-in-time copies of volumes and can be copied to other regions.
-- **AWS Backup** centralises and automates data protection across AWS services (RDS, DynamoDB, EBS, EFS, S3, Aurora, FSx, EC2, and more) from a single console and API.
+- **AWS Backup** centralises and automates data protection across AWS services (RDS, DynamoDB, EBS, EFS, S3, Aurora, FSx, EC2 and more) from a single console and API.
 
 **Anti-patterns:**
 - Not being aware of all data sources for the workload.
 - Not taking backups of critical data sources.
-- No defined RPO, or backup frequency that cannot meet the RPO.
+- No defined RPO or backup frequency that cannot meet the RPO.
 - Not evaluating whether backup is necessary or whether data can be reproduced from other sources.
 
 ### Secure and Encrypt Backups
@@ -1006,12 +1010,12 @@ Encrypt backups to ensure that data is secure. Use **AWS KMS** customer-managed 
 
 ### Perform Data Backup Automatically
 
-Use AWS Backup to create automated backup schedules. Define backup plans that specify the frequency, retention period, and destination vault. Use EventBridge rules with Lambda or Step Functions to back up data sources not supported by AWS Backup (for example, on-premises data sources or message queues).
+Use AWS Backup to create automated backup schedules. Define backup plans that specify the frequency, retention period and destination vault. Use EventBridge rules with Lambda or Step Functions to back up data sources not supported by AWS Backup (for example, on-premises data sources or message queues).
 
 ### Periodic Recovery Testing
 
 Validate that your backup process meets your RTO and RPO by performing a recovery test periodically. Restoring a backup without verifying the data is insufficient — common tests include:
-- Verifying that all data is present, not corrupted, and accessible.
+- Verifying that all data is present, not corrupted and accessible.
 - Verifying that data loss is within the RPO (compare backup timestamp to the time of simulated failure).
 - Measuring the time to restore and comparing it to the RTO.
 - Notifying stakeholders via SNS if validation fails or RTO is exceeded.
@@ -1028,7 +1032,7 @@ Automate the recovery validation process using AWS Lambda or Step Functions, tri
 
 All compute associated with a workload should be distributed among multiple Availability Zones. AWS compute services (EC2 Auto Scaling, ECS, EKS) provide ways to launch and manage compute across AZs and will automatically replace compute in a different AZ to maintain availability.
 
-Data services that are multi-AZ by default include Amazon S3, EFS, Aurora, DynamoDB, SQS, and Kinesis Data Streams. Data services that require explicit multi-AZ enablement include Amazon RDS, Amazon Redshift, and Amazon ElastiCache — once enabled, these services automatically detect AZ impairment, redirect requests, and re-replicate data.
+Data services that are multi-AZ by default include Amazon S3, EFS, Aurora, DynamoDB, SQS and Kinesis Data Streams. Data services that require explicit multi-AZ enablement include Amazon RDS, Amazon Redshift and Amazon ElastiCache — once enabled, these services automatically detect AZ impairment, redirect requests and re-replicate data.
 
 If using self-managed storage (EBS volumes, EC2 instance storage), you must manage multi-AZ replication yourself.
 
@@ -1036,7 +1040,7 @@ If using self-managed storage (EBS volumes, EC2 instance storage), you must mana
 
 Bimodal behaviour occurs when a workload behaves differently under normal conditions vs failure conditions. For example, relying on launching new EC2 instances when an AZ fails is bimodal — the workload operates normally in one mode and attempts to provision new resources (a control plane operation) in the other.
 
-A statically stable design operates in only one mode regardless of whether a failure is occurring. Provision enough instances in each AZ to handle the full load if one AZ is removed. When an AZ fails, traffic shifts to the healthy AZs (a data plane operation), and Auto Scaling asynchronously replaces the failed capacity.
+A statically stable design operates in only one mode regardless of whether a failure is occurring. Provision enough instances in each AZ to handle the full load if one AZ is removed. When an AZ fails, traffic shifts to the healthy AZs (a data plane operation) and Auto Scaling asynchronously replaces the failed capacity.
 
 Static stability applies to:
 - **Compute** (EC2, ECS/EC2, EKS/EC2, EMR) — pre-provision capacity in each AZ.
@@ -1062,14 +1066,14 @@ Example: 9 total required instances across 3 AZs
 
 ### Automate Recovery for Components Constrained to a Single Location
 
-Some components (for example, stateful storage with EBS volumes) cannot easily be distributed across AZs. For these, automate recovery: detect failure using CloudWatch alarms, and trigger automated recovery actions using EC2 Auto Recovery, ECS service replacement, or Lambda-driven automation that provisions the component in a healthy AZ.
+Some components (for example, stateful storage with EBS volumes) cannot easily be distributed across AZs. For these, automate recovery: detect failure using CloudWatch alarms and trigger automated recovery actions using EC2 Auto Recovery, ECS service replacement or Lambda-driven automation that provisions the component in a healthy AZ.
 
 ### Bulkhead Architectures to Limit Scope of Impact
 
 Bulkhead architectures partition resources so that a failure in one partition is contained and does not propagate. Beyond the service-level bulkheads described earlier (separate task definitions, separate data stores), consider:
 
-- **Cell-based architectures** — partition workloads by customer, geography, or function into independent cells. A failure in one cell affects only that cell's users. Route traffic between cells using Route 53 or Global Accelerator.
-- **Separate AWS accounts** — use separate accounts for production, staging, and development to prevent resource and quota conflicts between environments.
+- **Cell-based architectures** — partition workloads by customer, geography or function into independent cells. A failure in one cell affects only that cell's users. Route traffic between cells using Route 53 or Global Accelerator.
+- **Separate AWS accounts** — use separate accounts for production, staging and development to prevent resource and quota conflicts between environments.
 - **Reserved concurrency for Lambda** — use reserved concurrency to prevent one Lambda function from consuming all available concurrency in the account and starving other functions.
 
 ### Rely on the Data Plane During Recovery
@@ -1088,7 +1092,7 @@ Automated healing allows workloads to be reliable, but it can also obscure under
 When defining notifications:
 - Send alerts when thresholds are breached, even if auto-healing has already resolved the immediate issue.
 - Set alarm thresholds at values where investigation is warranted, not just at levels that represent complete failure.
-- Avoid alarm fatigue — too many alarms, or alarms that are not actionable, cause operators to ignore them. Tune thresholds regularly.
+- Avoid alarm fatigue — too many alarms or alarms that are not actionable, cause operators to ignore them. Tune thresholds regularly.
 - Use composite alarms to create high-confidence alerts based on multiple KPIs before paging on-call.
 
 ```hcl
@@ -1185,11 +1189,11 @@ resource "aws_fis_experiment_template" "az_failure" {
 Key safety practices:
 - Start with non-production environments; only run in production after pre-production results are satisfactory.
 - Use stop conditions (up to five per FIS template) to halt the experiment automatically if guardrail metrics are breached.
-- Communicate with operations teams, SRE teams, and customer support before running any experiment.
+- Communicate with operations teams, SRE teams and customer support before running any experiment.
 - Configure rollback actions (post-actions) in FIS experiment parameters so that the workload returns to its known-good state at experiment end.
 - Use AWS Resilience Hub to generate FIS experiment templates based on an analysis of your workload.
 
-We discourage custom scripts for chaos experiments unless they track current experiment state, emit logs, and provide rollback mechanisms. Use an established framework like AWS FIS that provides these capabilities by default.
+We discourage custom scripts for chaos experiments unless they track current experiment state, emit logs and provide rollback mechanisms. Use an established framework like AWS FIS that provides these capabilities by default.
 
 **4. Verify the hypothesis.** Measure system outputs during the experiment and compare to steady state. Focus on consequences that clients directly experience (5xx error rates, failed customer requests, latency) rather than internal attributes. Include a synthetic canary as a user proxy metric in every experiment's stop conditions.
 
@@ -1197,26 +1201,26 @@ We discourage custom scripts for chaos experiments unless they track current exp
 
 **6. Run experiments regularly.** After a workload meets the experiment hypothesis, automate the experiment to run as a regression in the CI/CD pipeline. Fault injection experiments are also a key component of game days.
 
-**Capture results.** Persist experiment results including timestamps, workload state, and conditions for later trend analysis. Examples: dashboard screenshots, CloudWatch metric CSV exports, X-Ray trace archives.
+**Capture results.** Persist experiment results including timestamps, workload state and conditions for later trend analysis. Examples: dashboard screenshots, CloudWatch metric CSV exports, X-Ray trace archives.
 
 ### Game Days
 
-Game days simulate a failure or event to verify systems, processes, and team responses. The purpose is to perform the same actions the team would perform as if the event actually occurred, building ingrained habits for responding under pressure.
+Game days simulate a failure or event to verify systems, processes and team responses. The purpose is to perform the same actions the team would perform as if the event actually occurred, building ingrained habits for responding under pressure.
 
 **Benefits:**
 - **Enhanced response skills** — teams practice their duties and communication mechanisms during simulated events, creating more coordinated and efficient responses in production.
 - **Identify and address dependencies** — complex environments have intricate dependencies; game days expose them before real events do.
-- **Foster a culture of resilience** — game days promote awareness, collaboration, and shared understanding of reliability across the organisation.
+- **Foster a culture of resilience** — game days promote awareness, collaboration and shared understanding of reliability across the organisation.
 - **Continuous improvement** — regular game days allow you to continually assess and adapt resilience strategies.
 - **Increased confidence** — successful game days build confidence in the system's ability to recover.
 
 **How to run a game day:**
 
-1. **Prepare**: Define scenarios and procedures. Inform all team members and stakeholders in advance of the date, time, and scenarios.
+1. **Prepare**: Define scenarios and procedures. Inform all team members and stakeholders in advance of the date, time and scenarios.
 2. **Simulate**: Inject faults using AWS FIS. Teams monitor and assess the impact of simulated events.
-3. **Observe**: If systems operate as designed, automated detection, scaling, and self-healing mechanisms should activate with little to no user impact.
+3. **Observe**: If systems operate as designed, automated detection, scaling and self-healing mechanisms should activate with little to no user impact.
 4. **Remediate**: If negative impact is observed, roll back the test and remedy identified issues through automated or manual means documented in runbooks.
-5. **Document**: Capture lessons learned. Use them as a feedback loop to improve systems, processes, and team capabilities.
+5. **Document**: Capture lessons learned. Use them as a feedback loop to improve systems, processes and team capabilities.
 
 **Anti-patterns:**
 - Documenting procedures but never exercising them.
@@ -1247,7 +1251,7 @@ Build a DR tiering matrix to classify workloads:
 | Medium | < 24 hours | < 4 hours |
 | Low | < 72 hours | < 24 hours |
 
-When analysing business impact consider: financial impact (lost revenue), reputational impact (loss of customer trust), operational impact (missed payroll, decreased productivity), and regulatory risk. Also consider whether recovery objectives change during specific times of year (holiday shopping seasons, sporting events, product launches).
+When analysing business impact consider: financial impact (lost revenue), reputational impact (loss of customer trust), operational impact (missed payroll, decreased productivity) and regulatory risk. Also consider whether recovery objectives change during specific times of year (holiday shopping seasons, sporting events, product launches).
 
 Note that different parts of the same workload may have different RTOs and RPOs — for example a database of completed orders (high criticality) vs a cache of recommendation data (lower criticality).
 
@@ -1325,7 +1329,7 @@ DR plans must be tested; untested plans should not be relied upon. Test DR imple
 
 Run **AWS Elastic Disaster Recovery (AWS DRS)** recovery drills that launch drill instances without redirecting production traffic, verifying the recovery process end-to-end.
 
-Schedule DR tests regularly — at minimum annually, and before significant architectural changes or new product launches.
+Schedule DR tests regularly — at minimum annually and before significant architectural changes or new product launches.
 
 ### Managing Configuration Drift at the DR Site
 
@@ -1355,7 +1359,7 @@ Design recovery to be automated where possible:
 - **Amazon EventBridge** can trigger recovery automation in response to CloudWatch alarm state changes.
 - **AWS Lambda** or **Step Functions** can orchestrate complex recovery workflows.
 
-Maintenance and improvement of automated recovery is an ongoing process: continually test and refine recovery procedures based on lessons learned, and stay updated on new AWS services and features that enhance recovery capabilities.
+Maintenance and improvement of automated recovery is an ongoing process: continually test and refine recovery procedures based on lessons learned and stay updated on new AWS services and features that enhance recovery capabilities.
 
 ---
 
@@ -1381,10 +1385,10 @@ Start with a valid, effective manual process; implement it in code; and invoke i
 Every HA incident should follow a documented runbook:
 
 1. **Detection**: CloudWatch alarm fires, on-call receives page.
-2. **Diagnosis**: Check dashboard for error rate, latency, and throttling.
+2. **Diagnosis**: Check dashboard for error rate, latency and throttling.
 3. **Mitigation**: Run the mitigation script (e.g., scale up, failover, rollback).
 4. **Resolution**: Confirm the system is healthy.
-5. **Post-mortem**: Document root cause, timeline, and preventive actions.
+5. **Post-mortem**: Document root cause, timeline and preventive actions.
 
 ```yaml
 # Example runbook snippet
@@ -1469,7 +1473,7 @@ Once targets are set, the table below maps each phase from initial discovery thr
 | **3. Observability** | See everything, measure SLOs | Add structured logging (JSON) with correlation IDs, instrument all services with X-Ray SDK for tracing, create service-level dashboards (latency, error rate, saturation, traffic), configure composite alarms based on SLO burn rate, set up synthetic canaries for critical user journeys, define SLIs and SLOs for each service, establish log retention policies, configure metric filters for key error patterns | Embed OpenTelemetry SDK at service creation, define SLI/SLO dashboards before first production deploy, enforce structured logging via CI/CD lint check, add synthetic canaries during staging setup, configure real-user monitoring (RUM) for frontend services, set up anomaly detection on key metrics | CloudWatch, X-Ray, OpenTelemetry SDK, Synthetics canaries, CloudWatch RUM, Grafana, Logs Insights, Contributor Insights, anomaly detection | % of services with structured logging (target: 100%), dashboard coverage per service (target: 1 service = 1 dashboard), alarm coverage ratio (metric : alarm), MTTD < 5 minutes for critical path services, synthetic canary uptime > same as service SLA, log retention enforced by policy |
 | **4. Resilience patterns** | Fail gracefully at every boundary | Add circuit breakers (Resilience4j or manual) on all downstream HTTP calls, configure retries with exponential backoff and jitter, set client timeouts (connect, read, write) per dependency, implement bulkheads for thread pools, use async/queue-based decoupling for non-critical calls, add request rate limiting, implement idempotency keys on write endpoints, add fallback responses (cached or degraded) | Include resilience4j or equivalent in service template, make circuit breaker thresholds configurable at deploy time, set timeouts to 2x p99 latency of downstream, use SQS or SNS for all non-synchronous communication, add idempotency keys from day one, implement graceful degradation with feature flags, add concurrency limits per endpoint | Resilience4j, Hystrix (legacy), SQS queues, SNS topics, API Gateway throttling per stage, DynamoDB DAX, ElastiCache for fallback responses, feature flags (AppConfig, LaunchDarkly) | % of downstream calls with circuit breaker (target: 100%), timeout configured per dependency (target: 100%), retry coverage on all transient-failure endpoints, fallback response coverage for degraded mode, p99 latency under 2x baseline during circuit breaker half-open state, zero cascading failures in incident review |
 | **5. Data & backup** | Protect data, prove recovery | Enable automated backups on all RDS instances (35 day retention), configure DynamoDB point-in-time recovery, test restore process quarterly, add cross-region replication for critical data (DynamoDB global tables, S3 CRR, RDS cross-region read replica), encrypt all data at rest (KMS) and in transit (TLS), implement backup lifecycle policies, verify backup integrity with restore drills | Define backup strategy and RPO/RTO before first data write, enable PITR and automated backups in infrastructure-as-code templates, encrypt all storage resources by default, choose DynamoDB global tables if multi-region is expected, use AWS Backup with centralized policy, document restore procedure in the service runbook | AWS Backup, RDS automated backups, DynamoDB PITR, DynamoDB global tables, S3 Cross-Region Replication, KMS, S3 Object Lock (immutable backups) | Backup success rate (target: 100%), RPO achieved vs target (gap = 0), recovery test success rate (target: 100% for critical data), restore time within RTO, encryption coverage (target: 100% at rest and in transit), DR test recovery time within RTO |
-| **6. CI/CD & deployment** | Ship fast, roll back faster | Adopt immutable deployments — no in-place updates, use blue/green or canary strategy, automate rollback on health check failure (pipeline auto-reverts), add pre-deploy health gates (smoke tests, dependency checks), require approval gates for production deploys, enforce tagging (AMI/container version, commit hash, deploy timestamp), integrate security scanning (SAST, dependency scan), measure deployment frequency and change failure rate | Build CI/CD pipeline in parallel with the first service commit, include integration tests, contract tests, and resiliency tests in pipeline, use canary deployments with traffic shifting, require all checks to pass before promotion, enforce branch protection and code review, add automated rollback testing, implement feature flags for gradual exposure | CodePipeline, CodeDeploy (blue/green), ECS rolling update with circuit breaker, canary deployments via AppMesh or target groups, approval gates, Tag Editor, Security Hub, SAST tools | Deployment frequency (target: daily+), change failure rate < 5%, rollback time < 5 minutes, mean time to deploy < 30 minutes from merge to production, % of deployments using immutable pattern (target: 100%), all rollbacks tested, all deploys fully automated |
+| **6. CI/CD & deployment** | Ship fast, roll back faster | Adopt immutable deployments — no in-place updates, use blue/green or canary strategy, automate rollback on health check failure (pipeline auto-reverts), add pre-deploy health gates (smoke tests, dependency checks), require approval gates for production deploys, enforce tagging (AMI/container version, commit hash, deploy timestamp), integrate security scanning (SAST, dependency scan), measure deployment frequency and change failure rate | Build CI/CD pipeline in parallel with the first service commit, include integration tests, contract tests and resiliency tests in pipeline, use canary deployments with traffic shifting, require all checks to pass before promotion, enforce branch protection and code review, add automated rollback testing, implement feature flags for gradual exposure | CodePipeline, CodeDeploy (blue/green), ECS rolling update with circuit breaker, canary deployments via AppMesh or target groups, approval gates, Tag Editor, Security Hub, SAST tools | Deployment frequency (target: daily+), change failure rate < 5%, rollback time < 5 minutes, mean time to deploy < 30 minutes from merge to production, % of deployments using immutable pattern (target: 100%), all rollbacks tested, all deploys fully automated |
 | **7. Testing & chaos** | Break things on purpose | Run load tests (stress, soak, spike) to find scaling limits before they hit production, use AWS FIS to run chaos experiments (AZ power loss, EC2 instance terminate, RDS failover, API throttle injection), run quarterly game days with rotating incident commander roles, include negative tests (invalid input, missing dependencies, expired credentials), test burst and surge scenarios | Include load test scripts in the service repo from the start, bake chaos experiments into pre-production validation, make staging environment identical to production (same instance types, same ASG config, same data volume), run failure scenarios as part of CI/CD staging gate | AWS Fault Injection Service (FIS), Locust, k6, Artiller, Chaos Mesh (EKS), Game Day runbooks | Load test passes at 2x expected peak traffic, chaos experiments cover all critical failure modes, game day participation rate per team (target: 100%), MTTD during chaos experiment < MTTD during real incident, no repeat incidents of same failure type |
 | **8. Emergency response** | Act fast, follow the script | Write runbooks for every known failure mode (service crash, DB failover, AZ outage, region failure, data corruption, quota exhaustion, cert expiry), implement emergency levers as one-click or one-command actions (kill pod, scale up, failover DB, rollback deploy, increase quota, drain AZ), test runbooks in quarterly drills, integrate runbooks with alerting for automatic suggestion, measure time from alert to mitigation | Create runbooks and emergency levers during service setup, not after first incident, document escalation paths and on-call rotation at deploy time, include emergency access procedures (break-glass accounts), define severity levels with clear response SLAs | Systems Manager Automation, CloudWatch alarm actions, Lambda for emergency levers, SNS notifications, PagerDuty or Opsgenie escalation, break-glass IAM roles | Runbook coverage for all critical failure modes (target: 100%), runbook drill pass rate (target: > 80% without needing to improvise), MTTR < 30 minutes for critical services, alarm-to-page time < 2 minutes, escalation path documented for all services |
 | **9. DR & continuity** | Survive region failure | Define RTO and RPO per workload tier (critical, important, best effort), implement DR strategy — pilot light (RDS cross-region replica, AMI copied, DNS cutover) or warm standby (reduced capacity running in DR region, scaled up on failover) or active-active (full traffic in both regions), test failover semi-annually, document DR plan with step-by-step checklist, verify data consistency after failover, test failback | Select DR strategy during architecture design (pilot light is the minimum for most), build cross-region replication from the first deploy for critical data, use Route 53 ARC with health checks for automated failover, include DR test in the service release checklist | Route 53 Application Recovery Controller (ARC), RDS cross-region read replica, DynamoDB global tables, S3 Batch Replication for existing objects, CloudFormation StackSets for DR region infrastructure | RTO achieved vs target (gap = 0), RPO achieved vs target (gap = 0), DR test pass rate (target: 100%), failover time within RTO, failback time documented and tested, data consistency verified after each DR test |
@@ -1485,11 +1489,11 @@ Once targets are set, the table below maps each phase from initial discovery thr
 
 High availability in microservices on AWS requires deliberate design at every layer of the stack. Start with the availability formulas to set realistic targets based on your dependency graph. Understand the distinction between hard and soft availability requirements across different parts of your workload. Manage service quotas proactively — quota exhaustion is one of the most common and preventable causes of availability incidents.
 
-Run services across multiple AZs, make them stateless, and implement static stability so workloads operate identically during normal and failure conditions. Use loosely coupled architectures with event-driven patterns, SQS queues, and idempotent APIs. Apply resilience patterns — circuit breakers, bulkheads, throttling, fail-fast, and client timeouts — at every service boundary. Implement emergency levers for rapid mitigation before automated healing kicks in.
+Run services across multiple AZs, make them stateless and implement static stability so workloads operate identically during normal and failure conditions. Use loosely coupled architectures with event-driven patterns, SQS queues and idempotent APIs. Apply resilience patterns — circuit breakers, bulkheads, throttling, fail-fast and client timeouts — at every service boundary. Implement emergency levers for rapid mitigation before automated healing kicks in.
 
-Deploy changes using immutable infrastructure, fault-isolated zonal rollouts, and automated CI/CD pipelines with integrated functional and resiliency testing. Monitor everything with CloudWatch metrics, composite alarms, synthetic canaries, real-user monitoring, and distributed tracing. Back up all data automatically, encrypt it, copy it cross-region, and validate recovery regularly.
+Deploy changes using immutable infrastructure, fault-isolated zonal rollouts and automated CI/CD pipelines with integrated functional and resiliency testing. Monitor everything with CloudWatch metrics, composite alarms, synthetic canaries, real-user monitoring and distributed tracing. Back up all data automatically, encrypt it, copy it cross-region and validate recovery regularly.
 
-Validate your architecture with load testing and chaos experiments. Run game days to build team muscle memory for responding to failures. Define RTO and RPO for every workload, implement the appropriate DR strategy, and test it.
+Validate your architecture with load testing and chaos experiments. Run game days to build team muscle memory for responding to failures. Define RTO and RPO for every workload, implement the appropriate DR strategy and test it.
 
-The goal is not to eliminate failure — that is impossible. It is to design systems that degrade gracefully, recover automatically, and give teams the observability and runbooks needed to respond consistently and confidently when failure inevitably occurs.
+The goal is not to eliminate failure — that is impossible. It is to design systems that degrade gracefully, recover automatically and give teams the observability and runbooks needed to respond consistently and confidently when failure inevitably occurs.
 
