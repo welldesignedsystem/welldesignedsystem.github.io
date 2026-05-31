@@ -1485,6 +1485,116 @@ Once targets are set, the table below maps each phase from initial discovery thr
 
 ---
 
+## Design Pattern Summary
+
+High availability emerges from the combination of many patterns applied together. Each pattern addresses a specific failure mode or architectural concern. The table below summarizes every pattern discussed in this article, grouped by what aspect of HA it supports, and maps each to the sections above.
+
+### Compute & Deployment Patterns
+
+| Pattern | How it helps HA | Key sections |
+|---------|-----------------|--------------|
+| **Multi-AZ Deployment** | Eliminates the AZ as a single point of failure. Spread across 3 AZs so any one AZ can fail without losing service. | Multi-AZ Deployment, Fault Isolation |
+| **Stateless Services** | Decouples request handling from instance identity. Any instance can serve any request, so the load balancer can route around failures instantly and Auto Scaling can replace instances freely. | Stateless Services |
+| **Static Stability** | Pre-provisions enough capacity per AZ to absorb the loss of one AZ without calling the control plane. Avoids bimodal behaviour where the system tries to provision resources during a failure (when the control plane may be degraded). | Fault Isolation (Static Stability) |
+| **Immutable Infrastructure** | Eliminates configuration drift and in-place failure. Every deploy builds fresh infrastructure — rollback is just a traffic shift to the previous version. | Deployment Strategies |
+| **Fault-Isolated Zonal Deployments** | Touches one AZ at a time during rollouts. A bad deploy breaks in one AZ before reaching the others, preserving the remaining AZs as a safety net. | Deployment Strategies |
+| **Blue/Green and Canary Deployments** | Blue/green provides instant rollback by switching traffic. Canary limits blast radius by shifting traffic gradually, validating health before full cutover. | Deployment Strategies |
+
+### Resilience & Fault Tolerance Patterns
+
+| Pattern | How it helps HA | Key sections |
+|---------|-----------------|--------------|
+| **Circuit Breaker** | Fails fast when a downstream service is unhealthy, preventing cascading failures. The breaker opens after a threshold of failures, giving the downstream time to recover without being hammered by retries. | Circuit Breaker |
+| **Bulkheads** | Isolates resources per service or partition so a failure in one component cannot starve others of CPU, memory, database connections or thread pool capacity. | Bulkheads, Fault Isolation |
+| **Graceful Degradation** | Converts hard dependencies into soft dependencies. When a non-critical service fails, the system falls back to a cached or default response instead of failing entirely. | Implement Graceful Degradation |
+| **Throttling (Rate Limiting)** | Protects the system from resource exhaustion during demand spikes. The token bucket algorithm rejects excess requests with 429 before load overwhelms compute or downstream services. | Throttle Requests |
+| **Retry with Exponential Backoff and Jitter** | Allows transient failures to self-heal by retrying after progressively longer delays. Jitter prevents the thundering herd problem where all clients retry simultaneously. | Control and Limit Retry Calls |
+| **Fail Fast** | Releases resources immediately when a request cannot be served. Rejects invalid input at the boundary, fails assertions early and avoids queuing work that will time out. | Fail Fast and Limit Queues |
+| **Client Timeouts** | Prevents a slow or hung downstream from consuming resources indefinitely. Connection timeouts catch network failures; request timeouts catch slow responses. | Set Client Timeouts |
+| **Emergency Levers** | Provides pre-built, tested mechanisms to disable features, shed traffic or bypass dependencies under extreme load. Acts as the last line of defence before a full outage. | Implement Emergency Levers |
+| **Dead Letter Queues** | Captures messages that repeatedly fail processing so they do not clog the main queue. Alarms on DLQ depth surface systemic failures that need human intervention. | Fail Fast and Limit Queues |
+| **Sideline Queues** | Sidelines old or expensive messages when a backlog builds up, so new time-sensitive work is processed promptly (LIFO-like behaviour). | Fail Fast and Limit Queues |
+
+### Data & Idempotency Patterns
+
+| Pattern | How it helps HA | Key sections |
+|---------|-----------------|--------------|
+| **Idempotency** | Makes mutating operations safe to retry. Clients can retry failed requests without risk of duplicate charges, duplicate orders or duplicate records. | Make Mutating Operations Idempotent |
+| **Backup & Point-in-Time Recovery** | Protects against data corruption, accidental deletion or region failure. Automated backups with PITR allow restore to any point within the retention window. | Back Up Data |
+| **Cross-Region Replication** | Replicates data to a second region for disaster recovery. DynamoDB Global Tables, Aurora Global Database, S3 CRR and RDS cross-region read replicas enable active-passive or active-active DR. | Disaster Recovery |
+
+### Service Design & Coupling Patterns
+
+| Pattern | How it helps HA | Key sections |
+|---------|-----------------|--------------|
+| **Loosely Coupled Dependencies (Event-Driven)** | Removes direct point-to-point dependencies. Services emit events to an event bus or write to a queue — downstream services consume asynchronously. A producer failure does not block consumers and vice versa. | Implement Loosely Coupled Dependencies |
+| **Service Contracts per API** | Documents request/response schemas, error codes and SLA expectations explicitly. Versioned contracts allow services to evolve without breaking consumers, preventing unexpected failures during upgrades. | Service Contracts per API |
+| **Strangler Fig** | Replaces monolith functionality incrementally without big-bang cutovers. Each replaced piece is independently deployable and can be rolled back without affecting the rest. | Workload Architecture |
+| **Domain-Aligned Service Boundaries** | Aligns service boundaries to business domains rather than technical layers. Each service owns its data store, preventing shared-database coupling that turns independent services into a distributed monolith. | Build Services Focused on Specific Business Domains |
+| **Constant Work Pattern** | Ensures a component does the same amount of work regardless of input load. Health checks that always send a full snapshot (rather than a delta) keep processing predictable even during large-scale failures. | Do Constant Work |
+| **Back Pressure** | Slows or stops incoming data when a consumer cannot keep up. Queue depth monitoring and consumer auto-scaling prevent the system from accepting more work than it can process. | Implement Loosely Coupled Dependencies |
+
+### Observability & Testing Patterns
+
+| Pattern | How it helps HA | Key sections |
+|---------|-----------------|--------------|
+| **Health Endpoints** | Every service exposes `/health` verifying critical dependencies. Load balancers use this to stop routing traffic to unhealthy instances. Orchestrators use it to replace failed tasks. | Health Endpoints |
+| **Structured Logging with Correlation IDs** | Enables tracing requests across service boundaries. Correlation IDs in structured JSON logs allow operators to reconstruct a full request path during incident investigation. | Observability for HA |
+| **Distributed Tracing** | Traces every hop a request makes across services, queues and data stores. Integration with X-Ray or OpenTelemetry reveals latency bottlenecks, error propagation and dependency health at a glance. | Observability for HA (X-Ray) |
+| **Synthetic Canaries** | Monitors endpoints from external vantage points on a schedule. Catches availability and latency degradation before real users are affected. | CloudWatch Synthetics |
+| **Composite Alarms** | Combines multiple low-confidence signals into a high-confidence alert. Reduces alarm fatigue while ensuring real problems are surfaced immediately. | Observability for HA (Alarms) |
+| **Load Testing** | Validates that the system handles expected peak traffic, burst traffic and sustained load. Identifies scaling limits, throttling thresholds and bottleneck services before they cause production incidents. | Testing for HA (Load Testing) |
+| **Chaos Engineering (FIS)** | Proactively injects failures (AZ outage, instance termination, RDS failover) to verify the system behaves as designed. Finds gaps in resilience before a real event does. | Testing for HA (Chaos Engineering) |
+| **Game Days** | Simulates a full incident scenario with the operations team responding. Builds muscle memory for runbooks, exposes gaps in documentation and improves team coordination under pressure. | Testing for HA (Game Days) |
+| **Operational Readiness Reviews** | Formal checkpoint before production launch that evaluates testing completeness, monitoring coverage, runbook readiness and SLA alignment. Prevents blind spots from reaching production. | Operational Readiness Reviews |
+
+### Disaster Recovery & Continuity Patterns
+
+| Pattern | How it helps HA | Key sections |
+|---------|-----------------|--------------|
+| **Backup & Restore** | Data is backed up to S3 or cross-region snapshots. Restored to new infrastructure in a recovery region. Lowest cost but highest RTO — suitable for non-critical workloads. | Disaster Recovery |
+| **Pilot Light** | Core data (RDS replicas, S3 replication) runs continuously in the recovery region. Compute is provisioned on failover. Balances cost with recovery speed for most workloads. | Disaster Recovery |
+| **Warm Standby** | A scaled-down copy of the full environment runs in the recovery region. Scaled up on failover. Higher cost, lower RTO — suitable for critical customer-facing services. | Disaster Recovery |
+| **Multi-Region Active-Active** | Full production load served from multiple regions simultaneously. No failover delay but highest cost and complexity. Required for 99.999% targets where five minutes of downtime is unacceptable. | Disaster Recovery |
+| **Cell-Based Architecture** | Partitions workloads into independent cells by customer, geography or function. A failure in one cell affects only that cell's users, preventing region-wide or tenant-wide outages. | Fault Isolation (Bulkhead Architectures) |
+
+### Deployment & Automation Patterns
+
+| Pattern | How it helps HA | Key sections |
+|---------|-----------------|--------------|
+| **Rolling Deployments** | Replaces instances one by one with `deployment_minimum_healthy_percent = 100` so capacity never drops below target. No additional cost but slower rollouts. | Deployment Strategies |
+| **Blue/Green Deployments** | Maintains two complete environments. Traffic is switched atomically via DNS or ALB listener rule. Rollback is instant — just switch back. | Deployment Strategies |
+| **Canary Deployments** | Routes a small traffic percentage to the new version. Shifts more traffic as error rates and latency are validated. Automated rollback if metrics degrade. | Deployment Strategies |
+| **Feature Flags** | Separates code deployment from feature release. A bad feature is turned off without rolling back the entire service. Enables gradual exposure and instant kill-switch. | Deployment Strategies |
+| **Infrastructure as Code** | All infrastructure defined declaratively (CloudFormation, CDK, Terraform). Changes are reviewed, version-controlled and deployed consistently across environments. Prevents configuration drift. | Deployment Strategies |
+| **Automated Rollback** | CI/CD pipeline automatically reverts a deployment if health checks fail after the deploy. Combined with canary or blue/green, this gives fully automated safe releases. | Monitoring & Alarms |
+
+### Operational Patterns
+
+| Pattern | How it helps HA | Key sections |
+|---------|-----------------|--------------|
+| **Service Quota Management** | Proactively monitors and requests quota increases before they are needed. Prevents the most common preventable cause of HA incidents — quota exhaustion during failover or scaling events. | Managing Service Quotas |
+| **Runbooks / Playbooks** | Codifies the response to every known failure mode. Removes guesswork during incidents, reduces MTTR and ensures consistent response regardless of who is on call. | Operational Runbooks |
+| **Post-Incident Reviews (Blameless)** | Identifies systemic causes rather than individual mistakes. Each review produces action items that improve the system, closing the loop between incidents and resilience. | Implementation Roadmap (Phase 10) |
+| **Error Budgets** | Tracks the gap between actual availability and the SLO. When the error budget is depleted, deployment velocity slows — creating an explicit feedback loop between reliability and feature velocity. | Implementation Roadmap |
+
+### How the patterns work together
+
+These patterns are not independent choices — they form layers of defence:
+
+1. **Prevention** (service design, coupling, idempotency, quotas) — stop failures before they start.
+2. **Containment** (circuit breakers, bulkheads, throttling, fail fast) — limit blast radius when a failure does occur.
+3. **Graceful degradation** (fallbacks, emergency levers, back pressure) — keep the core working even when parts fail.
+4. **Observability** (health checks, tracing, synthetic canaries, composite alarms) — detect degradation quickly.
+5. **Automated recovery** (DLQs, auto-scaling, static stability, immutable rollback) — heal without human intervention.
+6. **Manual recovery** (runbooks, emergency levers, game days) — when automation cannot handle it.
+7. **DR** (cross-region replication, pilot light, warm standby) — survive a region-level failure.
+8. **Continuous validation** (chaos engineering, game days, load testing, ORRs) — prove the system still works as expected and uncover drift.
+
+The Implementation Roadmap earlier in this article maps directly onto these layers: phases 1-2 build the prevention and containment layer, phase 3 adds observability, phases 4-6 add graceful degradation and automated recovery, phase 7 validates through chaos, phases 8-9 add manual recovery and DR, and phase 10 closes the loop with continuous improvement.
+
+---
+
 ## Conclusion
 
 High availability in microservices on AWS requires deliberate design at every layer of the stack. Start with the availability formulas to set realistic targets based on your dependency graph. Understand the distinction between hard and soft availability requirements across different parts of your workload. Manage service quotas proactively — quota exhaustion is one of the most common and preventable causes of availability incidents.

@@ -12,7 +12,7 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 | `npm run format` | Prettier only — **no linter, no typecheck** |
 | `npm run update-modules` | Update all Hugo module deps |
 
-**CI note:** deploy.yml runs `hugo --gc --minify --baseURL "$URL"` directly (not `npm run build`) so GitHub Pages can inject the deployment URL. Uses `npm ci` — `package-lock.json` is tracked despite `.gitignore`.
+**CI note:** deploy.yml runs `hugo --gc --minify --baseURL "$URL"` directly (not `npm run build`) so GitHub Pages can inject the deployment URL. CI uses `npm ci` — `package-lock.json` is tracked despite `.gitignore`.
 
 ## Content conventions
 
@@ -39,9 +39,8 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 
 - Push to `main` → GitHub Actions (Hugo + Node 24) → GitHub Pages.
 
-## Reference files
+## See also
 
-- `.github/copilot-instructions.md` — agent guidance, writing style, anti-hallucination rules
+- `.github/copilot-instructions.md` — writing style, anti-hallucination rules
 - `.github/instructions/blog.instructions.md` — blog editorial rules
 - `.github/commit-instructions.md` — commit message format
-- `.github/agents/commit-reviewer.agent.md` and `research.agent.md` — local agent definitions
