@@ -214,7 +214,9 @@ AWS secures the cloud; you secure what you run in it. For HA this means:
 
 ### Managing Service Quotas and Constraints
 
-For cloud-based workload architectures there are service quotas (also called service limits) that exist to prevent accidentally provisioning more resources than needed and to limit API request rates to protect services from abuse. There are also resource constraints such as network throughput or physical disk capacity.
+For cloud-based workload architectures there are service quotas (also called service limits), reasons: 
+- To prevent accidentally provisioning more resources than needed and to limit API request rates to protect services from abuse. 
+- There are also resource constraints such as network throughput or physical disk capacity.
 
 **Common anti-patterns to avoid:**
 - Deploying a workload without understanding hard or soft quotas and their limits.
@@ -227,27 +229,19 @@ For cloud-based workload architectures there are service quotas (also called ser
 
 **Key practices:**
 
-Use the **AWS Service Quotas console** to look up quota values, request increases and track quota increase requests for over 250 AWS services. **AWS Trusted Advisor** provides alerts at 80% and 90% threshold breaches.
-
-Manage quotas across accounts and regions. Service quota limits are per-account and per-region. The same named quota can have a different value in different regions; reconcile these differences continuously. Passive DR regions must have equivalent quotas to the active region — game days rarely test at peak capacity and often miss quota discrepancies between regions. This is referred to as **service quota drift** and must be actively tracked and remediated.
-
-Ensure a sufficient gap between current quotas and maximum usage to accommodate failover. If a primary AZ or region fails, surviving resources must absorb the full load. Pre-request quota increases so that headroom exists before it is needed.
-
-Accommodate fixed quotas through architecture. Some limits are not adjustable (for example API Gateway integration timeout is 29 seconds maximum, serverless function invocation payload sizes). Design the architecture to work within these constraints rather than expecting them to be lifted.
-
-Monitor and automate quota management using **Amazon EventBridge** to trigger **AWS Lambda** functions that check utilisation and automatically request increases.
+- Use the **AWS Service Quotas console** to look up quota values, request increases and track quota increase requests for over 250 AWS services. **AWS Trusted Advisor** provides alerts at 80% and 90% threshold breaches.
+- Manage quotas across accounts and regions. Service quota limits are per-account and per-region. The same named quota can have a different value in different regions; reconcile these differences continuously. Passive DR regions must have equivalent quotas to the active region — game days rarely test at peak capacity and often miss quota discrepancies between regions. This is referred to as **service quota drift** and must be actively tracked and remediated.
+- Ensure a sufficient gap between current quotas and maximum usage to accommodate failover. If a primary AZ or region fails, surviving resources must absorb the full load. Pre-request quota increases so that headroom exists before it is needed.
+- Accommodate fixed quotas through architecture. Some limits are not adjustable (for example API Gateway integration timeout is 29 seconds maximum, serverless function invocation payload sizes). Design the architecture to work within these constraints rather than expecting them to be lifted.
+- Monitor and automate quota management using **Amazon EventBridge** to trigger **AWS Lambda** functions that check utilisation and automatically request increases.
 
 ### Planning Network Topology
 
-**Highly available public endpoints.** Place an **Application Load Balancer (ALB)** or **Network Load Balancer (NLB)** in front of your compute to provide a highly available public endpoint. Load balancers distribute traffic across multiple AZs and automatically route around unhealthy targets. Use **Amazon Route 53** with health checks for DNS-level failover and geolocation routing. Use **AWS Global Accelerator** for workloads that need low-latency routing from users across the globe to the nearest healthy endpoint.
-
-**Redundant on-premises connectivity.** For hybrid workloads, provision redundant connectivity using two or more **AWS Direct Connect** connections to separate Direct Connect locations. Back up Direct Connect with **AWS Site-to-Site VPN** so that on-premises connectivity survives a circuit failure.
-
-**IP subnet allocation.** Ensure IP subnet allocation accounts for expansion and availability. Plan subnets in each AZ to be large enough to accommodate auto-scaling events, including failover scenarios where one AZ's capacity is absorbed by the remaining AZs.
-
-**Hub-and-spoke topologies.** Prefer hub-and-spoke topologies over many-to-many mesh. Use **AWS Transit Gateway** as the hub for connecting VPCs and on-premises networks. This simplifies routing tables and avoids the combinatorial explosion of VPC peering connections in large environments.
-
-**Non-overlapping IP ranges.** Enforce non-overlapping private IP address ranges across all private address spaces that are connected. Overlapping CIDRs prevent peering and cause routing failures that are difficult to diagnose under stress.
+- **Highly available public endpoints.** Place an **Application Load Balancer (ALB)** or **Network Load Balancer (NLB)** in front of your compute to provide a highly available public endpoint. Load balancers distribute traffic across multiple AZs and automatically route around unhealthy targets. Use **Amazon Route 53** with health checks for DNS-level failover and geolocation routing. Use **AWS Global Accelerator** for workloads that need low-latency routing from users across the globe to the nearest healthy endpoint.
+- **Redundant on-premises connectivity.** For hybrid workloads, provision redundant connectivity using two or more **AWS Direct Connect** connections to separate Direct Connect locations. Back up Direct Connect with **AWS Site-to-Site VPN** so that on-premises connectivity survives a circuit failure.
+- **IP subnet allocation.** Ensure IP subnet allocation accounts for expansion and availability. Plan subnets in each AZ to be large enough to accommodate auto-scaling events, including failover scenarios where one AZ's capacity is absorbed by the remaining AZs.
+- **Hub-and-spoke topologies.** Prefer hub-and-spoke topologies over many-to-many mesh. Use **AWS Transit Gateway** as the hub for connecting VPCs and on-premises networks. This simplifies routing tables and avoids the combinatorial explosion of VPC peering connections in large environments.
+- **Non-overlapping IP ranges.** Enforce non-overlapping private IP address ranges across all private address spaces that are connected. Overlapping CIDRs prevent peering and cause routing failures that are difficult to diagnose under stress.
 
 ---
 
@@ -255,15 +249,11 @@ Monitor and automate quota management using **Amazon EventBridge** to trigger **
 
 ### Choosing How to Segment Your Workload
 
-Build highly scalable and reliable workloads using a service-oriented architecture (SOA) or a microservices architecture. SOA makes software components reusable via service interfaces. Microservices go further, making components smaller and simpler.
-
-Microservices allow you to differentiate the availability required by different services, focusing investment more specifically on the microservices that have the greatest availability needs. For example, on Amazon product detail pages, hundreds of microservices build discrete portions of the page. While a few services must be available to show price and product details, the vast majority of page content can simply be excluded if a service is unavailable — even photos and reviews are not required for a customer to complete a purchase.
-
-**Key trade-offs.** Smaller services can introduce additional latency, more complex debugging and increased operational burden. One primary trade-off is that distributed compute can make it harder to achieve latency requirements and adds complexity in debugging and tracing. Use AWS X-Ray to address the tracing complexity.
-
-**The microservice Death Star anti-pattern.** A situation in which atomic components become so highly interdependent that the failure of one results in a much larger failure, making the components as rigid and fragile as a monolith. Avoid this by enforcing loose coupling between services.
-
-**Strangler Fig pattern.** When refactoring a monolith, gradually replace specific application components with new applications and services. AWS Migration Hub Refactor Spaces acts as the starting point for incremental application refactoring.
+- Build highly scalable and reliable workloads using a service-oriented architecture (SOA) or a microservices architecture. SOA makes software components reusable via service interfaces. Microservices go further, making components smaller and simpler.
+- Microservices allow you to differentiate the availability required by different services, focusing investment more specifically on the microservices that have the greatest availability needs. For example, on Amazon product detail pages, hundreds of microservices build discrete portions of the page. While a few services must be available to show price and product details, the vast majority of page content can simply be excluded if a service is unavailable — even photos and reviews are not required for a customer to complete a purchase.
+- **Key trade-offs.** Smaller services can introduce additional latency, more complex debugging and increased operational burden. One primary trade-off is that distributed compute can make it harder to achieve latency requirements and adds complexity in debugging and tracing. Use AWS X-Ray to address the tracing complexity.
+- **The microservice Death Star anti-pattern.** A situation in which atomic components become so highly interdependent that the failure of one results in a much larger failure, making the components as rigid and fragile as a monolith. Avoid this by enforcing loose coupling between services.
+- **Strangler Fig pattern.** When refactoring a monolith, gradually replace specific application components with new applications and services. AWS Migration Hub Refactor Spaces acts as the starting point for incremental application refactoring.
 
 | Tier | Component | What it does | If unavailable | Source |
 |------|-----------|--------------|----------------|--------|
