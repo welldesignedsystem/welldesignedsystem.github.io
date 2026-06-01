@@ -1,7 +1,7 @@
 +++
 date = '2025-05-27T10:00:00+10:00'
 draft = false
-title = 'High Availability in Microservices'
+title = 'High Availability'
 tags = ['High Availability', 'Microservices', 'AWS', 'System Design', 'Resilience']
 summary = 'Designing highly available microservices on AWS using multi-AZ deployment, stateless services, circuit breakers and chaos engineering.'
 +++
@@ -10,97 +10,57 @@ High availability (HA) is the ability of a system to remain operational and acce
 
 ---
 
+## Definitions
+
+### Terms
+
+**High Availability:** 
+- The ability of a system to remain operational and accessible despite failures in its components. 
+- Measured as uptime percentage over a period of time.
+- Availability is a property of the *system*, not any single component. It is achieved when every dependency in the chain is designed for the target, redundancy exists at each layer and recovery is automated.
+
+**Reliability:** The ability of a workload to perform its intended function correctly and consistently when expected to — including the ability to operate and test the workload through its total lifecycle. Reliability depends on several factors, the primary of which is Resiliency. While availability measures *uptime*, reliability measures *correctness*: a system that returns the wrong answer 100% of the time is technically "available" but not reliable.
+
+**Resiliency:** The ability to recover from infrastructure or service disruptions, dynamically acquire computing resources to meet demand and mitigate disruptions such as misconfigurations or transient network issues. Resiliency is what enables reliability in the face of failures. Without it, a system is available only when nothing goes wrong — which is never true at scale.
+
+**Customer:** Any entity that consumes a service. In HA architecture this includes:
+
+- **End users** — human customers whose workflow must complete. Their experience is the ultimate measure of HA; if they cannot complete their task, the system is down regardless of internal metrics.
+- **Internal services** — microservices, batch jobs and daemons that call another service's API, queue or data store. Every inter-service call is a customer relationship.
+- **Third-party integrations** — external SaaS, partners or downstream systems that depend on your service (or that your service depends on). Their availability affects yours and vice versa.
+- **Developer teams** — teams consuming CI/CD pipelines, deployment platforms, feature flags and observability tooling. A broken deployment pipeline halts delivery even if the production service is healthy.
+- **Automated processes** — monitoring agents, health checkers, auto-scalers, alerting systems and scheduled jobs. These consume internal APIs and infrastructure just like human users do.
+
+Failures propagate through all these customer relationships. Every consumer of a service — human or machine, internal or external — is a customer whose needs must be accounted for in the availability design.
+
+### Availability Metrics
+
+**SLI (Service Level Indicator):** A quantitative measure of some aspect of the service level being provided. Common SLIs include request latency, error rate, throughput and availability percentage (e.g. fraction of successful requests over total requests).
+
+**SLO (Service Level Objective):** A target value or range for an SLI that represents the acceptable service level. For example: "99.9% of requests will complete in under 200ms over a 30-day window." SLOs are used to drive engineering decisions — if the SLO is at risk, work on reliability takes priority over features.
+
+**SLA (Service Level Agreement):** A contractual commitment to meet specified SLOs, typically with penalties (service credits) for breach. The SLA is often looser than the internal SLO to leave a safety margin — a common practice is to set the internal SLO at 99.95% when the SLA is 99.9%.
+
+### Failure & Recovery Metrics
+
+**MTBF (Mean Time Between Failures):** The average time a system operates between failures. Higher MTBF indicates a more stable system. Calculated as total uptime divided by number of failures.
+
+**MTTR (Mean Time To Recover):** The average time to restore service after a failure is detected. Includes detection, diagnosis, mitigation and verification. Lower MTTR is the primary operational goal of HA design.
+
+**RTO (Recovery Time Objective):** The maximum acceptable delay between service interruption and restoration. Defines how quickly recovery must happen — drives decisions about warm standby vs pilot light vs backup-and-restore.
+
+**RPO (Recovery Point Objective):** The maximum acceptable data loss measured in time. Defines how much data can be lost in a failure — drives backup frequency, replication lag requirements and snapshot schedules.
+
+### Governance Metrics
+
+**Error Budget:** The allowed amount of unreliability over a period, defined as 100% minus the SLO target. For a 99.9% SLO, the error budget is 0.1% (roughly 8.75 hours per year). When the error budget is fully consumed, deployment velocity slows or stops until the budget is replenished — creating an explicit tradeoff between feature velocity and reliability.
+
+**Dependency SLA:** An SLA published by a service that your system depends on. Dependency SLAs constrain the maximum availability your own system can achieve (see the availability product formula in the section below). If a dependency offers 99.95%, your system cannot exceed 99.95% on that path regardless of how redundant your own architecture is. Understanding your dependency chain's composite SLA is essential before setting your own targets.
+
 ## Foundations of High Availability
 
-### Reliability vs Resiliency
+Beyond the core definitions above, reliability also depends on Operational Excellence (automation of changes, playbooks, Operational Readiness Reviews), Security (preventing harm to data or infrastructure), Performance Efficiency (maximising request rates, minimising latency) and Cost Optimization (trade-offs such as static stability vs auto-scaling).
 
-- **Reliability**: is the ability of a workload to perform its intended function correctly and consistently when expected to — including the ability to operate and test the workload through its total lifecycle. Reliability depends on several factors, the primary of which is Resiliency.
-- **Resiliency**: the ability to recover from infrastructure or service disruptions, dynamically acquire computing resources to meet demand and mitigate disruptions such as misconfigurations or transient network issues.
-
-The other reliability factors are Operational Excellence (automation of changes, playbooks, Operational Readiness Reviews), Security (preventing harm to data or infrastructure), Performance Efficiency (maximising request rates, minimising latency) and Cost Optimization (trade-offs such as static stability vs auto-scaling).
-
-### Design Principles
-
-The AWS Well-Architected Reliability Pillar identifies five design principles for cloud reliability:
-
-**1. Automatically recover from failure.** Monitor KPIs that measure business value (not just technical metrics). Run automation when a threshold is breached. With more sophisticated automation it is possible to anticipate and remediate failures before they occur.
-
-For example, in telecom and fintech the business-value KPIs that matter go beyond CPU and error rates. The table below uses TM Forum's Revenue Management process names:
-
-| Sub-function | KPI | What it measures | Why it is a business value KPI |
-|---|---|---|---|---|
-| **Rating & Discounting** (TMF 677) | Rating completion rate | Percentage of usage events rated within SLA (e.g. < 100ms for online, < 1h for offline) | Unrated events mean unbilled revenue directly |
-| **Balance Management** (TMF 654) | Online charging success rate | Real-time credit control requests that complete without failure | A failed credit check means the subscriber gets free service |
-| **Bill Management** (TMF 678) | Invoice generation success rate | Invoices generated on schedule / total expected invoices | Missed invoices delay revenue recognition and upset customers |
-| | Dispute ratio | Invoices disputed / total invoices issued | Rising disputes indicate billing errors or unclear charges |
-| **Payment Management** (TMF 676) | Payment authorization rate | Authorised transactions / total attempted transactions | Each declined auth is lost revenue and poor customer experience |
-| | Settlement latency | Time from transaction capture to funds available | Delayed settlements impact cash flow and partner payouts |
-| **Collection Management** (TMF 728) | Collection effectiveness index (CEI) | Amount collected / amount due | Direct measure of revenue recovery performance |
-| | Promise-to-pay hit rate | Customers who met their payment promise / total promises made | Indicates whether recovery strategies are working |
-| **Revenue Assurance** (GB941) | Journal posting lag | Time from transaction event to journal entry posted | Delayed bookkeeping hides financial position and delays reconciliation |
-| | Suspense account balance | Value of transactions that could not be automatically posted | Growing suspense means automation gaps that require manual effort |
-
-The difference from technical metrics: a 99.9% API uptime means nothing if the rating engine is processing usage at the wrong rate. Business KPIs tell you whether the system is actually delivering value, not just whether it is technically alive.
-
-**2. Test recovery procedures.** In the cloud you can test how your workload fails and validate your recovery procedures. Use automation to simulate different failures or recreate failure scenarios. This exposes failure pathways that can be fixed before a real event occurs.
-
-**3. Scale horizontally to increase aggregate workload availability.** Replace one large resource with multiple small resources to reduce the impact of a single failure. Distribute requests across multiple smaller resources to ensure they don't share a common point of failure.
-
-**4. Stop guessing capacity.** Resource saturation is a common cause of failure. In the cloud you can monitor demand and workload utilisation and automate the addition or removal of resources to maintain the optimal level without over- or under-provisioning.
-
-**5. Manage change through automation.** Changes to infrastructure should be made using automation. The changes that need to be managed include changes to the automation itself, which can then be tracked and reviewed.
-
-### Availability Targets
-
-Availability is measured as a percentage of uptime over a period. Common targets:
-
-| Availability | Max unavailability per year | Application categories |
-|---|---|---|
-| 99% (two nines) | 3 days 15 hours | Batch processing, ETL jobs |
-| 99.9% (three nines) | 8 hours 45 minutes | Internal tools, project tracking |
-| 99.95% | 4 hours 22 minutes | Online commerce, point of sale |
-| 99.99% (four nines) | 52 minutes | Video delivery, broadcast |
-| 99.999% (five nines) | 5 minutes | ATM transactions, telecommunications |
-
-Each additional nine imposes significantly more architectural complexity and cost. For most microservices, 99.9% is a pragmatic starting point.
-
-### AWS Service SLAs
-
-Every AWS service publishes its own SLA. These are not uniform — architectural choices (multi-AZ vs single-AZ, standard vs global replication tier) change the commitment. The table below covers the services most relevant to microservices architectures. AWS measures Monthly Uptime Percentage per region, calculates it over 5-minute intervals and excludes scheduled maintenance and force majeure. Service credits (the sole remedy) scale with severity and must be claimed within two billing cycles.
-
-| Category | Service | SLA commitment | Conditions |
-|---|---|---|---|
-| **Compute** | EC2 | 99.99% | Multi-AZ: instances in 2+ AZs in same region |
-| | EC2 | 99.5% | Single instance |
-| | ECS / Fargate | 99.99% | Multi-AZ: tasks or pods in 2+ AZs |
-| | ECS / Fargate | 99.5% | Single task or pod |
-| | Lambda | 99.95% | Per region |
-| **Networking** | Route 53 (DNS queries) | 100% | Data plane only; control plane excluded |
-| | ELB (ALB / NLB) | 99.99% | Multi-AZ |
-| | API Gateway | 99.95% | Per region |
-| | CloudFront | 99.9% | Global edge network |
-| | Global Accelerator | 99.99% | Global |
-| **Storage** | S3 Standard | 99.9% | Designed for 99.99% availability |
-| | S3 Standard-IA | 99.0% | |
-| | S3 One Zone-IA | 99.0% | Single AZ |
-| | EBS | 99.99% | Covered under Compute SLA (multi-AZ) |
-| **Database** | RDS Multi-AZ | 99.95% | Multi-AZ DB Instance or DB Cluster |
-| | RDS Single-DB | 99.5% | Instance-level |
-| | Aurora Multi-AZ | 99.99% | Cluster with instances in 2+ AZs |
-| | Aurora Single-AZ | 99.5% | |
-| | DynamoDB (standard) | 99.99% | Standard tables |
-| | DynamoDB (Global Tables) | 99.999% | Active-active multi-region |
-| | ElastiCache (Serverless) | 99.99% | Valkey, Memcached or Redis OSS |
-| | ElastiCache (Multi-AZ) | 99.99% | Valkey / Redis OSS with auto-failover |
-| | ElastiCache (Single-AZ) | 99.5% | |
-| **Messaging** | SQS | 99.9% | Standard queues |
-| | SNS | 99.9% | Standard topics |
-| | EventBridge | 99.99% | Default event bus |
-| | Step Functions | 99.9% | Standard workflows |
-| | Kinesis Data Streams | 99.9% | |
-| **Observability** | CloudWatch (metrics, logs, alarms) | 99.9% | Per region |
-
-These are the contractual commitments AWS makes. Your architecture's effective availability — calculated using the formulas in the next section — will be lower once you account for dependency chains and your own application layers.
 
 ### Availability Formulas
 
@@ -176,6 +136,172 @@ Availability (%) = MTBF / (MTBF + MTTR) × 100
 Example: MTBF = 150 days, MTTR = 1 hour → 99.97%
 ```
 
+### Availability Targets
+
+Availability is measured as a percentage of uptime over a period. Common targets:
+
+| Availability | Max unavailability per year | Application categories |
+|---|---|---|
+| 99% (two nines) | 3 days 15 hours | Batch processing, ETL jobs |
+| 99.9% (three nines) | 8 hours 45 minutes | Internal tools, project tracking |
+| 99.95% | 4 hours 22 minutes | Online commerce, point of sale |
+| 99.99% (four nines) | 52 minutes | Video delivery, broadcast |
+| 99.999% (five nines) | 5 minutes | ATM transactions, telecommunications |
+
+Each additional nine imposes significantly more architectural complexity and cost. For most microservices, 99.9% is a pragmatic starting point.
+
+### AWS Service SLAs
+
+Every AWS service publishes its own SLA. These are not uniform — architectural choices (multi-AZ vs single-AZ, standard vs global replication tier) change the commitment. The table below covers the services most relevant to microservices architectures. AWS measures Monthly Uptime Percentage per region, calculates it over 5-minute intervals and excludes scheduled maintenance and force majeure. Service credits (the sole remedy) scale with severity and must be claimed within two billing cycles.
+
+| Category | Service | SLA commitment | Conditions |
+|---|---|---|---|
+| **Compute** | EC2 | 99.99% | Multi-AZ: instances in 2+ AZs in same region |
+| | EC2 | 99.5% | Single instance |
+| | ECS / Fargate | 99.99% | Multi-AZ: tasks or pods in 2+ AZs |
+| | ECS / Fargate | 99.5% | Single task or pod |
+| | Lambda | 99.95% | Per region |
+| **Networking** | Route 53 (DNS queries) | 100% | Data plane only; control plane excluded |
+| | ELB (ALB / NLB) | 99.99% | Multi-AZ |
+| | API Gateway | 99.95% | Per region |
+| | CloudFront | 99.9% | Global edge network |
+| | Global Accelerator | 99.99% | Global |
+| **Storage** | S3 Standard | 99.9% | Designed for 99.99% availability |
+| | S3 Standard-IA | 99.0% | |
+| | S3 One Zone-IA | 99.0% | Single AZ |
+| | EBS | 99.99% | Covered under Compute SLA (multi-AZ) |
+| **Database** | RDS Multi-AZ | 99.95% | Multi-AZ DB Instance or DB Cluster |
+| | RDS Single-DB | 99.5% | Instance-level |
+| | Aurora Multi-AZ | 99.99% | Cluster with instances in 2+ AZs |
+| | Aurora Single-AZ | 99.5% | |
+| | DynamoDB (standard) | 99.99% | Standard tables |
+| | DynamoDB (Global Tables) | 99.999% | Active-active multi-region |
+| | ElastiCache (Serverless) | 99.99% | Valkey, Memcached or Redis OSS |
+| | ElastiCache (Multi-AZ) | 99.99% | Valkey / Redis OSS with auto-failover |
+| | ElastiCache (Single-AZ) | 99.5% | |
+| **Messaging** | SQS | 99.9% | Standard queues |
+| | SNS | 99.9% | Standard topics |
+| | EventBridge | 99.99% | Default event bus |
+| | Step Functions | 99.9% | Standard workflows |
+| | Kinesis Data Streams | 99.9% | |
+| **Observability** | CloudWatch (metrics, logs, alarms) | 99.9% | Per region |
+
+These are the contractual commitments AWS makes. Your architecture's effective availability — calculated using the formulas in the next section — will be lower once you account for dependency chains and your own application layers.
+
+### Availability Observability Metrics
+
+You cannot operate to an availability target you cannot measure. Observability for HA goes beyond simple up/down checks — it must track the SLIs that feed your SLOs and surface degradation before users are affected. Metrics group into six categories, each covering a different facet of system health:
+
+#### 1. Availability signals
+
+These are the headline indicators — does the system respond correctly?
+
+| Metric | What it measures | Why it matters for HA |
+|--------|-----------------|-----------------------|
+| **Uptime / service availability** | Fraction of requests or time where the service responds successfully (200 OK). Often expressed as a percentage over a rolling window (e.g. 99.9% over 30 days). | The primary HA target itself. Every other metric feeds into this one. |
+| **Error rate** | Fraction of requests returning 5xx, timeouts or connectivity failures. Calculated as failed requests / total requests. | The earliest signal of component failure. Rising error rate triggers automated response before the SLO is breached. |
+| **Success rate** | Inverse of error rate: 1 − error rate. Tracks the fraction of requests that succeed. | Useful as a positive indicator — directly shows the health of the system from the user's perspective. |
+
+These three are related: success rate + error rate = total requests. Availability % is usually derived from the success rate over a time window.
+
+#### 2. Traffic & latency signals
+
+These measure the *demand* on the system and how quickly it responds.
+
+| Metric | What it measures | Why it matters for HA |
+|--------|-----------------|-----------------------|
+| **Requests per second (RPS)** | Number of requests received per second at the load balancer, API gateway or service entry point. | Determines whether traffic volume is within provisioned capacity. A sudden drop may indicate routing failures or partial outages; a surge may trigger throttling. |
+| **Latency percentiles (p50, p95, p99, p99.9)** | Response time distribution across all requests. p99 captures the slowest 1% of requests — the tail that degrades first under load. | Latency degradation almost always precedes error rate spikes. Tracking p50 vs p99 reveals how evenly the system handles its load: a widening gap signals queue buildup or resource contention. |
+| **Timeout rate** | Fraction of requests that exceed the configured request timeout and are terminated without a response. | Distinct from error rate — a timeout means the client gave up, which may happen before the server returns a 5xx. High timeout rates with low error rates indicate the server is alive but too slow. |
+
+The relationship between these metrics: rising RPS → rising p99 latency → rising timeout rate → rising error rate. This chain means a p99 latency alarm is your earliest warning.
+
+#### 3. Health check metrics
+
+Health checks verify a service is alive and able to serve traffic, at increasing levels of depth.
+
+| Metric | What it measures | Why it matters for HA |
+|--------|-----------------|-----------------------|
+| **Liveness probe pass rate** | Fraction of light-weight checks that confirm the process is running (e.g. process alive, port open). | A failing liveness probe means the instance is dead and must be replaced. Orchestrators (ECS, EKS) use this to restart or terminate the task immediately. |
+| **Readiness probe pass rate** | Fraction of checks confirming the instance is ready to receive traffic (e.g. application loaded, dependencies warm). | A failing readiness probe removes the instance from the load balancer target group without killing it. Used during deployments and cold starts to avoid routing traffic to an unready instance. |
+| **Deep health / dependency health pass rate** | Fraction of checks that exercise critical downstream dependencies (database query, cache get, downstream API call). | A liveness probe passing while the deep health check fails means the service is alive but its dependencies are degraded — the most dangerous state, because the load balancer still sends traffic. |
+| **Circuit breaker state** | Current state of each circuit breaker: closed (normal), open (failing), half-open (testing recovery). | The only way to know whether a downstream dependency is being bypassed. A circuit breaker in open state means the service is operating in degraded mode — critical context for an on-call engineer diagnosing an incident. |
+
+Standard pattern: liveness probe → readiness probe → deep health check. Each level adds more dependency verification. An instance should fail liveness only if it cannot self-heal; readiness removes it from rotation during transient states; deep health reveals hidden degradation.
+
+#### 4. Infrastructure-level metrics
+
+These measure the health of the *platform* running the services, not the services themselves.
+
+| Metric | What it measures | Why it matters for HA |
+|--------|-----------------|-----------------------|
+| **Pod / instance restart count** | Number of times a container, pod or EC2 instance has restarted in a rolling window. | Frequent restarts indicate resource exhaustion (OOM), health check loop failures or crash-looping deployments. A rising restart rate often precedes a full outage. |
+| **Deployment success rate** | Fraction of deployments that complete without rollback or health check failure. | A low deployment success rate means the CI/CD pipeline or release process is unreliable — the leading cause of availability incidents that are not infrastructure failures. |
+| **Node / replica availability** | Fraction of worker nodes (ECS container instances, EKS nodes) or service replicas that are in a healthy state and registered with the load balancer. | The effective capacity of the service. If 3 of 6 replicas are unhealthy, the remaining 3 must handle 100% of traffic — pushing saturation higher and reducing headroom for failover. |
+
+These metrics often show problems *before* the availability signals degrade. A pod restarting in a crash loop will eventually bump the error rate — but the restart count alarm fires minutes earlier.
+
+#### 5. Queue & async service metrics
+
+Asynchronous processing hides latency and absorbs bursts, but the queue itself must be observed.
+
+| Metric | What it measures | Why it matters for HA |
+|--------|-----------------|-----------------------|
+| **Consumer lag** | The difference between the oldest message in the queue and the most recently processed message, measured in time or message count. | Growing lag means consumers are falling behind producers. If unchecked, messages age past their retention window and are lost. Lag is the earliest signal of consumer degradation. |
+| **Dead letter queue count** | Number of messages that have exhausted their retry attempts and been moved to the DLQ. | A non-empty DLQ indicates a systemic processing failure that retries could not resolve. Every message in a DLQ represents a failed business operation. |
+| **Little's Law** | The relationship between throughput, concurrency and latency: `L = λ × W` (concurrent messages = arrival rate × processing time). | Explains why growing queue depth causes end-to-end latency to increase linearly — every new message queued behind N existing messages adds N × processing time to its delivery. Use Little's Law to estimate whether adding consumers will clear the backlog within the acceptable time window. |
+
+Queue metrics are leading indicators for downstream availability: consumer lag today means empty responses or data staleness tomorrow.
+
+#### 6. Error budget & burn rate
+
+Error budgets connect observability to governance — they tell you how much unreliability is left before you must stop shipping features.
+
+| Metric | What it measures | Why it matters for HA |
+|--------|-----------------|-----------------------|
+| **Availability SLI (measured)** | The actual availability % measured over the SLO window (e.g. 99.92% over the last 28 days). | The ground truth your SLO is measured against, not the contractual SLA. Must be computed from the same SLI definition used to set the SLO. |
+| **Error budget remaining** | The budget consumed so far in the SLO window: `1 − (measured SLI / SLO target)`. Remaining budget = SLO target − measured SLI over the window. | When the error budget is exhausted, deployment velocity stops — creating an explicit feedback loop between reliability and feature delivery. Teams should track remaining budget as a visible dashboard widget, not a buried spreadsheet cell. |
+| **Burn rate** | How fast the error budget is being consumed, usually expressed as a multiplier of the expected consumption rate. A burn rate of 1x consumes the entire budget evenly over the SLO window; 2x would exhaust it in half the window. | Burn rate is the most actionable error budget metric. A burn rate above 1x for more than a few hours triggers a response even if the budget is not yet depleted. Common alert thresholds: 2x over 1 hour (page), 5x over 5 minutes (critical page). |
+
+The four golden signals (Google SRE) — **latency, traffic, errors, saturation** — map across all six categories above. Every dashboard, alarm and runbook should trace back to one of these four.
+
+#### AWS-specific observability services
+
+| Service | What it provides | How it supports HA |
+|---------|-----------------|---------------------|
+| **CloudWatch Metrics** | Collects AWS service metrics (CPU, error counts, request latency) and custom application metrics. 1-minute resolution by default; 1-second for detailed monitoring. | Foundation of all HA observability. Every alarm, dashboard and auto-scaling policy feeds from CloudWatch Metrics. |
+| **CloudWatch Composite Alarms** | Combines multiple alarms using AND/OR logic into a single alarm. Reduces noise by only firing when multiple signals agree. | Prevents pager fatigue. A composite alarm requiring both high error rate *and* high latency is far more likely to indicate a real problem than either signal alone. |
+| **CloudWatch Anomaly Detection** | Applies machine learning to historical metric data to detect deviations from expected behaviour. | Catches degradation that never crosses a static threshold. A gradual 5% latency increase over hours may be invisible to a fixed threshold alarm but is immediately surfaced by anomaly detection. |
+| **CloudWatch Logs / Logs Insights** | Collects, stores and queries structured JSON logs. Metric filters extract metrics (e.g. error count by service) from log streams. | Correlation IDs in structured logs enable tracing a single request across all services, queues and data stores during incident investigation. |
+| **CloudWatch Synthetics (Canaries)** | Configurable scripts that run on a schedule from external locations, monitoring endpoints and APIs. Includes X-Ray tracing on each canary run. | Catches availability failures from the user's perspective. A canary in us-east-1 hitting a service in ap-southeast-2 will detect regional routing failures that internal health checks miss. |
+| **CloudWatch RUM** | Real-user monitoring — captures page load times, Core Web Vitals, JavaScript errors and backend call latency from actual user browsers. | Measures HA as the user actually experiences it. Synthetic checks miss client-side issues (slow DNS, CDN failures, browser rendering delays) that RUM captures. |
+| **X-Ray** | Distributed tracing across services, queues and data stores. Provides service maps, trace analytics and integration with CloudWatch ServiceLens. | Essential for debugging the tail latency and error propagation that are invisible without end-to-end tracing. Without X-Ray, a 200ms slowdown in a downstream service is indistinguishable from a problem in the calling service. |
+| **ServiceLens** | Unifies CloudWatch metrics, logs, traces and alarms into a single service-centric view. | Provides one pane of glass for incident response. An operator investigating a high-latency alarm can go from the alarm to the trace to the log without switching tools. |
+| **Container Insights / Lambda Insights** | Collects, aggregates and summarises CPU, memory, disk and network performance data from containerised (ECS/EKS) and serverless (Lambda) workloads. | Necessary for the saturation signal in container/serverless environments where standard OS metrics are not available. |
+| **Contributor Insights** | Analyses time-series data to identify top contributors to errors, latency or traffic. | Answers the question "which instance, API key, user or service is causing this error spike?" without manual log analysis. |
+| **Resilience Hub** | Central place to define resiliency policies (RTO/RPO), evaluate workloads against them, generate FIS experiment templates and track improvement over time. | Translates HA targets into actionable checks. Running a Resilience Hub assessment after every architectural change prevents drift from your declared resilience posture. |
+
+The key principle: **measure everything in terms of the user experience.** A dashboard showing only CPU, memory and disk utilisation without error rate, latency and throughput is not an observability dashboard — it is a server health page that tells you nothing about HA.
+
+### Business Metrics
+
+Technical availability metrics (99.9%, p99 latency) are meaningless without business context. Business metrics translate technical health into terms that matter to stakeholders and justify HA investment.
+
+| Category | Metric | How it relates to HA | Why it matters |
+|----------|--------|----------------------|----------------|
+| **Revenue** | Cost per minute of downtime | Direct revenue loss during an outage. Calculated as average revenue per minute during peak hours. | Sets the ceiling for HA investment: the annual HA budget should not exceed the cost of 2-3 worst-case outages. |
+| **Customer impact** | Failed customer journeys | Number of users who could not complete their intended workflow (checkout, signup, payment) during an availability incident. | Technical error rates count *requests*; failed customer journeys count *users*. A single user may hit multiple errors across different services — request-based counting understates real impact. |
+| **Customer retention** | Churn rate correlated with availability incidents | Customer accounts closed within 30 days of a major incident. Each availability failure erodes trust — measured by the subsequent churn spike. | Justifies investing in HA for customer-facing services even when direct revenue impact appears low. The lifetime value of retained customers often dwarfs the immediate outage cost. |
+| **Operational efficiency** | Mean time between HA incidents (MTBF) | A rising MTBF indicates that prevention and containment investments are working. | Tracks whether the HA program is improving over time. Stakeholders who do not understand p99 latency understand "we went from one outage per quarter to one per year." |
+| **Feature velocity** | Deployment frequency during error budget depletion periods | When the error budget is exhausted, deployments stop or slow. This is an explicit tradeoff between reliability and feature delivery. | Makes the cost of poor availability visible to product and business stakeholders: "we cannot ship new features because we spent our error budget on that last incident." |
+| **Brand / reputation** | Social media sentiment, support ticket volume during incidents | A spike in negative sentiment or support tickets during an outage is the business-level signal of availability failure. | Technical teams may already know the error rate is elevated — but support ticket volume is the metric the executive team tracks. Both must be visible in the same incident response timeline. |
+
+**Using business metrics in practice:**
+
+- Every HA incident should be followed by a business impact assessment: "How much revenue was lost? How many customers were affected? How many support tickets were created?"
+- Business metrics should appear on the same dashboards as technical metrics. An on-call engineer should see "error rate: 5%" next to "estimated revenue impact: $12,000/hr."
+- The cost of downtime calculation is the basis for every HA architecture decision. Without it, you cannot determine whether 99.9% is the right target or whether 99.99% is worth the investment.
+
 ### Costs for Availability
 
 Designing for higher availability increases cost across every lifecycle phase:
@@ -187,6 +313,39 @@ Designing for higher availability increases cost across every lifecycle phase:
 - **Velocity**: Innovation slows because every change must be tested more exhaustively and moved more cautiously to avoid breaching the target.
 
 The right target is the lowest one that meets the business need. Be thorough in applying standards and consider the appropriate availability target for the entire lifecycle of the system.
+
+
+### Design Principles
+
+The AWS Well-Architected Reliability Pillar identifies five design principles for cloud reliability:
+
+**1. Automatically recover from failure.** Monitor KPIs that measure business value (not just technical metrics). Run automation when a threshold is breached. With more sophisticated automation it is possible to anticipate and remediate failures before they occur.
+
+For example, in telecom and fintech the business-value KPIs that matter go beyond CPU and error rates. The table below uses TM Forum's Revenue Management process names:
+
+| Sub-function | KPI | What it measures | Why it is a business value KPI |
+|---|---|---|---|---|
+| **Rating & Discounting** (TMF 677) | Rating completion rate | Percentage of usage events rated within SLA (e.g. < 100ms for online, < 1h for offline) | Unrated events mean unbilled revenue directly |
+| **Balance Management** (TMF 654) | Online charging success rate | Real-time credit control requests that complete without failure | A failed credit check means the subscriber gets free service |
+| **Bill Management** (TMF 678) | Invoice generation success rate | Invoices generated on schedule / total expected invoices | Missed invoices delay revenue recognition and upset customers |
+| | Dispute ratio | Invoices disputed / total invoices issued | Rising disputes indicate billing errors or unclear charges |
+| **Payment Management** (TMF 676) | Payment authorization rate | Authorised transactions / total attempted transactions | Each declined auth is lost revenue and poor customer experience |
+| | Settlement latency | Time from transaction capture to funds available | Delayed settlements impact cash flow and partner payouts |
+| **Collection Management** (TMF 728) | Collection effectiveness index (CEI) | Amount collected / amount due | Direct measure of revenue recovery performance |
+| | Promise-to-pay hit rate | Customers who met their payment promise / total promises made | Indicates whether recovery strategies are working |
+| **Revenue Assurance** (GB941) | Journal posting lag | Time from transaction event to journal entry posted | Delayed bookkeeping hides financial position and delays reconciliation |
+| | Suspense account balance | Value of transactions that could not be automatically posted | Growing suspense means automation gaps that require manual effort |
+
+The difference from technical metrics: a 99.9% API uptime means nothing if the rating engine is processing usage at the wrong rate. Business KPIs tell you whether the system is actually delivering value, not just whether it is technically alive.
+
+**2. Test recovery procedures.** In the cloud you can test how your workload fails and validate your recovery procedures. Use automation to simulate different failures or recreate failure scenarios. This exposes failure pathways that can be fixed before a real event occurs.
+
+**3. Scale horizontally to increase aggregate workload availability.** Replace one large resource with multiple small resources to reduce the impact of a single failure. Distribute requests across multiple smaller resources to ensure they don't share a common point of failure.
+
+**4. Stop guessing capacity.** Resource saturation is a common cause of failure. In the cloud you can monitor demand and workload utilisation and automate the addition or removal of resources to maintain the optimal level without over- or under-provisioning.
+
+**5. Manage change through automation.** Changes to infrastructure should be made using automation. The changes that need to be managed include changes to the automation itself, which can then be tracked and reviewed.
+
 
 ### Understanding Availability Needs
 
@@ -208,7 +367,6 @@ AWS secures the cloud; you secure what you run in it. For HA this means:
 
 **You own**: multi-AZ deployment, auto-scaling, data replication, retry logic, circuit breakers, deployment strategies, backup and recovery, service quota management and network topology planning.
 
----
 
 ## Foundations: Service Quotas and Network
 
