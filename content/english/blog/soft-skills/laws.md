@@ -5,15 +5,17 @@ title = 'Laws and Principles'
 tags = ['Laws']
 summary = "A curated reference of scientific, engineering and organizational laws and principles that shape software, systems and team behavior."
 +++
-This collection serves as a reference for understanding the diverse human and technical factors that shape software development and system design. It highlights how natural laws, engineering principles, organizational dynamics and cognitive limits influence outcomes, reminding us that building effective systems requires balancing complexity, resilience, people and technology.
+This collection is my way of cultivating out-of-the-box thinking through Feynman's **cross-domain analogy generation** — connecting ideas across physics, biology, engineering and organisational behaviour to build mental models that transfer.
 
 ---
 
 ## Laws
 
 ### Physics & Natural Science Laws Applied to Software
-* **Second Law of Thermodynamics (Entropy)** – In isolated systems, entropy always increases over time; software systems naturally tend toward disorder and complexity without deliberate maintenance.
+* **Zeroth Law of Thermodynamics** – If two systems are in thermal equilibrium with a third, they are in equilibrium with each other; service health must be measured relative to a consistent baseline, not in isolation.
 * **First Law of Thermodynamics (Conservation of Energy)** – Energy cannot be created or destroyed, only transformed; computational resources are finite and must be allocated efficiently.
+* **Second Law of Thermodynamics (Entropy)** – In isolated systems, entropy always increases over time; software systems naturally tend toward disorder and complexity without deliberate maintenance.
+* **Third Law of Thermodynamics** – As temperature approaches absolute zero, the entropy of a perfect crystal approaches zero; as system load approaches zero, complexity approaches its irreducible minimum — there is always a base level of necessary complexity.
 * **Newton's First Law (Inertia)** – Objects at rest stay at rest; established codebases resist change and changing systems require sustained effort.
 * **Newton's Third Law** – For every action, there is an equal and opposite reaction; every feature addition has consequences elsewhere in the system.
 * **Conservation of Mass** – Matter cannot be created or destroyed; technical debt accumulates and must eventually be addressed somewhere in the system.
@@ -149,8 +151,7 @@ This collection serves as a reference for understanding the diverse human and te
 
 ---
 
-### Reliability, Risk and Physics/Entropy
-* **Second Law of Thermodynamics (Entropy Law)** – Systems naturally move toward disorder; maintaining order in software requires constant work.
+### Reliability, Risk and Entropy
 * **Law of Entropy in Software** – Software tends to become more complex and chaotic unless actively refactored.
 * **Sod's Law** – A variant of Murphy’s Law, emphasizing bad timing.
 * **Normal Accident Theory (Perrow)** – In complex, tightly coupled systems, accidents are inevitable.

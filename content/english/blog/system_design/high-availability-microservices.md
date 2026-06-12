@@ -171,7 +171,7 @@ HA must take into consideration every layer:
 
 ### Main ones
 
-**High Availability:** The *ability* of a **system to remain operational and accessible despite failures** in its components. **Availability is a measure of uptime.**
+**Availability:** is a measure of uptime.
 
 **Reliability:** The *ability* of a **workload to perform intended function correctly and consistently** when expected to — including the ability to operate and test the workload through its total lifecycle. **Reliability is a measure of correctness** - a system that returns the wrong answer 100% of the time is technically "available" but not reliable. **Reliability directly depends on Resiliency**. 
 
