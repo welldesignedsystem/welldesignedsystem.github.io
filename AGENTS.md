@@ -12,32 +12,33 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 | `npm run format` | Prettier only — **no linter, no typecheck** |
 | `npm run update-modules` | Update all Hugo module deps |
 
-**CI note:** deploy.yml runs `hugo --gc --minify --baseURL "$URL"` directly (not `npm run build`) so GitHub Pages can inject the deployment URL. CI uses `npm ci` — `package-lock.json` is tracked despite `.gitignore`.
+**CI note:** deploy.yml runs `hugo --gc --minify --baseURL "$URL"` directly (not `npm run build`) so GitHub Pages can inject the deployment URL. CI uses `npm ci`. Both `package-lock.json` and `hugo_stats.json` are tracked despite `.gitignore`.
 
-## Content conventions
+**No OpenCode config:** No `opencode.json` or `.opencode/` directory — the project has no local OpenCode configuration.
+
+## Content
 
 - **Frontmatter is TOML** (`+++`), never YAML.
 - Blog posts: `content/english/blog/{category}/{slug}.md`.
 - Categories: `ai/`, `business-ideas/`, `containerization/`, `languages/`, `legacy/`, `roadmap/`, `security/`, `soft-skills/`, `system_design/`.
 - No Oxford comma in blog text (see `.github/instructions/blog.instructions.md`).
-- New posts: copy frontmatter from an existing post, use ISO 8601 date with timezone.
-- `summaryLength = 10` in `hugo.toml` — excerpt summaries truncate at 10 words.
+- `summaryLength = 10` in `hugo.toml` — excerpts truncate at 10 words.
 - Goldmark renders raw HTML in markdown (`unsafe = true`).
 - Code highlighting uses `guessSyntax = true` with `solarized-light` style.
 
 ## Architecture
 
-- **Theme**: `github.com/zeon-studio/hugoplate` (Hugo module, not submodule). Config in `config/_default/`.
+- **Theme**: `github.com/zeon-studio/hugoplate` — Hugo module (auto-downloads to `themes/hugoplate/`). Config in `config/_default/`.
 - **Asset pipeline**: TailwindCSS v4 via `@tailwindcss/cli` (CSS config, no `tailwind.config.js`).
-- **Custom Tailwind plugins**: `tailwind-plugin/` (tw-bs-grid.js, tw-theme.js).
-- **Required**: Hugo **extended** (>= 0.151.0). Go and Node.js needed locally.
-- **Custom layouts**: only `layouts/shortcodes/` (`iframe`, `include`) — everything else inherited.
+- **Custom plugins**: `tailwind-plugin/` (tw-bs-grid.js, tw-theme.js).
+- **Required**: Hugo extended >= 0.151.0 (per theme.toml). Go and Node.js needed locally.
+- **Custom layouts**: only `layouts/shortcodes/` (`iframe`, `include`) — everything else inherited from the module.
 - **Build output**: `public/` — generated, not committed.
-- **Module quirk**: `hugo_stats.json` is mounted with `disableWatch = true` — CSS rebuilds won't trigger on stat changes alone.
+- **Module quirk**: `hugo_stats.json` mounted with `disableWatch = true` — CSS rebuilds won't trigger on stat changes alone.
 
 ## CI / deploy
 
-- Push to `main` → GitHub Actions (Hugo + Node 24) → GitHub Pages.
+Push to `main` → GitHub Actions (Node 24, Hugo latest) → GitHub Pages.
 
 ## See also
 

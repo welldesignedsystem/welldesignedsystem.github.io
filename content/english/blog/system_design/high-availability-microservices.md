@@ -6,32 +6,214 @@ tags = ['High Availability', 'Microservices', 'AWS', 'System Design', 'Resilienc
 summary = 'Designing highly available microservices on AWS using multi-AZ deployment, stateless services, circuit breakers and chaos engineering.'
 +++
 
-High availability (HA) is the ability of a system to remain operational and accessible despite failures in its components. In a microservices architecture on AWS, HA must be designed at every layer: **compute**, **data**, **networking** and the **application** itself.
+High availability (HA) is the ability of a system to remain operational and accessible despite failures in its components. 
+HA must take into consideration every layer: 
+
+<table>
+<tr>
+  <th>Layer</th>
+  <th>Concern</th>
+  <th>HA Relationship</th>
+</tr>
+<tr>
+  <td rowspan=4><strong>compute</strong></td>
+  <td>Instance health</td>
+  <td>Failed instances must be auto-replaced, not just alerted</td>
+</tr>
+<tr>
+  <td>Auto-scaling</td>
+  <td>Must be pre-provisioned for failover traffic surges</td>
+</tr>
+<tr>
+  <td>Multi-AZ placement</td>
+  <td>Spread across AZs so no single AZ outage takes all replicas</td>
+</tr>
+<tr>
+  <td>Container orchestration</td>
+  <td>Orchestrator must reschedule onto healthy nodes automatically</td>
+</tr>
+<tr>
+  <td rowspan=5><strong>data</strong></td>
+  <td>Replication</td>
+  <td>Sync replicas enable fast failover; async avoids write latency at risk of data loss</td>
+</tr>
+<tr>
+  <td>Backup / restore</td>
+  <td>Last line of defence when all replicas corrupt; must be tested regularly</td>
+</tr>
+<tr>
+  <td>Consistency models</td>
+  <td>Stronger consistency increases failover complexity (quorum writes); weaker improves availability</td>
+</tr>
+<tr>
+  <td>Partitioning (sharding)</td>
+  <td>Limits blast radius — only affected shard's data is unavailable</td>
+</tr>
+<tr>
+  <td>Caching</td>
+  <td>Backend protection under load; cold cache causes thundering herd — must plan for it</td>
+</tr>
+<tr>
+  <td rowspan=4><strong>networking</strong></td>
+  <td>Load balancing</td>
+  <td>Must detect unhealthy targets and drain connections before removal</td>
+</tr>
+<tr>
+  <td>Connection pooling</td>
+  <td>Avoids connection storms on backend during partial failures</td>
+</tr>
+<tr>
+  <td>Retry logic</td>
+  <td>Exponential backoff + jitter prevents cascading retry storms</td>
+</tr>
+<tr>
+  <td>Firewall rules</td>
+  <td>Misconfigured rules block health checks or cross-AZ traffic, causing silent outages</td>
+</tr>
+<tr>
+  <td rowspan=4><strong>DNS / routing</strong></td>
+  <td>Health-check-based failover</td>
+  <td>DNS must route away from unhealthy endpoints with minimal TTL</td>
+</tr>
+<tr>
+  <td>Traffic shifting</td>
+  <td>Weighted routing enables gradual rollouts and canary deploys</td>
+</tr>
+<tr>
+  <td>TTL management</td>
+  <td>Lower TTL speeds failover but increases query volume — balance is critical</td>
+</tr>
+<tr>
+  <td>Global routing policies</td>
+  <td>Latency-based or geolocation routing must include fallback region on failure</td>
+</tr>
+<tr>
+  <td rowspan=6><strong>application</strong></td>
+  <td>Stateless design</td>
+  <td>Any instance can serve any request; no state locality means no single point of failure</td>
+</tr>
+<tr>
+  <td>Graceful degradation</td>
+  <td>Non-critical features should fail silently rather than taking down the whole page/API</td>
+</tr>
+<tr>
+  <td>Circuit breakers</td>
+  <td>Quickly stop calling a failing dependency — fail fast, recover later</td>
+</tr>
+<tr>
+  <td>Bulkheads</td>
+  <td>Isolate failure domains so one tenant/module cannot exhaust shared resources</td>
+</tr>
+<tr>
+  <td>Graceful shutdown</td>
+  <td>Process SIGTERM must drain in-flight requests before stopping — zero-downtime deploys</td>
+</tr>
+<tr>
+  <td>Deployment strategies</td>
+  <td>Blue/green, canary, rolling — minimise blast radius during releases</td>
+</tr>
+<tr>
+  <td rowspan=4><strong>security / identity</strong></td>
+  <td>Auth service availability</td>
+  <td>Auth is a universal dependency — if it's down, everything is down</td>
+</tr>
+<tr>
+  <td>Certificate expiry rotation</td>
+  <td>Expired TLS certs cause instant downtime; automate renewal</td>
+</tr>
+<tr>
+  <td>TLS termination</td>
+  <td>LB must handle TLS so backends don't renegotiate; plan for cipher incompatibilities</td>
+</tr>
+<tr>
+  <td>DDoS protection</td>
+  <td>Absorb attack traffic upstream (WAF, CloudFront) so legitimate requests still get through</td>
+</tr>
+<tr>
+  <td rowspan=4><strong>observability</strong></td>
+  <td>Monitoring</td>
+  <td>You can't fix what you don't measure — dashboards must be usable during an incident</td>
+</tr>
+<tr>
+  <td>Alerting</td>
+  <td>Alerts must route to on-call with minimal latency; avoid alert fatigue with proper tuning</td>
+</tr>
+<tr>
+  <td>Logging pipeline HA</td>
+  <td>Centralised logging is itself a system — if it fails, triage becomes blind</td>
+</tr>
+<tr>
+  <td>Distributed tracing</td>
+  <td>Pinpoints exactly which service in a call chain failed during cascading failures</td>
+</tr>
+<tr>
+  <td rowspan=4><strong>dependency management</strong></td>
+  <td>Third-party SLAs</td>
+  <td>Your availability is bounded by your weakest external dependency — plan fallbacks</td>
+</tr>
+<tr>
+  <td>Circuit breaker thresholds</td>
+  <td>Must be tuned per-dependency; too aggressive causes false positives, too lax causes cascading</td>
+</tr>
+<tr>
+  <td>Multi-provider failover</td>
+  <td>Active-passive across providers adds cost but insulates from single-provider outage</td>
+</tr>
+<tr>
+  <td>Fallback modes</td>
+  <td>Every external call needs a fallback — stale cache, degraded response, or clear error</td>
+</tr>
+</table>
 
 ---
 
 ## Definitions
 
-### Terms
+### Main ones
 
-**High Availability:** 
-- The ability of a system to remain operational and accessible despite failures in its components. 
-- Measured as uptime percentage over a period of time.
-- Availability is a property of the *system*, not any single component. It is achieved when every dependency in the chain is designed for the target, redundancy exists at each layer and recovery is automated.
+**High Availability:** The *ability* of a **system to remain operational and accessible despite failures** in its components. **Availability is a measure of uptime.**
 
-**Reliability:** The ability of a workload to perform its intended function correctly and consistently when expected to — including the ability to operate and test the workload through its total lifecycle. Reliability depends on several factors, the primary of which is Resiliency. While availability measures *uptime*, reliability measures *correctness*: a system that returns the wrong answer 100% of the time is technically "available" but not reliable.
+**Reliability:** The *ability* of a **workload to perform intended function correctly and consistently** when expected to — including the ability to operate and test the workload through its total lifecycle. **Reliability is a measure of correctness** - a system that returns the wrong answer 100% of the time is technically "available" but not reliable. **Reliability directly depends on Resiliency**. 
 
-**Resiliency:** The ability to recover from infrastructure or service disruptions, dynamically acquire computing resources to meet demand and mitigate disruptions such as misconfigurations or transient network issues. Resiliency is what enables reliability in the face of failures. Without it, a system is available only when nothing goes wrong — which is never true at scale.
+**Resiliency:** The ability to **recover from infrastructure or service disruptions**, dynamically acquire computing resources to meet demand and mitigate disruptions such as misconfigurations or transient network issues. **Resiliency is the measure of recovery in the face of failures**. Without it, a system is available only when nothing goes wrong — which is never true at scale.
 
 **Customer:** Any entity that consumes a service. In HA architecture this includes:
 
-- **End users** — human customers whose workflow must complete. Their experience is the ultimate measure of HA; if they cannot complete their task, the system is down regardless of internal metrics.
-- **Internal services** — microservices, batch jobs and daemons that call another service's API, queue or data store. Every inter-service call is a customer relationship.
+- **End users** — human customers whose workflow must complete. **Their experience is the ultimate measure of HA**; if they cannot complete their task, the system is down regardless of internal metrics.
+- **Internal services** — microservices, batch jobs and daemons that call another service's API, queue or data store. Like internal ticketing system.
 - **Third-party integrations** — external SaaS, partners or downstream systems that depend on your service (or that your service depends on). Their availability affects yours and vice versa.
 - **Developer teams** — teams consuming CI/CD pipelines, deployment platforms, feature flags and observability tooling. A broken deployment pipeline halts delivery even if the production service is healthy.
 - **Automated processes** — monitoring agents, health checkers, auto-scalers, alerting systems and scheduled jobs. These consume internal APIs and infrastructure just like human users do.
 
 Failures propagate through all these customer relationships. Every consumer of a service — human or machine, internal or external — is a customer whose needs must be accounted for in the availability design.
+
+### Consistency Models
+
+**Consistency model:** A set of rules defining how quickly a write to one node becomes visible to reads on other nodes. The choice determines replication strategy, failover behaviour, and whether quorum reads/writes are needed. Key models:
+
+- **Strong consistency** — all nodes see the same data at the same time. Highest correctness, highest latency, potentially lower availability (DynamoDB DA, Spanner).
+- **Eventual consistency** — writes propagate asynchronously; stale reads are possible until convergence. Lower latency, higher availability (DynamoDB default, S3).
+- **Read-after-write consistency** — a client always sees its own writes immediately, but others may not.
+- **Causal consistency** — causally related operations are seen in order; unrelated ones can lag.
+
+### Partitioning (Sharding)
+
+**Partitioning:** Splitting a dataset across multiple independent nodes so no single node holds everything. Each partition is responsible for a subset of the data. In HA terms:
+
+- **Limits blast radius** — if one partition fails, only the data on that node is affected; the rest stays up.
+- **Enables horizontal scaling** — more partitions = more nodes = more room for redundancy.
+- **Determines rebalance complexity** — adding/removing nodes requires redistribution (e.g. consistent hashing minimises moves).
+
+Common strategies: range-based, hash-based, or directory-based. The trade-off is between even distribution, rebalance cost, and query efficiency.
+
+### Caching
+
+**Caching:** Temporarily storing frequently accessed data in a fast, nearby layer to reduce load on slower backend systems. In HA context:
+
+- **Protects backends from load spikes** — a cache hit absorbs requests that would otherwise hit the database; if the backend is degraded, the cache can continue serving stale data (serving stale is better than serving nothing).
+- **Introduces a new failure mode** — if the cache becomes unavailable (thundering herd on a cold start, or cache node failure), all requests fall through to the backend, potentially overwhelming it. This cascade is a common HA incident pattern.
+- **Requires defensive design** — set reasonable TTLs (serving stale data is safe; serving no data is not), use connection pooling to the cache, and always implement a fallback that degrades gracefully (e.g. serve stale cache entries rather than erroring).
+- **Replication** — in-memory caches like Redis/Memcached can be replicated across AZs. Cache node failure then promotes a replica rather than causing a full miss.
 
 ### Availability Metrics
 
