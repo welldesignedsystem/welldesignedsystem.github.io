@@ -189,7 +189,7 @@ Failures propagate through all these customer relationships. Every consumer of a
 
 ### Consistency Models
 
-**Consistency model:** A set of rules defining how quickly a write to one node becomes visible to reads on other nodes. The choice determines replication strategy, failover behaviour, and whether quorum reads/writes are needed. Key models:
+**Consistency model:** A set of **rules** defining how **quickly a write to one node becomes visible to reads** on other nodes. The choice determines: **replication strategy**, **failover behaviour**, and whether **quorum reads/writes** are needed. Key models:
 
 - **Strong consistency** — all nodes see the same data at the same time. Highest correctness, highest latency, potentially lower availability (DynamoDB DA, Spanner).
 - **Eventual consistency** — writes propagate asynchronously; stale reads are possible until convergence. Lower latency, higher availability (DynamoDB default, S3).
