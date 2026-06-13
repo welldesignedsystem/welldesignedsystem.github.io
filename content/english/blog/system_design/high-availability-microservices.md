@@ -284,6 +284,142 @@ Failures propagate through all these customer relationships. Every consumer of a
 | **Write-behind** | Write to cache, async flush to DB | Low write latency, absorbs bursts | Data loss if cache fails before flush completes |
 | **Refresh-ahead** | Cache proactively refreshes expiring entries | No thundering herd, consistent low latency | Wastes resources if predictions miss |
 
+### Replication Patterns
+
+Replication has two orthogonal dimensions: **topology** (who can accept writes) and **mode** (when the write returns to the caller).
+
+**Topology patterns:**
+
+| Pattern | Write | Read | HA Strengths | HA Weaknesses |
+|---------|-------|------|-------------|---------------|
+| **Single-leader** | One node | Strong from leader; stale from replicas | Simple failover, known semantics | Write SPOF; failover has RTO |
+| **Multi-leader** | Multiple nodes | Eventual (conflict resolution) | Survives region outage; no write SPOF | Conflict resolution (LWW loses data); causality tracking required |
+| **Leaderless (quorum)** | Any node (R+W > N for strong) | Configurable via quorum size | Highest availability; linear scalability | Weak consistency at low quorum; vector clocks needed |
+
+**Replication modes** (applies within any topology):
+
+| Mode | Behaviour | HA Impact |
+|------|-----------|-----------|
+| **Synchronous** | Primary waits for all replicas to ack before confirming | Zero data loss; higher write latency; availability drops if a replica is slow |
+| **Asynchronous** | Primary confirms before replicas ack | Low latency; data loss on primary failure before replication catches up |
+| **Semi-synchronous** | Primary waits for one replica to ack, rest async | Best trade-off for most workloads; some data loss risk still present |
+
+### Load Balancing Patterns
+
+**Distribution algorithms:**
+
+| Pattern | How it works | HA Strengths | HA Weaknesses |
+|---------|-------------|-------------|---------------|
+| **Round Robin** | Cycles through targets in order | Simple, no state | Ignores backend load; slow instances get the same rate as fast ones |
+| **Least Connections** | Sends to backend with fewest active connections | Adapts to varying request durations | Requires connection tracking state on LB |
+| **Least Response Time** | Sends to fastest-responding backend | Adapts to degraded instances (slower = fewer requests) | Relies on accurate latency measurements |
+| **Weighted** | Distributes proportionally (e.g. 3:1) | Handles heterogeneous instances | Static weights need manual tuning |
+| **IP Hash / Sticky sessions** | Pins client to backend via hash | Consistent routing for stateful apps | Breaks when backend count changes; thundering herd on failover |
+| **Consistent Hashing** | Hash-based with minimal reshuffle on node change | Cache affinity; minimal rebalancing on scale events | Complex hash ring management |
+
+**Architectural patterns (LB placement):**
+
+| Pattern | Architecture | HA Strengths | HA Weaknesses |
+|---------|-------------|-------------|---------------|
+| **Layer 4 (TCP)** | Routes on IP + port | Simple, fast, no TLS overhead | No content-aware routing; limited health checks |
+| **Layer 7 (HTTP)** | Inspects headers, paths, cookies | Content-based routing, smart health checks, TLS termination | Higher CPU cost; more attack surface (TLS) |
+| **Active-passive** | One LB handles traffic; standby takes over on failure | Simple failover, no split-brain | Half capacity idle; failover has RTO |
+| **Active-active (anycast / DNS GSLB)** | Multiple LBs accept traffic simultaneously | Full capacity utilised; sub-second failover (anycast) | Complex routing; DNS caching delays failover (GSLB) |
+
+### Connection Pooling Patterns
+
+**Size strategy:**
+
+| Pattern | How it works | HA Strengths | HA Weaknesses |
+|---------|-------------|-------------|---------------|
+| **Fixed pool** | Constant size regardless of load | Predictable resource usage | Cannot absorb traffic spikes; queue builds up |
+| **Dynamic pool** | Grows/shrinks with demand | Adapts to varying load | Risk of connection storm cascading to backend under peak |
+| **Partitioned (separate pools)** | Isolated pool per workload (read / write / critical) | Connection-level bulkheading — one caller type cannot starve others | Requires more connections; harder to tune per-pool |
+
+**Health validation:**
+
+| Pattern | Behaviour | HA Strengths | HA Weaknesses |
+|---------|-----------|-------------|---------------|
+| **Test-on-borrow** | Validate before handing to caller | Catches dead connections before use | Adds latency to every acquire |
+| **Test-idle** | Periodic check on idle connections | Low overhead; catches many failures early | Stale between check intervals |
+| **Test-on-return** | Check when returned to pool | Useful for detecting leaky connections | Does not protect the next acquirer |
+
+**Exhaustion behaviour:**
+
+| Pattern | Behaviour | HA Strengths | HA Weaknesses |
+|---------|-----------|-------------|---------------|
+| **Block / queue** | Caller waits until a connection is available | Highest throughput under normal conditions | Can cause cascading pileup — all blocked callers cascade |
+| **Fail fast** | Throw error immediately | Graceful degradation; lets caller circuit-break upstream | Drops legitimate requests under brief spikes |
+| **Timeout + retry** | Wait up to N ms, then fail | Balanced — absorbs brief waits without cascading | Tuning window is narrow (too long = cascade; too short = false fail) |
+
+### Retry Logic Patterns
+
+| Pattern | Behaviour | HA Strengths | HA Weaknesses |
+|---------|-----------|-------------|---------------|
+| **Simple retry** | Fixed N retries immediately | Simple to implement | Can amplify load on an already-stressed backend |
+| **Exponential backoff** | Increasing delay between retries | Reduces pressure on recovering backend | Clients may time out before backoff completes |
+| **Exponential backoff + jitter** | Adds randomness to delay | Prevents thundering herd — retries from all clients do not sync | Slightly higher latency on the unlucky long-drawn retry |
+| **Circuit breaker** | Stop retrying after threshold, probe periodically | Protects backend from cascading failure | False trip if threshold is too tight |
+| **Retry budget** | Limit total retries across all requests | Prevents system-wide overload from aggregate retries | Hard to tune — too conservative leaves retries unused |
+| **Idempotency key** | Unique key so retries do not produce duplicates | Safe to retry indefinitely without side effects | Requires application-level deduplication logic |
+
+### Health Check Patterns
+
+**Probe type:**
+
+| Type | What it detects | HA Strengths | HA Weaknesses |
+|------|----------------|-------------|---------------|
+| **TCP** | Port is open | Fast, low overhead | Misses app-level failures (process alive but pool exhausted) |
+| **HTTP endpoint** | `/healthz` returns 200 | Catches application failures | Logic in the handler; a slow DB can cascade and falsely trip it |
+| **gRPC health protocol** | Standard gRPC health service | Language-agnostic, streaming | Only works for gRPC backends |
+| **Command / script** | Exit code of inside-container script | Flexible, can check anything | Higher overhead; shell dependency |
+
+**Check depth:**
+
+| Check | Behaviour | HA Strengths | HA Weaknesses |
+|-------|-----------|-------------|---------------|
+| **Liveness** | Is the process alive? Restart if dead | Recovers from hangs and deadlocks | Too aggressive can restart a healthy-but-slow instance |
+| **Readiness** | Is it ready to serve? Remove from LB if not | Drains traffic from degraded instances | Misconfigured dependency check removes all nodes in cascade |
+| **Startup** | Has init completed? Delays liveness during boot | Prevents premature restarts during slow startup | Adds boot latency; if too short, defeats the purpose |
+| **Shallow** | Quick self-check only | Fast, cheap | Misses dependency failures |
+| **Deep** | Checks dependencies (DB, cache, downstream) | Catches transitive failures | A downstream blip can falsely remove a perfectly healthy instance |
+
+**Aggregation:**
+
+| Pattern | Behaviour | HA Strengths | HA Weaknesses |
+|---------|-----------|-------------|---------------|
+| **Single `/healthz`** | One endpoint for everything | Simple, easy to wire | A degraded cache removes the entire node |
+| **Separate endpoints** | `/live`, `/ready`, `/db`, `/cache` | Granular — decide what removes vs alerts | More endpoints to manage; orchestrators need multiple probes |
+
+**Direction:**
+
+| Pattern | Behaviour | HA Strengths | HA Weaknesses |
+|---------|-----------|-------------|---------------|
+| **Pull (LB polls)** | Load balancer polls each target | LB controls check rate; no registration needed | Inactive instances not discovered until next poll cycle |
+| **Push (self-register)** | Instance registers with service registry | Instant registration; registry holds state | Registry is itself a SPOF; health becomes stale between re-registrations |
+
+### Traffic Shifting Patterns
+
+| Pattern | Mechanism | AWS Support | HA Strengths | HA Weaknesses |
+|---------|-----------|-------------|-------------|---------------|
+| **Canary (weighted)** | Route X% to new version, increase gradually | Route 53 weighted, ALB weighted target groups, CodeDeploy | Gradual exposure; zero-weight rollback | Needs metrics comparison; statistical noise can mislead |
+| **Header / cookie** | Route specific users via header match | ALB rule-based routing, CloudFront + Lambda@Edge | Zero impact on production users | Only tests the paths matched users exercise |
+| **Blue/green** | Swap whole target pool behind LB | CodeDeploy, ECS blue/green, ALB target group swap | Instant rollback (revert pool swap) | All-or-nothing; double capacity during cutover |
+| **Geographic / latency** | Shift DNS weights per region | Route 53 geolocation, latency, geoproximity | Isolates blast radius by region | Slow DNS propagation; coarse-grained control |
+| **GSLB percentage** | Gradually shift DNS resolution % | Route 53 weighted routing | Multi-region failover testing | DNS TTL delays each step takes minutes |
+| **Shadow / mirror** | Duplicate live requests to new version silently | API Gateway stage mirroring, VPC Traffic Mirroring | Zero user impact; validates latency + correctness | Backend must handle and discard mirrored requests separately |
+| **A/B split** | Canary with session persistence | ALB weighted + sticky sessions | User-consistent experience during shift | Sticky sessions complicate draining old sessions |
+
+**Cross-cutting rule:** Never shift more traffic than you can absorb if the new version fails. Stage the rollback before the shift starts.
+
+### TTL Management Patterns
+
+| Pattern | Behaviour | HA Strengths | HA Weaknesses |
+|---------|-----------|-------------|---------------|
+| **Low TTL (30–300s)** | DNS records expire quickly | Fast failover — clients pick up new IPs in seconds | High query volume; higher cost (Route 53 charges per query) |
+| **High TTL (300–86400s)** | DNS records cached for long periods | Low query volume; stable caching; cheaper | Slow failover — stale clients hit dead IPs for minutes to hours |
+| **Client-side re-resolution** | App re-resolves DNS at a shorter interval than the TTL | Break glass for critical services — bypass DNS cache | Non-standard; adds application complexity |
+
 ### Availability Metrics
 
 **SLI (Service Level Indicator):** A quantitative measure of some aspect of the service level being provided. Common SLIs include request latency, error rate, throughput and availability percentage (e.g. fraction of successful requests over total requests).
