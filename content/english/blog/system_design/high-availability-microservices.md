@@ -6,7 +6,11 @@ tags = ['High Availability', 'Microservices', 'AWS', 'System Design', 'Resilienc
 summary = 'Designing highly available microservices on AWS using multi-AZ deployment, stateless services, circuit breakers and chaos engineering.'
 +++
 
-High availability (HA) is the ability of a system to remain operational and accessible despite failures in its components. 
+## Definitions
+
+### High Availability
+
+**High availability (HA)** is the ability of a system to remain operational and accessible despite failures in its components. 
 HA must take into consideration every layer: 
 
 <table>
@@ -165,19 +169,43 @@ HA must take into consideration every layer:
 </tr>
 </table>
 
----
+### Reliability
 
-## Definitions
+The *ability* of a **workload to perform intended function correctly and consistently** when expected to — including the ability to operate and test the workload through its total lifecycle. **Reliability is a measure of correctness** - a system that returns the wrong answer 100% of the time is technically "available" but not reliable. **Reliability directly depends on Resiliency**.
 
-### Main ones
+#### Strategies
 
-**Availability:** is a measure of uptime.
+Unlike consistency models (a formal spectrum), reliability has no standard taxonomy. Instead, teams blend four strategic approaches:
 
-**Reliability:** The *ability* of a **workload to perform intended function correctly and consistently** when expected to — including the ability to operate and test the workload through its total lifecycle. **Reliability is a measure of correctness** - a system that returns the wrong answer 100% of the time is technically "available" but not reliable. **Reliability directly depends on Resiliency**. 
+| Strategy | Mindset | Examples |
+|----------|---------|----------|
+| **Preventive** | Stop failures before they happen | Testing, static analysis, formal verification, pre-mortems |
+| **Predictive** | Anticipate failure before it triggers a response | ML-driven anomaly detection, capacity forecasting, trend-based pre-scaling |
+| **Defensive** | Assume failure is inevitable, design around it | Circuit breakers, bulkheads, retries, redundancy, graceful degradation, stateless design |
+| **Reactive** | Detect and recover fast | Health checks, failover, AARs, runbooks, incident response, chaos engineering |
 
-**Resiliency:** The ability to **recover from infrastructure or service disruptions**, dynamically acquire computing resources to meet demand and mitigate disruptions such as misconfigurations or transient network issues. **Resiliency is the measure of recovery in the face of failures**. Without it, a system is available only when nothing goes wrong — which is never true at scale.
+This post covers defensive and reactive extensively in the HA layers table. Preventive overlaps with pre-mortems and the broader testing/QA practices behind reliability engineering.
 
-**Customer:** Any entity that consumes a service. In HA architecture this includes:
+### Resiliency
+
+The *ability* to **recover from infrastructure or service disruptions**, dynamically acquire computing resources to meet demand and mitigate disruptions such as misconfigurations or transient network issues. **Resiliency is the measure of recovery in the face of failures**. Without it, a system is available only when nothing goes wrong — which is never true at scale.
+
+#### Patterns
+
+Resiliency is best understood by **failure domain**, not by strategy categories. Each domain maps directly to the HA layers table:
+
+| Failure Domain | What it survives | Cross-cutting pattern | Covered in table |
+|---------------|-----------------|----------------------|------------------|
+| **Hardware / infra** | Server, rack, AZ, region failures | Redundancy + failover | Compute (multi-AZ, orchestration), data (replication) |
+| **Software / app** | Code bugs, slow deps, memory leaks | Isolation + graceful degradation | Application (circuit breakers, bulkheads, stateless design) |
+| **Operational / process** | Human error, misconfig, bad deploys | Detection + automated recovery | Observability (monitoring, alerting), DNS/routing (rollback via traffic shift) |
+| **External / dependency** | Third-party outages, network partitions | Fallback + circuit breaking | Dependency management (SLA, multi-provider failover, fallback modes) |
+
+The three cross-cutting patterns — **redundancy** (survive by having spares), **isolation** (survive by containing blast radius), **recovery** (survive by restoring fast) — are already embedded throughout the HA layers table above. Resiliency is what you get when every layer applies the right combination of these three.
+
+### Customer
+
+Any entity that consumes a service. In HA architecture this includes:
 
 - **End users** — human customers whose workflow must complete. **Their experience is the ultimate measure of HA**; if they cannot complete their task, the system is down regardless of internal metrics.
 - **Internal services** — microservices, batch jobs and daemons that call another service's API, queue or data store. Like internal ticketing system.
@@ -191,10 +219,31 @@ Failures propagate through all these customer relationships. Every consumer of a
 
 **Consistency model:** A set of **rules** defining how **quickly a write to one node becomes visible to reads** on other nodes. The choice determines: **replication strategy**, **failover behaviour**, and whether **quorum reads/writes** are needed. Key models:
 
-- **Strong consistency** — all nodes see the same data at the same time. Highest correctness, highest latency, potentially lower availability (DynamoDB DA, Spanner).
-- **Eventual consistency** — writes propagate asynchronously; stale reads are possible until convergence. Lower latency, higher availability (DynamoDB default, S3).
-- **Read-after-write consistency** — a client always sees its own writes immediately, but others may not.
-- **Causal consistency** — causally related operations are seen in order; unrelated ones can lag.
+| Model | Behaviour | HA Trade-off | Example |
+|-------|-----------|-------------|---------|
+| **Strong consistency** | All nodes see the same data at the same time | Highest correctness, highest latency, potentially lower availability | DynamoDB DA, Spanner |
+| **Eventual consistency** | Writes propagate asynchronously; stale reads possible until convergence | Lower latency, higher availability | DynamoDB default, S3 |
+| **Read-after-write consistency** | A client always sees its own writes immediately, but others may not | Balances write availability with read freshness | User session stores |
+| **Causal consistency** | Causally related operations seen in order; unrelated ones can lag | Preserves logical ordering without global coordination | DynamoDB Transactions, CRDTs |
+
+### CAP Theorem
+
+**CAP Theorem:** In a distributed data store, you can have at most two of **Consistency** (every read returns the most recent write), **Availability** (every request receives a non-error response) and **Partition Tolerance** (the system continues operating despite network failures).
+
+**Why CA is impossible in real networks:** Partitions are inevitable — network failures *will* happen. A CA-classified system is only CA *when the network is perfect*, which is never true at scale. The real choice in production is CP or AP.
+
+**How real systems pick their trade-off:**
+
+| System | Official CAP | Practical CAP | How they engineer around the sacrificed aspect |
+|--------|-------------|---------------|-----------------------------------------------|
+| **Spanner** | CA | CP | TrueTime (GPS + atomic clocks) guarantees external consistency across regions; Google's private redundant fiber network makes partitions so rare that 99.999% availability is achievable despite being CP |
+| **DynamoDB** | AP | AP | Default is eventually consistent; per-request strongly consistent reads available at higher latency/cost; DynamoDB Transactions add causal consistency on top of an AP foundation |
+| **Cassandra** | AP | AP | Tunable consistency per query (ONE, QUORUM, ALL) — dial up when needed; no single point of failure means linear scalability at the cost of strong consistency |
+| **MongoDB** | CP | CP | Automatic replica-set failover; all writes go to primary; reads can be configured for eventual consistency (secondary reads) when partition tolerance matters more |
+| **CockroachDB** | CP | CP | Serializable isolation via Raft consensus; survives full region outages — but drops writes if no quorum is reachable |
+| **Clustered PG / MySQL** | CP | CP | Primary handles all writes; replica takes over on failure — writes are blocked during promotion. RDBMS outside CAP's scope entirely (CAP governs distributed systems; a single instance is not distributed) |
+
+**Key insight:** The "sacrificed" pillar is never truly zero. AP systems find ways to give you consistency when you need it (DynamoDB strongly consistent reads, Cassandra QUORUM). CP systems invest heavily in infrastructure to make partitions rare (Spanner's private network, Raft lease mechanisms). No system fully ignores any pillar — they just prioritise.
 
 ### Partitioning (Sharding)
 
@@ -204,16 +253,36 @@ Failures propagate through all these customer relationships. Every consumer of a
 - **Enables horizontal scaling** — more partitions = more nodes = more room for redundancy.
 - **Determines rebalance complexity** — adding/removing nodes requires redistribution (e.g. consistent hashing minimises moves).
 
-Common strategies: range-based, hash-based, or directory-based. The trade-off is between even distribution, rebalance cost, and query efficiency.
+**Partitioning strategies (choices):**
+
+| Strategy | How it works | HA Strengths | HA Weaknesses |
+|----------|-------------|-------------|---------------|
+| **Range-based** | Split by key range (A-M, N-Z) | Simple, efficient range queries | Hot spots if distribution is skewed; rebalancing moves large ranges |
+| **Hash-based** | Hash(key) % N determines shard | Even distribution, good load balance | Range queries hit all shards; adding/removing nodes reshuffles most data |
+| **Directory-based** | Lookup table maps key to shard | Flexible, supports dynamic splits | Lookup table is a SPOF and potential bottleneck |
+| **List-based** | Split by discrete value list (region: US, EU, APAC) | Aligns with access patterns, geo-isolation | Uneven list sizes cause hot shards |
+| **Composite** | Combine two or more (e.g. hash within range) | Best of both worlds | Higher routing and rebalance complexity |
 
 ### Caching
 
 **Caching:** Temporarily storing frequently accessed data in a fast, nearby layer to reduce load on slower backend systems. In HA context:
 
-- **Protects backends from load spikes** — a cache hit absorbs requests that would otherwise hit the database; if the backend is degraded, the cache can continue serving stale data (serving stale is better than serving nothing).
-- **Introduces a new failure mode** — if the cache becomes unavailable (thundering herd on a cold start, or cache node failure), all requests fall through to the backend, potentially overwhelming it. This cascade is a common HA incident pattern.
-- **Requires defensive design** — set reasonable TTLs (serving stale data is safe; serving no data is not), use connection pooling to the cache, and always implement a fallback that degrades gracefully (e.g. serve stale cache entries rather than erroring).
-- **Replication** — in-memory caches like Redis/Memcached can be replicated across AZs. Cache node failure then promotes a replica rather than causing a full miss.
+**Placement choices:**
+
+| Placement | Architecture | HA Strengths | HA Weaknesses |
+|-----------|-------------|-------------|---------------|
+| **Local** | In-process per instance (Caffeine, Guava) | Fastest, no network dependency | Stale across instances, memory-limited per node |
+| **Distributed** | Shared cluster (Redis, Memcached) | Consistent view, replication across AZs, larger capacity | Network latency, cache cluster is itself a SPOF |
+
+**Write policy choices:**
+
+| Strategy | How it works | HA Strengths | HA Weaknesses |
+|----------|-------------|-------------|---------------|
+| **Cache-aside (lazy loading)** | App checks cache; on miss, loads from DB | Degrades to DB reads if cache fails; battle-tested | Thundering herd on cold start; stale until TTL expires |
+| **Read-through** | Cache fetches from DB on miss transparently | Simplified app logic, consistent staleness | Cache failure causes full outage until restored |
+| **Write-through** | Write to cache + DB synchronously | Cache always fresh | Higher write latency; double failure surface |
+| **Write-behind** | Write to cache, async flush to DB | Low write latency, absorbs bursts | Data loss if cache fails before flush completes |
+| **Refresh-ahead** | Cache proactively refreshes expiring entries | No thundering herd, consistent low latency | Wastes resources if predictions miss |
 
 ### Availability Metrics
 
