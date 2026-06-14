@@ -2478,6 +2478,7 @@
       "workload-architecture",
       "workspace--memory",
       "worktrees-parallel-isolation",
+      "write-anomalies",
       "write-your-own-bow-representation",
       "writing-effective-custom-instructions",
       "writing-your-first-test",

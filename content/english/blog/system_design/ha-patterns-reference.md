@@ -50,7 +50,29 @@ This reference collects pattern tables from the main [High Availability](/blog/s
 
 **Key insight:** The "sacrificed" pillar is never truly zero. AP systems find ways to give you consistency when you need it (DynamoDB strongly consistent reads, Cassandra QUORUM). CP systems invest heavily in infrastructure to make partitions rare (Spanner's private network, Raft lease mechanisms). No system fully ignores any pillar — they just prioritise.
 
+**No database guarantees 100% availability.** The best achievable is five 9s (99.999%) — about 5 minutes of downtime per year. Even AP systems go down during a full-region outage (no replicas left) or a software/ops failure that affects all nodes simultaneously. Real-world outages happen regardless of architectural trade-off: global DNS failures, bad schema migrations, shared control-plane bugs, misconfigured firewalls.
+
+**DynamoDB-specific write behaviour (being AP):** DynamoDB does not have dirty writes or dirty reads — every write is atomic and there is no uncommitted state. However, its default **last-writer-wins** policy means concurrent writes silently overwrite each other (lost updates). To prevent this, use **conditional writes** (`ConditionExpression`) for optimistic locking, or **DynamoDB Transactions** for serializable isolation. The trade-off: preventing lost updates requires a read-before-write round trip, reducing throughput.
+
+**RDBMS replication modes (sync vs async):** In **async** replication (default in PostgreSQL, MySQL) the primary commits immediately and ships the WAL to replicas asynchronously. A replica failure never stalls the primary — the replica catches up when it returns. In **sync** replication, the primary waits for at least one replica to acknowledge before committing. If the replica is down, the primary stalls. Most production deployments use **semi-sync** — the primary waits for a configurable timeout (e.g. 100ms), then falls back to async to avoid blocking writes on a slow or unreachable replica.
+
 **Sources:** *Designing Data-Intensive Applications* by Martin Kleppmann (Ch. 9); "Brewer's Conjecture and the Feasibility of C, A, P" (Eric Brewer, PODC 2000)
+
+---
+
+## Write Anomalies
+
+**Write anomalies:** Types of data corruption that can occur when multiple clients read and write concurrently without proper isolation. The choice of consistency model and database architecture determines which anomalies are possible.
+
+**Sources:** *Designing Data-Intensive Applications* by Martin Kleppmann (Ch. 7)
+
+| Anomaly | Definition | RDBMS (PG / MySQL) | AP NoSQL | Availability trade-off |
+|---------|-----------|-------------------|----------|----------------------|
+| **Dirty write** | Overwriting data that another client is still modifying (has not committed yet) | Prevented at all isolation levels — uncommitted writes are invisible via row-level locking | Not possible — there is no uncommitted state. Every write is atomic and immediately visible | No trade-off: atomic-write model naturally avoids this |
+| **Dirty read** | Reading data that another client is modifying but has not committed yet | Prevented at Read Committed and above | Not possible (same reason — no uncommitted state) | No trade-off |
+| **Lost update** | Two concurrent writes silently overwrite each other; the last writer wins and the earlier write disappears | Prevented at all isolation levels — a write locks the row until commit, so concurrent writes queue | Default: last-writer-wins. Prevented via conditional writes (optimistic locking) or transactions | Preventing requires a read-before-write round trip, reducing throughput and increasing latency. Last-writer-wins favours availability |
+| **Non-repeatable read** | Reading the same row twice and getting different results because another client modified it in between | Possible at Read Committed; prevented at Repeatable Read+ | Strongly consistent reads return the latest version every time. Eventual consistency may return stale committed data, but that's not a phantom | Strongly consistent reads cost more resources and add latency |
+| **Phantom read** | A search predicate returns different sets of rows on two executions because another client inserted/deleted rows in between | Possible at Read Committed and Repeatable Read; prevented at Serializable | No equivalent concept in key-value / document stores — queries reflect current committed state | — |
 
 ---
 
