@@ -18,10 +18,12 @@ This reference collects pattern tables from the main [High Availability](/blog/s
 
 | Model | Behaviour | HA Trade-off | Example |
 |-------|-----------|-------------|---------|
-| **Strong consistency** | All nodes see the same data at the same time | Highest correctness, highest latency, potentially lower availability | DynamoDB DA, Spanner |
+| **Strong consistency** | All nodes see the same data at the same time | Highest correctness, highest latency, potentially lower availability | DynamoDB DAX, Spanner |
 | **Eventual consistency** | Writes propagate asynchronously; stale reads possible until convergence | Lower latency, higher availability | DynamoDB default, S3 |
 | **Read-after-write consistency** | A client always sees its own writes immediately, but others may not | Balances write availability with read freshness | User session stores |
 | **Causal consistency** | Causally related operations seen in order; unrelated ones can lag | Preserves logical ordering without global coordination | DynamoDB Transactions, CRDTs |
+
+**Note &mdash; eventual vs read-after-write:** With eventual consistency even the *writer* may not see their own write immediately — the read could land on a replica still catching up. With read-after-write consistency the writer always sees their own writes, but other clients may still read stale data for a while.
 
 ---
 
@@ -29,18 +31,22 @@ This reference collects pattern tables from the main [High Availability](/blog/s
 
 **CAP Theorem:** In a distributed data store, you can have at most two of **Consistency** (every read returns the most recent write), **Availability** (every request receives a non-error response) and **Partition Tolerance** (the system continues operating despite network failures).
 
-**Why CA is impossible in real networks:** Partitions are inevitable — network failures *will* happen. A CA-classified system is only CA *when the network is perfect*, which is never true at scale. The real choice in production is CP or AP.
+**Note — two caveats to keep in mind:**
+
+1. **Writes during a partition:** In a **CP** system the majority side keeps accepting writes but the minority side rejects writes (returns errors) to prevent divergence. Those writes fail until the partition heals — they are not lost, simply denied. In an **AP** system both sides accept writes but data may diverge until the link is restored.
+
+2. **Why CA is impossible:** Partitions are inevitable — network failures *will* happen. A CA-classified system is only CA *when the network is perfect*, which is never true at scale. The real choice in production is CP or AP.
 
 **How real systems pick their trade-off:**
 
-| System | Official CAP | Practical CAP | How they engineer around the sacrificed aspect |
-|--------|-------------|---------------|-----------------------------------------------|
-| **Spanner** | CA | CP | TrueTime (GPS + atomic clocks) guarantees external consistency across regions; Google's private redundant fiber network makes partitions so rare that 99.999% availability is achievable despite being CP |
-| **DynamoDB** | AP | AP | Default is eventually consistent; per-request strongly consistent reads available at higher latency/cost; DynamoDB Transactions add causal consistency on top of an AP foundation |
-| **Cassandra** | AP | AP | Tunable consistency per query (ONE, QUORUM, ALL) — dial up when needed; no single point of failure means linear scalability at the cost of strong consistency |
-| **MongoDB** | CP | CP | Automatic replica-set failover; all writes go to primary; reads can be configured for eventual consistency (secondary reads) when partition tolerance matters more |
-| **CockroachDB** | CP | CP | Serializable isolation via Raft consensus; survives full region outages — but drops writes if no quorum is reachable |
-| **Clustered PG / MySQL** | CP | CP | Primary handles all writes; replica takes over on failure — writes are blocked during promotion. RDBMS outside CAP's scope entirely (CAP governs distributed systems; a single instance is not distributed) |
+| System | Official CAP | How they engineer around the sacrificed aspect | Use Cases |
+|--------|-------------|-----------------------------------------------|-----------|
+| **Spanner** | CA | TrueTime (GPS + atomic clocks) guarantees external consistency across regions; Google's private redundant fiber network makes partitions so rare that 99.999% availability is achievable despite being CP | Global financial ledgers, multi-region inventory, planetary-scale OLTP |
+| **DynamoDB** | AP | Default is eventually consistent; per-request strongly consistent reads available at higher latency/cost; DynamoDB Transactions add causal consistency on top of an AP foundation | Session stores, shopping carts, gaming leaderboards, high-traffic user profiles, IoT event ingestion |
+| **Cassandra** | AP | Tunable consistency per query (ONE, QUORUM, ALL) — dial up when needed; no single point of failure means linear scalability at the cost of strong consistency | Time-series data, IoT sensor ingestion, messaging / chat, recommendation engines |
+| **MongoDB** | CP | Automatic replica-set failover; all writes go to primary; reads can be configured for eventual consistency (secondary reads) when partition tolerance matters more | Content management, catalogs, real-time analytics, mobile backends |
+| **CockroachDB** | CP | Serializable isolation via Raft consensus; survives full region outages — but drops writes if no quorum is reachable | Multi-region SaaS backends, financial services requiring strong consistency with geo-distribution |
+| **Clustered PG / MySQL** | CP | Primary handles all writes; replica takes over on failure — writes are blocked during promotion. RDBMS outside CAP's scope entirely (CAP governs distributed systems; a single instance is not distributed) | Single-region financial transactions, ERP, traditional relational workloads |
 
 **Key insight:** The "sacrificed" pillar is never truly zero. AP systems find ways to give you consistency when you need it (DynamoDB strongly consistent reads, Cassandra QUORUM). CP systems invest heavily in infrastructure to make partitions rare (Spanner's private network, Raft lease mechanisms). No system fully ignores any pillar — they just prioritise.
 
