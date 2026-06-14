@@ -6,6 +6,8 @@ tags = ['High Availability', 'Microservices', 'AWS', 'System Design', 'Resilienc
 summary = 'Designing highly available microservices on AWS using multi-AZ deployment, stateless services, circuit breakers and chaos engineering.'
 +++
 
+*A companion [High Availability Patterns Reference](/blog/system_design/ha-patterns-reference/) collects all pattern tables and trade-off comparisons in a single browsable page.*
+
 ## Definitions
 
 ### High Availability
@@ -217,208 +219,11 @@ Failures propagate through all these customer relationships. Every consumer of a
 
 ### Consistency Models
 
-**Consistency model:** A set of **rules** defining how **quickly a write to one node becomes visible to reads** on other nodes. The choice determines: **replication strategy**, **failover behaviour**, and whether **quorum reads/writes** are needed. Key models:
+See [Consistency Models](/blog/system_design/ha-patterns-reference/#consistency-models) and [CAP Theorem](/blog/system_design/ha-patterns-reference/#cap-theorem) in the patterns reference.
 
-| Model | Behaviour | HA Trade-off | Example |
-|-------|-----------|-------------|---------|
-| **Strong consistency** | All nodes see the same data at the same time | Highest correctness, highest latency, potentially lower availability | DynamoDB DA, Spanner |
-| **Eventual consistency** | Writes propagate asynchronously; stale reads possible until convergence | Lower latency, higher availability | DynamoDB default, S3 |
-| **Read-after-write consistency** | A client always sees its own writes immediately, but others may not | Balances write availability with read freshness | User session stores |
-| **Causal consistency** | Causally related operations seen in order; unrelated ones can lag | Preserves logical ordering without global coordination | DynamoDB Transactions, CRDTs |
+### Pattern Reference
 
-### CAP Theorem
-
-**CAP Theorem:** In a distributed data store, you can have at most two of **Consistency** (every read returns the most recent write), **Availability** (every request receives a non-error response) and **Partition Tolerance** (the system continues operating despite network failures).
-
-**Why CA is impossible in real networks:** Partitions are inevitable — network failures *will* happen. A CA-classified system is only CA *when the network is perfect*, which is never true at scale. The real choice in production is CP or AP.
-
-**How real systems pick their trade-off:**
-
-| System | Official CAP | Practical CAP | How they engineer around the sacrificed aspect |
-|--------|-------------|---------------|-----------------------------------------------|
-| **Spanner** | CA | CP | TrueTime (GPS + atomic clocks) guarantees external consistency across regions; Google's private redundant fiber network makes partitions so rare that 99.999% availability is achievable despite being CP |
-| **DynamoDB** | AP | AP | Default is eventually consistent; per-request strongly consistent reads available at higher latency/cost; DynamoDB Transactions add causal consistency on top of an AP foundation |
-| **Cassandra** | AP | AP | Tunable consistency per query (ONE, QUORUM, ALL) — dial up when needed; no single point of failure means linear scalability at the cost of strong consistency |
-| **MongoDB** | CP | CP | Automatic replica-set failover; all writes go to primary; reads can be configured for eventual consistency (secondary reads) when partition tolerance matters more |
-| **CockroachDB** | CP | CP | Serializable isolation via Raft consensus; survives full region outages — but drops writes if no quorum is reachable |
-| **Clustered PG / MySQL** | CP | CP | Primary handles all writes; replica takes over on failure — writes are blocked during promotion. RDBMS outside CAP's scope entirely (CAP governs distributed systems; a single instance is not distributed) |
-
-**Key insight:** The "sacrificed" pillar is never truly zero. AP systems find ways to give you consistency when you need it (DynamoDB strongly consistent reads, Cassandra QUORUM). CP systems invest heavily in infrastructure to make partitions rare (Spanner's private network, Raft lease mechanisms). No system fully ignores any pillar — they just prioritise.
-
-### Partitioning (Sharding)
-
-**Partitioning:** Splitting a dataset across multiple independent nodes so no single node holds everything. Each partition is responsible for a subset of the data. In HA terms:
-
-- **Limits blast radius** — if one partition fails, only the data on that node is affected; the rest stays up.
-- **Enables horizontal scaling** — more partitions = more nodes = more room for redundancy.
-- **Determines rebalance complexity** — adding/removing nodes requires redistribution (e.g. consistent hashing minimises moves).
-
-**Partitioning strategies (choices):**
-
-| Strategy | How it works | HA Strengths | HA Weaknesses |
-|----------|-------------|-------------|---------------|
-| **Range-based** | Split by key range (A-M, N-Z) | Simple, efficient range queries | Hot spots if distribution is skewed; rebalancing moves large ranges |
-| **Hash-based** | Hash(key) % N determines shard | Even distribution, good load balance | Range queries hit all shards; adding/removing nodes reshuffles most data |
-| **Directory-based** | Lookup table maps key to shard | Flexible, supports dynamic splits | Lookup table is a SPOF and potential bottleneck |
-| **List-based** | Split by discrete value list (region: US, EU, APAC) | Aligns with access patterns, geo-isolation | Uneven list sizes cause hot shards |
-| **Composite** | Combine two or more (e.g. hash within range) | Best of both worlds | Higher routing and rebalance complexity |
-
-### Caching
-
-**Caching:** Temporarily storing frequently accessed data in a fast, nearby layer to reduce load on slower backend systems. In HA context:
-
-**Placement choices:**
-
-| Placement | Architecture | HA Strengths | HA Weaknesses |
-|-----------|-------------|-------------|---------------|
-| **Local** | In-process per instance (Caffeine, Guava) | Fastest, no network dependency | Stale across instances, memory-limited per node |
-| **Distributed** | Shared cluster (Redis, Memcached) | Consistent view, replication across AZs, larger capacity | Network latency, cache cluster is itself a SPOF |
-
-**Write policy choices:**
-
-| Strategy | How it works | HA Strengths | HA Weaknesses |
-|----------|-------------|-------------|---------------|
-| **Cache-aside (lazy loading)** | App checks cache; on miss, loads from DB | Degrades to DB reads if cache fails; battle-tested | Thundering herd on cold start; stale until TTL expires |
-| **Read-through** | Cache fetches from DB on miss transparently | Simplified app logic, consistent staleness | Cache failure causes full outage until restored |
-| **Write-through** | Write to cache + DB synchronously | Cache always fresh | Higher write latency; double failure surface |
-| **Write-behind** | Write to cache, async flush to DB | Low write latency, absorbs bursts | Data loss if cache fails before flush completes |
-| **Refresh-ahead** | Cache proactively refreshes expiring entries | No thundering herd, consistent low latency | Wastes resources if predictions miss |
-
-### Replication Patterns
-
-Replication has two orthogonal dimensions: **topology** (who can accept writes) and **mode** (when the write returns to the caller).
-
-**Topology patterns:**
-
-| Pattern | Write | Read | HA Strengths | HA Weaknesses |
-|---------|-------|------|-------------|---------------|
-| **Single-leader** | One node | Strong from leader; stale from replicas | Simple failover, known semantics | Write SPOF; failover has RTO |
-| **Multi-leader** | Multiple nodes | Eventual (conflict resolution) | Survives region outage; no write SPOF | Conflict resolution (LWW loses data); causality tracking required |
-| **Leaderless (quorum)** | Any node (R+W > N for strong) | Configurable via quorum size | Highest availability; linear scalability | Weak consistency at low quorum; vector clocks needed |
-
-**Replication modes** (applies within any topology):
-
-| Mode | Behaviour | HA Impact |
-|------|-----------|-----------|
-| **Synchronous** | Primary waits for all replicas to ack before confirming | Zero data loss; higher write latency; availability drops if a replica is slow |
-| **Asynchronous** | Primary confirms before replicas ack | Low latency; data loss on primary failure before replication catches up |
-| **Semi-synchronous** | Primary waits for one replica to ack, rest async | Best trade-off for most workloads; some data loss risk still present |
-
-### Load Balancing Patterns
-
-**Distribution algorithms:**
-
-| Pattern | How it works | HA Strengths | HA Weaknesses |
-|---------|-------------|-------------|---------------|
-| **Round Robin** | Cycles through targets in order | Simple, no state | Ignores backend load; slow instances get the same rate as fast ones |
-| **Least Connections** | Sends to backend with fewest active connections | Adapts to varying request durations | Requires connection tracking state on LB |
-| **Least Response Time** | Sends to fastest-responding backend | Adapts to degraded instances (slower = fewer requests) | Relies on accurate latency measurements |
-| **Weighted** | Distributes proportionally (e.g. 3:1) | Handles heterogeneous instances | Static weights need manual tuning |
-| **IP Hash / Sticky sessions** | Pins client to backend via hash | Consistent routing for stateful apps | Breaks when backend count changes; thundering herd on failover |
-| **Consistent Hashing** | Hash-based with minimal reshuffle on node change | Cache affinity; minimal rebalancing on scale events | Complex hash ring management |
-
-**Architectural patterns (LB placement):**
-
-| Pattern | Architecture | HA Strengths | HA Weaknesses |
-|---------|-------------|-------------|---------------|
-| **Layer 4 (TCP)** | Routes on IP + port | Simple, fast, no TLS overhead | No content-aware routing; limited health checks |
-| **Layer 7 (HTTP)** | Inspects headers, paths, cookies | Content-based routing, smart health checks, TLS termination | Higher CPU cost; more attack surface (TLS) |
-| **Active-passive** | One LB handles traffic; standby takes over on failure | Simple failover, no split-brain | Half capacity idle; failover has RTO |
-| **Active-active (anycast / DNS GSLB)** | Multiple LBs accept traffic simultaneously | Full capacity utilised; sub-second failover (anycast) | Complex routing; DNS caching delays failover (GSLB) |
-
-### Connection Pooling Patterns
-
-**Size strategy:**
-
-| Pattern | How it works | HA Strengths | HA Weaknesses |
-|---------|-------------|-------------|---------------|
-| **Fixed pool** | Constant size regardless of load | Predictable resource usage | Cannot absorb traffic spikes; queue builds up |
-| **Dynamic pool** | Grows/shrinks with demand | Adapts to varying load | Risk of connection storm cascading to backend under peak |
-| **Partitioned (separate pools)** | Isolated pool per workload (read / write / critical) | Connection-level bulkheading — one caller type cannot starve others | Requires more connections; harder to tune per-pool |
-
-**Health validation:**
-
-| Pattern | Behaviour | HA Strengths | HA Weaknesses |
-|---------|-----------|-------------|---------------|
-| **Test-on-borrow** | Validate before handing to caller | Catches dead connections before use | Adds latency to every acquire |
-| **Test-idle** | Periodic check on idle connections | Low overhead; catches many failures early | Stale between check intervals |
-| **Test-on-return** | Check when returned to pool | Useful for detecting leaky connections | Does not protect the next acquirer |
-
-**Exhaustion behaviour:**
-
-| Pattern | Behaviour | HA Strengths | HA Weaknesses |
-|---------|-----------|-------------|---------------|
-| **Block / queue** | Caller waits until a connection is available | Highest throughput under normal conditions | Can cause cascading pileup — all blocked callers cascade |
-| **Fail fast** | Throw error immediately | Graceful degradation; lets caller circuit-break upstream | Drops legitimate requests under brief spikes |
-| **Timeout + retry** | Wait up to N ms, then fail | Balanced — absorbs brief waits without cascading | Tuning window is narrow (too long = cascade; too short = false fail) |
-
-### Retry Logic Patterns
-
-| Pattern | Behaviour | HA Strengths | HA Weaknesses |
-|---------|-----------|-------------|---------------|
-| **Simple retry** | Fixed N retries immediately | Simple to implement | Can amplify load on an already-stressed backend |
-| **Exponential backoff** | Increasing delay between retries | Reduces pressure on recovering backend | Clients may time out before backoff completes |
-| **Exponential backoff + jitter** | Adds randomness to delay | Prevents thundering herd — retries from all clients do not sync | Slightly higher latency on the unlucky long-drawn retry |
-| **Circuit breaker** | Stop retrying after threshold, probe periodically | Protects backend from cascading failure | False trip if threshold is too tight |
-| **Retry budget** | Limit total retries across all requests | Prevents system-wide overload from aggregate retries | Hard to tune — too conservative leaves retries unused |
-| **Idempotency key** | Unique key so retries do not produce duplicates | Safe to retry indefinitely without side effects | Requires application-level deduplication logic |
-
-### Health Check Patterns
-
-**Probe type:**
-
-| Type | What it detects | HA Strengths | HA Weaknesses |
-|------|----------------|-------------|---------------|
-| **TCP** | Port is open | Fast, low overhead | Misses app-level failures (process alive but pool exhausted) |
-| **HTTP endpoint** | `/healthz` returns 200 | Catches application failures | Logic in the handler; a slow DB can cascade and falsely trip it |
-| **gRPC health protocol** | Standard gRPC health service | Language-agnostic, streaming | Only works for gRPC backends |
-| **Command / script** | Exit code of inside-container script | Flexible, can check anything | Higher overhead; shell dependency |
-
-**Check depth:**
-
-| Check | Behaviour | HA Strengths | HA Weaknesses |
-|-------|-----------|-------------|---------------|
-| **Liveness** | Is the process alive? Restart if dead | Recovers from hangs and deadlocks | Too aggressive can restart a healthy-but-slow instance |
-| **Readiness** | Is it ready to serve? Remove from LB if not | Drains traffic from degraded instances | Misconfigured dependency check removes all nodes in cascade |
-| **Startup** | Has init completed? Delays liveness during boot | Prevents premature restarts during slow startup | Adds boot latency; if too short, defeats the purpose |
-| **Shallow** | Quick self-check only | Fast, cheap | Misses dependency failures |
-| **Deep** | Checks dependencies (DB, cache, downstream) | Catches transitive failures | A downstream blip can falsely remove a perfectly healthy instance |
-
-**Aggregation:**
-
-| Pattern | Behaviour | HA Strengths | HA Weaknesses |
-|---------|-----------|-------------|---------------|
-| **Single `/healthz`** | One endpoint for everything | Simple, easy to wire | A degraded cache removes the entire node |
-| **Separate endpoints** | `/live`, `/ready`, `/db`, `/cache` | Granular — decide what removes vs alerts | More endpoints to manage; orchestrators need multiple probes |
-
-**Direction:**
-
-| Pattern | Behaviour | HA Strengths | HA Weaknesses |
-|---------|-----------|-------------|---------------|
-| **Pull (LB polls)** | Load balancer polls each target | LB controls check rate; no registration needed | Inactive instances not discovered until next poll cycle |
-| **Push (self-register)** | Instance registers with service registry | Instant registration; registry holds state | Registry is itself a SPOF; health becomes stale between re-registrations |
-
-### Traffic Shifting Patterns
-
-| Pattern | Mechanism | AWS Support | HA Strengths | HA Weaknesses |
-|---------|-----------|-------------|-------------|---------------|
-| **Canary (weighted)** | Route X% to new version, increase gradually | Route 53 weighted, ALB weighted target groups, CodeDeploy | Gradual exposure; zero-weight rollback | Needs metrics comparison; statistical noise can mislead |
-| **Header / cookie** | Route specific users via header match | ALB rule-based routing, CloudFront + Lambda@Edge | Zero impact on production users | Only tests the paths matched users exercise |
-| **Blue/green** | Swap whole target pool behind LB | CodeDeploy, ECS blue/green, ALB target group swap | Instant rollback (revert pool swap) | All-or-nothing; double capacity during cutover |
-| **Geographic / latency** | Shift DNS weights per region | Route 53 geolocation, latency, geoproximity | Isolates blast radius by region | Slow DNS propagation; coarse-grained control |
-| **GSLB percentage** | Gradually shift DNS resolution % | Route 53 weighted routing | Multi-region failover testing | DNS TTL delays each step takes minutes |
-| **Shadow / mirror** | Duplicate live requests to new version silently | API Gateway stage mirroring, VPC Traffic Mirroring | Zero user impact; validates latency + correctness | Backend must handle and discard mirrored requests separately |
-| **A/B split** | Canary with session persistence | ALB weighted + sticky sessions | User-consistent experience during shift | Sticky sessions complicate draining old sessions |
-
-**Cross-cutting rule:** Never shift more traffic than you can absorb if the new version fails. Stage the rollback before the shift starts.
-
-### TTL Management Patterns
-
-| Pattern | Behaviour | HA Strengths | HA Weaknesses |
-|---------|-----------|-------------|---------------|
-| **Low TTL (30–300s)** | DNS records expire quickly | Fast failover — clients pick up new IPs in seconds | High query volume; higher cost (Route 53 charges per query) |
-| **High TTL (300–86400s)** | DNS records cached for long periods | Low query volume; stable caching; cheaper | Slow failover — stale clients hit dead IPs for minutes to hours |
-| **Client-side re-resolution** | App re-resolves DNS at a shorter interval than the TTL | Break glass for critical services — bypass DNS cache | Non-standard; adds application complexity |
+For detailed comparisons of partitioning, caching, replication, load balancing, connection pooling, retry logic, health checks, traffic shifting, TTL management, disaster recovery, auto-scaling, rate limiting, backpressure, timeout, service discovery, chaos engineering, saga, and feature flag patterns, see [High Availability Patterns Reference](/blog/system_design/ha-patterns-reference/).
 
 ### Availability Metrics
 
@@ -689,6 +494,12 @@ Technical availability metrics (99.9%, p99 latency) are meaningless without busi
 - Business metrics should appear on the same dashboards as technical metrics. An on-call engineer should see "error rate: 5%" next to "estimated revenue impact: $12,000/hr."
 - The cost of downtime calculation is the basis for every HA architecture decision. Without it, you cannot determine whether 99.9% is the right target or whether 99.99% is worth the investment.
 
+**Using business metrics in practice:**
+
+- Every HA incident should be followed by a business impact assessment: "How much revenue was lost? How many customers were affected? How many support tickets were created?"
+- Business metrics should appear on the same dashboards as technical metrics. An on-call engineer should see "error rate: 5%" next to "estimated revenue impact: $12,000/hr."
+- The cost of downtime calculation is the basis for every HA architecture decision. Without it, you cannot determine whether 99.9% is the right target or whether 99.99% is worth the investment.
+
 ### Costs for Availability
 
 Designing for higher availability increases cost across every lifecycle phase:
@@ -711,7 +522,7 @@ The AWS Well-Architected Reliability Pillar identifies five design principles fo
 For example, in telecom and fintech the business-value KPIs that matter go beyond CPU and error rates. The table below uses TM Forum's Revenue Management process names:
 
 | Sub-function | KPI | What it measures | Why it is a business value KPI |
-|---|---|---|---|---|
+|---|---|---|---|
 | **Rating & Discounting** (TMF 677) | Rating completion rate | Percentage of usage events rated within SLA (e.g. < 100ms for online, < 1h for offline) | Unrated events mean unbilled revenue directly |
 | **Balance Management** (TMF 654) | Online charging success rate | Real-time credit control requests that complete without failure | A failed credit check means the subscriber gets free service |
 | **Bill Management** (TMF 678) | Invoice generation success rate | Invoices generated on schedule / total expected invoices | Missed invoices delay revenue recognition and upset customers |
