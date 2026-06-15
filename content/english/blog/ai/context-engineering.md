@@ -255,6 +255,21 @@ project-root/
 - Parallel subagents: independent investigations
 - Background subagents: `background: true`, auto-deny permission prompts (https://code.claude.com/docs/en/sub-agents)
 
+### Progressive Disclosure vs Just-in-Time Retrieval
+
+These two terms are often conflated but describe different scopes.
+
+**Just-in-time retrieval** (broad pattern): defer loading any context — files, data, search results, tool output — until the agent actually needs it. Applies to everything the agent does: reading a source file only when it needs to understand a function, querying an API only when it needs live data, running a search only when it needs to find something.
+
+**Progressive disclosure** (specific implementation of JIT): defer loading instruction content based on an initial metadata scan. The agent loads skill names and descriptions at startup (cheap), but waits to load the full skill body until a matching task is detected (https://code.claude.com/docs/en/skills). The agent knows the skill exists and what it does, but the 200 lines of instruction text don't enter context until actually needed.
+
+The distinction matters because they have different costs:
+- JIT for data (files, APIs) costs a tool invocation round-trip — generally worthwhile
+- Progressive disclosure for instructions costs nothing until triggered — strictly better than loading everything upfront
+- You can have JIT without progressive disclosure (reading a file on demand), but progressive disclosure is always a form of JIT applied to the instruction layer
+
+Progressively disclosed skills are Claude Code's answer to the "single responsibility" principle for context: each domain gets its own block of instructions that only loads when relevant, rather than one monolithic CLAUDE.md that pays the token cost on every turn.
+
 ### Skills as Modular Context
 
 - CLAUDE.md loads every session and consumes attention budget from turn one
