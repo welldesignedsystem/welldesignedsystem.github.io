@@ -147,6 +147,21 @@ Replication has two orthogonal dimensions: **topology** (who can accept writes) 
 
 ---
 
+## Leader Election / Distributed Coordination
+
+Mechanisms for electing a single leader among multiple replicas to coordinate writes, assign partition ownership or manage task distribution:
+
+| Pattern | How it works | HA Strengths | HA Weaknesses |
+|---------|-------------|-------------|---------------|
+| **Raft / Paxos consensus** | Majority-based voting to elect a leader with a replicated write-ahead log | Strong consistency guarantees; well-understood safety properties; no split-brain | Multiple RTTs per write under leader; leader election has a blackout window |
+| **Lease-based (etcd, Zookeeper, Consul)** | Candidate creates an ephemeral lease; lease expiry triggers re-election | Simple lease semantics; lease renewal acts as heartbeat; widely used in service discovery | Lease window must be tuned — too short causes false elections, too long delays failover; clock skew sensitivity |
+| **Generation clock / fencing token** | Monotonically increasing token issued with each leader term; older tokens are rejected by the storage layer | Prevents a stale leader from corrupting shared state after a split or partition heals | Requires the resource layer (DB, queue, lock manager) to validate the token on every write |
+| **Bully algorithm** | Highest-ID node becomes leader; all others defer | Simple to implement; no consensus overhead | If the highest-ID node is unstable leadership churns; O(n²) message complexity |
+
+**Sources:** *Designing Data-Intensive Applications* by Martin Kleppmann (Ch. 8, 9); *Database Internals* by Alex Petrov (Ch. 7-8)
+
+---
+
 ## Load Balancing Patterns
 
 **Distribution algorithms:**
@@ -168,6 +183,12 @@ Replication has two orthogonal dimensions: **topology** (who can accept writes) 
 | **Layer 7 (HTTP)** | Inspects headers, paths, cookies | Content-based routing, smart health checks, TLS termination | Higher CPU cost; more attack surface (TLS) |
 | **Active-passive** | One LB handles traffic; standby takes over on failure | Simple failover, no split-brain | Half capacity idle; failover has RTO |
 | **Active-active (anycast / DNS GSLB)** | Multiple LBs accept traffic simultaneously | Full capacity utilised; sub-second failover (anycast) | Complex routing; DNS caching delays failover (GSLB) |
+
+**Instance lifecycle / draining:**
+
+| Pattern | How it works | HA Strengths | HA Weaknesses |
+|---------|-------------|-------------|---------------|
+| **Lame Duck / Graceful Shutdown** | Instance deregisters from the LB or returns unhealthy, finishes in-flight requests within a configured grace period (drain window), then shuts down | Zero failed requests during deployments, scale-in and rolling updates; hot instances get no new traffic | Grace period must exceed the longest expected request; slow clients may still see connection reset; in-flight tracking adds application complexity |
 
 **Sources:** *Site Reliability Engineering* by Beyer et al. (Ch. 20)
 
@@ -198,6 +219,21 @@ Replication has two orthogonal dimensions: **topology** (who can accept writes) 
 | **Block / queue** | Caller waits until a connection is available | Highest throughput under normal conditions | Can cause cascading pileup — all blocked callers cascade |
 | **Fail fast** | Throw error immediately | Graceful degradation; lets caller circuit-break upstream | Drops legitimate requests under brief spikes |
 | **Timeout + retry** | Wait up to N ms, then fail | Balanced — absorbs brief waits without cascading | Tuning window is narrow (too long = cascade; too short = false fail) |
+
+---
+
+## Bulkhead
+
+Isolating system resources into isolated pools so a failure in one pool does not cascade to others — named after the watertight compartments (bulkheads) on a ship:
+
+| Isolation level | How it works | HA Strengths | HA Weaknesses |
+|----------------|-------------|-------------|---------------|
+| **Thread pool isolation** | Each downstream dependency gets its own thread pool (e.g. Hystrix thread pools) | One slow or hung downstream cannot exhaust all threads in the service; failure is contained per pool | Higher overhead from context switching; thread pool sizing must be tuned per dependency |
+| **Connection pool isolation** | Separate connection pools per downstream or per workload class | Connection exhaustion in one pool does not block other dependencies | More total connections needed; per-pool sizing must account for peak load independently |
+| **Process / container isolation** | Each service or workload runs in its own process or container | A crash, OOM or memory leak in one does not affect others | Higher resource overhead per process; inter-process communication latency |
+| **Cellular / shard isolation** | Each shard or cell is independent with its own resources (compute + storage) | Complete blast radius containment — one cell failure cannot affect others; independent deployments per cell | No cross-cell resource sharing; warm standby needed per cell for failover |
+
+**Sources:** *Building Microservices* by Sam Newman (Ch. 7); *Site Reliability Engineering* by Beyer et al. (Ch. 22)
 
 ---
 
@@ -397,6 +433,21 @@ Chaos engineering validates that a system withstands unexpected failures by inje
 
 ---
 
+## Supervisor / Watchdog
+
+A monitoring process that detects failures in a worker process and restarts it or triggers escalation:
+
+| Pattern | How it works | HA Strengths | HA Weaknesses |
+|---------|-------------|-------------|---------------|
+| **Process supervisor** (Erlang OTP, systemd, supervisord) | Parent process monitors child; restarts it on crash or hang | Fast local restart; no external dependency; battle-tested in Erlang/Elixir | Does not protect against infrastructure-level failures (host, network, AZ) |
+| **Kuberentes ReplicaSet / Deployment** | Controller ensures N replicas are running; replaces terminated pods | Declarative; self-healing across nodes; integrates with readiness and liveness probes | Restart takes seconds (pull image, init); does not handle stateful failures (corrupted data) |
+| **Sidecar health proxy** (Envoy, Istio sidecar) | Sidecar monitors the application process and reports health to the control plane | Language-agnostic; integrates with service mesh observability | Adds latency for health check proxying; sidecar can become a SPOF for the pod |
+| **External watchdog** (separate monitoring system) | Out-of-process system (e.g. Prometheus + Alertmanager, Datadog) that alerts when a process is unreachable | Independent of the monitored process; can trigger escalations and page humans | Detection latency includes scrape interval + alert evaluation time |
+
+**Sources:** *Kuberentes in Action* by Marko Lukša (Ch. 8); *Site Reliability Engineering* by Beyer et al. (Ch. 11)
+
+---
+
 ## Saga / Compensating Transactions
 
 Sagas manage data consistency across multiple services without distributed transactions. Each step has a compensating action to undo it:
@@ -453,6 +504,22 @@ Prevent cascading failures by failing fast when a downstream service is unhealth
 
 ---
 
+## Graceful Degradation / Fallback
+
+When a dependency fails or degrades, the system continues operating at reduced functionality rather than failing entirely:
+
+| Strategy | How it works | HA Strengths | HA Weaknesses |
+|----------|-------------|-------------|---------------|
+| **Stale data fallback** | Return the last cached value when the primary data source is unavailable | Users see something meaningful rather than an error; buys time for recovery | Stale data may be incorrect for time-sensitive operations |
+| **Functional degradation** | Disable non-critical features while keeping critical paths working | Preserves core user experience under partial failure | Users may be confused by partial functionality; needs clear UI signalling |
+| **Default value fallback** | Return a safe default when the real value cannot be fetched | Simple to implement; fast | Default may be wrong for the specific request context |
+| **Null object / no-op** | Return an empty result or no-op instead of throwing an error | Caller does not need to handle the error path; clean semantics | Hides real failures from monitoring; delays detection |
+| **Prioritised degradation** | Drop lower-priority requests first as resources become scarce | Preserves SLOs for the most critical traffic | Requires classification of all request types by priority |
+
+**Sources:** *Building Microservices* by Sam Newman (Ch. 7); *Site Reliability Engineering* by Beyer et al. (Ch. 22)
+
+---
+
 ## API Gateway / Backend for Frontend (BFF)
 
 A single entry point for client requests that handles cross-cutting concerns, reducing round-trips and centralizing HA policy enforcement:
@@ -495,6 +562,21 @@ Ensures reliable message or event publishing by writing the message to the same 
 | **Saga + outbox combined** | Outbox entries feed into a saga coordinator for multi-step workflows | Reliable saga step execution with full traceability; supports compensation | Higher complexity — outbox publishing and saga coordination must be managed together |
 
 **Sources:** *Microservices Patterns* by Chris Richardson (Ch. 7); *Designing Data-Intensive Applications* by Martin Kleppmann (Ch. 11)
+
+---
+
+## Dead Letter Queue (DLQ)
+
+A holding area for messages or events that cannot be processed successfully after repeated retries:
+
+| Strategy | How it works | HA Strengths | HA Weaknesses |
+|----------|-------------|-------------|---------------|
+| **Simple DLQ** | Failed messages moved to a separate queue after max retries exhausted | Protects the main queue from poison-pill messages; preserves message order in the main queue | DLQ is a dead end without monitoring; messages sit there unless manually re-driven |
+| **DLQ with alerting** | DLQ message arrival triggers an alert or incident | Ensures human attention on processing failures before data loss accumulates | Alert fatigue if retry policy is too lenient and DLQ fills frequently |
+| **DLQ with replay** | DLQ messages can be re-driven to the main queue after the root cause is fixed | Zero data loss for poison-pill messages; enables post-mortem analysis and replay | Re-driven messages may arrive out of order; may cause duplicate processing downstream |
+| **DLQ with TTL + archival** | DLQ messages expire after a TTL and are archived to object storage | Bounded DLQ storage; audit trail for all failed messages | Archived messages require a separate retrieval process for replay |
+
+**Sources:** *Building Event-Driven Microservices* by Adam Bellemare (Ch. 6); AWS Well-Architected Framework Reliability Pillar
 
 ---
 
