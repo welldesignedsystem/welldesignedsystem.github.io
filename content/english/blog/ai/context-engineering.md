@@ -1,9 +1,9 @@
 +++
-date = '2026-06-14T12:00:00+10:00'
+date = '2026-06-15T12:00:00+10:00'
 draft = false
 title = 'Context Engineering'
-tags = ['Context Engineering', 'Claude Code', 'OpenCode', 'Coding Agent', 'Design Patterns', 'LLM']
-summary = "Design patterns, best practices and caveats for engineering context in AI coding agents like Claude Code and OpenCode."
+tags = ['Context Engineering', 'Claude Code', 'Coding Agent', 'Design Patterns', 'LLM']
+summary = "Design patterns, best practices and caveats for engineering context in AI coding agents with Claude Code."
 +++
 
 ## What Is Context Engineering
@@ -16,16 +16,16 @@ The guiding principle: find the smallest possible set of high-signal tokens that
 
 ---
 
-## Claude Code Context Architecture
+## How Coding Agents Consume Context
 
-Claude Code and OpenCode share a common lineage and expose similar primitives for context engineering. Understanding how each layer contributes to the context window is the foundation for designing effective patterns.
+Modern coding agents like Claude Code — whether running in VS Code's extension panel or in the terminal — construct their context from several distinct layers. Each layer has a different lifecycle, token cost and invocation model.
 
-### Prompt Files: AGENTS.md and Instructions
+### CLAUDE.md: The Per-Session Foundation
 
-The canonical rules file is `AGENTS.md` in the project root. `CLAUDE.md` is a fallback used only when no `AGENTS.md` exists (https://opencode.ai/docs/rules/). This file is loaded at session start and its content is injected directly into the system prompt — every token counts.
+`CLAUDE.md` at the project root is loaded at every session start. Its content is injected directly into the system prompt — every token it contains competes for attention on every user turn (https://docs.anthropic.com/en/docs/claude-code/overview).
 
 ```markdown
-# AGENTS.md
+# CLAUDE.md
 
 ## Project Overview
 This is a Rust monorepo with Cargo workspaces. Key crates:
@@ -39,7 +39,9 @@ This is a Rust monorepo with Cargo workspaces. Key crates:
 - Run `cargo test` before committing
 ```
 
-Additional instruction files can be loaded via the `instructions` field in `opencode.json`, supporting glob patterns and remote URLs (https://opencode.ai/docs/config/):
+Anthropic's own guidance: keep it short. For every line, ask "would the agent make a mistake without this?" If not, delete it (https://docs.anthropic.com/en/docs/claude-code/overview).
+
+Additional instruction files can be referenced via the `instructions` field in Claude Code settings, supporting glob patterns and remote URLs:
 
 ```json
 {
@@ -51,11 +53,24 @@ Additional instruction files can be loaded via the `instructions` field in `open
 }
 ```
 
-All instruction files are combined with `AGENTS.md` into the system prompt. Keep them concise — they compete for attention budget with every user turn.
+In monorepos, `CLAUDE.md` cascades: a `CLAUDE.md` at the root and another at `services/billing/CLAUDE.md` both load when working in the billing directory.
 
-### Skills
+### Path-Filtered Rules
 
-Skills are reusable domain-specific instruction sets stored as `SKILL.md` files in a `.opencode/skills/<name>/` directory. Unlike `AGENTS.md` which loads every session, skills use progressive disclosure — the agent loads skill names and descriptions at startup, but fetches full content only when a relevant task is encountered (https://code.claude.com/docs/en/skills) (https://opencode.ai/docs).
+Rules in `.claude/rules/*.md` provide deep domain knowledge that loads only when file patterns match (https://code.claude.com/docs/en/skills). This is the middle ground between `CLAUDE.md` (always loaded) and skills (user or model invoked).
+
+```
+.claude/
+└── rules/
+    ├── python-testing.md     # Applies when working with test files
+    └── database.md           # Applies when touching SQL or schema files
+```
+
+Each rule file can specify a `paths` glob in its frontmatter to control when it activates. This prevents irrelevant instructions from consuming attention budget.
+
+### Skills: On-Demand Workflows
+
+Skills are reusable instruction sets stored as `SKILL.md` files in `~/.claude/skills/<name>/` (global) or `.claude/skills/<name>/` (project). Unlike `CLAUDE.md` which loads every session, skills use progressive disclosure — the agent loads only names and descriptions at startup, then fetches full content when a relevant task is detected (https://code.claude.com/docs/en/skills).
 
 ```markdown
 ---
@@ -76,7 +91,7 @@ Keep each `SKILL.md` under 500 lines — move detailed reference material to sup
 
 ### Subagents
 
-Subagents run in their own context window with custom system prompts, specific tool access and independent permissions (https://code.claude.com/docs/en/sub-agents). Only the result summary (typically 1K-2K tokens) returns to the parent context, making subagents a powerful tool for context isolation.
+Subagents run in their own context window with custom system prompts, specific tool access and independent permissions (https://code.claude.com/docs/en/sub-agents). Only the result summary (typically 1K-2K tokens) returns to the parent context.
 
 Built-in subagents include:
 
@@ -86,49 +101,27 @@ Built-in subagents include:
 | Plan | Inherits | Read-only | Codebase research for planning |
 | General-purpose | Inherits | All tools | Complex multi-step tasks |
 
-Custom subagents are defined in `.opencode/agents/` or `opencode.json`:
+Custom subagents are defined in `.claude/agents/` or `~/.claude/agents/`:
 
-```json
-{
-  "agent": {
-    "code-reviewer": {
-      "description": "Expert code reviewer for Rust crates",
-      "prompt": "Review Rust code for safety, idiomatic patterns and performance.",
-      "tools": ["Read", "Glob", "Grep"],
-      "model": "sonnet"
-    }
-  }
-}
+```markdown
+---
+name: db-schema-explorer
+description: Explores database schemas and relationships using MCP
+model: haiku
+disallowedTools: Write, Edit, Bash
+---
+
+Explore the database schema for the requested tables using the postgres MCP server.
+Return table names, column types, indexes and foreign key relationships.
 ```
 
-Key frontmatter fields for agents include `permissionMode` (`default`, `acceptEdits`, `auto`, `dontAsk`, `bypassPermissions`, `plan`), `skills` for preloading skill content into agent context at startup, `memory` for cross-session persistence (`user`, `project`, `local`), and `isolation: worktree` for running in an isolated git worktree copy (https://code.claude.com/docs/en/sub-agents).
-
-### Plugins
-
-Plugins package skills, agents, hooks, MCP servers, LSP servers, background monitors, output styles, themes and executables into a shareable bundle (https://code.claude.com/docs/en/plugins-reference). When a plugin is enabled, all its components are loaded:
-
-```
-my-plugin/
-├── .claude-plugin/
-│   └── plugin.json          # Manifest (name, description, version)
-├── skills/                  # Skills as <name>/SKILL.md directories
-├── agents/                  # Custom agent definitions
-├── hooks/
-│   └── hooks.json           # Event handlers
-├── monitors/
-│   └── monitors.json        # Background monitor configs
-├── bin/                     # Executables added to Bash tool PATH
-├── .mcp.json                # MCP server configs
-└── settings.json            # Default settings
-```
-
-A common mistake: putting `skills/`, `agents/` or `hooks/` inside `.claude-plugin/`. Only `plugin.json` goes in that directory — all other component directories must be at the plugin root (https://code.claude.com/docs/en/plugins-reference).
-
-Plugin skills use namespaced names (`plugin-name:skill-name`) to prevent conflicts. When starting, prefer standalone configuration in `.opencode/` for fast iteration, then convert to a plugin when you need to share (https://code.claude.com/docs/en/plugins-reference).
+Key frontmatter fields include `permissionMode` (`default`, `acceptEdits`, `auto`, `dontAsk`, `bypassPermissions`, `plan`), `skills` for preloading skill content at startup, `memory` for cross-session persistence (`user`, `project`, `local`), and `isolation: worktree` for running in an isolated git worktree copy (https://code.claude.com/docs/en/sub-agents).
 
 ### MCP Servers
 
-MCP (Model Context Protocol) servers connect coding agents to external systems — databases, browsers, APIs, file systems. Each server exposes tools, resources and prompts that the agent can use (https://code.claude.com/docs/en/mcp) (https://opencode.ai/docs).
+MCP (Model Context Protocol) servers connect coding agents to external systems — databases, browsers, APIs, file systems. Each server exposes tools, resources and prompts that the agent can use (https://code.claude.com/docs/en/mcp).
+
+In VS Code, MCP servers are added via the CLI (`claude mcp add` in the integrated terminal) and managed through the `/mcp` command in the chat panel (https://code.claude.com/docs/en/vs-code).
 
 ```json
 {
@@ -145,75 +138,115 @@ MCP (Model Context Protocol) servers connect coding agents to external systems �
 }
 ```
 
-MCP servers can be scoped at three levels: `local` (`.claude.json` per-project), `project` (`.mcp.json` in project root, shared via version control), or `user` (`~/.claude.json` top-level, available across all projects) (https://code.claude.com/docs/en/mcp). Use `allowedTools` with wildcards (`mcp__server__*`) for MCP permissions — this is narrower than `bypassPermissions` and more secure (https://code.claude.com/docs/en/mcp) (https://code.claude.com/docs/en/permissions).
+MCP servers can be scoped at three levels: `local` (per-project entry in `~/.claude/settings.json`), `project` (`.mcp.json` in project root, shared via version control), or `user` (`~/.claude/settings.json` top-level, available across all projects) (https://code.claude.com/docs/en/mcp). Use `allowedTools` with wildcards (`mcp__server__*`) for MCP permissions — this is narrower than `bypassPermissions` and more secure (https://code.claude.com/docs/en/permissions).
+
+### Hooks
+
+Hooks run shell commands automatically before or after Claude Code actions (https://code.claude.com/docs/en/plugins-reference). They are defined in `~/.claude/settings.json` or `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs npm run lint:fix"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Common hook events include `PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`, `PreCompact`, and `PostCompact`. Hooks run with the user's local privileges and receive event JSON on stdin. Use them sparingly — every hook adds latency.
+
+### Plugins
+
+Plugins package skills, agents, hooks, MCP servers and executables into shareable bundles (https://code.claude.com/docs/en/plugins-reference). In VS Code, plugins are managed through the graphical `/plugins` interface. The extension and CLI share the same plugin system — plugins configured in one are available in the other.
+
+```
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json          # Manifest (name, description, version)
+├── skills/                  # Skills as <name>/SKILL.md directories
+├── agents/                  # Custom agent definitions
+├── hooks/
+│   └── hooks.json           # Event handlers
+├── bin/                     # Executables added to Bash tool PATH
+└── .mcp.json                # MCP server configs
+```
+
+A common mistake: putting `skills/`, `agents/` or `hooks/` inside `.claude-plugin/`. Only `plugin.json` goes in that directory — all other component directories must be at the plugin root (https://code.claude.com/docs/en/plugins-reference).
+
+### VS Code Extension Settings
+
+The VS Code extension adds its own layer of configuration under the `claudeCode.*` settings namespace (https://code.claude.com/docs/en/vs-code):
+
+| Setting | Default | Purpose |
+|---------|---------|---------|
+| `initialPermissionMode` | `default` | Approval mode for new conversations |
+| `useTerminal` | `false` | Use CLI-style terminal instead of graphical panel |
+| `preferredLocation` | `panel` | Where the Claude panel opens |
+| `respectGitIgnore` | `true` | Exclude `.gitignore` patterns from searches |
+| `allowDangerouslySkipPermissions` | `false` | Enable bypass mode (sandbox only) |
+
+These are set through VS Code's Settings UI (`Cmd+,`) under Extensions → Claude Code, or in `.vscode/settings.json` for project-scoped overrides.
 
 ### Configuration Layering
 
-Configuration files are merged, not replaced. Later configs override earlier ones only for conflicting keys (https://opencode.ai/docs/config/):
+Claude Code configuration is merged from multiple sources, with later sources overriding earlier ones for conflicting keys:
 
-1. Remote config (`.well-known/opencode`) — organizational defaults
-2. Global config (`~/.config/opencode/opencode.json`) — user preferences
-3. Custom config (`OPENCODE_CONFIG` env var)
-4. Project config (`opencode.json` in project root)
-5. `.opencode` directories — agents, skills, commands, plugins
-6. Inline config (`OPENCODE_CONFIG_CONTENT` env var) — runtime overrides
+1. Managed settings (organizational defaults)
+2. `~/.claude/settings.json` (user global)
+3. `.claude/settings.json` (project)
+4. `.claude/settings.local.json` (project-local, not committed)
+5. VS Code extension settings (`claudeCode.*`)
+6. Command-line flags and environment variables
 
-The `.opencode/` directory uses plural names for subdirectories: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/`, `themes/`. Singular names are supported for backwards compatibility (https://opencode.ai/docs/config/).
+The `.claude/` directory uses plural subdirectory names: `agents/`, `skills/`, `rules/`. Singular names are accepted for backwards compatibility.
 
 ---
 
 ## What Goes Where: Choosing the Right Primitive
 
-The most common source of confusion in context engineering is knowing which primitive to use for which job. Each layer has a different lifecycle, scope, token cost and invocation model. Choosing wrong means paying token premiums for context that rarely applies, or worse, burying critical instructions in a rarely-loaded skill.
+The most common source of confusion in context engineering is knowing which primitive to use for which job. Each layer has a different lifecycle, scope, token cost and invocation model.
 
 ### Decision Matrix
 
 | Primitive | Loaded | Scope | Token Cost | Best For |
 |---|---|---|---|---|
-| `AGENTS.md` | Every session start | Project | Full content, always | Project conventions, architecture overview, critical constraints |
-| `instructions` (config) | Every session start | Project | Full content, always | External contributing guides, shared rule files from other tools |
-| Skills | On demand (name + description at startup, full content when invoked) | Project or global | Content only when loaded | Domain workflows, language conventions, deployment routines, testing guides |
+| `CLAUDE.md` | Every session start | Project | Full content, always | Project conventions, architecture overview, critical constraints |
+| Rules (`.claude/rules/`) | When path matches | Project | Content only when matched | Deep domain knowledge, path-specific conventions |
+| Skills | On demand (name + description at startup, content when invoked) | User or project | Content only when loaded | Domain workflows, deployment routines, testing guides |
 | Subagents | On delegation | Clean context per invocation | Summary only (1K-2K tokens) | Isolated tasks needing special tools, long-running operations, parallel research |
 | Plugins | On enable | Plugin namespace | Cumulative (all components) | Shareable packages, marketplace distribution, cross-project reuse |
 | MCP servers | On config load | Per-server tools | Tool definitions + response tokens | Live data access, external API integration, database queries, browser automation |
-| Hooks | On lifecycle event | Per-event shell | Event + execution overhead | Automation (lint on save, notify on deploy), enforcement (block dangerous patterns) |
-| Monitors | On session start (interactive only) | Per-monitor stream | Continuous notification tokens | Log watching, build status monitoring, long-running process observation |
+| Hooks | On lifecycle event | Per-event shell | Event + execution overhead | Automation (lint on save), enforcement (block dangerous patterns) |
 | Permission rules | On tool invocation | Per-tool/per-pattern | Negligible | Security boundaries, access control, blast radius reduction |
 
-### AGENTS.md
+### CLAUDE.md
 
-Put in `AGENTS.md`:
+Put in `CLAUDE.md`:
 
 - Project structure overview — language, framework, directory layout
 - Critical must-follow conventions — code style, error handling patterns, naming rules
-- Build, test and run commands
+- Exact build, test and run commands the agent would otherwise guess wrong
 - Architectural decisions and rationale
 - Security-sensitive constraints — "never commit secrets", "always validate input"
-- Links or pointers to key documentation
+- "Stuck record" items — mistakes the team has made before
 
-Do not put in `AGENTS.md`:
+Do not put in `CLAUDE.md`:
 
 - Lengthy reference tables (API docs, command lists, framework guides)
 - Rarely-needed workflows (deploy to production, database migration steps)
 - Instructions for tasks only relevant to specific subdirectories
 - Verbose examples that consume tokens every session
 
-Keep `AGENTS.md` under 100-150 lines. If it grows beyond that, move sections into skills.
-
-### Instructions (Config)
-
-Use the `instructions` array in `opencode.json` for:
-
-- Rule files shared across multiple tools (e.g. `.cursor/rules/*.md` for Cursor compatibility)
-- External CONTRIBUTING.md or GOVERNANCE.md from upstream repos
-- Remote URLs pointing to organizational standards (with 5-second timeout) (https://opencode.ai/docs/config/)
-- Glob patterns for monorepo packages (`packages/*/AGENTS.md`) (https://opencode.ai/docs/rules/)
-
-Do not use instructions for:
-
-- Instructions that should load only on demand (use skills)
-- Content better expressed as tool permissions (use permission rules)
-- Personal preferences that vary per developer (use global config or skills)
+Keep `CLAUDE.md` under 100-150 lines. If it grows beyond that, move sections into skills or rules. Anthropic's own `CLAUDE.md` for the Claude Code repository is famously terse — it fits in a single screen.
 
 ### Skills
 
@@ -224,16 +257,16 @@ Put in a skill:
 - Integration guides — API usage, SDK conventions, vendor-specific tooling
 - Repetitive but infrequent tasks the user might ask for
 - Instructions that benefit from tool auto-approval (`allowed-tools`) (https://code.claude.com/docs/en/skills)
-- Any instruction too long for `AGENTS.md`
+- Any instruction too long for `CLAUDE.md`
 
 Do not put in a skill:
 
-- Content that should apply to every session (put in `AGENTS.md`)
+- Content that should apply to every session (put in `CLAUDE.md`)
 - One-time instructions that lose meaning after execution
 - Security-sensitive commands that should not auto-execute
 - Content better expressed as a subagent prompt (when isolation or special tools needed)
 
-A good rule of thumb: if you find yourself writing `/deploy` into the chat more than once a week, make it a skill. If you use a set of instructions exactly once per project setup, put them in `AGENTS.md` or skip them entirely.
+A good rule of thumb: if you find yourself describing the same workflow more than once a week, make it a skill.
 
 ### Subagents
 
@@ -246,32 +279,9 @@ Create a subagent when:
 - The task is parallelizable — spawn multiple agents for independent investigations
 - The task is dangerous — use `isolation: worktree` for a throwaway git copy (https://code.claude.com/docs/en/sub-agents)
 
-Do not create a subagent for:
+Do not create a subagent for tasks simpler than a single Read + Grep cycle, tasks that require ongoing awareness of the full conversation history, or tasks where delegation overhead exceeds the work itself.
 
-- Tasks simpler than a single Read + Grep cycle (just let the main agent handle it)
-- Tasks that require ongoing awareness of the full conversation history
-- Tasks where delegation overhead exceeds the work itself
-
-Name subagents for routing, not marketing. The `description` field is how Claude decides when to delegate — write it as routing guidance, not promotional copy (https://code.claude.com/docs/en/sub-agents). For example, "Reviews Rust code for safety and idiomatic patterns" is better than "Expert Rust reviewer with years of experience".
-
-### Plugins
-
-Package into a plugin when:
-
-- You need to share configuration across a team or organization
-- You want versioned releases with update notifications
-- You are distributing through a marketplace
-- The same skills or agents need to be available across multiple projects
-- You need bundled executables in `bin/` (https://code.claude.com/docs/en/plugins-reference)
-
-Keep as standalone configuration (`.opencode/`) when:
-
-- The configuration is personal or project-specific
-- You are experimenting before packaging
-- You want short, unnamespaced skill names like `/deploy` instead of `/my-plugin:deploy`
-- You need hooks, MCP servers or `permissionMode` on agents (plugin agents cannot use these) (https://code.claude.com/docs/en/plugins-reference)
-
-The recommended workflow: start with standalone `.opencode/` for fast iteration, then convert to a plugin when you are ready to share (https://code.claude.com/docs/en/plugins-reference).
+Name subagents for routing, not marketing. The `description` field is how Claude decides when to delegate — write it as routing guidance, not promotional copy (https://code.claude.com/docs/en/sub-agents).
 
 ### MCP Servers
 
@@ -282,43 +292,21 @@ Connect an MCP server when:
 - External state changes and the agent needs current information
 - You want to gate access with permission rules
 
-Do not use MCP for:
-
-- Static reference data better loaded as instructions or skills
-- Operations achievable with built-in tools (Read, Glob, Grep, Bash)
-- One-off scripts better expressed as Bash commands
+Do not use MCP for static reference data better loaded as instructions or skills, operations achievable with built-in tools (Read, Glob, Grep, Bash), or one-off scripts better expressed as Bash commands.
 
 Scope MCP servers at the right level (https://code.claude.com/docs/en/mcp):
 - `.mcp.json` (project) — team-shared servers committed to version control
-- `~/.claude.json` per-project entry (local) — personal servers for one project
-- `~/.claude.json` top-level (user) — servers available in all projects
+- `~/.claude/settings.json` per-project entry (local) — personal servers for one project
+- `~/.claude/settings.json` top-level (user) — servers available in all projects
 - Plugin `.mcp.json` — servers bundled with a distributable plugin
 
 ### Hooks
 
-Use hooks for:
-
-- Automation — run linter on file edit, notify on deploy completion
-- Enforcement — block writes to sensitive files, require commit message format
-- Observability — log tool usage, send telemetry to monitoring
-
-Do not use hooks for:
-
-- Complex workflows better expressed as skills or agents
-- Operations requiring user interaction (hooks run unattended)
-- Anything that should survive session restarts (use MCP servers or monitors instead)
-
-Hooks run with the user's local privileges and receive event JSON on stdin (https://code.claude.com/docs/en/plugins-reference). Use them sparingly — every hook adds latency to tool execution.
+Use hooks for automation (run linter on file edit), enforcement (block writes to sensitive files), and observability (log tool usage). Do not use hooks for complex workflows better expressed as skills or agents, or anything that should survive session restarts (use MCP servers instead).
 
 ### Permission Rules
 
-Configure permission rules for:
-
-- Security boundaries — deny destructive bash commands, block MCP write tools
-- Workflow optimization — allow frequent safe commands (Bash(npm run *), Edit(*.test.ts))
-- Blast radius reduction — restrict agents to their intended scope
-
-Permission modes arranged from most to least restrictive (https://code.claude.com/docs/en/permissions):
+Configure permission modes for security boundaries and workflow optimization:
 
 | Mode | Behavior |
 |---|---|
@@ -327,7 +315,9 @@ Permission modes arranged from most to least restrictive (https://code.claude.co
 | `acceptEdits` | Auto-accept file edits + common commands |
 | `auto` | Background safety classifier (research preview) |
 | `dontAsk` | Auto-deny unless pre-approved |
-| `bypassPermissions` | Skip all prompts — container/VM only |
+| `bypassPermissions` | Skip all prompts — container/VM only (https://code.claude.com/docs/en/permissions) |
+
+In VS Code, the permission mode is set via `claudeCode.initialPermissionMode` in settings or toggled through the prompt box mode indicator. The `allowDangerouslySkipPermissions` setting must be enabled to expose the `bypassPermissions` option.
 
 ### Putting It All Together: A Worked Example
 
@@ -335,27 +325,27 @@ A team building a Rust web service might organize their context engineering like
 
 ```
 project-root/
-├── AGENTS.md                          # 80 lines: project structure, Rust conventions, build commands
-├── opencode.json                      # Config: permissions, MCP, agent definitions
-├── .opencode/
+├── CLAUDE.md                          # 60 lines: project structure, Rust conventions, build commands
+├── .claude/
+│   ├── settings.json                  # Permissions, MCP, hook config
+│   ├── rules/
+│   │   └── postgres.md                # Schema conventions, query patterns (applies to .sql/.rs)
 │   ├── skills/
 │   │   ├── deploy/                    # /deploy: build, test, deploy to staging
 │   │   │   └── SKILL.md
 │   │   └── code-review/               # Auto-invoked on PR review requests
 │   │       └── SKILL.md
-│   ├── agents/
-│   │   ├── db-explorer.md             # Read-only agent with postgres MCP access
-│   │   └── cargo-audit.md             # Background agent for dependency scanning
-│   └── commands/
-│       └── release.md                 # /release: cut a new crate release
+│   └── agents/
+│       └── db-explorer.md             # Read-only agent with postgres MCP access
 └── .mcp.json                          # Shared MCP: postgres, cargo-audit
 ```
 
-- `AGENTS.md` covers what the agent needs every session — project layout, how to build and test, critical Rust idioms
+- `CLAUDE.md` covers what the agent needs every session — project layout, how to build and test, critical Rust idioms
+- The postgres rule applies only when touching SQL schema files or database code
 - The deploy and code-review skills load only when their domain task is detected
 - The db-explorer subagent gets its own Haiku model and postgres MCP — the main agent never sees database credentials
-- The release command is a simple slash command for a procedurally-boring task
 - MCP servers are project-scoped so the whole team shares them
+- Permission mode is set to `acceptEdits` in VS Code settings so routine edits flow without prompting
 
 ---
 
@@ -365,7 +355,7 @@ project-root/
 
 Instead of loading all potentially relevant context upfront, maintain lightweight identifiers (file paths, query terms, MCP tool names) and dynamically load data only when needed (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents). This mirrors human cognition — external organization plus indexing, not memorization.
 
-Claude Code and OpenCode implement this naturally: `AGENTS.md` provides upfront orientation, then the agent uses `Glob`, `Grep`, `Read` and tool calls to fetch specific information on demand (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents). A hybrid strategy works best: retrieve some data upfront for speed, leave autonomous exploration at the agent's discretion.
+Claude Code implements this naturally: `CLAUDE.md` provides upfront orientation, then the agent uses file reads, glob searches and tool calls to fetch specific information on demand. In the VS Code extension, @-mentions provide a direct channel for attaching file context to prompts (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents). A hybrid strategy works best: retrieve some data upfront for speed, leave autonomous exploration at the agent's discretion.
 
 ### Context Compaction
 
@@ -375,23 +365,14 @@ When the context window nears its limit, older conversation history is summarize
 - Implementation details still in progress
 - High-level summaries of completed work
 
-Discard redundant tool outputs, resolved sub-tasks and verbose logs. In Claude Code, compaction can be triggered manually with `/compact` or `/summarize` (https://opencode.ai).
-
-```yaml
-# In opencode.json
-compaction: auto       # automatic when nearing limit
-# or
-compaction: prune      # prune older messages
-# or
-compaction: reserved   # treat as reserved token buffer
-```
+Discard redundant tool outputs, resolved sub-tasks and verbose logs. Compaction runs automatically in Claude Code and can be triggered manually with `/compact`.
 
 ### Structured Note-Taking (Agentic Memory)
 
 The agent writes structured notes to a persistent file outside the context window, then re-reads them when needed (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents). This is distinct from compaction — notes are deliberate knowledge artifacts rather than compressed conversation history.
 
 ```markdown
-# .opencode/memory/architecture.md
+# .claude/memory/architecture.md
 
 ## Decisions
 - 2026-06-14: Chose PostgreSQL over MySQL for JSONB support.
@@ -403,43 +384,28 @@ The agent writes structured notes to a persistent file outside the context windo
 - Blocked on: webhook signature verification library decision
 ```
 
-This pattern is supported via the `memory` field in subagent definitions, which accepts `user`, `project` or `local` scope for cross-session persistence (https://code.claude.com/docs/en/sub-agents).
+This is supported via the `memory` field in subagent definitions, which accepts `user`, `project` or `local` scope for cross-session persistence (https://code.claude.com/docs/en/sub-agents).
 
 ### Sub-Agent Architecture
 
 Delegating focused subtasks to specialized subagents keeps the main context window lean and prevents context pollution (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) (https://code.claude.com/docs/en/sub-agents). Each subagent gets a clean context with only the tools and instructions it needs, and returns a condensed summary.
 
-```json
-{
-  "agent": {
-    "db-schema-explorer": {
-      "description": "Explores database schemas and relationships",
-      "prompt": "Use the postgres MCP server to describe the schema for the given tables.",
-      "tools": ["Read", "Glob"],
-      "mcpServers": { "postgres": true },
-      "model": "haiku"
-    },
-    "code-reviewer": {
-      "description": "Reviews pull request diffs for correctness and style",
-      "prompt": "Review the diff for bugs, security issues and style problems.",
-      "tools": ["Read", "Glob", "Grep"],
-      "model": "sonnet",
-      "isolation": "worktree"
-    }
-  }
-}
+```markdown
+---
+name: db-schema-explorer
+description: Explores database schemas and relationships using MCP
+model: haiku
+disallowedTools: Write, Edit, Bash
+---
+
+Use the postgres MCP server to describe the schema for the given tables.
 ```
 
-Chain subagents for multi-step workflows where each agent's output feeds the next. Run parallel subagents for independent investigations. Use background subagents (`background: true`) for long-running tasks — they auto-deny permission prompts (https://code.claude.com/docs/en/sub-agents).
+Chain subagents for multi-step workflows where each agent's output feeds the next. Run parallel subagents for independent investigations. Use background subagents for long-running tasks — they auto-deny permission prompts (https://code.claude.com/docs/en/sub-agents).
 
 ### Skills as Modular Context
 
-Since `AGENTS.md` loads every session and consumes attention budget from turn one, defer detailed domain knowledge to skills that load only when the task requires them (https://code.claude.com/docs/en/skills). This is especially valuable for:
-
-- Deployment workflows (load only when the user asks to deploy)
-- Language-specific conventions (load only when working in that language)
-- Testing frameworks (load only when writing or running tests)
-- API integration guides (load only when the relevant tool is invoked)
+Since `CLAUDE.md` loads every session and consumes attention budget from turn one, defer detailed domain knowledge to skills that load only when the task requires them (https://code.claude.com/docs/en/skills). This is especially valuable for deployment workflows, language-specific conventions, testing frameworks, and API integration guides.
 
 ```markdown
 ---
@@ -478,13 +444,13 @@ Combine the `llms.txt` standard with MCP for a two-tier context system (../mcp/)
 
 ### Inverted Configuration
 
-The most intuitive approach is to pack everything into `AGENTS.md` — project context, language conventions, deployment instructions, API references. The inverted pattern flips this: `AGENTS.md` is the smallest file in your configuration. It contains only what the agent needs every single turn: project identity, critical constraints (never commit secrets, never mutate production), and build commands. Everything else — domain workflows, language conventions, deployment routines — lives in skills that load on demand.
+The most intuitive approach is to pack everything into `CLAUDE.md`. The inverted pattern flips this: `CLAUDE.md` is the smallest file in your configuration. It contains only what the agent needs every single turn: project identity, critical constraints, and build commands. Everything else — domain workflows, language conventions, deployment routines — lives in skills that load on demand.
 
-A team that trimmed their `AGENTS.md` from 300 lines to 40 and migrated the remainder into skills saw token usage drop by roughly half and reported faster response times on routine tasks. The mechanism is straightforward: every token in `AGENTS.md` consumes attention budget on every turn, while skill tokens only enter context when the relevant task is detected.
+A team that trimmed their `CLAUDE.md` from 300 lines to 40 and migrated the remainder into skills saw token usage drop by roughly half on routine tasks. Every token in `CLAUDE.md` consumes attention budget on every turn, while skill tokens only enter context when the relevant task is detected.
 
 ### Subagent Sandbox
 
-Subagents are typically framed as tools for parallelism or delegation. A distinct pattern uses them as security boundaries. Define a subagent with `disallowedTools: [Write, Edit, Bash]`, assign a cheaper model like Haiku, and grant it MCP access to production observability systems. The result is a read-only investigator that cannot modify state under any circumstances.
+Subagents are typically framed as tools for parallelism or delegation. A distinct pattern uses them as security boundaries. Define a subagent with `disallowedTools: Write, Edit, Bash`, assign a cheaper model like Haiku, and grant it MCP access to production observability systems. The result is a read-only investigator that cannot modify state under any circumstances.
 
 This pattern is particularly useful for on-call incident triage. A subagent can query production logs, inspect metrics and return a diagnosis without any risk of filesystem mutation or configuration drift. The permission boundary is machine-enforced by the tool layer, not dependent on prompt instructions.
 
@@ -496,9 +462,9 @@ A deploy skill configured with `context: fork` is the canonical example. Its bui
 
 ### Prohibitive Constraints
 
-Positive instructions — do this, follow that convention — are heuristics the model may or may not follow depending on context. Prohibitive constraints — never do this — function as unconditional rules that the model treats with higher priority. A single "Never commit secrets or credentials" in `AGENTS.md` is more reliably followed than fifty lines describing ideal coding practices.
+Positive instructions — do this, follow that convention — are heuristics the model may or may not follow depending on context. Prohibitive constraints — never do this — function as unconditional rules that the model treats with higher priority. A single "Never commit secrets or credentials" in `CLAUDE.md` is more reliably followed than fifty lines describing ideal coding practices.
 
-This maps to the permission system for machine enforcement: `bash(rm -rf *)` and `mcp__production__*` denials in `opencode.json` backstop prompt-level prohibitions with tool-level blocks.
+A powerful technique: when Claude makes a mistake, tell it "Update `CLAUDE.md` so you never make this mistake again." The resulting self-authored rules are often more precise than anything a human would write — Boris Cherny of Anthropic describes these as "creepily accurate" (https://docs.anthropic.com/en/docs/claude-code/overview).
 
 ### Agentic Memory Journaling
 
@@ -514,13 +480,14 @@ A `query(sql: string, params: object[])` MCP tool with a defined schema cannot b
 
 ### Permission Configuration as Deployable Policy
 
-Interactive permission prompts are the default, but the pattern scales poorly across a team. Treating the `permission` block in `opencode.json` as a machine-enforceable security policy — version-controlled, reviewed in PRs, deployed with the project — transforms onboarding from verbal knowledge transfer to artifact distribution.
+Interactive permission prompts are the default, but the pattern scales poorly across a team. Treating the permission block in `.claude/settings.json` as a machine-enforceable security policy — version-controlled, reviewed in PRs, deployed with the project — transforms onboarding from verbal knowledge transfer to artifact distribution.
 
-```
-edit: "allow"
-bash(npm run *): "allow"
-bash(curl *): "deny"
-mcp__production__*: "deny"
+```json
+{
+  "permissions": {
+    "allow": ["Read", "Edit", "Bash(git *)", "Bash(npm run *)"]
+  }
+}
 ```
 
 New team members clone the repo and inherit the policy. No tribal knowledge required.
@@ -536,35 +503,26 @@ Compaction alone is lossy — it summarizes conversation history but does not ex
 ### Context Rot and the Lost-in-the-Middle Problem
 
 As context grows, the model's recall accuracy degrades — especially for information in the middle of the window (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) (https://sourcegraph.com/blog/context-engineering). Highest-signal material must go at the beginning or end, not the middle. This means:
-- Place the most critical instructions at the start of `AGENTS.md`
+- Place the most critical instructions at the start of `CLAUDE.md`
 - Put tool definitions early in the system prompt
 - Avoid burying important context in long conversation history
 - Compaction should prioritize preserving early and late positions
 
 ### Tool Bloat
 
-Too many tools degrade performance (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) (../mcp/). Every additional tool increases the model's decision space, and verbose tool responses consume tokens quickly. Give the agent too many tools and it gets overwhelmed, leading to slower response times and more hallucinated tool calls. Give it too few and it lacks the capability to do the job (../mcp/).
+Too many tools degrade performance (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) (../mcp/). Every additional tool increases the model's decision space, and verbose tool responses consume tokens quickly. Give the agent too many tools and it gets overwhelmed, leading to slower response times and more hallucinated tool calls. Give it too few and it lacks the capability to do the job.
 
 Audit your tool set regularly. Remove unused MCP servers. Scope tools to subagents rather than making everything available to the main agent.
 
 ### Permission Security
 
-Permission rules are enforced by Claude Code and OpenCode at the tool level, not by the model — prompt instructions alone cannot reliably prevent the model from accessing tools (https://code.claude.com/docs/en/permissions). Use the permission system, not prompt engineering, for security boundaries.
+Permission rules are enforced by Claude Code at the tool level, not by the model — prompt instructions alone cannot reliably prevent the model from accessing tools (https://code.claude.com/docs/en/permissions). Use the permission system, not prompt engineering, for security boundaries.
 
-Precedence follows deny-first: a matching deny rule blocks a tool even if an allow rule also matches (https://code.claude.com/docs/en/permissions). For MCP permissions, prefer `allowedTools` with wildcards over `bypassPermissions` mode:
-
-```json
-{
-  "permission": {
-    "mcp__postgres__query": "deny",
-    "mcp__postgres__*": "ask"
-  }
-}
-```
+Precedence follows deny-first: a matching deny rule blocks a tool even if an allow rule also matches. In VS Code, the permission mode is controlled through `claudeCode.initialPermissionMode` and can be toggled per-session through the prompt box mode indicator.
 
 ### Bash Command Pattern Fragility
 
-Pattern matching on Bash command arguments is unreliable (https://code.claude.com/docs/en/permissions). For example, `Bash(curl http://github.com *)` will not catch variations like `curl -X GET https://github.com/...` or `curl --url "http://github.com/..."`. Do not rely on Bash argument patterns for security — use tool-level denials and MCP scoping instead.
+Pattern matching on Bash command arguments is unreliable (https://code.claude.com/docs/en/permissions). For example, a rule matching `curl http://github.com` will not catch variations like `curl -X GET https://github.com/...`. Do not rely on Bash argument patterns for security — use tool-level denials and MCP scoping instead.
 
 ### Compaction Trade-Offs
 
@@ -580,7 +538,7 @@ Use manual compaction (`/compact`) when you know what should be preserved. Use a
 
 Vector indexes and cached context go stale. Embeddings not refreshed poison the agent with outdated information (https://sourcegraph.com/blog/context-engineering). In a Kubernetes monorepo study, MCP-based retrieval achieved file recall of 0.277 versus 0.127 without MCP, and an F1@5 of 0.262 versus 0.099 — but this assumes fresh indexes (https://sourcegraph.com/blog/context-engineering).
 
-For project context, prefer live queries (Glob, Grep, Read, MCP tools) over cached embeddings when freshness matters. Use caching primarily for reference data that changes infrequently.
+For project context, prefer live queries (file reads, grep, MCP tools) over cached embeddings when freshness matters. Use caching primarily for reference data that changes infrequently.
 
 ### Skills Lifecycle Surprises
 
@@ -588,45 +546,33 @@ Skills content enters the conversation once and stays until compaction removes i
 
 The `context: fork` field mitigates this by running the skill in an isolated subagent — its effects never reach the main context (https://code.claude.com/docs/en/skills). Use this for skills with side effects like deploys, commits or API mutations.
 
+### CLI-Only Features in VS Code Workflows
+
+Some Claude Code features are only available in the terminal CLI, not in the VS Code extension panel (https://code.claude.com/docs/en/vs-code). Notably: the `!` bash shortcut for inline shell execution and tab completion for file paths. If you need these, run `claude` in VS Code's integrated terminal instead of using the extension panel. The extension and CLI share the same configuration files and conversation history, so switching between them is seamless.
+
 ---
 
 ## Things One Might Miss
 
-### AGENTS.md vs CLAUDE.md Precedence
+### The Built-in IDE MCP Server
 
-`AGENTS.md` is the canonical rules file. `CLAUDE.md` is loaded only as a fallback when no `AGENTS.md` exists (https://opencode.ai/docs/rules/). If both files exist in the same project, `CLAUDE.md` is silently ignored. The global search path follows the same priority: `~/.config/opencode/AGENTS.md` before `~/.claude/CLAUDE.md`. Claude Code skills are loaded from `~/.claude/skills/` as a fallback when no OpenCode skills directory exists.
+When the VS Code extension is active, it runs a local MCP server that the CLI connects to automatically (https://code.claude.com/docs/en/vs-code). This server enables diff viewing in VS Code's native diff viewer, selection-aware @-mentions, and Jupyter notebook code execution. The server is named `ide` and is hidden from `/mcp` because there is nothing to configure, but organizations using `PreToolUse` hooks to allowlist MCP tools need to know it exists. It exposes `mcp__ide__getDiagnostics` (read-only, returns VS Code diagnostic errors/warnings) and `mcp__ide__executeCode` (writes, runs Python in Jupyter, always requires confirmation).
 
-### .opencode Directory Naming
+### CLAUDE.md Cascading in Monorepos
 
-The `.opencode/` directory uses plural subdirectory names: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/`, `themes/` (https://opencode.ai/docs/config/). Singular names are accepted for backwards compatibility but the plural form is canonical. Mixing both in the same project works but is confusing.
+In monorepos, `CLAUDE.md` cascades across directory boundaries. A `CLAUDE.md` at the root and another at `services/billing/CLAUDE.md` both load when working in the billing directory. This is different from rules — rules are path-filtered, while `CLAUDE.md` cascading is directory-based. Be deliberate about what goes in each level.
 
-### MCP Scoping Rules
+### The @-mention as Context Channel
 
-Project-scoped MCP servers in `.mcp.json` require user approval on first clone — you cannot silently add a server that runs arbitrary code on a collaborator's machine (https://code.claude.com/docs/en/mcp). Managed MCP (`managed-mcp.json`) bypasses this by deploying a fixed server set that users cannot modify. When using managed settings, `allowManagedMcpServersOnly: true` makes the allowlist authoritative and blocks all other servers.
+In the VS Code extension, @-mentions are the primary mechanism for attaching file context to prompts (https://code.claude.com/docs/en/vs-code). When you type `@` followed by a file or folder name, Claude reads that content and can answer questions or make changes. The extension also sees your current editor selection automatically — the prompt box footer shows how many lines are selected. Press `Alt+K` to insert an @-mention with the file path and line range. This is subtly different from the terminal CLI, where context is typically provided through `--file` flags or conversation history.
 
-### Plugin Agent Restrictions
+### Plugin Agents Have Restrictions
 
-Plugin-shipped agents cannot use `hooks`, `mcpServers` or `permissionMode` fields for security reasons (https://code.claude.com/docs/en/plugins-reference). If you need those capabilities, copy the agent to `.opencode/agents/` or `~/.config/opencode/agents/` instead of shipping it from a plugin.
-
-### The `!` Shell Injection in Skills
-
-Skills support dynamic context injection via `` !`command` `` — a shell command that runs before the skill content is sent to the model, with its output replacing the placeholder (https://code.claude.com/docs/en/skills). This is powerful but dangerous in shared skills:
-
-```markdown
----
-name: deploy
----
-
-# Deploy
-Run: !`git log --oneline -3`
-Current branch: !`git branch --show-current`
-```
-
-Skills with shell injection can be disabled globally with `disableSkillShellExecution: true` in managed settings. Prefer `$ARGUMENTS` or named arguments for user-provided input over shell commands.
+Plugin-shipped agents cannot use `hooks`, `mcpServers` or `permissionMode` fields for security reasons (https://code.claude.com/docs/en/plugins-reference). If you need those capabilities, copy the agent to `.claude/agents/` or `~/.claude/agents/` instead of shipping it from a plugin.
 
 ### Variable Substitution in Configuration
 
-OpenCode and Claude Code support variable substitution in configuration files (https://opencode.ai/docs/config/) (https://code.claude.com/docs/en/plugins-reference):
+Claude Code supports variable substitution in configuration files:
 - `{env:VARIABLE_NAME}` — environment variable at runtime
 - `{file:path/to/file}` — file content at startup
 - `${CLAUDE_PLUGIN_ROOT}` — absolute path to installed plugin version
@@ -636,33 +582,21 @@ OpenCode and Claude Code support variable substitution in configuration files (h
 
 These are evaluated at different points in the lifecycle. Env vars and `{file:...}` are resolved at config load time. Plugin variables are resolved when the plugin initializes. Understanding this distinction matters when debugging path issues in MCP servers or hooks.
 
-### Hooks Run with User Privileges
-
-Hooks execute shell commands with the user's local privileges (https://code.claude.com/docs/en/plugins-reference). A shared plugin that defines hooks should make its side effects clear and keep commands auditable. Hook commands receive event JSON on stdin and can extract fields with `jq` or similar tools:
-
-```json
-{
-  "PostToolUse": [
-    {
-      "matcher": "Write|Edit",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "jq -r '.tool_input.file_path' | xargs npm run lint:fix"
-        }
-      ]
-    }
-  ]
-}
-```
-
-### Background Monitor Implications
-
-Background monitors (`monitors/monitors.json`) run unsandboxed at the same trust level as hooks (https://code.claude.com/docs/en/plugins-reference). They run only in interactive CLI sessions and are skipped when the Monitor tool is unavailable. Each line written to stdout by the monitor command is delivered to Claude as a notification — verbose monitors waste tokens and distract the agent.
-
 ### Precedence of Config Merge (Not Replace)
 
-Configuration files are merged, not replaced. A project `opencode.json` that omits the `mcp` key does not clear MCP servers defined in global config — they remain active (https://opencode.ai/docs/config/). To disable a global MCP server from a project config, you must explicitly set it to `false` or `null`. This is a common source of confusion when debugging why an unexpected tool is available.
+Configuration files are merged, not replaced. A project `.claude/settings.json` that omits the `mcpServers` key inherits MCP servers from `~/.claude/settings.json`. To disable a global MCP server from a project config, you must explicitly set it to `false` or `null`. This is a common source of confusion when debugging why an unexpected tool is available.
+
+### The `!` Bash Shortcut Is CLI-Only
+
+In the terminal CLI, you can start a message with `!` to run a shell command inline — the output is added to the conversation as a tool result. This feature is not available in the VS Code extension panel (https://code.claude.com/docs/en/vs-code). If you need it, run `claude` in the integrated terminal instead.
+
+### The Forgotten CLAUDE.local.md
+
+Claude Code also loads `CLAUDE.local.md` if it exists — this file is intended for local-only instructions that should not be committed to version control (typically added to `.gitignore`). This is useful for personal workflow preferences, local environment paths, or experimental instructions that should not affect teammates.
+
+### Self-Writing CLAUDE.md
+
+The most powerful pattern is often the simplest: when Claude makes a mistake, tell it to update `CLAUDE.md` to prevent the same mistake in the future. Anthropic reports that Claude is "creepily accurate" at writing these self-authored rules (https://docs.anthropic.com/en/docs/claude-code/overview). The compound effect of this habit over time produces a `CLAUDE.md` that captures the team's actual failure modes rather than idealized conventions.
 
 ---
 
@@ -671,12 +605,12 @@ Configuration files are merged, not replaced. A project `opencode.json` that omi
 - [IBM — What Is Context Engineering?](https://www.ibm.com/think/topics/context-engineering)
 - [Sourcegraph — Context Engineering: A Practical Guide for AI Agents (2026)](https://sourcegraph.com/blog/context-engineering)
 - [Anthropic — Effective Context Engineering for AI Agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
-- [OpenCode — Rules (AGENTS.md)](https://opencode.ai/docs/rules/)
-- [OpenCode — Configuration](https://opencode.ai/docs/config/)
+- [Claude Code — Overview](https://docs.anthropic.com/en/docs/claude-code/overview)
+- [Claude Code — VS Code Extension](https://code.claude.com/docs/en/vs-code)
 - [Claude Code — Skills](https://code.claude.com/docs/en/skills)
 - [Claude Code — Subagents](https://code.claude.com/docs/en/sub-agents)
 - [Claude Code — Plugins Reference](https://code.claude.com/docs/en/plugins-reference)
 - [Claude Code — MCP Integration](https://code.claude.com/docs/en/mcp)
 - [Claude Code — Permissions](https://code.claude.com/docs/en/permissions)
-- [OpenCode — Website](https://opencode.ai)
+- [Claude Code — Settings](https://code.claude.com/docs/en/settings)
 - [MCP Blog Post (this site)](../mcp/)
