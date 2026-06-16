@@ -158,6 +158,12 @@ Mechanisms for electing a single leader among multiple replicas to coordinate wr
 | **Generation clock / fencing token** | Monotonically increasing token issued with each leader term; older tokens are rejected by the storage layer | Prevents a stale leader from corrupting shared state after a split or partition heals | Requires the resource layer (DB, queue, lock manager) to validate the token on every write |
 | **Bully algorithm** | Highest-ID node becomes leader; all others defer | Simple to implement; no consensus overhead | If the highest-ID node is unstable leadership churns; O(n²) message complexity |
 
+**How Raft consensus works.** A cluster elects a single leader by majority vote. The leader is the only node that accepts writes — followers just replicate its decisions. No split-brain is possible because only one leader can exist per term.
+
+**Replicated write-ahead log (WAL).** Every write is first appended to a durable log file on the leader. That log entry is replicated to a majority of followers before the leader commits it. Each follower appends the same entry to its own WAL in the same order. If the leader crashes, the new leader replays its WAL so no committed write is lost. Because the log is *write-ahead* (recorded before the state is updated) and *replicated* (copied to N servers), you get durability even if half the cluster dies. This is the foundation of Aurora, DynamoDB Global Tables, CockroachDB, Kafka's KRaft mode and many other HA data services.
+
+**Ephemeral** (in lease-based elections) means temporary — the lease auto-expires if not renewed. The leader periodically renews its lease to stay alive; if it crashes, the lease expires and triggers re-election. No manual cleanup needed.
+
 **Sources:** *Designing Data-Intensive Applications* by Martin Kleppmann (Ch. 8, 9); *Database Internals* by Alex Petrov (Ch. 7-8)
 
 ---
