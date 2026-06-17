@@ -235,9 +235,11 @@ Isolating system resources into isolated pools so a failure in one pool does not
 | Isolation level | How it works | HA Strengths | HA Weaknesses |
 |----------------|-------------|-------------|---------------|
 | **Thread pool isolation** | Each downstream dependency gets its own thread pool (e.g. Hystrix thread pools) | One slow or hung downstream cannot exhaust all threads in the service; failure is contained per pool | Higher overhead from context switching; thread pool sizing must be tuned per dependency |
+| **Semaphore isolation** | Caps the number of concurrent callers via a semaphore instead of a separate thread pool (e.g. Resilience4j semaphore bulkhead) | Lower overhead than thread pool isolation; no thread context switching; blocks the calling thread only up to the semaphore limit | No built-in timeout — a blocked caller stays blocked until a permit is acquired unless a separate timing mechanism is added; cannot interrupt a running operation |
 | **Connection pool isolation** | Separate connection pools per downstream or per workload class | Connection exhaustion in one pool does not block other dependencies | More total connections needed; per-pool sizing must account for peak load independently |
 | **Process / container isolation** | Each service or workload runs in its own process or container | A crash, OOM or memory leak in one does not affect others | Higher resource overhead per process; inter-process communication latency |
 | **Cellular / shard isolation** | Each shard or cell is independent with its own resources (compute + storage) | Complete blast radius containment — one cell failure cannot affect others; independent deployments per cell | No cross-cell resource sharing; warm standby needed per cell for failover |
+| **Tenant / consumer-based isolation** | Pools partitioned by caller identity (premium vs free tier, per-tenant) rather than by downstream dependency | A flood of low-priority requests cannot starve high-priority callers because each tenant draws from its own isolated pool | Harder to size per-tenant pools without tenant-level traffic data; many small pools increase total resource overhead |
 
 **Sources:** *Building Microservices* by Sam Newman (Ch. 7); *Site Reliability Engineering* by Beyer et al. (Ch. 22)
 

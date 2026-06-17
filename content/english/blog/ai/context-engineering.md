@@ -8,10 +8,11 @@ summary = "Design patterns, best practices and caveats for engineering context i
 
 ## What Is Context Engineering
 
-- The practice of deliberately designing, structuring and optimizing context provided to an LLM to produce more accurate, reliable outputs (https://www.ibm.com/think/topics/context-engineering)
-- Natural progression of prompt engineering — the tell is whether improvements come from rewording or rewiring (https://sourcegraph.com/blog/context-engineering)
-- Prompt engineering: writing LLM instructions. Context engineering: managing entire context state — system prompts, tools, MCP, data sources, conversation history (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
-- Every token depletes the model's limited attention budget. As context grows, recall accuracy decreases = context rot (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+- The practice of deliberately designing, structuring and optimizing context provided to an LLM to produce more accurate, reliable outputs.
+- Natural progression from prompt engineering — when the charging team did Balance manager Anomaly Detection in July 2025 Context engineering a term we did exactly that then.
+- Prompt engineering: writing LLM instructions. 
+- Context engineering: managing entire context state — system prompts, tools, MCP, data sources, conversation history
+- Model has a limited attention span and Every token depletes the ttention budget. As context grows, recall accuracy decreases -> this is also called **Context Rot**
 - Guiding principle: smallest possible set of high-signal tokens that maximize likelihood of desired outcome (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
 
 ---
