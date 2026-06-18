@@ -10,8 +10,8 @@ summary = "Kong is an open-source cloud-native API gateway for managing securing
 
 - Kong is an open-source cloud-native API gateway built on top of **Nginx** with **Lua** scripting for extensibility. 
 - It acts as a reverse proxy that sits in front of your APIs and handles routing, authentication, rate limiting, load balancing, observability and more.
-  - Forward proxy (what people usually mean by "proxy"): sits in front of clients. Hides the client. Example: a corporate web filter.
-  - Reverse proxy: sits in front of servers. Hides the server. The client talks to the reverse proxy and has no idea the backend exists. 
+  - Forward proxy (aka just "proxy"): sits in front of clients/Hides the client. Example: when in your office network (or connecting using VPN from home), when you browse the web traffic goes through a forward proxy that filters/caches/logs outbound HTTP requests. Thats how they block chatgpt, gemini etc..
+  - Reverse proxy: sits in front of servers/Hides the server. The client talks to the reverse proxy and has no idea the backend exists. 
 
 ## Core Architecture
 
@@ -223,7 +223,9 @@ The two most common in practice: **OAuth2 Client Credentials** (token-based, sho
 
 ### OAuth2 with External Auth Server — Request Flow
 
-When a separate Auth Server (e.g. Keycloak, Okta) handles token issuance and Kong only validates:
+When a separate Auth Server handles token issuance and Kong only validates. The Auth Server is the OAuth2/OIDC token endpoint — it is part of a larger **IdP (Identity Provider)** that manages users, service accounts, policies and MFA. In practice the terms are used interchangeably because an IdP almost always includes an Auth Server, but the IdP is the broader system.
+
+Examples of products that are IdPs (with built-in Auth Servers): Keycloak, Okta, Auth0, Azure AD, Google Identity Platform.
 
 ```mermaid
 sequenceDiagram
@@ -290,18 +292,3 @@ curl -X POST http://localhost:8001/consumers/my-service/jwt \
 
 The client uses the full JWK (with `d`) to sign JWT tokens and sends them with each request. Kong decodes the payload, verifies the signature against the stored public key, checks expiry and claims — all without talking to any external service.
 
-## Why Use Kong
-
-- **Single entry point** for all APIs — consistent authentication, rate limiting, and observability across services
-- **Extensible** without modifying upstream code — add auth, logging, transformations via plugins
-- **Cloud-native** — runs natively in Kubernetes, supports declarative config, separates CP/DP
-- **High performance** — built on Nginx, benchmarks at tens of thousands of requests per second per node
-- **Plugin ecosystem** — 50+ official plugins plus the ability to write custom ones
-- **Vendor-neutral** — open-source Apache 2.0 license, no vendor lock-in
-
-## Limitations
-
-- **Operational overhead** — a DB-backed deployment requires managing PostgreSQL and Kong node configuration
-- **Plugin debugging** — custom Lua plugins are harder to debug than application code
-- **Learning curve** — the entity model (Service/Route/Upstream/Target) and plugin scoping rules take time to learn
-- **DB-less limitations** — no Admin API runtime changes, no Consumer management, plugin state (e.g. rate limiter counters) resets on restart
