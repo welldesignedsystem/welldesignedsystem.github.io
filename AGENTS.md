@@ -12,9 +12,11 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 | `npm run format` | Prettier only — **no linter, no typecheck** |
 | `npm run update-modules` | Update all Hugo module deps |
 
-**CI note:** deploy.yml runs `hugo --gc --minify --baseURL "$URL"` directly (not `npm run build`) so GitHub Pages can inject the deployment URL. CI uses `npm ci`. Both `package-lock.json` and `hugo_stats.json` are tracked despite `.gitignore`.
+**CI note:** deploy.yml builds with `hugo --gc --minify --baseURL "$URL"` (not `npm run build`) so GitHub Pages injects the URL. CI uses `npm ci`.
 
-**No OpenCode config:** No `opencode.json` or `.opencode/` directory — the project has no local OpenCode configuration.
+**Tracked despite `.gitignore`:** `package-lock.json` and `hugo_stats.json` — do not delete.
+
+**No opencode.json** — no local OpenCode config.
 
 ## Content
 
@@ -29,7 +31,7 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 ## Architecture
 
 - **Theme**: `github.com/zeon-studio/hugoplate` — Hugo module (auto-downloads to `themes/hugoplate/`). Config in `config/_default/`.
-- **Asset pipeline**: TailwindCSS v4 via `@tailwindcss/cli` (CSS config, no `tailwind.config.js`).
+- **Asset pipeline**: TailwindCSS v4 via `@tailwindcss/cli` (CSS config, no `tailwind.config.js`). Entrypoint: `assets/css/custom.css`.
 - **Custom plugins**: `tailwind-plugin/` (tw-bs-grid.js, tw-theme.js).
 - **Required**: Hugo extended >= 0.151.0 (per theme.toml). Go and Node.js needed locally.
 - **Custom layouts**: only `layouts/shortcodes/` (`iframe`, `include`) — everything else inherited from the module.
