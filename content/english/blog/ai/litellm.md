@@ -9,14 +9,17 @@ summary = "LiteLLM explores lightweight large-language-model approaches focused 
 Universal translator for AI models. Connects to over 100+ model providers and runtimes with a simple, consistent API.
 
 ### Advantages:
+
 - built in cost tracking and usage monitoring
 - Automatic fail-over between providers
 - Self-hosted option for privacy and control
 
-Alternative to  LiteLLM include OpenRouter
+Alternative to LiteLLM include OpenRouter
 
 ### Prerequisites
+
 Ensure Gemini is accessible and you have an API key.
+
 ```bash
 gcloud auth application-default login
 
@@ -32,40 +35,49 @@ curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-e
 ```
 
 ## Usage options
+
 ### LiteLLM Python SDK
+
 you can use LiteLLM as a Python package to integrate with your applications. Similar to using Langchain or other LLM SDKs.
 
 ### LiteLLM Proxy Server
+
 Using LiteLLM this way is also called LLM Gateway.
 Advantages:
+
 - Hooks for auth
 - Hooks for logging
 - Cost tracking
 - Rate limiting
 
-#### Generating a Key 
+#### Generating a Key
+
 ```yaml
-  model_list:
-    - model_name: gpt-4
-      litellm_params:
-          model: ollama/llama2
-    - model_name: gpt-3.5-turbo
-      litellm_params:
-          model: ollama/llama2
-    
-  general_settings: 
-    master_key: sk-1234 
-    database_url: "postgresql://<user>:<password>@<host>:<port>/<dbname>" # 👈 KEY CHANGE
+model_list:
+  - model_name: gpt-4
+    litellm_params:
+      model: ollama/llama2
+  - model_name: gpt-3.5-turbo
+    litellm_params:
+      model: ollama/llama2
+
+general_settings:
+  master_key: sk-1234
+  database_url: "postgresql://<user>:<password>@<host>:<port>/<dbname>" # 👈 KEY CHANGE
 ```
+
 #### Generate Keys
+
 ```bash
 curl 'http://0.0.0.0:4000/key/generate' \
 --header 'Authorization: Bearer <your-master-key>' \
 --header 'Content-Type: application/json' \
 --data-raw '{"models": ["gpt-3.5-turbo", "gpt-4"], "metadata": {"user": "ishaan@berri.ai"}}'
 ```
+
 #### With RPM Limit
-```bash
+
+````bash
 curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
 -H 'Authorization: Bearer sk-1234' \
 -H 'Content-Type: application/json' \
@@ -76,25 +88,28 @@ curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
 #### Start Litellm
 ```bash
 litellm --config /path/to/config.yaml
-```
+````
+
 #### Key/User/Team Spend tracking
+
 ```bash
   curl 'http://0.0.0.0:4000/key/info?key=<user-key>' \
      -X GET \
      -H 'Authorization: Bearer <your-master-key>'
-     
+
   curl --location 'http://localhost:4000/user/new' \
     --header 'Authorization: Bearer <your-master-key>' \
     --header 'Content-Type: application/json' \
     --data-raw '{user_email: "krrish@berri.ai"}'
-    
+
   curl --location 'http://localhost:4000/team/new' \
     --header 'Authorization: Bearer <your-master-key>' \
     --header 'Content-Type: application/json' \
-    --data-raw '{"team_alias": "my-awesome-team"}'     
+    --data-raw '{"team_alias": "my-awesome-team"}'
 ```
 
 #### Sample Response
+
 ```json
 {
     "key": "sk-tXL0wt5-lOOVK9sfY2UacA",
@@ -116,6 +131,7 @@ litellm --config /path/to/config.yaml
 ```
 
 ### Docker
+
 ```yaml
 model_list:
   - model_name: gemini-flash
@@ -123,6 +139,7 @@ model_list:
       model: gemini/gemini-2.0-flash-exp
       api_key: ${GEMINI_API_KEY}
 ```
+
 ```bash
 docker rm -f litellm || true
 
@@ -134,11 +151,13 @@ docker run -d \
   ghcr.io/berriai/litellm:main-latest \
   --config /app/config.yml \
   --port 4000 \
-  --host 0.0.0.0 
-  
+  --host 0.0.0.0
+
 docker logs -f litellm
 ```
-### Testing 
+
+### Testing
+
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
@@ -149,7 +168,9 @@ curl http://localhost:4000/v1/chat/completions \
 ```
 
 ## Using Tags with Langchain
+
 ### OpenAI Chat Model with Metadata Tags
+
 ```python
 import os
 from langchain_openai import ChatOpenAI
@@ -177,6 +198,7 @@ print(response)
 ```
 
 ### LiteLLM proxy with Metadata Tags
+
 ```python
 import os
 from langchain_openai import ChatOpenAI
@@ -206,19 +228,21 @@ print(response)
 ```
 
 ## Routing and Fallbacks
+
 Use this to set budgets for LLM Providers example $100 per day for OpenAI, $100 per day for Azure.
 
 ### Budget Routing
+
 ```yaml
 model_list:
-    - model_name: gpt-3.5-turbo
-      litellm_params:
-        model: openai/gpt-3.5-turbo
-        api_key: os.environ/OPENAI_API_KEY
+  - model_name: gpt-3.5-turbo
+    litellm_params:
+      model: openai/gpt-3.5-turbo
+      api_key: os.environ/OPENAI_API_KEY
 
 router_settings:
-  provider_budget_config: 
-    openai: 
+  provider_budget_config:
+    openai:
       budget_limit: 0.000000000001 # float of $ value budget for time period
       time_period: 1d # can be 1d, 2d, 30d, 1mo, 2mo
     azure:
@@ -233,7 +257,7 @@ router_settings:
     gemini:
       budget_limit: 100
       time_period: 12d
-  
+
   # OPTIONAL: Set Redis Host, Port, and Password if using multiple instance of LiteLLM
   redis_host: os.environ/REDIS_HOST
   redis_port: os.environ/REDIS_PORT
@@ -244,6 +268,7 @@ general_settings:
 ```
 
 ### Autorouting
+
 ```yaml
 model_list:
   # Embedding model for semantic routing
@@ -284,6 +309,7 @@ model_list:
 ```
 
 Corresponding json
+
 ```json
 {
   "routes": [

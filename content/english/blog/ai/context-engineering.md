@@ -10,7 +10,7 @@ summary = "Design patterns, best practices and caveats for engineering context i
 
 - The practice of deliberately designing, structuring and optimizing context provided to an LLM to produce more accurate, reliable outputs.
 - Natural progression from prompt engineering — when the charging team did Balance manager Anomaly Detection in July 2025 Context engineering a term we did exactly that then.
-- Prompt engineering: writing LLM instructions. 
+- Prompt engineering: writing LLM instructions.
 - Context engineering: managing entire context state — system prompts, tools, MCP, data sources, conversation history
 - Model has a limited attention span and Every token depletes the ttention budget. As context grows, recall accuracy decreases -> this is also called **Context Rot**
 - Guiding principle: smallest possible set of high-signal tokens that maximize likelihood of desired outcome (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
@@ -37,7 +37,7 @@ Rust monorepo, Cargo workspaces. Core crates: core/, api/, cli/.
 - Always run `cargo test` before committing
 ```
 
-### Path-Filtered Rules (.claude/rules/*.md)
+### Path-Filtered Rules (.claude/rules/\*.md)
 
 - Middle ground between CLAUDE.md (always loaded) and skills (user/model invoked)
 - Loads only when file path patterns match
@@ -102,7 +102,14 @@ disallowedTools: Write, Edit, Bash
 - Use sparingly — every hook adds latency
 
 ```json
-{ "PostToolUse": [{ "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "npm run lint:fix" }] }] }
+{
+  "PostToolUse": [
+    {
+      "matcher": "Write|Edit",
+      "hooks": [{ "type": "command", "command": "npm run lint:fix" }]
+    }
+  ]
+}
 ```
 
 ### Plugins
@@ -133,20 +140,21 @@ disallowedTools: Write, Edit, Bash
 
 ## What Goes Where: Choosing the Right Primitive
 
-| Primitive | Loaded | Token Cost | Best For |
-|-----------|--------|------------|----------|
-| CLAUDE.md | Every session | Full content, always | Project conventions, critical constraints, build commands |
-| Rules (.claude/rules/) | On path match | Content only when matched | Deep domain knowledge, path-specific conventions |
-| Skills | On demand | Content only when loaded | Domain workflows, deploy, testing guides |
-| Subagents | On delegation | Summary only (1K-2K tokens) | Isolated tasks, parallel research, dangerous operations |
-| Plugins | On enable | Cumulative | Shareable packages, cross-project reuse |
-| MCP servers | On config load | Tool defs + responses | Live data access, external API integration |
-| Hooks | On lifecycle event | Event + execution overhead | Automation, enforcement, observability |
-| Permission rules | On tool invocation | Negligible | Security boundaries, blast radius reduction |
+| Primitive              | Loaded             | Token Cost                  | Best For                                                  |
+| ---------------------- | ------------------ | --------------------------- | --------------------------------------------------------- |
+| CLAUDE.md              | Every session      | Full content, always        | Project conventions, critical constraints, build commands |
+| Rules (.claude/rules/) | On path match      | Content only when matched   | Deep domain knowledge, path-specific conventions          |
+| Skills                 | On demand          | Content only when loaded    | Domain workflows, deploy, testing guides                  |
+| Subagents              | On delegation      | Summary only (1K-2K tokens) | Isolated tasks, parallel research, dangerous operations   |
+| Plugins                | On enable          | Cumulative                  | Shareable packages, cross-project reuse                   |
+| MCP servers            | On config load     | Tool defs + responses       | Live data access, external API integration                |
+| Hooks                  | On lifecycle event | Event + execution overhead  | Automation, enforcement, observability                    |
+| Permission rules       | On tool invocation | Negligible                  | Security boundaries, blast radius reduction               |
 
 ### CLAUDE.md — Do's and Don'ts
 
 **Put in:**
+
 - Project structure, language, framework
 - Critical conventions — error handling, naming, style
 - Exact build/test/run commands agent would guess wrong
@@ -155,6 +163,7 @@ disallowedTools: Write, Edit, Bash
 - "Stuck record" — mistakes the team has actually made
 
 **Leave out:**
+
 - Lengthy reference tables, API docs, framework guides
 - Rarely-needed workflows (infrequent deploys, migrations)
 - Instructions for specific subdirectories only
@@ -173,6 +182,7 @@ disallowedTools: Write, Edit, Bash
 ### Subagents — When to Create
 
 **Create when:**
+
 - Task needs different model (Haiku for cheap exploration, Opus for hard reasoning)
 - Task needs restricted tools (read-only, MCP only, no Write/Edit)
 - Task benefits from isolation (clean context, no pollution)
@@ -265,6 +275,7 @@ These two terms are often conflated but describe different scopes.
 **Progressive disclosure** (specific implementation of JIT): defer loading instruction content based on an initial metadata scan. The agent loads skill names and descriptions at startup (cheap), but waits to load the full skill body until a matching task is detected (https://code.claude.com/docs/en/skills). The agent knows the skill exists and what it does, but the 200 lines of instruction text don't enter context until actually needed.
 
 The distinction matters because they have different costs:
+
 - JIT for data (files, APIs) costs a tool invocation round-trip — generally worthwhile
 - Progressive disclosure for instructions costs nothing until triggered — strictly better than loading everything upfront
 - You can have JIT without progressive disclosure (reading a file on demand), but progressive disclosure is always a form of JIT applied to the instruction layer
@@ -346,7 +357,9 @@ Progressively disclosed skills are Claude Code's answer to the "single responsib
 - New team members clone repo and inherit policy — no tribal knowledge
 
 ```json
-{ "permissions": { "allow": ["Read", "Edit", "Bash(git *)", "Bash(npm run *)"] } }
+{
+  "permissions": { "allow": ["Read", "Edit", "Bash(git *)", "Bash(npm run *)"] }
+}
 ```
 
 ### Two-Phase Compaction

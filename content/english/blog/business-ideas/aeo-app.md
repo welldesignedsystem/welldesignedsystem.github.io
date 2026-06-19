@@ -1,36 +1,36 @@
 ---
-date: '2022-03-21T12:44:47+10:00'
+date: "2022-03-21T12:44:47+10:00"
 draft: false
-title: 'Business Requirements Document'
-tags: ['SEO', 'GEO', 'AEO']
+title: "Business Requirements Document"
+tags: ["SEO", "GEO", "AEO"]
 summary: "aeo-app.ai — unified SEO, AEO & GEO intelligence platform"
 ---
 
 ## Ideas
-lets plan - i want to build the following - a portal that will 
-1. show me the top 10 competitors for my business 
-2. our market share - based on various factor you can find e.g. revenue info in the net, traffic etc.. (you can suggest the full list) 
-3. traffic, usage from organic and paid for the business based on website. (differentiate paid channels) 
-4. usage/popularity among customers based on country for the business 
-5. top 20 keywords and prompts to target for this business after comparing with top competitors in the business 
-7. Find out how can i improve my rankings / visibility for those 20 keywords
-8. Find out my profiles in linkedin, fb, insta, x, and major platforms and suggest the improvements
-9. Based on the finding automate task to improve my ranking
-10. Back links - identify related sites / blogs and put comment / add links to my product
-11. compare and use results from all SEO,AEO and GEO  - google.com, bing, chatgpt, copilot etc. 
-12. analyse my current website and generate a report.  
 
-lets build a plan, roadmap,  tell me the modules for this project. in markdown. I am planning to do it in AI using agents skills etc... and make it a portal
+lets plan - i want to build the following - a portal that will
 
+1. show me the top 10 competitors for my business
+2. our market share - based on various factor you can find e.g. revenue info in the net, traffic etc.. (you can suggest the full list)
+3. traffic, usage from organic and paid for the business based on website. (differentiate paid channels)
+4. usage/popularity among customers based on country for the business
+5. top 20 keywords and prompts to target for this business after comparing with top competitors in the business
+6. Find out how can i improve my rankings / visibility for those 20 keywords
+7. Find out my profiles in linkedin, fb, insta, x, and major platforms and suggest the improvements
+8. Based on the finding automate task to improve my ranking
+9. Back links - identify related sites / blogs and put comment / add links to my product
+10. compare and use results from all SEO,AEO and GEO - google.com, bing, chatgpt, copilot etc.
+11. analyse my current website and generate a report.
 
+lets build a plan, roadmap, tell me the modules for this project. in markdown. I am planning to do it in AI using agents skills etc... and make it a portal
 
 ## 1. The Problem
 
-> *The Unified SEO · AEO · GEO Intelligence Platform*
+> _The Unified SEO · AEO · GEO Intelligence Platform_
 
 For three decades, the game was simple: rank on Google, get to page one, earn clicks. That era isn't over — but it's no longer the whole story.
 
-When someone searches "what's the best way to treat a mild burn at home?" they often don't click a single link. They read the answer directly from Google's AI Overview, Bing Copilot, Perplexity, or ChatGPT. The question is answered *before* the user reaches your website.
+When someone searches "what's the best way to treat a mild burn at home?" they often don't click a single link. They read the answer directly from Google's AI Overview, Bing Copilot, Perplexity, or ChatGPT. The question is answered _before_ the user reaches your website.
 
 **The question is no longer just "Can I rank #1?" — it's "Can I be the source that AI cites, quotes, or summarises?"**
 
@@ -51,7 +51,7 @@ flowchart LR
     style F fill:#991b1b,stroke:#dc2626,color:#fff
 ```
 
-Over 60% of Google searches now end without a click (Sparktoro/Semrush data). If your content isn't *the answer*, you receive no traffic even from searches you technically rank for. Existing tools — Semrush, Ahrefs, Moz — were built for the pre-LLM era and measure the wrong thing: link rankings. https://aeo-app.ai measures what actually matters in 2026: **who gets quoted when AI answers a question**.
+Over 60% of Google searches now end without a click (Sparktoro/Semrush data). If your content isn't _the answer_, you receive no traffic even from searches you technically rank for. Existing tools — Semrush, Ahrefs, Moz — were built for the pre-LLM era and measure the wrong thing: link rankings. https://aeo-app.ai measures what actually matters in 2026: **who gets quoted when AI answers a question**.
 
 ---
 
@@ -87,13 +87,13 @@ graph TB
 
 While people often use these terms interchangeably, there's a meaningful distinction:
 
-| Dimension | AEO | GEO |
-|---|---|---|
-| Focus | Being the *direct answer* to a query | Being *cited or synthesised* by an AI response |
-| Engine type | Structured retrieval (snippets, PAA, voice) | Generative LLM outputs |
-| Content format | Clear Q&A, definitions, lists | Authoritative depth, citations, statistics |
-| Origin | Pre-LLM era (voice search, snippets) | Post-2022 (GPT-4, AI Search era) |
-| Measurement | Featured snippet wins, zero-click share | AI citation frequency, mention volume |
+| Dimension      | AEO                                         | GEO                                            |
+| -------------- | ------------------------------------------- | ---------------------------------------------- |
+| Focus          | Being the _direct answer_ to a query        | Being _cited or synthesised_ by an AI response |
+| Engine type    | Structured retrieval (snippets, PAA, voice) | Generative LLM outputs                         |
+| Content format | Clear Q&A, definitions, lists               | Authoritative depth, citations, statistics     |
+| Origin         | Pre-LLM era (voice search, snippets)        | Post-2022 (GPT-4, AI Search era)               |
+| Measurement    | Featured snippet wins, zero-click share     | AI citation frequency, mention volume          |
 
 ---
 
@@ -119,14 +119,14 @@ A page ranked #15 organically can still appear in an AI Overview if it contains 
 
 Research from the original GEO paper found the following tactics increased citation frequency:
 
-| Tactic | Citation visibility increase |
-|---|---|
-| Citing authoritative sources within your own content | +40% |
-| Adding expert quotations | +34% |
-| Including specific statistics | +27% |
-| Using technical, domain-specific vocabulary | +13% |
-| Fluent, readable prose | +17% |
-| Persuasive language and strong claims | +11% |
+| Tactic                                               | Citation visibility increase |
+| ---------------------------------------------------- | ---------------------------- |
+| Citing authoritative sources within your own content | +40%                         |
+| Adding expert quotations                             | +34%                         |
+| Including specific statistics                        | +27%                         |
+| Using technical, domain-specific vocabulary          | +13%                         |
+| Fluent, readable prose                               | +17%                         |
+| Persuasive language and strong claims                | +11%                         |
 
 ### Voice Search & Smart Assistants
 
@@ -178,28 +178,30 @@ flowchart TD
 
 Target questions and intent, not just keywords. Sources: AnswerThePublic, AlsoAsked, Google PAA boxes, Semrush/Ahrefs question filters, Reddit/Quora, and your own Search Console data.
 
-| Intent Type | Example Query | Optimal Format |
-|---|---|---|
-| Definition | "What is compound interest?" | 40–60 word definition paragraph |
-| How-To | "How do I set up 2FA?" | Numbered steps |
-| Comparison | "AEO vs SEO — what's the difference?" | Table |
-| Best/Recommendation | "Best project management tools" | Ranked list with descriptions |
-| When/Why | "Why is my Wi-Fi slow?" | Short direct answer + explanation |
-| Local | "Dentists open Sunday in Brisbane" | Local schema + NAP data |
+| Intent Type         | Example Query                         | Optimal Format                    |
+| ------------------- | ------------------------------------- | --------------------------------- |
+| Definition          | "What is compound interest?"          | 40–60 word definition paragraph   |
+| How-To              | "How do I set up 2FA?"                | Numbered steps                    |
+| Comparison          | "AEO vs SEO — what's the difference?" | Table                             |
+| Best/Recommendation | "Best project management tools"       | Ranked list with descriptions     |
+| When/Why            | "Why is my Wi-Fi slow?"               | Short direct answer + explanation |
+| Local               | "Dentists open Sunday in Brisbane"    | Local schema + NAP data           |
 
 ### Step 2: Answer-First Structure
 
 Every major section should answer a specific question:
 
 **H2 heading = the question**
+
 ```
 ## How Does AEO Differ from Traditional SEO?
 ```
 
 **First 1–2 sentences = the direct answer**
+
 ```
-AEO differs from SEO in its primary goal: where SEO aims to rank a page in 
-search results, AEO aims to have content selected as the direct answer — 
+AEO differs from SEO in its primary goal: where SEO aims to rank a page in
+search results, AEO aims to have content selected as the direct answer —
 bypassing the ranking list entirely.
 ```
 
@@ -276,9 +278,9 @@ When an LLM is asked about small business cybersecurity, your domain appearing r
 
 Named, specific, current statistics with context. Example:
 
-**Bad:** *Cyber attacks are very common among small businesses.*
+**Bad:** _Cyber attacks are very common among small businesses._
 
-**Good:** *According to the Australian Cyber Security Centre's 2024 Annual Cyber Threat Report, cybercrime cost Australian organisations an estimated $33 billion in 2023–24, with small businesses accounting for 43% of all reported incidents.*
+**Good:** _According to the Australian Cyber Security Centre's 2024 Annual Cyber Threat Report, cybercrime cost Australian organisations an estimated $33 billion in 2023–24, with small businesses accounting for 43% of all reported incidents._
 
 What makes a good GEO statistic: named source, specific number, current year reference, contextualised meaning.
 
@@ -288,7 +290,7 @@ Include full name, title, and organisation. Make quotes specific and concrete, n
 
 **Example format:**
 
-> *"The biggest mistake SMEs make is treating cybersecurity as an IT issue rather than a business continuity issue,"* says David Thodey, former CEO of Telstra, speaking at the 2024 AICD Cybersecurity Forum.
+> _"The biggest mistake SMEs make is treating cybersecurity as an IT issue rather than a business continuity issue,"_ says David Thodey, former CEO of Telstra, speaking at the 2024 AICD Cybersecurity Forum.
 
 ### Step 4: Comprehensiveness
 
@@ -380,14 +382,14 @@ The single most powerful GEO tactic is creating content that cannot be found any
 
 Ensure `robots.txt` does not block AI crawlers. Submit and maintain an up-to-date `sitemap.xml`. Use `hreflang` for multilingual sites. Resolve all broken internal links and redirect chains. Avoid heavy JavaScript rendering for key content — server-side rendering is preferred.
 
-| Crawler | User Agent |
-|---|---|
-| OpenAI (ChatGPT) | `GPTBot` |
-| Perplexity | `PerplexityBot` |
-| Anthropic (Claude) | `ClaudeBot` / `anthropic-ai` |
-| Google (AI Overviews) | `Googlebot-Extended` |
-| Common Crawl | `CCBot` |
-| Meta | `FacebookBot` |
+| Crawler               | User Agent                   |
+| --------------------- | ---------------------------- |
+| OpenAI (ChatGPT)      | `GPTBot`                     |
+| Perplexity            | `PerplexityBot`              |
+| Anthropic (Claude)    | `ClaudeBot` / `anthropic-ai` |
+| Google (AI Overviews) | `Googlebot-Extended`         |
+| Common Crawl          | `CCBot`                      |
+| Meta                  | `FacebookBot`                |
 
 ### Content Freshness
 
@@ -397,7 +399,7 @@ Update the published/modified date when content is substantively refreshed. Add 
 
 ## 9. Schema Markup & Structured Data
 
-Schema markup is the bridge between your content and machine-readable structure. It explicitly tells search engines and AI systems what your content is *about*, not just what it *says*.
+Schema markup is the bridge between your content and machine-readable structure. It explicitly tells search engines and AI systems what your content is _about_, not just what it _says_.
 
 ### FAQPage Schema
 
@@ -515,21 +517,25 @@ Schema markup is the bridge between your content and machine-readable structure.
 Google's E-E-A-T framework (Experience, Expertise, Authoritativeness, Trustworthiness) is a proxy for the signals both traditional search and generative AI use to weight content.
 
 ### Experience
-Has the author *done* the thing they're writing about?
+
+Has the author _done_ the thing they're writing about?
 
 **Tactics:** Include case studies from your own work. Add personal anecdotes where relevant. Reference direct testing ("In our testing of 50 product pages..."). Show screenshots, results, or outcomes as evidence.
 
 ### Expertise
+
 Does the author have demonstrable knowledge?
 
 **Tactics:** Add author bios to every content piece — name, credentials, links to professional profiles. Use technical vocabulary correctly and confidently. Cite primary sources and peer-reviewed research. Link to your other expert content on the same topic.
 
 ### Authoritativeness
+
 Is this source recognised as an authority by others?
 
 **Tactics:** Earn backlinks from respected industry sources. Get mentioned or quoted in trade press. Build a recognisable brand on social/professional platforms. Contribute expert quotes to others' content (they'll link back).
 
 ### Trustworthiness
+
 Is the content honest, accurate, and safe?
 
 **Tactics:** Show your sources — link out to primary data. Include dates and version notes. Disclose affiliations and conflicts of interest. Have a clear, comprehensive About page. Display trust signals: privacy policy, terms, contact details. Use HTTPS.
@@ -540,12 +546,13 @@ Is the content honest, accurate, and safe?
 
 When an LLM retrieves your page and reads it, it is essentially processing your text as input context. The clearer, more structured, and more answerable your text is, the better the model can extract value from it.
 
-**Write "Context-Complete" Sections:** Every chunk of your content should contain sufficient context to generate a useful answer. Ask yourself: *If I gave this paragraph — and only this paragraph — to ChatGPT, could it answer a question from this text alone?*
+**Write "Context-Complete" Sections:** Every chunk of your content should contain sufficient context to generate a useful answer. Ask yourself: _If I gave this paragraph — and only this paragraph — to ChatGPT, could it answer a question from this text alone?_
 
 **Use Explicit Definitional Language:** LLMs latch onto definitional sentences — statements of the form "X is Y." Use them liberally:
-> *AEO is the practice of...*
-> *The key difference between X and Y is...*
-> *A [term] refers to...*
+
+> _AEO is the practice of..._
+> _The key difference between X and Y is..._
+> _A [term] refers to..._
 
 **Reinforce Your Entity in Context:** Mention your brand name, core expertise, and key claims naturally throughout content — contextually embedded, not stuffed. When an LLM encounters your brand repeatedly in the context of authoritative, accurate claims, it reinforces entity associations.
 
@@ -555,24 +562,24 @@ When an LLM retrieves your page and reads it, it is essentially processing your 
 
 ### AEO Metrics
 
-| Metric | What it Measures | Tool |
-|---|---|---|
-| Featured Snippet wins | How often you appear in snippet position | Semrush, Ahrefs |
-| PAA appearances | Presence in People Also Ask boxes | AlsoAsked, SERPWatcher |
-| Zero-click impression share | Impressions without clicks (indicating snippet presence) | Google Search Console |
-| Voice search rankings | Rank for conversational queries | SEMrush Voice |
-| AI Overview appearances | Whether you're cited in Google AI Overviews | Manual checks, emerging tools |
-| Rich result types | HowTo, FAQ, etc. in SERP | Google Rich Results Test |
+| Metric                      | What it Measures                                         | Tool                          |
+| --------------------------- | -------------------------------------------------------- | ----------------------------- |
+| Featured Snippet wins       | How often you appear in snippet position                 | Semrush, Ahrefs               |
+| PAA appearances             | Presence in People Also Ask boxes                        | AlsoAsked, SERPWatcher        |
+| Zero-click impression share | Impressions without clicks (indicating snippet presence) | Google Search Console         |
+| Voice search rankings       | Rank for conversational queries                          | SEMrush Voice                 |
+| AI Overview appearances     | Whether you're cited in Google AI Overviews              | Manual checks, emerging tools |
+| Rich result types           | HowTo, FAQ, etc. in SERP                                 | Google Rich Results Test      |
 
 ### GEO Metrics
 
-| Metric | What it Measures | Tool |
-|---|---|---|
-| AI citation frequency | How often you're cited by Perplexity, ChatGPT, etc. | Manual spot-checks, AirOps |
-| Brand mention volume in AI | How often your brand appears in AI answers | Mention tracking tools |
-| Share of AI voice | Your citations vs. competitors' | Competitive monitoring |
-| Topical coverage | Questions on your topic you're cited for | Manual testing |
-| LLM brand familiarity | Does the model "know" your brand? | Prompt testing |
+| Metric                     | What it Measures                                    | Tool                       |
+| -------------------------- | --------------------------------------------------- | -------------------------- |
+| AI citation frequency      | How often you're cited by Perplexity, ChatGPT, etc. | Manual spot-checks, AirOps |
+| Brand mention volume in AI | How often your brand appears in AI answers          | Mention tracking tools     |
+| Share of AI voice          | Your citations vs. competitors'                     | Competitive monitoring     |
+| Topical coverage           | Questions on your topic you're cited for            | Manual testing             |
+| LLM brand familiarity      | Does the model "know" your brand?                   | Prompt testing             |
 
 ### Practical GEO Monitoring Process
 
@@ -589,46 +596,46 @@ When an LLM retrieves your page and reads it, it is essentially processing your 
 
 ### Research & Discovery
 
-| Tool | Use Case |
-|---|---|
-| **AnswerThePublic** | Question-based keyword research |
-| **AlsoAsked** | PAA question mapping |
-| **Semrush** | Keyword research, SERP feature tracking |
-| **Ahrefs** | Link analysis, content gap analysis |
-| **SparkToro** | Audience research |
-| **BuzzSumo** | Content performance and citation research |
+| Tool                | Use Case                                  |
+| ------------------- | ----------------------------------------- |
+| **AnswerThePublic** | Question-based keyword research           |
+| **AlsoAsked**       | PAA question mapping                      |
+| **Semrush**         | Keyword research, SERP feature tracking   |
+| **Ahrefs**          | Link analysis, content gap analysis       |
+| **SparkToro**       | Audience research                         |
+| **BuzzSumo**        | Content performance and citation research |
 
 ### Schema & Technical
 
-| Tool | Use Case |
-|---|---|
-| **Google Rich Results Test** | Test schema implementation |
-| **Schema.org** | Schema markup reference |
-| **Merkle Schema Generator** | Visual schema markup builder |
-| **Google Markup Helper** | Visual schema markup tagging tool |
-| **Screaming Frog** | Technical SEO crawl and audit |
-| **Google Search Console** | Search performance and index monitoring |
+| Tool                         | Use Case                                |
+| ---------------------------- | --------------------------------------- |
+| **Google Rich Results Test** | Test schema implementation              |
+| **Schema.org**               | Schema markup reference                 |
+| **Merkle Schema Generator**  | Visual schema markup builder            |
+| **Google Markup Helper**     | Visual schema markup tagging tool       |
+| **Screaming Frog**           | Technical SEO crawl and audit           |
+| **Google Search Console**    | Search performance and index monitoring |
 
 ### AI & Generative Search Monitoring
 
-| Tool | Use Case |
-|---|---|
-| **Perplexity AI** | Test GEO visibility manually |
-| **ChatGPT / Bing Copilot** | Test brand and content presence in AI answers |
-| **AirOps** | AI content pipeline and brand monitoring |
-| **Profound** | GEO-specific citation and brand visibility tracking |
-| **Otterly.AI** | Monitor brand mentions across AI platforms |
-| **Goodie** | AI search optimisation and monitoring |
-| **GenRank** | Track AI citation visibility and GEO performance |
+| Tool                       | Use Case                                            |
+| -------------------------- | --------------------------------------------------- |
+| **Perplexity AI**          | Test GEO visibility manually                        |
+| **ChatGPT / Bing Copilot** | Test brand and content presence in AI answers       |
+| **AirOps**                 | AI content pipeline and brand monitoring            |
+| **Profound**               | GEO-specific citation and brand visibility tracking |
+| **Otterly.AI**             | Monitor brand mentions across AI platforms          |
+| **Goodie**                 | AI search optimisation and monitoring               |
+| **GenRank**                | Track AI citation visibility and GEO performance    |
 
 ### Content Optimisation
 
-| Tool | Use Case |
-|---|---|
+| Tool           | Use Case                               |
+| -------------- | -------------------------------------- |
 | **Surfer SEO** | Content structure and NLP optimisation |
-| **Clearscope** | Topical comprehensiveness scoring |
-| **MarketMuse** | Content depth and gap analysis |
-| **Frase** | Question-based content briefs |
+| **Clearscope** | Topical comprehensiveness scoring      |
+| **MarketMuse** | Content depth and gap analysis         |
+| **Frase**      | Question-based content briefs          |
 
 ---
 
@@ -752,12 +759,12 @@ mindmap
 
 ## 18. Market Opportunity
 
-| Segment | TAM | SAM | SOM (Y3) |
-|---|---|---|---|
-| Global SEO Software Market | $1.6B | $400M | $18M |
-| AI Search Optimisation (emerging) | $800M (projected) | $200M | $25M |
-| Digital Agency Tools | $4.2B | $600M | $30M |
-| **Total Addressable** | **~$6.6B** | **~$1.2B** | **$73M** |
+| Segment                           | TAM               | SAM        | SOM (Y3) |
+| --------------------------------- | ----------------- | ---------- | -------- |
+| Global SEO Software Market        | $1.6B             | $400M      | $18M     |
+| AI Search Optimisation (emerging) | $800M (projected) | $200M      | $25M     |
+| Digital Agency Tools              | $4.2B             | $600M      | $30M     |
+| **Total Addressable**             | **~$6.6B**        | **~$1.2B** | **$73M** |
 
 **Key tailwinds:** AI Overview appearances growing ~40% YoY. 67% of marketers report zero-click rates increasing. No single platform currently offers unified SEO + AEO + GEO measurement.
 
@@ -791,14 +798,14 @@ quadrantChart
     aeo-app.ai: [0.92, 0.68]
 ```
 
-| Tool | Strengths | Limitations for AEO/GEO |
-|---|---|---|
-| **Semrush** | Comprehensive keyword research, SERP feature tracking | Limited GEO citation monitoring, no real-time AI search testing |
-| **Ahrefs** | Excellent link analysis, content gap detection | Emerging AI insights, but not primary focus |
-| **Moz** | Strong traditional SEO metrics, local SEO | Minimal AEO/GEO tools, focused on legacy SEO |
-| **BrightEdge** | Enterprise-grade SEO platform, some AI capabilities | Expensive, limited generative search tracking |
-| **Profound** | Dedicated GEO citation tracking | New entrant, smaller feature set |
-| **Otterly.AI** | Brand mention monitoring in AI responses | Narrow focus on mentions, not full GEO optimisation |
+| Tool           | Strengths                                             | Limitations for AEO/GEO                                         |
+| -------------- | ----------------------------------------------------- | --------------------------------------------------------------- |
+| **Semrush**    | Comprehensive keyword research, SERP feature tracking | Limited GEO citation monitoring, no real-time AI search testing |
+| **Ahrefs**     | Excellent link analysis, content gap detection        | Emerging AI insights, but not primary focus                     |
+| **Moz**        | Strong traditional SEO metrics, local SEO             | Minimal AEO/GEO tools, focused on legacy SEO                    |
+| **BrightEdge** | Enterprise-grade SEO platform, some AI capabilities   | Expensive, limited generative search tracking                   |
+| **Profound**   | Dedicated GEO citation tracking                       | New entrant, smaller feature set                                |
+| **Otterly.AI** | Brand mention monitoring in AI responses              | Narrow focus on mentions, not full GEO optimisation             |
 
 ---
 
@@ -836,18 +843,21 @@ flowchart TD
 ## 21. User Personas Examples:
 
 ### Persona 1: The Agency Director
+
 - **Role:** Head of Digital at a 40-person agency managing 60+ client accounts
 - **Pain:** Manually checking AI answers for each client is impossible at scale. Clients ask "are we in ChatGPT?" and there's no good answer.
 - **Needs:** White-labelled client reporting, bulk monitoring, ROI dashboards, alerts
 - **Willing to pay:** $500–$2,000/month
 
 ### Persona 2: The In-House SEO Lead
+
 - **Role:** Senior SEO Manager at a mid-size e-commerce brand
 - **Pain:** Knows AI search is important but has no tooling. Justifying investment to the CMO requires data she can't produce.
 - **Needs:** GEO score benchmarking, content gap analysis, automated briefs
 - **Willing to pay:** $200–$600/month
 
 ### Persona 3: The Enterprise Content Strategist
+
 - **Role:** VP Content at a Fortune 500 financial services firm
 - **Pain:** Compliance requires knowing exactly where brand messaging appears. AI citations are ungoverned. Competitor AI mentions are eating their share.
 - **Needs:** Enterprise governance, brand entity monitoring, competitor tracking, API access
@@ -950,13 +960,13 @@ flowchart TD
 
 ### Score Bands
 
-| Score | Label | Description |
-|---|---|---|
-| 85–100 | 🟢 **Dominant** | Cited in most tracked queries across multiple AI engines |
-| 65–84 | 🔵 **Established** | Consistently cited; strong single-engine presence |
-| 40–64 | 🟡 **Emerging** | Cited sporadically; significant gaps in coverage |
-| 15–39 | 🟠 **Weak** | Rarely cited; competitor brands dominate |
-| 0–14 | 🔴 **Invisible** | Not found in AI responses; urgent remediation needed |
+| Score  | Label              | Description                                              |
+| ------ | ------------------ | -------------------------------------------------------- |
+| 85–100 | 🟢 **Dominant**    | Cited in most tracked queries across multiple AI engines |
+| 65–84  | 🔵 **Established** | Consistently cited; strong single-engine presence        |
+| 40–64  | 🟡 **Emerging**    | Cited sporadically; significant gaps in coverage         |
+| 15–39  | 🟠 **Weak**        | Rarely cited; competitor brands dominate                 |
+| 0–14   | 🔴 **Invisible**   | Not found in AI responses; urgent remediation needed     |
 
 ---
 
@@ -999,14 +1009,14 @@ xychart-beta horizontal
     bar [85, 40, 70, 55, 65, 50]
 ```
 
-| Dimension | Weight | What it measures |
-|---|---|---|
-| Answer-First Structure | 20% | Does each section open with a direct answer? Inverted pyramid use |
-| Schema Markup | 20% | FAQPage, HowTo, Article, Speakable presence and validity |
-| Question Coverage | 18% | % of PAA questions for this topic addressed |
-| Statistical Depth | 15% | Named, cited, specific statistics per 1,000 words |
-| Entity Clarity | 15% | Definitional sentences, named attributions, entity mentions |
-| Chunk Independence | 12% | Each section readable without surrounding context |
+| Dimension              | Weight | What it measures                                                  |
+| ---------------------- | ------ | ----------------------------------------------------------------- |
+| Answer-First Structure | 20%    | Does each section open with a direct answer? Inverted pyramid use |
+| Schema Markup          | 20%    | FAQPage, HowTo, Article, Speakable presence and validity          |
+| Question Coverage      | 18%    | % of PAA questions for this topic addressed                       |
+| Statistical Depth      | 15%    | Named, cited, specific statistics per 1,000 words                 |
+| Entity Clarity         | 15%    | Definitional sentences, named attributions, entity mentions       |
+| Chunk Independence     | 12%    | Each section readable without surrounding context                 |
 
 ---
 
@@ -1082,38 +1092,38 @@ flowchart LR
 
 ### GEO Metrics
 
-| Metric | Definition | Frequency |
-|---|---|---|
-| **GEO Visibility Score™** | Composite 0–100 AI citation score | Daily |
-| **Citation Rate** | % of tracked queries where brand is cited by any AI engine | Per crawl |
+| Metric                       | Definition                                                           | Frequency |
+| ---------------------------- | -------------------------------------------------------------------- | --------- |
+| **GEO Visibility Score™**   | Composite 0–100 AI citation score                                    | Daily     |
+| **Citation Rate**            | % of tracked queries where brand is cited by any AI engine           | Per crawl |
 | **Per-Engine Citation Rate** | Citation rate broken down by Perplexity / ChatGPT / Gemini / Copilot | Per crawl |
-| **Citation Position** | Average ranked position of brand among all cited sources | Per crawl |
-| **AI Share of Voice** | Brand citations / (Brand + top 3 competitors) citations | Weekly |
-| **New Citation Gain** | Queries newly citing brand this period | Weekly |
-| **Citation Loss** | Queries that used to cite brand but no longer do | Weekly |
-| **Engine Coverage** | Number of distinct AI engines that have cited brand at least once | Monthly |
+| **Citation Position**        | Average ranked position of brand among all cited sources             | Per crawl |
+| **AI Share of Voice**        | Brand citations / (Brand + top 3 competitors) citations              | Weekly    |
+| **New Citation Gain**        | Queries newly citing brand this period                               | Weekly    |
+| **Citation Loss**            | Queries that used to cite brand but no longer do                     | Weekly    |
+| **Engine Coverage**          | Number of distinct AI engines that have cited brand at least once    | Monthly   |
 
 ### AEO Metrics
 
-| Metric | Definition | Frequency |
-|---|---|---|
-| **Featured Snippet Win Rate** | % of tracked queries where brand owns the snippet | Daily |
-| **PAA Presence Rate** | % of tracked queries where brand appears in PAA box | Daily |
-| **AI Overview Citation Rate** | % of tracked queries where brand cited in Google AI Overview | Daily |
-| **Voice Rank (Position 1 Rate)** | % of voice-intent queries where brand answer is returned | Weekly |
-| **Zero-Click Impact Score** | Estimated impressions captured via answer positions | Weekly |
-| **Rich Result Coverage** | % of site content with valid rich result schema | Weekly |
+| Metric                           | Definition                                                   | Frequency |
+| -------------------------------- | ------------------------------------------------------------ | --------- |
+| **Featured Snippet Win Rate**    | % of tracked queries where brand owns the snippet            | Daily     |
+| **PAA Presence Rate**            | % of tracked queries where brand appears in PAA box          | Daily     |
+| **AI Overview Citation Rate**    | % of tracked queries where brand cited in Google AI Overview | Daily     |
+| **Voice Rank (Position 1 Rate)** | % of voice-intent queries where brand answer is returned     | Weekly    |
+| **Zero-Click Impact Score**      | Estimated impressions captured via answer positions          | Weekly    |
+| **Rich Result Coverage**         | % of site content with valid rich result schema              | Weekly    |
 
 ### SEO Metrics
 
-| Metric | Definition | Frequency |
-|---|---|---|
-| **Visibility Score** | Weighted rank score across all tracked keywords | Daily |
-| **Average Position** | Mean organic position for tracked queries | Daily |
-| **Top 3 Rate** | % of queries ranking positions 1–3 | Daily |
-| **Crawl Health Score** | Composite of Core Web Vitals + index coverage + redirect chains | Weekly |
-| **AI Crawler Access Score** | % of AI crawlers explicitly allowed in robots.txt | Weekly |
-| **Backlink Authority Score** | DR-equivalent composite from indexed link profile | Weekly |
+| Metric                       | Definition                                                      | Frequency |
+| ---------------------------- | --------------------------------------------------------------- | --------- |
+| **Visibility Score**         | Weighted rank score across all tracked keywords                 | Daily     |
+| **Average Position**         | Mean organic position for tracked queries                       | Daily     |
+| **Top 3 Rate**               | % of queries ranking positions 1–3                              | Daily     |
+| **Crawl Health Score**       | Composite of Core Web Vitals + index coverage + redirect chains | Weekly    |
+| **AI Crawler Access Score**  | % of AI crawlers explicitly allowed in robots.txt               | Weekly    |
+| **Backlink Authority Score** | DR-equivalent composite from indexed link profile               | Weekly    |
 
 ### Trend Visualisations
 
@@ -1563,20 +1573,20 @@ flowchart TB
 
 ### Infrastructure Cost Model (Monthly — 1,000 Tenants)
 
-| Component | Service | Est. Monthly Cost |
-|---|---|---|
-| Compute (services) | ECS Fargate | $1,200 |
-| Compute (crawlers) | Lambda + ECS Batch | $800 |
-| Database | Aurora Serverless v2 | $600 |
-| Cache | ElastiCache Redis | $300 |
-| Search | OpenSearch | $400 |
-| Time-series DB | Timestream | $200 |
-| Storage | S3 + DynamoDB | $150 |
-| CDN | CloudFront | $100 |
-| AI/ML | Bedrock API calls | $1,500 |
-| Monitoring | CloudWatch + Grafana | $200 |
-| **Total Infrastructure** | | **~$5,450/mo** |
-| **Cost per tenant** | | **~$5.45/mo** |
+| Component                | Service              | Est. Monthly Cost |
+| ------------------------ | -------------------- | ----------------- |
+| Compute (services)       | ECS Fargate          | $1,200            |
+| Compute (crawlers)       | Lambda + ECS Batch   | $800              |
+| Database                 | Aurora Serverless v2 | $600              |
+| Cache                    | ElastiCache Redis    | $300              |
+| Search                   | OpenSearch           | $400              |
+| Time-series DB           | Timestream           | $200              |
+| Storage                  | S3 + DynamoDB        | $150              |
+| CDN                      | CloudFront           | $100              |
+| AI/ML                    | Bedrock API calls    | $1,500            |
+| Monitoring               | CloudWatch + Grafana | $200              |
+| **Total Infrastructure** |                      | **~$5,450/mo**    |
+| **Cost per tenant**      |                      | **~$5.45/mo**     |
 
 At $299/month average plan, infrastructure is ~1.8% of revenue. Gross margin target: **>80%.**
 
@@ -1725,14 +1735,14 @@ gantt
 
 ## 36. Risks & Mitigations
 
-| Risk | Likelihood | Impact | Mitigation |
-|---|---|---|---|
-| LLM changes citation behaviour | Medium | High | Multi-engine redundancy; monitor model update announcements |
-| AI API rate limits / cost increase | High | Medium | Build caching layer; negotiate enterprise contracts; own crawl layer where possible |
-| Google blocks SERP scraping | Medium | High | Use official Search Console API where possible; maintain headless browser fallback; legal counsel review |
-| Competitor (Semrush, Ahrefs) copies feature | High | Medium | IP moat via proprietary GEO Score™ methodology; brand + customer lock-in |
-| Privacy regulation (GDPR AI) | Low-Medium | Medium | Privacy by design from day one; DPA + data residency options |
-| AWS Outage | Low | High | Multi-AZ + cross-region DR; 99.9% SLA with 30-min RPO target |
+| Risk                                        | Likelihood | Impact | Mitigation                                                                                               |
+| ------------------------------------------- | ---------- | ------ | -------------------------------------------------------------------------------------------------------- |
+| LLM changes citation behaviour              | Medium     | High   | Multi-engine redundancy; monitor model update announcements                                              |
+| AI API rate limits / cost increase          | High       | Medium | Build caching layer; negotiate enterprise contracts; own crawl layer where possible                      |
+| Google blocks SERP scraping                 | Medium     | High   | Use official Search Console API where possible; maintain headless browser fallback; legal counsel review |
+| Competitor (Semrush, Ahrefs) copies feature | High       | Medium | IP moat via proprietary GEO Score™ methodology; brand + customer lock-in                                |
+| Privacy regulation (GDPR AI)                | Low-Medium | Medium | Privacy by design from day one; DPA + data residency options                                             |
+| AWS Outage                                  | Low        | High   | Multi-AZ + cross-region DR; 99.9% SLA with 30-min RPO target                                             |
 
 ---
 
@@ -1770,28 +1780,27 @@ flowchart TD
 
 ### System Performance SLAs
 
-| Metric | Target | Critical Threshold |
-|---|---|---|
-| API Response Time (p50) | < 200ms | < 500ms |
-| API Response Time (p99) | < 1,000ms | < 2,000ms |
-| Dashboard Load Time | < 2s | < 4s |
-| GEO Crawl Freshness | ≤ 6 hours | ≤ 12 hours |
-| AEO SERP Freshness | ≤ 24 hours | ≤ 48 hours |
-| Platform Uptime | 99.9% | 99.5% |
-| Data Accuracy (vs manual) | ≥ 90% | ≥ 80% |
-| Alert Delivery Time | < 5 minutes | < 15 minutes |
+| Metric                    | Target      | Critical Threshold |
+| ------------------------- | ----------- | ------------------ |
+| API Response Time (p50)   | < 200ms     | < 500ms            |
+| API Response Time (p99)   | < 1,000ms   | < 2,000ms          |
+| Dashboard Load Time       | < 2s        | < 4s               |
+| GEO Crawl Freshness       | ≤ 6 hours   | ≤ 12 hours         |
+| AEO SERP Freshness        | ≤ 24 hours  | ≤ 48 hours         |
+| Platform Uptime           | 99.9%       | 99.5%              |
+| Data Accuracy (vs manual) | ≥ 90%       | ≥ 80%              |
+| Alert Delivery Time       | < 5 minutes | < 15 minutes       |
 
 ---
 
 # Application
-
 
 ## Step 1: Set Up Your Project
 
 When you first log in, you create a **project** for your website.
 
 - Enter your domain (e.g. `mybusiness.com.au`)
-- Type in the questions your customers ask — e.g. *"best CRM for small business"*, *"how to treat a burn at home"*. These are called **tracked queries**.
+- Type in the questions your customers ask — e.g. _"best CRM for small business"_, _"how to treat a burn at home"_. These are called **tracked queries**.
 - Choose which AI engines to watch — Perplexity, ChatGPT, Google Gemini, Microsoft Copilot
 - Set how often you want the platform to check — weekly, daily, or every 6 hours
 
@@ -1827,13 +1836,13 @@ Before optimising anything, the platform checks what's broken or blocked right n
 
 This is your ongoing monitoring — the platform runs automatically in the background.
 
-**GEO Tracker** — for each of your tracked queries, it goes and asks ChatGPT, Perplexity, Gemini, and Copilot the question. It checks: *did they cite your website in the answer?* It logs whether you were cited, what position you were in, and which engines cited you.
+**GEO Tracker** — for each of your tracked queries, it goes and asks ChatGPT, Perplexity, Gemini, and Copilot the question. It checks: _did they cite your website in the answer?_ It logs whether you were cited, what position you were in, and which engines cited you.
 
 **AEO Manager** — checks Google Search for each query. Did you win the featured snippet (the box at the top)? Did you appear in the "People Also Ask" boxes? Did Google's AI Overview cite you?
 
 **SEO Rank Tracker** — standard keyword ranking. Where do you appear in Google's organic results for each query?
 
-**Voice Search Tracker** — for voice-style queries (e.g. *"what's the best way to..."*), checks whether your answer is the one a smart speaker would read out.
+**Voice Search Tracker** — for voice-style queries (e.g. _"what's the best way to..."_), checks whether your answer is the one a smart speaker would read out.
 
 ---
 
@@ -1841,12 +1850,12 @@ This is your ongoing monitoring — the platform runs automatically in the backg
 
 The platform turns all that monitoring into three simple numbers on your dashboard.
 
-| Score | What it means |
-|---|---|
+| Score                              | What it means                                                                |
+| ---------------------------------- | ---------------------------------------------------------------------------- |
 | **GEO Visibility Score™ (0–100)** | How often you're cited across all AI engines. 0 = invisible, 100 = dominant. |
-| **AEO Win Rate** | % of tracked queries where you own the featured snippet or PAA box. |
-| **SEO Visibility Score** | How well you rank organically across all tracked queries. |
-| **Competitor AI Share** | Of all AI citations for your queries, what % go to you vs competitors. |
+| **AEO Win Rate**                   | % of tracked queries where you own the featured snippet or PAA box.          |
+| **SEO Visibility Score**           | How well you rank organically across all tracked queries.                    |
+| **Competitor AI Share**            | Of all AI citations for your queries, what % go to you vs competitors.       |
 
 ---
 
@@ -1855,6 +1864,7 @@ The platform turns all that monitoring into three simple numbers on your dashboa
 Now you know the gaps — here's how you fix them.
 
 **Content Optimiser** — paste in a page URL. It scores the page across 6 dimensions:
+
 - Does it have a direct answer up front?
 - Does it have schema markup?
 - Does it cover all the sub-questions?
@@ -1874,11 +1884,11 @@ It tells you exactly what to fix and by how much.
 
 You don't need to log in every day. The platform watches for you and tells you when something important happens.
 
-| Alert Level | Triggers | Channel |
-|---|---|---|
-| 🔴 **Immediate** | Competitor stole your snippet, you dropped from an AI answer, AI bot blocked on your site | Slack + Email |
-| 🟡 **Daily Digest** | Moderate changes worth knowing about | Email |
-| 🟢 **Weekly Summary** | General trends, wins, and progress | Email |
+| Alert Level           | Triggers                                                                                  | Channel       |
+| --------------------- | ----------------------------------------------------------------------------------------- | ------------- |
+| 🔴 **Immediate**      | Competitor stole your snippet, you dropped from an AI answer, AI bot blocked on your site | Slack + Email |
+| 🟡 **Daily Digest**   | Moderate changes worth knowing about                                                      | Email         |
+| 🟢 **Weekly Summary** | General trends, wins, and progress                                                        | Email         |
 
 ---
 
@@ -1891,6 +1901,7 @@ Once you have data, you can share it.
 **Executive Dashboard** — a single-screen view of all three scores with trend lines. Built for showing a CMO or CEO at a glance.
 
 **Export options:**
+
 - Google Sheets
 - Looker Studio
 - BigQuery

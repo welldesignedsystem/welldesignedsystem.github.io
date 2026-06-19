@@ -13,6 +13,7 @@ summary = "Reference for building production AI agents with the Claude Agent SDK
 Before the Agent SDK, connecting Claude to real-world tasks meant implementing your own tool loop: call the API, detect tool_use stop reason, run the tool, feed back the result, repeat. The Agent SDK packages that entire loop into a single call — `query()` — so you can focus on what the agent does rather than how the loop runs.
 
 The SDK is available at:
+
 - **Python:** `pip install claude-agent-sdk` — [GitHub](https://github.com/anthropics/claude-agent-sdk-python)
 
 ---
@@ -20,12 +21,15 @@ The SDK is available at:
 ## Core Concepts
 
 ### What the Agent SDK Is
+
 - SDK is a **library** you import into your application — your process runs the agent loop.
 - It packages the same execution model that powers the Claude Code CLI as a programmable API.
 - It is distinct from **Managed Agents**, where Anthropic's infrastructure runs the agent and your app talks to it over REST.
 
 ### The Agent Loop
+
 The agent runs the same loop every time:
+
 1. **Receive prompt.** Claude receives your prompt, system prompt, tool definitions and conversation history.
 2. **Evaluate and respond.** Claude determines what to do: reply with text, call tools, or both.
 3. **Execute tools.** The SDK runs each requested tool and feeds results back to Claude.
@@ -35,6 +39,7 @@ The agent runs the same loop every time:
 A quick task ("what files are here?") might take 1–2 turns. A complex task ("refactor the auth module and update tests") can chain dozens of tool calls across many turns, with Claude adapting based on each result.
 
 ### Context Window
+
 Everything accumulates in the context window across turns within a session: system prompt, tool definitions, conversation history, tool inputs, tool outputs. It does not reset between turns.
 
 **Automatic compaction:** when the context approaches its limit, the SDK summarizes older history to free space while keeping recent exchanges intact. A `compact_boundary` system message is emitted when this happens.
@@ -42,6 +47,7 @@ Everything accumulates in the context window across turns within a session: syst
 **Prompt caching:** content that stays constant across turns (system prompt, CLAUDE.md, tool definitions) is automatically prompt-cached, reducing cost and latency for repeated prefixes.
 
 ### Sessions
+
 A session is the conversation history accumulated during an agent run. The SDK writes it to disk as a JSONL file under `~/.claude/projects/<encoded-cwd>/`. You can resume any past session, continue the most recent one, or fork a session to explore an alternative without modifying the original.
 
 ---
@@ -54,6 +60,7 @@ pip install claude-agent-sdk
 ```
 
 **Authentication:**
+
 ```bash
 # Direct API
 export ANTHROPIC_API_KEY=your-api-key
@@ -100,22 +107,22 @@ asyncio.run(main())
 
 The SDK ships with all the tools that power Claude Code. No implementation required — Claude uses them autonomously.
 
-| Category | Tool | What It Does |
-|---|---|---|
-| **File operations** | `Read` | Read any file in the working directory |
-| | `Write` | Create new files |
-| | `Edit` | Make precise edits to existing files |
-| **Search** | `Glob` | Find files by pattern (`**/*.py`, `src/**/*.ts`) |
-| | `Grep` | Search file contents with regex |
-| **Execution** | `Bash` | Run shell commands, scripts, git operations |
-| | `Monitor` | Watch a background script and react to each output line |
-| **Web** | `WebSearch` | Search the web for current information |
-| | `WebFetch` | Fetch and parse web page content |
-| **Orchestration** | `Agent` | Spawn subagents for focused subtasks |
-| | `Skill` | Invoke a skill from the skills directory |
-| | `TodoWrite` | Maintain a structured task list for planning |
-| | `AskUserQuestion` | Ask the user clarifying questions with multiple-choice options |
-| **Discovery** | `ToolSearch` | Dynamically load MCP tools on-demand instead of preloading all |
+| Category            | Tool              | What It Does                                                   |
+| ------------------- | ----------------- | -------------------------------------------------------------- |
+| **File operations** | `Read`            | Read any file in the working directory                         |
+|                     | `Write`           | Create new files                                               |
+|                     | `Edit`            | Make precise edits to existing files                           |
+| **Search**          | `Glob`            | Find files by pattern (`**/*.py`, `src/**/*.ts`)               |
+|                     | `Grep`            | Search file contents with regex                                |
+| **Execution**       | `Bash`            | Run shell commands, scripts, git operations                    |
+|                     | `Monitor`         | Watch a background script and react to each output line        |
+| **Web**             | `WebSearch`       | Search the web for current information                         |
+|                     | `WebFetch`        | Fetch and parse web page content                               |
+| **Orchestration**   | `Agent`           | Spawn subagents for focused subtasks                           |
+|                     | `Skill`           | Invoke a skill from the skills directory                       |
+|                     | `TodoWrite`       | Maintain a structured task list for planning                   |
+|                     | `AskUserQuestion` | Ask the user clarifying questions with multiple-choice options |
+| **Discovery**       | `ToolSearch`      | Dynamically load MCP tools on-demand instead of preloading all |
 
 ---
 
@@ -145,23 +152,23 @@ options = ClaudeAgentOptions(
 
 ### Permission Modes
 
-| Mode | Behaviour |
-|---|---|
-| `"default"` | Tools not in allowed list trigger your approval callback; no callback = deny |
-| `"acceptEdits"` | Auto-approves file edits and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`); other Bash commands follow default rules |
-| `"plan"` | No tool execution; Claude produces a plan for review |
-| `"dontAsk"` | Never prompts; tools pre-approved by permission rules run, everything else is denied |
-| `"auto"` *(TypeScript only)* | Uses a model classifier to approve or deny each tool call |
-| `"bypassPermissions"` | All allowed tools run without asking. **Only for isolated environments. Cannot run as root on Unix.** |
+| Mode                         | Behaviour                                                                                                                        |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `"default"`                  | Tools not in allowed list trigger your approval callback; no callback = deny                                                     |
+| `"acceptEdits"`              | Auto-approves file edits and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`); other Bash commands follow default rules |
+| `"plan"`                     | No tool execution; Claude produces a plan for review                                                                             |
+| `"dontAsk"`                  | Never prompts; tools pre-approved by permission rules run, everything else is denied                                             |
+| `"auto"` _(TypeScript only)_ | Uses a model classifier to approve or deny each tool call                                                                        |
+| `"bypassPermissions"`        | All allowed tools run without asking. **Only for isolated environments. Cannot run as root on Unix.**                            |
 
 ### Effort Levels
 
-| Level | Behaviour | Good For |
-|---|---|---|
-| `"low"` | Minimal reasoning, fast responses | File lookups, directory listing |
-| `"medium"` | Balanced reasoning | Routine edits, standard tasks |
-| `"high"` | Thorough analysis (TypeScript default) | Refactors, debugging |
-| `"max"` | Maximum reasoning depth | Multi-step problems, deep analysis |
+| Level      | Behaviour                              | Good For                           |
+| ---------- | -------------------------------------- | ---------------------------------- |
+| `"low"`    | Minimal reasoning, fast responses      | File lookups, directory listing    |
+| `"medium"` | Balanced reasoning                     | Routine edits, standard tasks      |
+| `"high"`   | Thorough analysis (TypeScript default) | Refactors, debugging               |
+| `"max"`    | Maximum reasoning depth                | Multi-step problems, deep analysis |
 
 `effort` and Extended Thinking are independent — you can use either, neither, or both.
 
@@ -169,13 +176,13 @@ options = ClaudeAgentOptions(
 
 The `ResultMessage` at the end of every session carries a `subtype` indicating what happened:
 
-| Subtype | Meaning | `result` field? |
-|---|---|---|
-| `success` | Claude finished the task normally | ✅ Yes |
-| `error_max_turns` | Hit `max_turns` before finishing | ❌ No |
-| `error_max_budget_usd` | Hit `max_budget_usd` before finishing | ❌ No |
-| `error_during_execution` | API failure or cancelled request | ❌ No |
-| `error_max_structured_output_retries` | Structured output validation failed | ❌ No |
+| Subtype                               | Meaning                               | `result` field? |
+| ------------------------------------- | ------------------------------------- | --------------- |
+| `success`                             | Claude finished the task normally     | ✅ Yes          |
+| `error_max_turns`                     | Hit `max_turns` before finishing      | ❌ No           |
+| `error_max_budget_usd`                | Hit `max_budget_usd` before finishing | ❌ No           |
+| `error_during_execution`              | API failure or cancelled request      | ❌ No           |
+| `error_max_structured_output_retries` | Structured output validation failed   | ❌ No           |
 
 Always check the subtype before reading `result`. All subtypes carry `total_cost_usd`, `usage`, `num_turns` and `session_id`.
 
@@ -185,13 +192,13 @@ Always check the subtype before reading `result`. All subtypes carry `total_cost
 
 As the loop runs, the SDK yields a stream of typed messages.
 
-| Type | When Emitted | Key Fields |
-|---|---|---|
-| `SystemMessage` | Session lifecycle events | `subtype`: `"init"` (session start), `"compact_boundary"` (after compaction) |
-| `AssistantMessage` | After each Claude response | `content`: text blocks and tool call blocks |
-| `UserMessage` | After each tool execution | Tool result content fed back to Claude |
-| `StreamEvent` | When `include_partial_messages=True` | Raw API streaming events (text deltas, tool chunks) |
-| `ResultMessage` | Always last | `result`, `subtype`, `total_cost_usd`, `usage`, `session_id` |
+| Type               | When Emitted                         | Key Fields                                                                   |
+| ------------------ | ------------------------------------ | ---------------------------------------------------------------------------- |
+| `SystemMessage`    | Session lifecycle events             | `subtype`: `"init"` (session start), `"compact_boundary"` (after compaction) |
+| `AssistantMessage` | After each Claude response           | `content`: text blocks and tool call blocks                                  |
+| `UserMessage`      | After each tool execution            | Tool result content fed back to Claude                                       |
+| `StreamEvent`      | When `include_partial_messages=True` | Raw API streaming events (text deltas, tool chunks)                          |
+| `ResultMessage`    | Always last                          | `result`, `subtype`, `total_cost_usd`, `usage`, `session_id`                 |
 
 ```python
 from claude_agent_sdk import (
@@ -219,22 +226,24 @@ async for message in query(prompt="Summarize this project"):
 ## Session Management
 
 ### Why Sessions Matter
+
 Sessions persist the conversation history to disk. When you resume a session, Claude has full context from before — files already read, analysis performed, decisions made — without re-doing that work.
 
 **Sessions persist the conversation, not the filesystem.** For snapshotting and reverting file changes, use File Checkpointing.
 
 ### Choosing the Right Approach
 
-| Use Case | Approach |
-|---|---|
-| One-shot task | Nothing extra. One `query()` call handles it. |
-| Multi-turn conversation in one process | `ClaudeSDKClient` (Python) or `continue: true` (TypeScript) |
-| Pick up after a process restart | `continue_conversation=True` (Python) / `continue: true` (TypeScript) |
-| Resume a specific past session | Capture the session ID, pass it to `resume` |
-| Explore an alternative without losing original | Fork the session |
-| Stateless task (TypeScript only) | `persistSession: false` |
+| Use Case                                       | Approach                                                              |
+| ---------------------------------------------- | --------------------------------------------------------------------- |
+| One-shot task                                  | Nothing extra. One `query()` call handles it.                         |
+| Multi-turn conversation in one process         | `ClaudeSDKClient` (Python) or `continue: true` (TypeScript)           |
+| Pick up after a process restart                | `continue_conversation=True` (Python) / `continue: true` (TypeScript) |
+| Resume a specific past session                 | Capture the session ID, pass it to `resume`                           |
+| Explore an alternative without losing original | Fork the session                                                      |
+| Stateless task (TypeScript only)               | `persistSession: false`                                               |
 
 ### Python: `ClaudeSDKClient` (Automatic)
+
 `ClaudeSDKClient` manages session IDs across calls automatically. No ID tracking required.
 
 ```python
@@ -261,6 +270,7 @@ asyncio.run(main())
 ```
 
 ### Resume by Session ID
+
 ```python
 session_id = None
 
@@ -285,6 +295,7 @@ async for message in query(
 ```
 
 ### Fork a Session
+
 Forking creates a new session branching from the original's history. The original stays unchanged.
 
 ```python
@@ -306,7 +317,9 @@ async for message in query(
 ```
 
 ### Resuming Across Hosts
+
 Session files are local: `~/.claude/projects/<encoded-cwd>/<session-id>.jsonl`. To resume on a different machine:
+
 - Mirror the JSONL file to shared storage and restore it at the same path before resuming.
 - Or don't rely on session resume — capture results as application state and pass them into a fresh session's prompt.
 
@@ -317,6 +330,7 @@ Session files are local: `~/.claude/projects/<encoded-cwd>/<session-id>.jsonl`. 
 Hooks are callback functions that fire at specific points in the agent lifecycle. They run in your application process — not inside the context window — so they don't consume tokens.
 
 ### How Hooks Work
+
 1. An event fires (e.g. a tool is about to run).
 2. The SDK checks registered hooks for that event type.
 3. Matchers (regex against tool name) filter which callbacks execute.
@@ -325,41 +339,42 @@ Hooks are callback functions that fire at specific points in the agent lifecycle
 
 ### Available Hook Events
 
-| Hook | Python | TypeScript | When It Fires | Common Uses |
-|---|---|---|---|---|
-| `PreToolUse` | ✅ | ✅ | Before a tool executes | Block dangerous commands, validate inputs |
-| `PostToolUse` | ✅ | ✅ | After a tool returns | Audit outputs, log changes |
-| `PostToolUseFailure` | ✅ | ✅ | When a tool fails | Error handling, alerting |
-| `UserPromptSubmit` | ✅ | ✅ | When a prompt is sent | Inject additional context |
-| `Stop` | ✅ | ✅ | When agent execution stops | Save session state |
-| `SubagentStart` | ✅ | ✅ | When a subagent spawns | Track parallel tasks |
-| `SubagentStop` | ✅ | ✅ | When a subagent completes | Aggregate parallel results |
-| `PreCompact` | ✅ | ✅ | Before context compaction | Archive full transcript |
-| `PermissionRequest` | ✅ | ✅ | Permission dialog would show | Custom permission handling |
-| `Notification` | ✅ | ✅ | Agent status messages | Forward to Slack, PagerDuty |
-| `SessionStart` | ❌ | ✅ | Session initialisation | Logging, telemetry setup |
-| `SessionEnd` | ❌ | ✅ | Session termination | Clean up resources |
-| `TaskCompleted` | ❌ | ✅ | Background task completes | Aggregate parallel results |
-| `ConfigChange` | ❌ | ✅ | Config file changes | Reload settings |
+| Hook                 | Python | TypeScript | When It Fires                | Common Uses                               |
+| -------------------- | ------ | ---------- | ---------------------------- | ----------------------------------------- |
+| `PreToolUse`         | ✅     | ✅         | Before a tool executes       | Block dangerous commands, validate inputs |
+| `PostToolUse`        | ✅     | ✅         | After a tool returns         | Audit outputs, log changes                |
+| `PostToolUseFailure` | ✅     | ✅         | When a tool fails            | Error handling, alerting                  |
+| `UserPromptSubmit`   | ✅     | ✅         | When a prompt is sent        | Inject additional context                 |
+| `Stop`               | ✅     | ✅         | When agent execution stops   | Save session state                        |
+| `SubagentStart`      | ✅     | ✅         | When a subagent spawns       | Track parallel tasks                      |
+| `SubagentStop`       | ✅     | ✅         | When a subagent completes    | Aggregate parallel results                |
+| `PreCompact`         | ✅     | ✅         | Before context compaction    | Archive full transcript                   |
+| `PermissionRequest`  | ✅     | ✅         | Permission dialog would show | Custom permission handling                |
+| `Notification`       | ✅     | ✅         | Agent status messages        | Forward to Slack, PagerDuty               |
+| `SessionStart`       | ❌     | ✅         | Session initialisation       | Logging, telemetry setup                  |
+| `SessionEnd`         | ❌     | ✅         | Session termination          | Clean up resources                        |
+| `TaskCompleted`      | ❌     | ✅         | Background task completes    | Aggregate parallel results                |
+| `ConfigChange`       | ❌     | ✅         | Config file changes          | Reload settings                           |
 
 ### Hook Return Values
 
-| Field | Type | Effect |
-|---|---|---|
-| `{}` (empty) | — | Allow the operation without changes |
-| `hookSpecificOutput.permissionDecision` | `"allow"`, `"deny"`, `"ask"` | Control whether the tool runs |
-| `hookSpecificOutput.permissionDecisionReason` | `str` | Explain the decision to Claude |
-| `hookSpecificOutput.updatedInput` | `dict` | Modify tool arguments before execution |
-| `hookSpecificOutput.additionalContext` | `str` | Append context to tool result (`PostToolUse`) |
-| `systemMessage` | `str` | Inject a message into the conversation the model sees |
-| `continue_` / `continue` | `bool` | Whether the agent continues running after this hook |
-| `async_: True` | — | Agent proceeds immediately; hook runs as background task |
+| Field                                         | Type                         | Effect                                                   |
+| --------------------------------------------- | ---------------------------- | -------------------------------------------------------- |
+| `{}` (empty)                                  | —                            | Allow the operation without changes                      |
+| `hookSpecificOutput.permissionDecision`       | `"allow"`, `"deny"`, `"ask"` | Control whether the tool runs                            |
+| `hookSpecificOutput.permissionDecisionReason` | `str`                        | Explain the decision to Claude                           |
+| `hookSpecificOutput.updatedInput`             | `dict`                       | Modify tool arguments before execution                   |
+| `hookSpecificOutput.additionalContext`        | `str`                        | Append context to tool result (`PostToolUse`)            |
+| `systemMessage`                               | `str`                        | Inject a message into the conversation the model sees    |
+| `continue_` / `continue`                      | `bool`                       | Whether the agent continues running after this hook      |
+| `async_: True`                                | —                            | Agent proceeds immediately; hook runs as background task |
 
 **Priority rule:** deny > ask > allow. If any hook returns deny, the operation is blocked.
 
 ### Hook Examples
 
 **Block writes to sensitive files:**
+
 ```python
 async def protect_env_files(input_data, tool_use_id, context):
     file_path = input_data["tool_input"].get("file_path", "")
@@ -381,6 +396,7 @@ options = ClaudeAgentOptions(
 ```
 
 **Redirect all file writes to a sandbox:**
+
 ```python
 async def redirect_to_sandbox(input_data, tool_use_id, context):
     if input_data["tool_name"] == "Write":
@@ -399,6 +415,7 @@ async def redirect_to_sandbox(input_data, tool_use_id, context):
 ```
 
 **Audit log every file change:**
+
 ```python
 from datetime import datetime
 
@@ -417,6 +434,7 @@ options = ClaudeAgentOptions(
 ```
 
 **Forward agent notifications to Slack:**
+
 ```python
 import asyncio, json, urllib.request
 
@@ -438,6 +456,7 @@ options = ClaudeAgentOptions(
 ```
 
 **Chain multiple hooks (order matters — deny wins):**
+
 ```python
 options = ClaudeAgentOptions(
     hooks={
@@ -475,14 +494,15 @@ Subagents let the main agent delegate focused subtasks to a fresh agent instance
 
 ### When to Use Subagents
 
-| Use | Avoid |
-|---|---|
-| Multi-step subtasks that would clutter the main context | Simple one-step tasks |
-| Work requiring specialised instructions | When intermediate context must be preserved |
-| Tasks that benefit from a different tool set | When delegation overhead outweighs benefit |
-| Parallel workstreams | |
+| Use                                                     | Avoid                                       |
+| ------------------------------------------------------- | ------------------------------------------- |
+| Multi-step subtasks that would clutter the main context | Simple one-step tasks                       |
+| Work requiring specialised instructions                 | When intermediate context must be preserved |
+| Tasks that benefit from a different tool set            | When delegation overhead outweighs benefit  |
+| Parallel workstreams                                    |                                             |
 
 ### What Subagents Inherit
+
 - Each subagent starts with a **fresh conversation** — no prior message history from the parent.
 - They do load their own system prompt and project-level context like `CLAUDE.md`.
 - Only the final response returns to the parent as a tool result.
@@ -519,17 +539,19 @@ async for message in query(
 
 ### AgentDefinition Fields
 
-| Field | Type | Description |
-|---|---|---|
-| `description` | `str` | Required. What this subagent does. The main agent uses this to decide when to delegate. Be specific. |
-| `prompt` | `str` | Required. Instructions for the subagent (its system prompt). Does NOT inherit from parent. |
-| `tools` | `list[str]` | Optional. Tools the subagent can use. Defaults to parent's tool set if omitted. |
-| `model` | `str` | Optional. Override the model for this subagent. Useful for cost optimisation. |
+| Field         | Type        | Description                                                                                          |
+| ------------- | ----------- | ---------------------------------------------------------------------------------------------------- |
+| `description` | `str`       | Required. What this subagent does. The main agent uses this to decide when to delegate. Be specific. |
+| `prompt`      | `str`       | Required. Instructions for the subagent (its system prompt). Does NOT inherit from parent.           |
+| `tools`       | `list[str]` | Optional. Tools the subagent can use. Defaults to parent's tool set if omitted.                      |
+| `model`       | `str`       | Optional. Override the model for this subagent. Useful for cost optimisation.                        |
 
 ### Tracking Subagent Messages
+
 Messages from within a subagent's context include a `parent_tool_use_id` field, letting you correlate which messages belong to which subagent run.
 
 ### Parallel Subagents
+
 Multiple subagents can run concurrently. Use `SubagentStart` and `SubagentStop` hooks to track parallel task spawning and aggregation:
 
 ```python
@@ -548,6 +570,7 @@ options = ClaudeAgentOptions(
 ## Tools: Custom and MCP
 
 ### Custom Tools
+
 Define functions as tools — Claude will call them when relevant:
 
 ```python
@@ -572,10 +595,12 @@ async for message in query(
 ```
 
 Custom tools default to sequential execution. Mark them read-only for parallel execution:
+
 - TypeScript: `readOnly: true` in tool annotations
 - Python: `readOnlyHint=True` in tool definition
 
 ### MCP (Model Context Protocol)
+
 MCP servers connect your agent to external systems — databases, browsers, APIs — without you implementing tool execution.
 
 ```python
@@ -624,7 +649,9 @@ Three settings work together to control what runs:
 3. **`permission_mode`** — controls what happens to tools not covered by either list.
 
 ### Tool Scoping with Rules
+
 You can scope individual tools with rules to allow only specific commands:
+
 ```python
 # Allow only npm commands via Bash
 allowed_tools=["Bash(npm:*)"]
@@ -637,6 +664,7 @@ disallowed_tools=["Bash(rm -rf:*)"]
 ```
 
 ### Approval Callbacks
+
 For interactive applications, provide a callback to handle tool approval prompts:
 
 ```python
@@ -658,24 +686,27 @@ options = ClaudeAgentOptions(
 
 ### What Consumes Context
 
-| Source | When It Loads | Impact |
-|---|---|---|
-| System prompt | Every request | Small fixed cost, always present |
-| CLAUDE.md files | Session start (when `settingSources` enabled) | Full content every request (prompt-cached after first) |
-| Tool definitions | Every request | Each tool adds its schema |
-| Conversation history | Accumulates over turns | Grows with each turn |
-| Skill descriptions | Session start | Short summaries; full content loads on invocation |
-| MCP tool schemas | Every request | All schemas for all connected servers |
+| Source               | When It Loads                                 | Impact                                                 |
+| -------------------- | --------------------------------------------- | ------------------------------------------------------ |
+| System prompt        | Every request                                 | Small fixed cost, always present                       |
+| CLAUDE.md files      | Session start (when `settingSources` enabled) | Full content every request (prompt-cached after first) |
+| Tool definitions     | Every request                                 | Each tool adds its schema                              |
+| Conversation history | Accumulates over turns                        | Grows with each turn                                   |
+| Skill descriptions   | Session start                                 | Short summaries; full content loads on invocation      |
+| MCP tool schemas     | Every request                                 | All schemas for all connected servers                  |
 
 ### Automatic Compaction
+
 When context approaches the window limit, the SDK automatically summarises older history and emits a `compact_boundary` system message.
 
 **Customise what gets preserved:**
 Add a section to your `CLAUDE.md` file:
+
 ```markdown
 ## Summary instructions
 
 When summarising this conversation, always preserve:
+
 - The current task objective and acceptance criteria
 - File paths that have been read or modified
 - Test results and error messages
@@ -685,6 +716,7 @@ When summarising this conversation, always preserve:
 **Manual compaction:** send `/compact` as a prompt string to trigger on demand.
 
 **PreCompact hook:** run custom logic before compaction (e.g. archive full transcript):
+
 ```python
 async def archive_transcript(input_data, tool_use_id, context):
     trigger = input_data.get("trigger")  # "manual" or "auto"
@@ -698,6 +730,7 @@ options = ClaudeAgentOptions(
 ```
 
 ### Strategies for Long-Running Agents
+
 - **Use subagents for subtasks.** Each starts with a fresh context; only the summary returns to the parent.
 - **Be selective with tools.** Every tool definition costs context. Scope subagents to minimal tool sets.
 - **Watch MCP server costs.** Large MCP servers with many tools can consume significant context upfront. Use `ToolSearch` to load on-demand.
@@ -719,7 +752,9 @@ options = ClaudeAgentOptions(
 ```
 
 ### CLAUDE.md (Memory)
+
 `CLAUDE.md` files provide persistent project context that is always injected into every request. Use them for:
+
 - Project conventions and coding style
 - Architecture decisions and constraints
 - Tool usage guidelines
@@ -729,16 +764,19 @@ options = ClaudeAgentOptions(
 # Project Context
 
 This is a Python FastAPI application. Always:
+
 - Use type hints on all functions
 - Write docstrings for public APIs
 - Follow PEP 8 naming conventions
 - Run `pytest` before declaring code complete
 
 ## Summary instructions
+
 When summarising, always preserve: current task, files modified, test results.
 ```
 
 ### Skills
+
 Skills are Markdown files in `.claude/skills/*/SKILL.md` that define reusable workflows and domain expertise. Claude reads skill descriptions at startup and loads full content only when a skill is relevant to the current task (progressive disclosure).
 
 ```
@@ -753,6 +791,7 @@ Skills are Markdown files in `.claude/skills/*/SKILL.md` that define reusable wo
 ```
 
 ### Slash Commands
+
 Custom commands defined in `.claude/commands/*.md` are available as slash commands in the agent. In the SDK, send them as prompt strings:
 
 ```python
@@ -766,6 +805,7 @@ async for message in query(prompt="/compact"):
 ```
 
 ### Plugins
+
 Plugins extend the SDK programmatically with custom commands, agents, and MCP server configurations:
 
 ```python
@@ -785,6 +825,7 @@ options = ClaudeAgentOptions(
 ## Input Modes and Streaming
 
 ### Streaming Output
+
 Stream the agent's response in real-time as the loop runs:
 
 ```python
@@ -799,9 +840,11 @@ async for message in query(prompt="Refactor utils.py", options=options):
 ```
 
 ### Streaming Input
+
 You can stream user input into a running agent session mid-execution — useful for interactive applications where the user wants to provide guidance while the agent is working.
 
 ### Handling Approval Prompts Mid-Loop
+
 The `AskUserQuestion` tool lets the agent ask clarifying questions during execution without ending the session:
 
 ```python
@@ -862,6 +905,7 @@ options = ClaudeAgentOptions(
 ```
 
 Use file checkpointing when:
+
 - The agent may make multiple file changes and you want the ability to undo any of them.
 - You want to fork the file state independently of forking the session.
 - You're running agents in CI and want guaranteed rollback on failure.
@@ -871,6 +915,7 @@ Use file checkpointing when:
 ## Cost Tracking and Observability
 
 ### Tracking Cost Per Session
+
 Every `ResultMessage` carries `total_cost_usd` and `usage`:
 
 ```python
@@ -883,6 +928,7 @@ async for message in query(prompt="Refactor the API layer", options=options):
 ```
 
 ### OpenTelemetry Observability
+
 The SDK emits OpenTelemetry traces for all agent activity:
 
 ```python
@@ -901,6 +947,7 @@ async for message in query(prompt="Fix the tests", options=options):
 ```
 
 ### Todo Tracking
+
 The `TodoWrite` tool gives the agent a structured task list to track its progress. Monitor it via hooks:
 
 ```python
@@ -917,6 +964,7 @@ async def track_todos(input_data, tool_use_id, context):
 ## Deployment
 
 ### Self-Hosted
+
 The Agent SDK runs inside your own process. You are responsible for building and operating the HTTP/WebSocket server, authentication, and session management that exposes the agent to end users.
 
 ```python
@@ -941,20 +989,22 @@ async def run_agent(prompt: str, session_id: str | None = None):
 ```
 
 ### Managed Agents (Alternative)
+
 If you don't want to operate the agent infrastructure, Anthropic's **Managed Agents** service runs the agent loop and sandbox on Anthropic's infrastructure. Your application calls a REST API and streams back results.
 
-| | Agent SDK | Managed Agents |
-|---|---|---|
-| **Runs in** | Your process | Anthropic infrastructure |
-| **Interface** | Python/TS library | REST API |
-| **Agent works on** | Your filesystem / services | Anthropic-managed sandbox |
-| **Session state** | JSONL on your filesystem | Anthropic-hosted event log |
-| **Custom tools** | In-process functions | You execute, return results |
-| **Best for** | Local prototyping, direct filesystem access | Production without managing sandboxes |
+|                    | Agent SDK                                   | Managed Agents                        |
+| ------------------ | ------------------------------------------- | ------------------------------------- |
+| **Runs in**        | Your process                                | Anthropic infrastructure              |
+| **Interface**      | Python/TS library                           | REST API                              |
+| **Agent works on** | Your filesystem / services                  | Anthropic-managed sandbox             |
+| **Session state**  | JSONL on your filesystem                    | Anthropic-hosted event log            |
+| **Custom tools**   | In-process functions                        | You execute, return results           |
+| **Best for**       | Local prototyping, direct filesystem access | Production without managing sandboxes |
 
 A common path: prototype with the Agent SDK locally, then migrate to Managed Agents for production.
 
 ### Security Considerations
+
 - Use `allowed_tools` and `disallowed_tools` to enforce the principle of least privilege.
 - Never use `bypassPermissions` or `dontAsk` modes unless running in a fully isolated container.
 - Use `PreToolUse` hooks to validate and sanitise tool inputs before execution.
@@ -969,12 +1019,12 @@ A common path: prototype with the Agent SDK locally, then migrate to Managed Age
 
 ### Agent SDK vs Anthropic Client SDK
 
-| | Client SDK | Agent SDK |
-|---|---|---|
-| **Tool loop** | You implement it | Claude handles it autonomously |
-| **Built-in tools** | None — you provide all tools | Read, Write, Edit, Bash, Glob, Grep, WebSearch, etc. |
-| **Session management** | Manual | Automatic (JSONL on disk) |
-| **Best for** | Custom control, simpler single-turn tasks | Multi-step autonomous tasks |
+|                        | Client SDK                                | Agent SDK                                            |
+| ---------------------- | ----------------------------------------- | ---------------------------------------------------- |
+| **Tool loop**          | You implement it                          | Claude handles it autonomously                       |
+| **Built-in tools**     | None — you provide all tools              | Read, Write, Edit, Bash, Glob, Grep, WebSearch, etc. |
+| **Session management** | Manual                                    | Automatic (JSONL on disk)                            |
+| **Best for**           | Custom control, simpler single-turn tasks | Multi-step autonomous tasks                          |
 
 ```python
 # Client SDK — you implement the loop
@@ -990,13 +1040,13 @@ async for message in query(prompt="Fix the bug in auth.py"):
 
 ### Agent SDK vs Claude Code CLI
 
-| Use Case | Best Choice |
-|---|---|
-| Interactive development | CLI |
-| CI/CD pipelines | SDK |
-| Custom applications | SDK |
-| One-off tasks | CLI |
-| Production automation | SDK |
+| Use Case                | Best Choice |
+| ----------------------- | ----------- |
+| Interactive development | CLI         |
+| CI/CD pipelines         | SDK         |
+| Custom applications     | SDK         |
+| One-off tasks           | CLI         |
+| Production automation   | SDK         |
 
 Workflows translate directly between them — many teams use the CLI for development and the SDK for production.
 
@@ -1005,7 +1055,9 @@ Workflows translate directly between them — many teams use the CLI for develop
 ## Common Patterns and Use Cases
 
 ### Pattern 1: Code Review Agent
+
 Read-only agent that analyses a codebase and produces a structured report.
+
 ```python
 options = ClaudeAgentOptions(
     allowed_tools=["Read", "Glob", "Grep"],
@@ -1017,7 +1069,9 @@ options = ClaudeAgentOptions(
 ```
 
 ### Pattern 2: Bug-Fixing Agent with Safety Gates
+
 Autonomous bug fixing with human approval before each file edit.
+
 ```python
 options = ClaudeAgentOptions(
     allowed_tools=["Read", "Glob", "Grep", "Bash"],
@@ -1029,7 +1083,9 @@ options = ClaudeAgentOptions(
 ```
 
 ### Pattern 3: Research Agent with Web Search
+
 Gather information from the web and synthesise a report without touching the filesystem.
+
 ```python
 options = ClaudeAgentOptions(
     allowed_tools=["WebSearch", "WebFetch"],
@@ -1040,7 +1096,9 @@ options = ClaudeAgentOptions(
 ```
 
 ### Pattern 4: Multi-Stage Pipeline with Subagents
+
 Orchestrator delegates specialised work to focused subagents — collector, analyser, report writer.
+
 ```python
 options = ClaudeAgentOptions(
     allowed_tools=["Read", "Write", "Agent"],
@@ -1060,7 +1118,9 @@ options = ClaudeAgentOptions(
 ```
 
 ### Pattern 5: CI/CD Agent
+
 Runs in a pipeline, exits with non-zero on failure, bounded by cost.
+
 ```python
 import sys
 
@@ -1088,32 +1148,38 @@ async for message in query(
 ## Troubleshooting
 
 ### Hook Not Firing
+
 - Hook event names are case-sensitive: `PreToolUse` not `preToolUse`.
 - Hooks may not fire if the session ends before they can execute (e.g. hitting `max_turns`).
 - Check that `setting_sources` includes `"project"` if using file-based hooks.
 
 ### Matcher Not Filtering as Expected
+
 - Matchers only match tool **names**, not file paths or arguments.
 - To filter by file path, check `tool_input["file_path"]` inside the callback.
 - MCP tools follow the pattern `mcp__<server>__<action>`.
 
 ### Tool Blocked Unexpectedly
+
 - Check all `PreToolUse` hooks for `permissionDecision: "deny"` returns.
 - Verify matchers aren't too broad (no matcher matches everything).
 - Log `permissionDecisionReason` to identify which hook is blocking.
 
 ### Context Window Errors
+
 - Set `max_turns` to bound total context growth.
 - Add summarisation instructions to `CLAUDE.md`.
 - Use subagents to isolate large subtasks.
 - Use `ToolSearch` instead of preloading all MCP tools.
 
 ### Resuming Wrong Session
+
 - Sessions are stored under `~/.claude/projects/<encoded-cwd>/`.
 - The `encoded-cwd` is the absolute path with all non-alphanumeric characters replaced by `-`.
 - If the `cwd` is different on resume, the SDK looks in the wrong location.
 
 ### Modified Tool Input Not Applied
+
 - `updatedInput` must be inside `hookSpecificOutput`, not at the top level.
 - You must also return `permissionDecision: "allow"` for the modification to take effect.
 - Include `hookEventName` in `hookSpecificOutput`.

@@ -6,7 +6,6 @@ tags = ['Claude']
 summary = "Claude is a family of large language models developed by Anthropic, designed to be helpful, harmless, and honest. This document provides an overview of Claude's capabilities, architecture, and applications — with all examples using LangChain (Python)."
 +++
 
-
 ## Part 1: Claude Code
 
 Claude Code is Anthropic's **agentic CLI tool** for software development. Unlike IDE plugins (GitHub Copilot, Cursor) that assist you as you type, Claude Code operates **autonomously** — it reads your codebase, writes files, runs commands, browses the web, calls APIs, and iterates on its own output.
@@ -22,15 +21,15 @@ Claude Code is Anthropic's **agentic CLI tool** for software development. Unlike
 
 ### What Makes It Different from Cursor/Copilot
 
-| Feature | Cursor / Copilot | Claude Code |
-|---|---|---|
-| Primary interface | IDE (GUI) | Terminal (CLI) |
-| Context awareness | Open files | Entire codebase |
-| Autonomy level | Suggestions | Full autonomous execution |
-| MCP / Hooks | No | Yes |
-| CI/CD integration | No | Yes (GitHub Actions) |
-| Custom agents | No | Yes |
-| Sandboxing control | Limited | Full control |
+| Feature            | Cursor / Copilot | Claude Code               |
+| ------------------ | ---------------- | ------------------------- |
+| Primary interface  | IDE (GUI)        | Terminal (CLI)            |
+| Context awareness  | Open files       | Entire codebase           |
+| Autonomy level     | Suggestions      | Full autonomous execution |
+| MCP / Hooks        | No               | Yes                       |
+| CI/CD integration  | No               | Yes (GitHub Actions)      |
+| Custom agents      | No               | Yes                       |
+| Sandboxing control | Limited          | Full control              |
 
 ---
 
@@ -101,7 +100,7 @@ graph TD
 
 ### Key Insight
 
-> CLAUDE.md gives Claude *memory* → Slash Commands create *repeatable workflows* → Sub-Agents handle *parallel work* → Hooks enforce *deterministic rules* → MCP connects *external services*
+> CLAUDE.md gives Claude _memory_ → Slash Commands create _repeatable workflows_ → Sub-Agents handle _parallel work_ → Hooks enforce _deterministic rules_ → MCP connects _external services_
 
 ---
 
@@ -163,17 +162,17 @@ claude --worktree feature-auth   # Create isolated git worktree for this session
 
 ### Keyboard Shortcuts
 
-| Shortcut | Action |
-|---|---|
-| `SHIFT + TAB` | Cycle between modes (Default → Write → Plan) |
-| `CTRL + C` | Cancel current input |
-| `ESC` | Cancel current generation (can inject new prompt mid-task) |
-| `ESC + ESC` | Undo the last action Claude performed |
-| `CTRL + B` | Move task to background (Claude continues autonomously) |
-| `OPTION + P` / `ALT + P` | Switch model mid-session |
-| `CTRL + O` | Toggle verbose output |
-| `CTRL + V` / `CMD + V` | Paste text or image into prompt |
-| `↑ / ↓ arrows` | Scroll through past messages |
+| Shortcut                 | Action                                                     |
+| ------------------------ | ---------------------------------------------------------- |
+| `SHIFT + TAB`            | Cycle between modes (Default → Write → Plan)               |
+| `CTRL + C`               | Cancel current input                                       |
+| `ESC`                    | Cancel current generation (can inject new prompt mid-task) |
+| `ESC + ESC`              | Undo the last action Claude performed                      |
+| `CTRL + B`               | Move task to background (Claude continues autonomously)    |
+| `OPTION + P` / `ALT + P` | Switch model mid-session                                   |
+| `CTRL + O`               | Toggle verbose output                                      |
+| `CTRL + V` / `CMD + V`   | Paste text or image into prompt                            |
+| `↑ / ↓ arrows`           | Scroll through past messages                               |
 
 ### Slash Commands (Built-in)
 
@@ -215,11 +214,13 @@ your-project/CLAUDE.local.md     # Local — personal overrides, NOT in Git
 # Project: E-Commerce API
 
 ## Tech Stack
+
 - Python 3.12 + FastAPI + SQLAlchemy
 - PostgreSQL (primary DB), Redis (cache)
 - Docker for local dev, AWS ECS for production
 
 ## Code Conventions
+
 - Use type hints everywhere — no untyped functions
 - Snake_case for variables, PascalCase for classes
 - Write docstrings for all public functions
@@ -227,17 +228,20 @@ your-project/CLAUDE.local.md     # Local — personal overrides, NOT in Git
 - Use pytest with fixtures, not unittest
 
 ## Architecture Rules
+
 - All DB access goes through the repository pattern
 - Business logic in services, NOT in route handlers
 - Never return raw SQLAlchemy models — use Pydantic schemas
 
 ## DO NOT
+
 - Modify `.env` or `.env.example` files
 - Delete or alter database migration files
 - Change any `*_schema.py` files without asking
 - Push directly to `main` branch — always create a PR
 
 ## Running the Project
+
 - Start: `docker-compose up`
 - Tests: `pytest -v`
 - Migrations: `alembic upgrade head`
@@ -330,12 +334,12 @@ Claude Code asks for permission before performing potentially risky actions. You
 
 ### Permission Levels (Modes)
 
-| Mode | Behavior |
-|---|---|
-| `default` | Ask permission for each new tool/action type |
-| `acceptEdits` | Auto-approve file writes, ask for Bash |
-| `plan` | Read-only — plan actions, execute nothing |
-| `bypassPermissions` | Skip all dialogs (dangerous!) |
+| Mode                | Behavior                                     |
+| ------------------- | -------------------------------------------- |
+| `default`           | Ask permission for each new tool/action type |
+| `acceptEdits`       | Auto-approve file writes, ask for Bash       |
+| `plan`              | Read-only — plan actions, execute nothing    |
+| `bypassPermissions` | Skip all dialogs (dangerous!)                |
 
 ### Setting Granular Permissions
 
@@ -380,6 +384,7 @@ MCP transforms Claude Code from a file reader/writer into a tool that can intera
 
 Without MCP, Claude Code can only read files and run bash commands.  
 With MCP, Claude can:
+
 - Query your production database
 - Create GitHub PRs and issues
 - Post Slack messages
@@ -448,14 +453,14 @@ Once connected, MCP tools appear as slash commands:
 
 ### Popular MCP Servers
 
-| Server | Use Case |
-|---|---|
-| `@modelcontextprotocol/server-github` | GitHub PRs, issues, repos |
-| `@modelcontextprotocol/server-postgres` | Query PostgreSQL |
-| `@modelcontextprotocol/server-filesystem` | Extended filesystem ops |
-| `@modelcontextprotocol/server-slack` | Slack messaging |
-| `@playwright/mcp` | Browser automation |
-| `@modelcontextprotocol/server-sequential-thinking` | Structured reasoning |
+| Server                                             | Use Case                  |
+| -------------------------------------------------- | ------------------------- |
+| `@modelcontextprotocol/server-github`              | GitHub PRs, issues, repos |
+| `@modelcontextprotocol/server-postgres`            | Query PostgreSQL          |
+| `@modelcontextprotocol/server-filesystem`          | Extended filesystem ops   |
+| `@modelcontextprotocol/server-slack`               | Slack messaging           |
+| `@playwright/mcp`                                  | Browser automation        |
+| `@modelcontextprotocol/server-sequential-thinking` | Structured reasoning      |
 
 ### MCP Tool Naming in Hooks
 
@@ -478,13 +483,13 @@ Think of CLAUDE.md as "should do" rules. Hooks are "must do" rules.
 
 ### Hook Events
 
-| Event | When It Fires |
-|---|---|
-| `PreToolUse` | Before Claude executes any tool — can BLOCK it |
-| `PostToolUse` | After a tool completes successfully |
-| `PostToolUseFailure` | After a tool fails |
-| `PermissionRequest` | When Claude asks for a new permission |
-| `Elicitation` | When an MCP server requests user input |
+| Event                | When It Fires                                  |
+| -------------------- | ---------------------------------------------- |
+| `PreToolUse`         | Before Claude executes any tool — can BLOCK it |
+| `PostToolUse`        | After a tool completes successfully            |
+| `PostToolUseFailure` | After a tool fails                             |
+| `PermissionRequest`  | When Claude asks for a new permission          |
+| `Elicitation`        | When an MCP server requests user input         |
 
 ### Hook Configuration
 
@@ -494,19 +499,23 @@ Think of CLAUDE.md as "should do" rules. Hooks are "must do" rules.
     "PreToolUse": [
       {
         "matcher": "Bash(git commit*)",
-        "hooks": [{
-          "type": "command",
-          "command": "bash .claude/hooks/pre-commit-check.sh"
-        }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/pre-commit-check.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
       {
         "matcher": "Write",
-        "hooks": [{
-          "type": "command",
-          "command": "bash .claude/hooks/run-linter.sh"
-        }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/run-linter.sh"
+          }
+        ]
       }
     ]
   }
@@ -525,7 +534,7 @@ This hook blocks Claude from committing until all tests pass:
 npm run test 2>&1
 
 if [ $? -ne 0 ]; then
-  echo '{"decision": "block", "reason": "Tests must pass before committing"}' 
+  echo '{"decision": "block", "reason": "Tests must pass before committing"}'
   exit 0
 fi
 
@@ -556,13 +565,17 @@ echo '{"decision": "allow"}'
 ```json
 {
   "hooks": {
-    "PreToolUse": [{
-      "matcher": "Write",
-      "hooks": [{
-        "type": "command",
-        "command": "bash -c 'INPUT=$(cat); FILE=$(echo $INPUT | python3 -c \"import sys,json; print(json.load(sys.stdin)[\\\"tool_input\\\"][\\\"path\\\"]\"); if [[ $FILE == *.env* ]]; then echo \\'{{\"decision\":\"block\",\"reason\":\"Cannot write to .env files\"}}\\'; else echo \\'{{\"decision\":\"allow\"}}\\'; fi'"
-      }]
-    }]
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'INPUT=$(cat); FILE=$(echo $INPUT | python3 -c \"import sys,json; print(json.load(sys.stdin)[\\\"tool_input\\\"][\\\"path\\\"]\"); if [[ $FILE == *.env* ]]; then echo \\'{{\"decision\":\"block\",\"reason\":\"Cannot write to .env files\"}}\\'; else echo \\'{{\"decision\":\"allow\"}}\\'; fi'"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
@@ -600,9 +613,11 @@ Use `$ARGUMENTS` to pass dynamic input:
 
 ```markdown
 <!-- .claude/commands/fix-issue.md -->
+
 Fix GitHub issue #$ARGUMENTS following our coding standards in CLAUDE.md.
 
 Steps:
+
 1. Read the issue description
 2. Identify affected files
 3. Implement the fix with tests
@@ -619,9 +634,11 @@ Steps:
 
 ```markdown
 <!-- .claude/commands/pr.md -->
+
 Create a pull request for the current changes.
 
 Steps:
+
 1. Run `git diff` to understand all changes
 2. Run the full test suite — abort if any fail
 3. Write a clear PR description explaining WHY, not just what
@@ -644,11 +661,12 @@ Sub-agents are **specialized Claude instances** you can spawn for specific tasks
 ### Defining a Sub-Agent
 
 ```markdown
-<!-- .claude/agents/security-auditor.md -->
----
+## <!-- .claude/agents/security-auditor.md -->
+
 name: security-auditor
 description: Specialized in application security analysis and vulnerability assessment
-allowed-tools: Read, Grep, Glob, Bash(git log:*), Bash(git diff:*)
+allowed-tools: Read, Grep, Glob, Bash(git log:_), Bash(git diff:_)
+
 ---
 
 # Security Auditor Agent
@@ -656,6 +674,7 @@ allowed-tools: Read, Grep, Glob, Bash(git log:*), Bash(git diff:*)
 You are a senior application security engineer specializing in:
 
 ## Expertise
+
 - OWASP Top 10 vulnerabilities
 - SQL injection, XSS, CSRF patterns
 - Authentication and authorization flaws
@@ -663,7 +682,9 @@ You are a senior application security engineer specializing in:
 - Dependency vulnerability analysis
 
 ## Response Format
+
 Always provide:
+
 1. Severity rating (Critical/High/Medium/Low)
 2. Affected files and line numbers
 3. Proof of concept or explanation
@@ -674,14 +695,16 @@ Always provide:
 ### More Agent Examples
 
 ```markdown
-<!-- .claude/agents/test-writer.md -->
----
+## <!-- .claude/agents/test-writer.md -->
+
 name: test-writer
 description: Writes comprehensive tests for new or modified code
-allowed-tools: Read, Write, Bash(pytest *), Bash(npm test *)
+allowed-tools: Read, Write, Bash(pytest _), Bash(npm test _)
+
 ---
 
 You are a test engineering specialist. For every function or component:
+
 - Write unit tests covering happy path, edge cases, and error conditions
 - Follow existing test patterns in the codebase
 - Aim for >90% branch coverage
@@ -689,19 +712,21 @@ You are a test engineering specialist. For every function or component:
 ```
 
 ```markdown
-<!-- .claude/agents/db-expert.md -->
----
+## <!-- .claude/agents/db-expert.md -->
+
 name: db-expert
 description: Database query optimization, schema design, and migration planning
-allowed-tools: Read, Bash(psql *), mcp__postgres__.*
+allowed-tools: Read, Bash(psql _), mcp**postgres**._
+
 ---
 
 You are a database architect expert focused on:
+
 - Query performance and indexing strategy
 - Schema normalization and design
 - Safe migration planning
 - Analyze EXPLAIN ANALYZE output
-Always provide performance impact estimates.
+  Always provide performance impact estimates.
 ```
 
 ### Using Sub-Agents
@@ -737,10 +762,11 @@ Unlike slash commands (user-triggered), **skills activate automatically** when C
 ```
 
 ```markdown
-<!-- .claude/skills/python-typing/SKILL.md -->
----
+## <!-- .claude/skills/python-typing/SKILL.md -->
+
 name: python-typing
 description: Adding or improving Python type hints and type annotations in Python code
+
 ---
 
 When adding type hints to Python code:
@@ -798,12 +824,12 @@ Context is your most important resource in Claude Code. Managing it well is the 
 
 ### Context Warning Signs
 
-| Context Usage | Status | Action |
-|---|---|---|
-| 0–50% | ✅ Good | Work freely |
-| 50–70% | ⚠️ Watch | Plan ahead |
-| 70–90% | 🟡 Danger | Run `/compact` |
-| 90%+ | 🔴 Critical | `/clear` mandatory |
+| Context Usage | Status      | Action             |
+| ------------- | ----------- | ------------------ |
+| 0–50%         | ✅ Good     | Work freely        |
+| 50–70%        | ⚠️ Watch    | Plan ahead         |
+| 70–90%        | 🟡 Danger   | Run `/compact`     |
+| 90%+          | 🔴 Critical | `/clear` mandatory |
 
 At 70%+ context, Claude starts losing precision. At 85%+, hallucinations increase significantly.
 
@@ -857,21 +883,25 @@ SHIFT + TAB    # Cycle through modes in session
 ### Mode Behaviors
 
 **Default Mode**
+
 - Claude asks permission per tool category
 - Good balance of safety and speed
 - Best for most tasks
 
 **Plan Mode (`plan`)**
+
 - Claude can only read — no writes or execution
 - Claude proposes a plan for your approval
 - Use for: reviewing architecture changes, understanding impact before committing
 
 **Write Mode (`acceptEdits`)**
+
 - Auto-approves file writes
 - Still asks for Bash execution
 - Use for: known-safe code generation tasks
 
 **Bypass Mode (`bypassPermissions` / `--dangerously-skip-permissions`)**
+
 - Skips ALL dialogs
 - Use only in sandboxed CI/CD environments
 - Never use on production systems or with untrusted prompts
@@ -904,18 +934,18 @@ jobs:
   fix-issue:
     if: github.event.label.name == 'claude-fix'
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      
+          node-version: "20"
+
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code
-      
+
       - name: Run Claude Code Agent
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -1038,11 +1068,7 @@ claude mcp list
 ```json
 {
   "permissions": {
-    "deny": [
-      "Read(.env*)",
-      "Write(.env*)",
-      "Read(**/.env*)"
-    ]
+    "deny": ["Read(.env*)", "Write(.env*)", "Read(**/.env*)"]
   }
 }
 ```
@@ -1117,39 +1143,47 @@ mcp__filesystem__read_file
 ```
 
 ---
+
 ## Part 2: Programmatically using it
 
-Claude is a family of large language models developed by **Anthropic**. Focus of each: 
-- OpenAI focuses on **capability maximization** 
-- Google **scale-first** 
+Claude is a family of large language models developed by **Anthropic**. Focus of each:
+
+- OpenAI focuses on **capability maximization**
+- Google **scale-first**
 - Anthropic's focuses **safety-first AI development**.
 
 ## Ways to Access Claude
 
 ### Anthropic Interfaces
+
 - **Claude.ai** — consumer web/mobile/desktop chat interface
 - **Claude for mobile devices** — native Android/iOS app
 - **Claude Desktop App** — native macOS and Windows app
 
 ### Developer Tools
+
 - **Anthropic API** — direct API access for building applications
 - **Claude Code** — agentic CLI for software development
 - **Claude Code for IDEs** - VS Code, IntelliJ, PyCharm and other JetBrains IDEs
 
 ### Embedded Product Integrations
+
 - **Claude in Browsers** — browser-based browsing agent
-- **Claude in Excel/PowerPoint** 
+- **Claude in Excel/PowerPoint**
 - **Claude Code for Slack** — Claude accessible within Slack workspaces
 - **Cowork** — desktop tool for non-developers to automate file and task management
 
 ### Third-Party Cloud Providers
+
 - **Amazon Bedrock** — Claude models via AWS
 - **Google Cloud Vertex AI** — Claude models via GCP
 
 ### Ecosystem / Third-Party Apps
+
 Various platforms building on the Anthropic API, including tools like Cursor, Notion, Perplexity, and more.
 
 ### Key Strengths of Claude
+
 - Large Token context window
 - Native **PDF and document understanding**
 - Strong **instruction following** and structured output
@@ -1161,21 +1195,20 @@ Various platforms building on the Anthropic API, including tools like Cursor, No
 
 To understand 1 Million tokens - think of entire Harry Potter series its almost ~1.08M Tokens. 1 Million Tokens is approx ~3000 pages.
 
-| Model | Provider | Context Window | How They Achieve It |
-|---|---|---|---|
-| **Llama 4 Scout** | Meta | 10M tokens | Mixture-of-Experts (17B active / 109B total params); open-weight, self-hosted |
-| **Gemini 1.5 Pro** | Google | 2M tokens | Efficient attention scaling; optimized for retrieval over synthesis |
-| **Claude Opus 4.6** | Anthropic | 1M tokens | Constitutional AI architecture; strong recall & reasoning at depth |
-| **GPT-5.4** | OpenAI | 1M tokens | Large dense model with extended attention; Codex-tier access |
-| **Gemini 3.1 Pro** | Google | 1M tokens | Native multimodal attention across text, image, audio, video |
-| **Qwen 3.6 Plus** | Alibaba | 1M tokens | Sparse MoE transformer; cost-efficient at scale |
-| **Grok 4.20** | xAI | 2M tokens | High-throughput transformer with extended positional encoding |
-| **Gemini 3.1 Flash** | Google | 200K tokens | Distilled Flash architecture; optimized for speed and low latency |
-| **Claude Sonnet 4.6** | Anthropic | 200K tokens | Balanced compute/quality; strong instruction-following |
-| **Claude Haiku 4.5** | Anthropic | 200K tokens | Lightweight; optimized for fast, high-volume tasks |
-| **GPT-4o** | OpenAI | 128K tokens | Dense transformer with rotary position embeddings |
-| **Perplexity Sonar** | Perplexity | 200K tokens | RAG-augmented; retrieval offsets context limits |
-
+| Model                 | Provider   | Context Window | How They Achieve It                                                           |
+| --------------------- | ---------- | -------------- | ----------------------------------------------------------------------------- |
+| **Llama 4 Scout**     | Meta       | 10M tokens     | Mixture-of-Experts (17B active / 109B total params); open-weight, self-hosted |
+| **Gemini 1.5 Pro**    | Google     | 2M tokens      | Efficient attention scaling; optimized for retrieval over synthesis           |
+| **Claude Opus 4.6**   | Anthropic  | 1M tokens      | Constitutional AI architecture; strong recall & reasoning at depth            |
+| **GPT-5.4**           | OpenAI     | 1M tokens      | Large dense model with extended attention; Codex-tier access                  |
+| **Gemini 3.1 Pro**    | Google     | 1M tokens      | Native multimodal attention across text, image, audio, video                  |
+| **Qwen 3.6 Plus**     | Alibaba    | 1M tokens      | Sparse MoE transformer; cost-efficient at scale                               |
+| **Grok 4.20**         | xAI        | 2M tokens      | High-throughput transformer with extended positional encoding                 |
+| **Gemini 3.1 Flash**  | Google     | 200K tokens    | Distilled Flash architecture; optimized for speed and low latency             |
+| **Claude Sonnet 4.6** | Anthropic  | 200K tokens    | Balanced compute/quality; strong instruction-following                        |
+| **Claude Haiku 4.5**  | Anthropic  | 200K tokens    | Lightweight; optimized for fast, high-volume tasks                            |
+| **GPT-4o**            | OpenAI     | 128K tokens    | Dense transformer with rotary position embeddings                             |
+| **Perplexity Sonar**  | Perplexity | 200K tokens    | RAG-augmented; retrieval offsets context limits                               |
 
 ## Constitutional AI — How Claude Thinks
 
@@ -1186,21 +1219,22 @@ This is the most important Claude-specific concept. Claude is not just RLHF-trai
 **Step 1 — Supervised Learning:** Claude is trained on human-generated data (like other LLMs).
 
 **Step 2 — Self-Critique via a Constitution:** A set of principles (the "constitution") is used to have Claude critique its own outputs. For example:
-> *"Does this response help someone do something harmful? If so, rewrite it."*
+
+> _"Does this response help someone do something harmful? If so, rewrite it."_
 
 **Step 3 — RLHF from AI Feedback (RLAIF):** Instead of only using human feedback, Claude uses AI-generated feedback based on the constitution. This scales alignment without needing infinite human labelers.
 
 ### The Three Core Principles (HHH)
 
-| Principle | What It Means |
-|-----------|---------------|
-| **Helpful** | Actually useful to the human, not watered-down or overly cautious |
-| **Harmless** | Avoids enabling physical, psychological, or societal harm |
-| **Honest** | Truthful, calibrated in uncertainty, non-deceptive |
+| Principle    | What It Means                                                     |
+| ------------ | ----------------------------------------------------------------- |
+| **Helpful**  | Actually useful to the human, not watered-down or overly cautious |
+| **Harmless** | Avoids enabling physical, psychological, or societal harm         |
+| **Honest**   | Truthful, calibrated in uncertainty, non-deceptive                |
 
 ### Why This Matters for Engineers
 
-- Claude will **push back** on instructions that violate its values — design *with* this, not against it
+- Claude will **push back** on instructions that violate its values — design _with_ this, not against it
 - Claude's refusals are more **consistent and principled** than other models
 - You can rely on Claude not sycophantically agreeing with wrong answers
 - Constitutional values are **internalized**, not just surface-level filters
@@ -1213,11 +1247,11 @@ As of 2025–2026, Claude models are organized into families. The current genera
 
 ### Current Models (Claude 4 Family)
 
-| Model | Best For | Speed | Cost |
-|-------|----------|-------|------|
-| **Claude Opus 4** | Complex reasoning, research, hard problems | Slow | Highest |
-| **Claude Sonnet 4** | Production apps, balanced intelligence + speed | Medium | Medium |
-| **Claude Haiku 4** | High-volume, simple tasks, real-time responses | Fastest | Lowest |
+| Model               | Best For                                       | Speed   | Cost    |
+| ------------------- | ---------------------------------------------- | ------- | ------- |
+| **Claude Opus 4**   | Complex reasoning, research, hard problems     | Slow    | Highest |
+| **Claude Sonnet 4** | Production apps, balanced intelligence + speed | Medium  | Medium  |
+| **Claude Haiku 4**  | High-volume, simple tasks, real-time responses | Fastest | Lowest  |
 
 ### Model String IDs (for LangChain)
 
@@ -1237,6 +1271,7 @@ Streaming chatbot, real-time features? → Haiku or Sonnet
 ```
 
 ### Older Generations (Still Available)
+
 - **Claude 3** family: Opus 3, Sonnet 3.5, Haiku 3 — still widely used
 - **Claude 2** — largely deprecated, avoid for new projects
 
@@ -1275,15 +1310,15 @@ print(response.content)
 
 ### Key Differences from Raw Anthropic SDK
 
-| Feature | Raw Anthropic SDK | LangChain (`ChatAnthropic`) |
-|---|---|---|
-| System prompt | Top-level `system` param | `("system", "...")` tuple or `SystemMessage` |
-| Response access | `response.content[0].text` | `response.content` (string) |
-| Streaming | `client.messages.stream(...)` | `for chunk in llm.stream(...)` |
-| Chaining | Manual | `\|` operator with LCEL |
-| Memory | Manual history management | LangGraph checkpointer |
-| Structured output | Manual JSON parsing | `llm.with_structured_output(MyModel)` |
-| Tool calling | Manual loop | `llm.bind_tools([...])` |
+| Feature           | Raw Anthropic SDK             | LangChain (`ChatAnthropic`)                  |
+| ----------------- | ----------------------------- | -------------------------------------------- |
+| System prompt     | Top-level `system` param      | `("system", "...")` tuple or `SystemMessage` |
+| Response access   | `response.content[0].text`    | `response.content` (string)                  |
+| Streaming         | `client.messages.stream(...)` | `for chunk in llm.stream(...)`               |
+| Chaining          | Manual                        | `\|` operator with LCEL                      |
+| Memory            | Manual history management     | LangGraph checkpointer                       |
+| Structured output | Manual JSON parsing           | `llm.with_structured_output(MyModel)`        |
+| Tool calling      | Manual loop                   | `llm.bind_tools([...])`                      |
 
 > **Tip:** You can pass messages as plain tuples `("system", "...")` / `("human", "...")` — no need to import `SystemMessage` / `HumanMessage` for basic usage.
 
@@ -1582,6 +1617,7 @@ print(response.content)
 ```
 
 ### Supported Image Formats
+
 - JPEG, PNG, GIF, WebP
 - Max size: 5MB per image
 - Max images per request: 20
@@ -1628,10 +1664,10 @@ When you send the same large context (system prompt, documents, etc.) repeatedly
 
 ### Cache Pricing
 
-| Token Type | Cost vs Normal |
-|---|---|
+| Token Type  | Cost vs Normal        |
+| ----------- | --------------------- |
 | Cache write | ~25% more than normal |
-| Cache read | ~90% less than normal |
+| Cache read  | ~90% less than normal |
 
 Break-even: After just ~2 reads, you save money overall.
 
@@ -1669,6 +1705,7 @@ print(response.content)
 - Customer support bots: caching product documentation
 
 ### Cache Lifetime
+
 - Ephemeral cache: lasts **5 minutes** after last use
 
 ---
@@ -1692,6 +1729,7 @@ Claude (like all LLMs) performs best when important information is at the **begi
 ### Strategies for Long Conversations
 
 **1. LangGraph with MemorySaver (recommended):**
+
 ```python
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
@@ -1701,6 +1739,7 @@ app = workflow.compile(checkpointer=MemorySaver())
 ```
 
 **2. Trim messages manually in the graph:**
+
 ```python
 from langchain_core.messages import trim_messages
 
@@ -1711,6 +1750,7 @@ def call_model(state: MessagesState):
 ```
 
 **3. Summarization — Compact old history:**
+
 ```python
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -1751,7 +1791,7 @@ vectorstore = FAISS.load_local("my_index", embeddings)
 retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
 prompt = ChatPromptTemplate.from_messages([
-    ("system", """You are a helpful assistant. Answer questions based ONLY on the 
+    ("system", """You are a helpful assistant. Answer questions based ONLY on the
 provided context. If the answer isn't in the context, say "I don't have that information."
 Always cite which part of the context you used."""),
     ("human", """
@@ -1900,16 +1940,16 @@ claude --dangerously-skip-permissions  # Skip ALL permission dialogs (careful!)
 
 ### Key In-Session Shortcuts
 
-| Shortcut | Action |
-|---|---|
-| `SHIFT + TAB` | Switch modes (default / write / plan) |
-| `CTRL + C` | Cancel current input |
-| `ESC` | Cancel generation (can inject new prompt) |
-| `ESC + ESC` | Undo last action |
-| `CTRL + B` | Move task to background |
-| `/compact` | Summarize and clear context |
-| `/model` | Switch model mid-session |
-| `/clear` | Clear context window |
+| Shortcut      | Action                                    |
+| ------------- | ----------------------------------------- |
+| `SHIFT + TAB` | Switch modes (default / write / plan)     |
+| `CTRL + C`    | Cancel current input                      |
+| `ESC`         | Cancel generation (can inject new prompt) |
+| `ESC + ESC`   | Undo last action                          |
+| `CTRL + B`    | Move task to background                   |
+| `/compact`    | Summarize and clear context               |
+| `/model`      | Switch model mid-session                  |
+| `/clear`      | Clear context window                      |
 
 ### CLAUDE.md — Project Instructions File
 
@@ -1919,16 +1959,19 @@ Create a `CLAUDE.md` in your project root to give Claude persistent instructions
 # Project: E-Commerce API
 
 ## Stack
+
 - Python 3.12 + FastAPI
 - PostgreSQL with SQLAlchemy ORM
 - Redis for caching
 
 ## Conventions
+
 - All endpoints must have type hints
 - Use snake_case for variable names
 - Write tests for every new function in /tests
 
 ## DO NOT
+
 - Modify .env files
 - Delete migration files
 - Change database schema without asking first
@@ -1956,12 +1999,12 @@ External Service (GitHub, Slack, Databases, APIs...)
 
 ### MCP Concepts
 
-| Concept | Description |
-|---|---|
-| **MCP Server** | A service that exposes tools and resources via the MCP protocol |
-| **Tools** | Functions Claude can call (e.g., `create_issue`, `send_slack_message`) |
-| **Resources** | Data Claude can read (e.g., files, database records) |
-| **Prompts** | Pre-built prompt templates exposed by the server |
+| Concept        | Description                                                            |
+| -------------- | ---------------------------------------------------------------------- |
+| **MCP Server** | A service that exposes tools and resources via the MCP protocol        |
+| **Tools**      | Functions Claude can call (e.g., `create_issue`, `send_slack_message`) |
+| **Resources**  | Data Claude can read (e.g., files, database records)                   |
+| **Prompts**    | Pre-built prompt templates exposed by the server                       |
 
 ### Using MCP in LangChain
 
@@ -2014,6 +2057,7 @@ async def run_mcp_agent():
 ```
 
 ### Popular MCP Servers (2025)
+
 - GitHub, GitLab
 - Slack, Gmail, Google Calendar
 - Notion, Confluence
@@ -2041,7 +2085,7 @@ def read_file(path: str) -> str:
     with open(path) as f:
         return f.read()
 
-@tool  
+@tool
 def write_file(path: str, content: str) -> str:
     """Write content to a file."""
     with open(path, "w") as f:
@@ -2090,6 +2134,7 @@ review_llm   = ChatAnthropic(model="claude-opus-4-6", max_tokens=2048)          
 ### What Claude Won't Do
 
 Claude will refuse to:
+
 - Generate content that enables mass harm (bioweapons, CSAM, etc.)
 - Help with clearly illegal activities targeting real people
 - Impersonate real individuals deceptively
@@ -2097,6 +2142,7 @@ Claude will refuse to:
 ### What Claude Will Do That Others Won't
 
 Claude is notably **less over-cautious** than many competitors. It can:
+
 - Discuss sensitive historical events in depth
 - Help with security research and penetration testing
 - Write morally complex fiction
@@ -2221,10 +2267,10 @@ llm = ChatAnthropic(model="claude-sonnet-4-6")  # Picks up ANTHROPIC_API_KEY aut
 
 ### Rate Limits (Approximate)
 
-| Tier | RPM | TPM |
-|---|---|---|
-| Free | 5 | 25,000 |
-| Tier 1 | 50 | 50,000 |
+| Tier   | RPM   | TPM     |
+| ------ | ----- | ------- |
+| Free   | 5     | 25,000  |
+| Tier 1 | 50    | 50,000  |
 | Tier 2 | 1,000 | 100,000 |
 | Tier 4 | 4,000 | 400,000 |
 
@@ -2234,11 +2280,11 @@ llm = ChatAnthropic(model="claude-sonnet-4-6")  # Picks up ANTHROPIC_API_KEY aut
 
 ### General Pricing Tiers (per million tokens)
 
-| Model | Input | Output |
-|---|---|---|
-| Opus | ~$15 | ~$75 |
-| Sonnet | ~$3 | ~$15 |
-| Haiku | ~$0.25 | ~$1.25 |
+| Model  | Input  | Output |
+| ------ | ------ | ------ |
+| Opus   | ~$15   | ~$75   |
+| Sonnet | ~$3    | ~$15   |
+| Haiku  | ~$0.25 | ~$1.25 |
 
 > Always check [anthropic.com/pricing](https://anthropic.com/pricing) for current rates.
 
@@ -2265,18 +2311,18 @@ sonnet_cost = (input_tokens * 3 + output_tokens * 15) / 1_000_000
 
 ## Claude vs Other LLMs — Key Differences
 
-| Feature | Claude (Anthropic) | GPT-4o (OpenAI) | Gemini (Google) |
-|---|---|---|---|
-| Context Window | **200K** | 128K | 1M (Gemini 1.5) |
-| Native PDF Support | **Yes** | No (extract first) | Yes |
-| Extended Thinking | **Yes** | No | Yes (Gemini 2.0) |
-| Constitutional AI | **Yes** | No | No |
-| Prompt Caching | **Yes** | Yes | Yes |
-| MCP Support | **Native** | Partial | Partial |
-| Code Generation | Excellent | Excellent | Good |
-| Instruction Following | **Best-in-class** | Very good | Good |
-| Sycophancy | Low (pushes back) | Higher | Medium |
-| LangChain Support | ✅ `langchain-anthropic` | ✅ `langchain-openai` | ✅ `langchain-google-genai` |
+| Feature               | Claude (Anthropic)       | GPT-4o (OpenAI)       | Gemini (Google)             |
+| --------------------- | ------------------------ | --------------------- | --------------------------- |
+| Context Window        | **200K**                 | 128K                  | 1M (Gemini 1.5)             |
+| Native PDF Support    | **Yes**                  | No (extract first)    | Yes                         |
+| Extended Thinking     | **Yes**                  | No                    | Yes (Gemini 2.0)            |
+| Constitutional AI     | **Yes**                  | No                    | No                          |
+| Prompt Caching        | **Yes**                  | Yes                   | Yes                         |
+| MCP Support           | **Native**               | Partial               | Partial                     |
+| Code Generation       | Excellent                | Excellent             | Good                        |
+| Instruction Following | **Best-in-class**        | Very good             | Good                        |
+| Sycophancy            | Low (pushes back)        | Higher                | Medium                      |
+| LangChain Support     | ✅ `langchain-anthropic` | ✅ `langchain-openai` | ✅ `langchain-google-genai` |
 
 ---
 

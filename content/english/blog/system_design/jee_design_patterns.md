@@ -16,6 +16,7 @@ JEE design patterns are specialized solutions for enterprise Java applications. 
 Provides centralized request pre-processing and post-processing.
 
 **Example (Java):**
+
 ```java
 public interface Filter {
     void execute(String request);
@@ -36,10 +37,12 @@ public class FilterChain {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - When you need reusable request processing logic (logging, authentication).
 
-**When not to use:**  
+**When not to use:**
+
 - When processing logic is simple or not reusable.
 
 ---
@@ -49,6 +52,7 @@ public class FilterChain {
 Centralizes request handling to improve control and flexibility.
 
 **Example (Java):**
+
 ```java
 public class FrontController {
     public void dispatchRequest(String request) {
@@ -61,10 +65,12 @@ public class FrontController {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - When you want a single entry point for requests.
 
-**When not to use:**  
+**When not to use:**
+
 - For very simple applications.
 
 ---
@@ -74,6 +80,7 @@ public class FrontController {
 Separates business logic from view rendering.
 
 **Example (Java):**
+
 ```java
 public class ViewHelper {
     public String formatDate(Date date) {
@@ -82,10 +89,12 @@ public class ViewHelper {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - When you want to keep views clean and reusable.
 
-**When not to use:**  
+**When not to use:**
+
 - When formatting logic is trivial.
 
 ---
@@ -95,6 +104,7 @@ public class ViewHelper {
 Creates views from modular, reusable subviews.
 
 **Example (Java):**
+
 ```java
 public interface View {
     void render();
@@ -113,10 +123,12 @@ public class CompositeView implements View {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - For complex UIs with reusable components.
 
-**When not to use:**  
+**When not to use:**
+
 - For simple, static views.
 
 ---
@@ -128,6 +140,7 @@ public class CompositeView implements View {
 Decouples presentation and business logic.
 
 **Example (Java):**
+
 ```java
 public class BusinessService {
     public void doTask() { System.out.println("Business logic executed"); }
@@ -139,10 +152,12 @@ public class BusinessDelegate {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - When you want to hide business logic complexity from the presentation tier.
 
-**When not to use:**  
+**When not to use:**
+
 - When business logic is simple.
 
 ---
@@ -152,6 +167,7 @@ public class BusinessDelegate {
 Provides a unified interface to a set of business services.
 
 **Example (Java):**
+
 ```java
 public class OrderService { public void placeOrder() {} }
 public class PaymentService { public void processPayment() {} }
@@ -166,10 +182,12 @@ public class SessionFacade {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - When you want to reduce network calls and simplify client interaction.
 
-**When not to use:**  
+**When not to use:**
+
 - When only one service is involved.
 
 ---
@@ -179,6 +197,7 @@ public class SessionFacade {
 Coordinates business logic across multiple operations.
 
 **Example (Java):**
+
 ```java
 public class ApplicationService {
     public void performBusinessOperation() {
@@ -187,10 +206,12 @@ public class ApplicationService {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - For complex business workflows.
 
-**When not to use:**  
+**When not to use:**
+
 - For simple, single-step operations.
 
 ---
@@ -200,6 +221,7 @@ public class ApplicationService {
 Centralizes service lookup and management.
 
 **Example (Java):**
+
 ```java
 public class ServiceLocator {
     private static Map<String, Object> services = new HashMap<>();
@@ -208,10 +230,12 @@ public class ServiceLocator {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - When you need to decouple service consumers from service creation.
 
-**When not to use:**  
+**When not to use:**
+
 - When dependency injection is preferred.
 
 ---
@@ -221,6 +245,7 @@ public class ServiceLocator {
 Encapsulates data for transfer between layers.
 
 **Example (Java):**
+
 ```java
 public class CustomerDTO {
     private String name;
@@ -229,10 +254,12 @@ public class CustomerDTO {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - When transferring multiple data fields between layers.
 
-**When not to use:**  
+**When not to use:**
+
 - For simple, single-field transfers.
 
 ---
@@ -244,6 +271,7 @@ public class CustomerDTO {
 Abstracts and encapsulates all access to the data source.
 
 **Example (Java):**
+
 ```java
 public class CustomerDAO {
     public CustomerDTO findCustomerById(int id) {
@@ -253,10 +281,12 @@ public class CustomerDAO {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - When you want to separate persistence logic from business logic.
 
-**When not to use:**  
+**When not to use:**
+
 - For trivial data access.
 
 ---
@@ -266,6 +296,7 @@ public class CustomerDAO {
 Enables asynchronous invocation of business services.
 
 **Example (Java):**
+
 ```java
 public class ServiceActivator {
     public void activateService(Runnable serviceTask) {
@@ -274,10 +305,12 @@ public class ServiceActivator {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - For asynchronous processing.
 
-**When not to use:**  
+**When not to use:**
+
 - For synchronous, simple calls.
 
 ---
@@ -287,6 +320,7 @@ public class ServiceActivator {
 Centralizes and manages web service interactions.
 
 **Example (Java):**
+
 ```java
 public class WebServiceBroker {
     public void callService(String endpoint) {
@@ -295,10 +329,12 @@ public class WebServiceBroker {
 }
 ```
 
-**When to use:**  
+**When to use:**
+
 - For integrating multiple web services.
 
-**When not to use:**  
+**When not to use:**
+
 - For direct, simple web service calls.
 
 ---

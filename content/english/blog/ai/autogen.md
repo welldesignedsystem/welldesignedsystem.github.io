@@ -14,17 +14,16 @@ AutoGen provides a well-defined class hierarchy that forms the foundation for bu
 
 ![](../img/autogen_architecture.png)
 
-## Class Diagrams 
+## Class Diagrams
+
 ![Class Diagram](https://raw.githubusercontent.com/welldesignedsystem/stunning-spork/main/Agent_original.svg)
 ![Class Diagram](https://raw.githubusercontent.com/welldesignedsystem/stunning-spork/main/Agent_grouped.svg)
 
 ## Some code snippets:
+
 [Sample Code](https://github.com/welldesignedsystem/stunning-spork/blob/main/notebook.ipynb)
 
 ## References
 
 - [Docs](https://microsoft.github.io/autogen/stable//user-guide/agentchat-user-guide/selector-group-chat.html)
 - [Autogen Design Patterns](https://microsoft.github.io/autogen/stable//user-guide/core-user-guide/design-patterns/concurrent-agents.html)
-  
-
-

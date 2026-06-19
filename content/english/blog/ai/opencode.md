@@ -72,7 +72,9 @@ opencode
 ## Core Concepts
 
 ### Agent Loop
+
 OpenCode implements a continuous agent loop:
+
 1. **Receive prompt** — user input, conversation history, tool definitions
 2. **Plan** — the model reasons about what to do
 3. **Execute** — tools run (file ops, bash, search, web)
@@ -80,14 +82,18 @@ OpenCode implements a continuous agent loop:
 5. **Repeat** — until the task is complete
 
 ### Multi-Agent Architecture
+
 OpenCode uses a multi-agent system with two primary built-in agents, switchable with the `Tab` key:
+
 - **Plan mode** — read-only agent for analysis and code exploration
 - **Build mode** — default, full-access agent for development work
 
 A general-purpose subagent is also included for complex searches and multi-step tasks. It is used internally and can be invoked with `@general` in messages.
 
 ### Sessions
+
 Every conversation is a persistent session stored in SQLite. Sessions can be:
+
 - **Resumed** — pick up exactly where you left off
 - **Shared** — generate a share link for debugging or reference
 - **Forked** — explore alternatives without losing the original thread
@@ -106,6 +112,7 @@ opencode --continue <session-id>
 ```
 
 ### Context Management
+
 - **Automatic compaction** — when context nears the window limit, older history is summarized
 - **Prompt caching** — static content (system prompt, tool definitions) is prompt-cached across turns
 - **LSP integration** — automatically loads the right language servers to provide accurate code context
@@ -116,21 +123,21 @@ opencode --continue <session-id>
 
 OpenCode ships with built-in tools that the agent uses autonomously:
 
-| Category | Tool | What It Does |
-|---|---|---|
-| **File** | `Read` | Read files in the working directory |
-| | `Write` | Create or overwrite files |
-| | `Edit` | Make precise edits to existing files |
-| | `Glob` | Find files by pattern |
-| | `Grep` | Search file contents with regex |
-| **Execution** | `Bash` | Run shell commands, scripts, git |
-| | `Process` | Manage background processes (list, poll, log, kill) |
-| **Web** | `WebSearch` | Search the web |
-| | `WebFetch` | Fetch and parse web pages |
-| **Agent** | `Agent` | Spawn subagents for delegation |
-| **Tool** | `Skill` | Load domain-specific skill instructions |
-| | `ToolSearch` | Dynamically discover tools |
-| **Planning** | `TodoWrite` | Maintain structured task lists |
+| Category      | Tool         | What It Does                                        |
+| ------------- | ------------ | --------------------------------------------------- |
+| **File**      | `Read`       | Read files in the working directory                 |
+|               | `Write`      | Create or overwrite files                           |
+|               | `Edit`       | Make precise edits to existing files                |
+|               | `Glob`       | Find files by pattern                               |
+|               | `Grep`       | Search file contents with regex                     |
+| **Execution** | `Bash`       | Run shell commands, scripts, git                    |
+|               | `Process`    | Manage background processes (list, poll, log, kill) |
+| **Web**       | `WebSearch`  | Search the web                                      |
+|               | `WebFetch`   | Fetch and parse web pages                           |
+| **Agent**     | `Agent`      | Spawn subagents for delegation                      |
+| **Tool**      | `Skill`      | Load domain-specific skill instructions             |
+|               | `ToolSearch` | Dynamically discover tools                          |
+| **Planning**  | `TodoWrite`  | Maintain structured task lists                      |
 
 ---
 
@@ -176,23 +183,24 @@ opencode run --mcp mcp.json "Query the database"
 
 ### CLI Flags
 
-| Flag | Description |
-|---|---|
-| `--provider` | LLM provider to use |
-| `--model` | Model name |
-| `--workdir` | Working directory |
-| `--continue` / `-c` | Resume most recent (or specified) session |
-| `--title` | Set a name for the session (non-interactive mode) |
-| `--file` | Attach a file to the prompt |
-| `--pty` | Enable PTY for interactive TUI |
-| `--timeout` | Max execution time |
-| `--background` | Run as background session |
+| Flag                | Description                                       |
+| ------------------- | ------------------------------------------------- |
+| `--provider`        | LLM provider to use                               |
+| `--model`           | Model name                                        |
+| `--workdir`         | Working directory                                 |
+| `--continue` / `-c` | Resume most recent (or specified) session         |
+| `--title`           | Set a name for the session (non-interactive mode) |
+| `--file`            | Attach a file to the prompt                       |
+| `--pty`             | Enable PTY for interactive TUI                    |
+| `--timeout`         | Max execution time                                |
+| `--background`      | Run as background session                         |
 
 ---
 
 ## TUI, Slash Commands & Shortcuts
 
 ### TUI Overview
+
 Running `opencode` in a project directory launches the Terminal User Interface (TUI) — a chat-like interface with full project context. The TUI provides three primary interaction methods: **slash commands**, **command palette**, and **keyboard shortcuts**.
 
 ```
@@ -201,48 +209,54 @@ opencode
 ```
 
 ### Built-in Slash Commands
+
 Type `/` in the TUI prompt to see the autocomplete list. Here are all available commands:
 
-| Command | Alias | Action |
-|---|---|---|
-| `/init` | — | Create or update `AGENTS.md` with project analysis |
-| `/connect` | — | Add an LLM provider (select and paste API key) |
-| `/models` | — | List and switch available models |
-| `/sessions` | `/resume`, `/continue` | List and switch between saved sessions |
-| `/new` | `/clear` | Start a fresh session |
-| `/undo` | — | Revert last message and all file changes |
-| `/redo` | — | Restore a previously undone message and file changes |
-| `/compact` | `/summarize` | Manually compact context by summarizing older history |
-| `/share` | — | Create a public shareable link to the current session |
-| `/unshare` | — | Remove sharing from the current session |
-| `/export` | — | Export conversation to Markdown and open in editor |
-| `/editor` | — | Open external editor to compose a message |
-| `/theme` | — | List and switch TUI color themes |
-| `/thinking` | — | Toggle display of AI reasoning/thinking blocks |
-| `/details` | — | Toggle visibility of tool execution details |
-| `/help` | — | Show the help dialog |
-| `/exit` | `/quit`, `/q` | Exit OpenCode |
+| Command     | Alias                  | Action                                                |
+| ----------- | ---------------------- | ----------------------------------------------------- |
+| `/init`     | —                      | Create or update `AGENTS.md` with project analysis    |
+| `/connect`  | —                      | Add an LLM provider (select and paste API key)        |
+| `/models`   | —                      | List and switch available models                      |
+| `/sessions` | `/resume`, `/continue` | List and switch between saved sessions                |
+| `/new`      | `/clear`               | Start a fresh session                                 |
+| `/undo`     | —                      | Revert last message and all file changes              |
+| `/redo`     | —                      | Restore a previously undone message and file changes  |
+| `/compact`  | `/summarize`           | Manually compact context by summarizing older history |
+| `/share`    | —                      | Create a public shareable link to the current session |
+| `/unshare`  | —                      | Remove sharing from the current session               |
+| `/export`   | —                      | Export conversation to Markdown and open in editor    |
+| `/editor`   | —                      | Open external editor to compose a message             |
+| `/theme`    | —                      | List and switch TUI color themes                      |
+| `/thinking` | —                      | Toggle display of AI reasoning/thinking blocks        |
+| `/details`  | —                      | Toggle visibility of tool execution details           |
+| `/help`     | —                      | Show the help dialog                                  |
+| `/exit`     | `/quit`, `/q`          | Exit OpenCode                                         |
 
 ### Custom Commands
+
 Define your own slash commands as Markdown files in `.opencode/commands/`:
 
 `.opencode/commands/review.md`:
+
 ```markdown
 ---
 description: Review recent changes
 agent: plan
 ---
+
 Review the recent git changes and suggest improvements:
 
 !`git log --oneline -10`
 ```
 
 Type `/review` in the TUI to run it. Supports:
+
 - **Arguments** — `$ARGUMENTS`, `$1`, `$2`, etc.
 - **Shell output** — `` !`command` `` injects bash output into the prompt
 - **File references** — `@path/to/file` includes file content
 
 ### File References with `@`
+
 Reference files in messages using `@` for fuzzy file search:
 
 ```
@@ -252,6 +266,7 @@ How is auth handled in @packages/functions/src/api/index.ts?
 The file content is added to the conversation automatically. Configured references also appear in autocomplete — type `@alias/` to browse files.
 
 ### Bash Commands with `!`
+
 Start a message with `!` to run a shell command inline:
 
 ```
@@ -264,39 +279,40 @@ The command output is added to the conversation as a tool result.
 
 OpenCode uses a **leader key** (default `Ctrl+X`) for many shortcuts. Press the leader, then the action key.
 
-| Shortcut | Action |
-|---|---|
-| `Tab` / `Shift+Tab` | Cycle agent modes (plan → build) |
-| `Ctrl+T` | Cycle model variants |
-| `F2` / `Shift+F2` | Cycle recent models |
-| `Ctrl+P` | Open command palette |
-| `Ctrl+X` `n` | New session |
-| `Ctrl+X` `l` | List sessions |
-| `Ctrl+X` `c` | Compact session |
-| `Ctrl+X` `u` | Undo last message |
-| `Ctrl+X` `r` | Redo last undo |
-| `Ctrl+X` `e` | Open editor |
-| `Ctrl+X` `x` | Export session |
-| `Ctrl+X` `s` | View status |
-| `Ctrl+X` `m` | List models |
-| `Ctrl+X` `t` | List themes |
-| `Ctrl+X` `a` | List agents |
-| `Ctrl+X` `b` | Toggle sidebar |
-| `Ctrl+X` `q` | Exit OpenCode |
-| `Ctrl+X` `h` | Toggle tips |
-| `Ctrl+X` `y` | Copy message |
-| `Escape` | Interrupt current response |
-| `PageUp` / `PageDown` | Scroll messages |
-| `Ctrl+G` / `Home` | Jump to top |
-| `Ctrl+Alt+G` / `End` | Jump to bottom |
-| `Ctrl+A` / `Ctrl+E` | Line start / end (input) |
-| `Ctrl+U` / `Ctrl+K` | Delete to line start / end |
-| `Ctrl+W` / `Alt+D` | Delete previous / next word |
-| `Ctrl+D` | Delete character under cursor |
-| `y` / `n` | Allow / Deny permission prompt |
-| `a` | Always allow (current session) |
+| Shortcut              | Action                           |
+| --------------------- | -------------------------------- |
+| `Tab` / `Shift+Tab`   | Cycle agent modes (plan → build) |
+| `Ctrl+T`              | Cycle model variants             |
+| `F2` / `Shift+F2`     | Cycle recent models              |
+| `Ctrl+P`              | Open command palette             |
+| `Ctrl+X` `n`          | New session                      |
+| `Ctrl+X` `l`          | List sessions                    |
+| `Ctrl+X` `c`          | Compact session                  |
+| `Ctrl+X` `u`          | Undo last message                |
+| `Ctrl+X` `r`          | Redo last undo                   |
+| `Ctrl+X` `e`          | Open editor                      |
+| `Ctrl+X` `x`          | Export session                   |
+| `Ctrl+X` `s`          | View status                      |
+| `Ctrl+X` `m`          | List models                      |
+| `Ctrl+X` `t`          | List themes                      |
+| `Ctrl+X` `a`          | List agents                      |
+| `Ctrl+X` `b`          | Toggle sidebar                   |
+| `Ctrl+X` `q`          | Exit OpenCode                    |
+| `Ctrl+X` `h`          | Toggle tips                      |
+| `Ctrl+X` `y`          | Copy message                     |
+| `Escape`              | Interrupt current response       |
+| `PageUp` / `PageDown` | Scroll messages                  |
+| `Ctrl+G` / `Home`     | Jump to top                      |
+| `Ctrl+Alt+G` / `End`  | Jump to bottom                   |
+| `Ctrl+A` / `Ctrl+E`   | Line start / end (input)         |
+| `Ctrl+U` / `Ctrl+K`   | Delete to line start / end       |
+| `Ctrl+W` / `Alt+D`    | Delete previous / next word      |
+| `Ctrl+D`              | Delete character under cursor    |
+| `y` / `n`             | Allow / Deny permission prompt   |
+| `a`                   | Always allow (current session)   |
 
 ### Configuring Keybinds
+
 Customize shortcuts in `opencode.json` (or a dedicated `tui.json`):
 
 ```json
@@ -314,6 +330,7 @@ Customize shortcuts in `opencode.json` (or a dedicated `tui.json`):
 Disable any keybind by setting it to `"none"`. Multiple bindings per action use comma separation or arrays.
 
 ### TUI Config
+
 TUI behaviour is configured under the `tui` key in `opencode.json`:
 
 ```json
@@ -343,18 +360,18 @@ The `attention` block enables desktop notifications and sounds for questions, pe
 
 OpenCode supports **75+ LLM providers**, including:
 
-| Provider | How to Connect |
-|---|---|
-| **Zen (free)** | No config — included out of the box |
-| **OpenAI** | `OPENAI_API_KEY` |
-| **Anthropic** | `ANTHROPIC_API_KEY` |
-| **Google Gemini** | `GEMINI_API_KEY` |
-| **GitHub Copilot** | `opencode auth login` |
-| **ChatGPT Plus/Pro** | `opencode auth login` |
-| **AWS Bedrock** | AWS credentials |
-| **Ollama (local)** | Local Ollama instance |
-| **OpenRouter** | `OPENROUTER_API_KEY` |
-| **Groq** | `GROQ_API_KEY` |
+| Provider             | How to Connect                      |
+| -------------------- | ----------------------------------- |
+| **Zen (free)**       | No config — included out of the box |
+| **OpenAI**           | `OPENAI_API_KEY`                    |
+| **Anthropic**        | `ANTHROPIC_API_KEY`                 |
+| **Google Gemini**    | `GEMINI_API_KEY`                    |
+| **GitHub Copilot**   | `opencode auth login`               |
+| **ChatGPT Plus/Pro** | `opencode auth login`               |
+| **AWS Bedrock**      | AWS credentials                     |
+| **Ollama (local)**   | Local Ollama instance               |
+| **OpenRouter**       | `OPENROUTER_API_KEY`                |
+| **Groq**             | `GROQ_API_KEY`                      |
 
 You can also use local models with full agentic capabilities via Ollama — no API costs, fully offline.
 
@@ -455,6 +472,7 @@ OpenCode will automatically review PRs when opened/updated, triage issues, and r
 ## Desktop App
 
 OpenCode's desktop app (beta) is available for macOS, Windows, and Linux. It provides:
+
 - Native OS integration
 - Desktop notifications
 - Persistent background sessions
@@ -483,31 +501,31 @@ OpenCode is configured via `opencode.json` or `opencode.jsonc` in the project ro
   "autoupdate": true,
   "permission": {
     "edit": "ask",
-    "bash": "ask"
+    "bash": "ask",
   },
   "mcp": {
     "playwright": {
       "command": "npx",
-      "args": ["@playwright/mcp@latest"]
-    }
-  }
+      "args": ["@playwright/mcp@latest"],
+    },
+  },
 }
 ```
 
 ### Key Config Options
 
-| Option | Type | Description |
-|---|---|---|
-| `model` | string | Provider/model string, e.g. `"anthropic/claude-sonnet-4-5"` |
-| `permission` | object | Per-tool approval rules (`"ask"`, `"allow"`, `"deny"`) |
-| `mcp` | object | MCP server connections |
-| `agent` | object | Custom agent/subagent definitions |
-| `lsp` | object | LSP server configuration |
-| `server` | object | HTTP server settings (port, hostname, mDNS, CORS) |
-| `tui` | object | TUI behaviour (scroll speed, diff style) |
-| `systemPrompt` | string | Append to base system prompt |
-| `autoupdate` | boolean | Auto-update OpenCode on launch |
-| `shell` | string | Shell used for Bash tool and terminal |
+| Option         | Type    | Description                                                 |
+| -------------- | ------- | ----------------------------------------------------------- |
+| `model`        | string  | Provider/model string, e.g. `"anthropic/claude-sonnet-4-5"` |
+| `permission`   | object  | Per-tool approval rules (`"ask"`, `"allow"`, `"deny"`)      |
+| `mcp`          | object  | MCP server connections                                      |
+| `agent`        | object  | Custom agent/subagent definitions                           |
+| `lsp`          | object  | LSP server configuration                                    |
+| `server`       | object  | HTTP server settings (port, hostname, mDNS, CORS)           |
+| `tui`          | object  | TUI behaviour (scroll speed, diff style)                    |
+| `systemPrompt` | string  | Append to base system prompt                                |
+| `autoupdate`   | boolean | Auto-update OpenCode on launch                              |
+| `shell`        | string  | Shell used for Bash tool and terminal                       |
 
 Organizations can provide default configuration via a `.well-known/opencode` endpoint, which is fetched automatically when authenticating with a supporting provider. Remote config is the base layer; global and project configs override it.
 
@@ -525,14 +543,14 @@ Subagents can be defined in `opencode.json`:
     "code-reviewer": {
       "description": "Expert code reviewer",
       "prompt": "Analyse code quality, security, and performance.",
-      "tools": ["Read", "Glob", "Grep"]
+      "tools": ["Read", "Glob", "Grep"],
     },
     "test-writer": {
       "description": "Writes comprehensive tests",
       "prompt": "Write pytest unit tests with edge cases.",
-      "tools": ["Read", "Write", "Bash"]
-    }
-  }
+      "tools": ["Read", "Write", "Bash"],
+    },
+  },
 }
 ```
 
@@ -593,6 +611,7 @@ description: "Detailed code review covering quality, security, and performance"
 ---
 
 # Code Review Checklist
+
 ...
 ```
 
@@ -609,18 +628,18 @@ Control tool access via the `permission` key in `opencode.json`:
   "permission": {
     "edit": "allow",
     "bash": "ask",
-    "bash(rm -rf:*)": "deny"
-  }
+    "bash(rm -rf:*)": "deny",
+  },
 }
 ```
 
 ### Permission Values
 
-| Value | Behaviour |
-|---|---|
+| Value     | Behaviour                      |
+| --------- | ------------------------------ |
 | `"allow"` | Auto-approve without prompting |
-| `"ask"` | Prompt the user each time |
-| `"deny"` | Block the tool entirely |
+| `"ask"`   | Prompt the user each time      |
+| `"deny"`  | Block the tool entirely        |
 
 By default, OpenCode allows all operations without requiring explicit approval.
 
@@ -630,59 +649,65 @@ By default, OpenCode allows all operations without requiring explicit approval.
 
 ### OpenCode vs Claude Code
 
-| | OpenCode | Claude Code |
-|---|---|---|
-| **Provider** | Any (75+ providers) | Anthropic only |
-| **License** | MIT (open source) | Proprietary |
-| **Local models** | ✅ Yes (Ollama) | ❌ No |
-| **Cost** | Free (BYOK or Zen) | Claude subscription |
-| **LSP** | ✅ Yes | ✅ Yes |
-| **Desktop app** | ✅ Beta | ❌ No |
-| **GitHub Copilot** | ✅ Native | ❌ No |
-| **Privacy** | No data stored | Anthropic processes data |
-| **Stars** | 160K+ | N/A |
+|                    | OpenCode            | Claude Code              |
+| ------------------ | ------------------- | ------------------------ |
+| **Provider**       | Any (75+ providers) | Anthropic only           |
+| **License**        | MIT (open source)   | Proprietary              |
+| **Local models**   | ✅ Yes (Ollama)     | ❌ No                    |
+| **Cost**           | Free (BYOK or Zen)  | Claude subscription      |
+| **LSP**            | ✅ Yes              | ✅ Yes                   |
+| **Desktop app**    | ✅ Beta             | ❌ No                    |
+| **GitHub Copilot** | ✅ Native           | ❌ No                    |
+| **Privacy**        | No data stored      | Anthropic processes data |
+| **Stars**          | 160K+               | N/A                      |
 
 ### OpenCode vs Aider
 
-| | OpenCode | Aider |
-|---|---|---|
-| **Interface** | TUI + CLI + Desktop | CLI only |
-| **MCP** | ✅ Yes | Limited |
-| **Subagents** | ✅ Yes | ❌ No |
-| **Multi-session** | ✅ Yes | ❌ No |
-| **Git integration** | ✅ Auto-commit | ✅ Auto-commit (stronger) |
-| **LSP** | ✅ Yes | ❌ No |
+|                     | OpenCode            | Aider                     |
+| ------------------- | ------------------- | ------------------------- |
+| **Interface**       | TUI + CLI + Desktop | CLI only                  |
+| **MCP**             | ✅ Yes              | Limited                   |
+| **Subagents**       | ✅ Yes              | ❌ No                     |
+| **Multi-session**   | ✅ Yes              | ❌ No                     |
+| **Git integration** | ✅ Auto-commit      | ✅ Auto-commit (stronger) |
+| **LSP**             | ✅ Yes              | ❌ No                     |
 
 ---
 
 ## Common Workflows
 
 ### Code Review
+
 ```bash
 opencode run --agent plan "Review the auth module for security vulnerabilities"
 ```
 
 ### Bug Fixing
+
 ```bash
 opencode run "Find and fix the bug causing the 500 error in api/users.py"
 ```
 
 ### Refactoring
+
 ```bash
 opencode run "Refactor the payment service to use the strategy pattern"
 ```
 
 ### Testing
+
 ```bash
 opencode run "Add comprehensive unit tests for the data processing pipeline"
 ```
 
 ### Research
+
 ```bash
 opencode run "Research best practices for rate limiting in FastAPI and implement them"
 ```
 
 ### CI/CD Pipeline
+
 ```bash
 opencode run --timeout 300000 "Run the test suite and fix any failures"
 ```

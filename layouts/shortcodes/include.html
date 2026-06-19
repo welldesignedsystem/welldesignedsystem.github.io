@@ -1,3 +1,2 @@
-{{ $file := .Get 0 }}
-{{ $content := readFile $file }}
-{{ $content | markdownify }}
+{{ $file := .Get 0 }} {{ $content := readFile $file }} {{ $content | markdownify
+}}

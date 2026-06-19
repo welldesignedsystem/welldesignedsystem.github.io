@@ -29,9 +29,10 @@ Before diving in, the tutorials establish four key terms used throughout:
 - **Hyperparameters** — The configuration values that shape your LLM application: system prompts, model choice, temperature, chunk size (for RAG), and more.
 - **System Prompt** — A prompt that defines the overall behaviour of your LLM across all interactions.
 - **Generation Model** — The LLM you're actually evaluating (the model that produces responses).
-- **Evaluation Model** — A separate LLM used to score or critique the generation model's outputs. This is *not* the model being evaluated. By default, DeepEval uses OpenAI's models for this.
+- **Evaluation Model** — A separate LLM used to score or critique the generation model's outputs. This is _not_ the model being evaluated. By default, DeepEval uses OpenAI's models for this.
 
 ### Key Metrices
+
 -- Refer the [Metric Types](http://localhost:1313/blog/ai/deepevals/#metric-types) Section.
 
 ## Getting Started: Installation and Your First Eval
@@ -113,6 +114,7 @@ deepeval logout
 ### What You'll Build
 
 A **meeting summarisation agent** that takes a raw meeting transcript and returns:
+
 - A concise plain-text summary of the discussion
 - A structured JSON object of action items (individual and team-wide)
 
@@ -297,7 +299,7 @@ class MeetingSummarizer:
     @observe(name="Action Items")
     def get_action_items(self, transcript: str, model: str = None) -> dict:
         try:
-            llm = ChatOpenAI(model=model or self.model, 
+            llm = ChatOpenAI(model=model or self.model,
                              model_kwargs={"response_format": {"type": "json_object"}})
             messages = [
                 SystemMessage(content=self.action_item_system_prompt),
@@ -350,6 +352,7 @@ def test_full_pipeline_quality(summarizer):
     assert isinstance(summary, str) and len(summary) > 0
     assert "individual_actions" in action_items
 ```
+
 ### Setting Up Your Evaluation Dataset
 
 Rather than maintaining a custom database, DeepEval uses `EvaluationDataset` objects populated with `Golden`s. A `Golden` stores just the `input` without requiring an `actual_output` — the output is generated at runtime.
@@ -431,9 +434,9 @@ evaluate(test_cases=summary_test_cases, metrics=[summary_concision])
 evaluate(test_cases=action_item_test_cases, metrics=[action_item_check])
 ```
 
-`GEval` uses LLM-as-a-judge with chain-of-thought reasoning. It not only scores each test case but also explains *why* it passed or failed. A typical reason from a failing test case looks like:
+`GEval` uses LLM-as-a-judge with chain-of-thought reasoning. It not only scores each test case but also explains _why_ it passed or failed. A typical reason from a failing test case looks like:
 
-> *"The summary captures key discussion points but includes some verbose phrasing. Some sentences feel unnecessarily elaborate for an executive-style brief."*
+> _"The summary captures key discussion points but includes some verbose phrasing. Some sentences feel unnecessarily elaborate for an executive-style brief."_
 
 ### Iterating on Hyperparameters
 
@@ -498,11 +501,11 @@ for model in models:
 
 Results across the three models with the updated prompts:
 
-| Model | Summary Concision | Action Item Accuracy |
-|---|---|---|
-| gpt-3.5-turbo | 0.7 | 0.6 |
-| gpt-4o | **0.9** | 0.7 |
-| gpt-4-turbo | 0.8 | **0.9** |
+| Model         | Summary Concision | Action Item Accuracy |
+| ------------- | ----------------- | -------------------- |
+| gpt-3.5-turbo | 0.7               | 0.6                  |
+| gpt-4o        | **0.9**           | 0.7                  |
+| gpt-4-turbo   | 0.8               | **0.9**              |
 
 Different models excel at different tasks. The solution is to configure `gpt-4o` for summaries and `gpt-4-turbo` for action items by passing them as separate arguments to `summarize()`.
 
@@ -1097,66 +1100,68 @@ evaluate_thread(
 
 ### LLMTestCase vs ConversationalTestCase
 
-| Feature | `LLMTestCase` | `ConversationalTestCase` |
-|---|---|---|
-| Use case | Single-turn interactions | Multi-turn dialogues |
-| Key fields | `input`, `actual_output`, `retrieval_context`, `expected_output` | `turns` (list of `Turn`) |
-| Typical apps | RAG agents, summarisers | Chatbots, voice assistants |
+| Feature      | `LLMTestCase`                                                    | `ConversationalTestCase`   |
+| ------------ | ---------------------------------------------------------------- | -------------------------- |
+| Use case     | Single-turn interactions                                         | Multi-turn dialogues       |
+| Key fields   | `input`, `actual_output`, `retrieval_context`, `expected_output` | `turns` (list of `Turn`)   |
+| Typical apps | RAG agents, summarisers                                          | Chatbots, voice assistants |
 
 ### Golden vs TestCase
 
-| Feature | `Golden` / `ConversationalGolden` | `LLMTestCase` / `ConversationalTestCase` |
-|---|---|---|
-| Requires `actual_output`? | No | Yes |
-| When to use | Dataset creation, storage | At evaluation time |
-| Role | Template / input definition | Fully populated test unit |
-| Extra fields | `expected_output`, `scenario`, `expected_outcome` | — |
+| Feature                   | `Golden` / `ConversationalGolden`                 | `LLMTestCase` / `ConversationalTestCase` |
+| ------------------------- | ------------------------------------------------- | ---------------------------------------- |
+| Requires `actual_output`? | No                                                | Yes                                      |
+| When to use               | Dataset creation, storage                         | At evaluation time                       |
+| Role                      | Template / input definition                       | Fully populated test unit                |
+| Extra fields              | `expected_output`, `scenario`, `expected_outcome` | —                                        |
 
 `scenario` and `expected_outcome` are fields on `ConversationalGolden` (used when defining simulation scenarios). They are not fields on `ConversationalTestCase` itself.
 
 ### Metric Types
-Deepeval offers 50+ State of the Art, ready-to-use metrics for you to quickly get started with. 
+
+Deepeval offers 50+ State of the Art, ready-to-use metrics for you to quickly get started with.
 [Refer](https://deepeval.com/docs/metrics-introduction#quick-summary)
 
-| Metric | Type | Use Case |
-|---|---|---|
-| `GEval` | LLM-as-a-judge | Evaluate any custom criteria you define in plain English (e.g. "is the response polite and concise?") |
-| `DAGMetric` | LLM-as-a-judge | Like GEval but breaks evaluation into a decision tree of sub-criteria for more structured, explainable scoring |
-| `ConversationalGEval` | LLM-as-a-judge | Same as GEval but applied across a full multi-turn conversation rather than a single response |
-| `ConversationalDAGMetric` | LLM-as-a-judge | DAG-based structured evaluation applied across an entire conversation history |
-| `ArenaGEval` | LLM-as-a-judge | Pits two model outputs head-to-head and picks a winner based on your custom criteria |
-| `ContextualRelevancyMetric` | RAG | Checks whether the chunks your retriever fetched are actually relevant to the user's question |
-| `ContextualRecallMetric` | RAG | Checks whether the retriever fetched all the chunks needed to produce the expected answer (requires `expected_output`) |
-| `ContextualPrecisionMetric` | RAG | Checks whether the retriever ranked the most useful chunks at the top, penalising irrelevant results (requires `expected_output`) |
-| `AnswerRelevancyMetric` | RAG | Checks whether the LLM's final answer actually addresses the user's question, ignoring the retrieval step |
-| `FaithfulnessMetric` | RAG | Checks whether every claim in the LLM's answer is grounded in the retrieved context (i.e. no hallucinations) |
-| `TaskCompletionMetric` | Agents | Evaluates whether the agent successfully accomplished the end goal of the task given to it |
-| `ArgumentCorrectnessMetric` | Agents | Checks whether the values passed into tool calls are correct and make sense for the situation |
-| `ToolCorrectnessMetric` | Agents | Checks whether the agent chose the right tools to call, not just whether it called something |
-| `StepEfficiencyMetric` | Agents | Penalises agents that took unnecessary or redundant steps to reach the final answer |
-| `PlanAdherenceMetric` | Agents | Checks whether the agent followed the plan it originally laid out during execution |
-| `PlanQualityMetric` | Agents | Evaluates how good the plan itself was before execution even began |
-| `KnowledgeRetentionMetric` | Multi-turn | Checks whether the chatbot remembers facts the user mentioned earlier in the conversation |
-| `RoleAdherenceMetric` | Multi-turn | Checks whether the chatbot stayed in character / followed its assigned persona throughout the conversation |
-| `ConversationCompletenessMetric` | Multi-turn | Checks whether the chatbot addressed all of the user's goals and questions across the full conversation |
-| `ConversationRelevancyMetric` | Multi-turn | Checks whether each response stays relevant to the overall thread of the conversation |
-| `TurnRelevancyMetric` | Multi-turn | Checks whether each individual reply is relevant to the specific message it is responding to |
-| `TurnFaithfulnessMetric` | Multi-turn | Checks whether each individual reply is grounded in retrieved context and does not hallucinate |
-| `BiasMetric` | Safety | Detects whether outputs show unfair preference or prejudice toward particular groups or viewpoints |
-| `ToxicityMetric` | Safety | Detects harmful, abusive, or offensive language in the model's output |
-| `NonAdviceMetric` | Safety | Checks that the model avoids giving professional advice (medical, legal, financial) it is not qualified to give |
-| `MisuseMetric` | Safety | Checks whether the model resists being manipulated into producing harmful or policy-violating content |
-| `PIILeakageMetric` | Safety | Detects whether the model has exposed personally identifiable information it should not have |
-| `RoleViolationMetric` | Safety | Checks whether the model broke out of its system prompt instructions or assigned role |
-| `ImageCoherenceMetric` | Image | Checks whether the generated image is internally consistent and visually logical (e.g. no extra limbs) |
-| `ImageHelpfulnessMetric` | Image | Checks whether the generated image is useful and appropriate given the user's request |
-| `ImageReferenceMetric` | Image | Checks how closely the generated image matches a provided reference image |
-| `TextToImageMetric` | Image | Checks whether the generated image faithfully reflects what the text prompt described |
-| `ImageEditingMetric` | Image | Checks whether edits applied to an image match the editing instructions while preserving the rest |
-| `HallucinationMetric` | Other | Detects factual claims in the output that are not supported by the provided context or known facts |
-| `JsonCorrectnessMetric` | Other | Checks whether the model's output is valid JSON and conforms to your expected schema |
-| `SummarizationMetric` | Other | Checks whether a summary is accurate, complete, and concise relative to the source document |
-| `RagasMetric` | Other | Runs evaluation using the RAGAS framework, useful if you are already using RAGAS elsewhere in your stack |
+| Metric                           | Type           | Use Case                                                                                                                          |
+| -------------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `GEval`                          | LLM-as-a-judge | Evaluate any custom criteria you define in plain English (e.g. "is the response polite and concise?")                             |
+| `DAGMetric`                      | LLM-as-a-judge | Like GEval but breaks evaluation into a decision tree of sub-criteria for more structured, explainable scoring                    |
+| `ConversationalGEval`            | LLM-as-a-judge | Same as GEval but applied across a full multi-turn conversation rather than a single response                                     |
+| `ConversationalDAGMetric`        | LLM-as-a-judge | DAG-based structured evaluation applied across an entire conversation history                                                     |
+| `ArenaGEval`                     | LLM-as-a-judge | Pits two model outputs head-to-head and picks a winner based on your custom criteria                                              |
+| `ContextualRelevancyMetric`      | RAG            | Checks whether the chunks your retriever fetched are actually relevant to the user's question                                     |
+| `ContextualRecallMetric`         | RAG            | Checks whether the retriever fetched all the chunks needed to produce the expected answer (requires `expected_output`)            |
+| `ContextualPrecisionMetric`      | RAG            | Checks whether the retriever ranked the most useful chunks at the top, penalising irrelevant results (requires `expected_output`) |
+| `AnswerRelevancyMetric`          | RAG            | Checks whether the LLM's final answer actually addresses the user's question, ignoring the retrieval step                         |
+| `FaithfulnessMetric`             | RAG            | Checks whether every claim in the LLM's answer is grounded in the retrieved context (i.e. no hallucinations)                      |
+| `TaskCompletionMetric`           | Agents         | Evaluates whether the agent successfully accomplished the end goal of the task given to it                                        |
+| `ArgumentCorrectnessMetric`      | Agents         | Checks whether the values passed into tool calls are correct and make sense for the situation                                     |
+| `ToolCorrectnessMetric`          | Agents         | Checks whether the agent chose the right tools to call, not just whether it called something                                      |
+| `StepEfficiencyMetric`           | Agents         | Penalises agents that took unnecessary or redundant steps to reach the final answer                                               |
+| `PlanAdherenceMetric`            | Agents         | Checks whether the agent followed the plan it originally laid out during execution                                                |
+| `PlanQualityMetric`              | Agents         | Evaluates how good the plan itself was before execution even began                                                                |
+| `KnowledgeRetentionMetric`       | Multi-turn     | Checks whether the chatbot remembers facts the user mentioned earlier in the conversation                                         |
+| `RoleAdherenceMetric`            | Multi-turn     | Checks whether the chatbot stayed in character / followed its assigned persona throughout the conversation                        |
+| `ConversationCompletenessMetric` | Multi-turn     | Checks whether the chatbot addressed all of the user's goals and questions across the full conversation                           |
+| `ConversationRelevancyMetric`    | Multi-turn     | Checks whether each response stays relevant to the overall thread of the conversation                                             |
+| `TurnRelevancyMetric`            | Multi-turn     | Checks whether each individual reply is relevant to the specific message it is responding to                                      |
+| `TurnFaithfulnessMetric`         | Multi-turn     | Checks whether each individual reply is grounded in retrieved context and does not hallucinate                                    |
+| `BiasMetric`                     | Safety         | Detects whether outputs show unfair preference or prejudice toward particular groups or viewpoints                                |
+| `ToxicityMetric`                 | Safety         | Detects harmful, abusive, or offensive language in the model's output                                                             |
+| `NonAdviceMetric`                | Safety         | Checks that the model avoids giving professional advice (medical, legal, financial) it is not qualified to give                   |
+| `MisuseMetric`                   | Safety         | Checks whether the model resists being manipulated into producing harmful or policy-violating content                             |
+| `PIILeakageMetric`               | Safety         | Detects whether the model has exposed personally identifiable information it should not have                                      |
+| `RoleViolationMetric`            | Safety         | Checks whether the model broke out of its system prompt instructions or assigned role                                             |
+| `ImageCoherenceMetric`           | Image          | Checks whether the generated image is internally consistent and visually logical (e.g. no extra limbs)                            |
+| `ImageHelpfulnessMetric`         | Image          | Checks whether the generated image is useful and appropriate given the user's request                                             |
+| `ImageReferenceMetric`           | Image          | Checks how closely the generated image matches a provided reference image                                                         |
+| `TextToImageMetric`              | Image          | Checks whether the generated image faithfully reflects what the text prompt described                                             |
+| `ImageEditingMetric`             | Image          | Checks whether edits applied to an image match the editing instructions while preserving the rest                                 |
+| `HallucinationMetric`            | Other          | Detects factual claims in the output that are not supported by the provided context or known facts                                |
+| `JsonCorrectnessMetric`          | Other          | Checks whether the model's output is valid JSON and conforms to your expected schema                                              |
+| `SummarizationMetric`            | Other          | Checks whether a summary is accurate, complete, and concise relative to the source document                                       |
+| `RagasMetric`                    | Other          | Runs evaluation using the RAGAS framework, useful if you are already using RAGAS elsewhere in your stack                          |
+
 ---
 
 ## The Evaluation Workflow: End-to-End
@@ -1200,6 +1205,7 @@ DeepEval brings software engineering discipline to LLM development — the same 
 The framework is open source, actively maintained (the tutorials were last updated in April 2026), and integrates with Confident AI for production observability with no code changes beyond a decorator.
 
 **Resources:**
+
 - Official tutorials: [deepeval.com/tutorials](https://deepeval.com/tutorials/tutorial-introduction)
 - GitHub: [github.com/confident-ai/deepeval](https://github.com/confident-ai/deepeval)
 - Discord community: [discord.gg/a3K9c8GRGt](https://discord.gg/a3K9c8GRGt)

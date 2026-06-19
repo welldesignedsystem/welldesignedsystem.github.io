@@ -9,33 +9,36 @@ summary = "Practical COBOL reference covering program structure, copybooks, JCL,
 COBOL (Common Business-Oriented Language) is a high-level programming language created for business data processing, especially on mainframes. It is known for its English-like syntax and is widely used in industries such as banking, insurance and government for batch and transaction processing. This guide provides an overview of COBOL, its features, structure and key concepts, helping developers understand and work with COBOL programs, especially in the context of mainframe systems.
 
 ## What is COBOL?
+
 COBOL (Common Business-Oriented Language) is a high-level programming language designed for business data processing, especially on mainframes. It is widely used in banking, insurance and government systems for batch and transaction processing.
 
 ## Key Features
+
 - **English-like Syntax:** COBOL code is verbose and reads like English, making it easy to understand.
 - **Procedural Language:** COBOL is primarily procedural, focusing on step-by-step instructions.
 - **Strong Data Processing:** Excellent for handling large volumes of data and batch processing.
 - **Legacy Systems:** Many critical systems still run on COBOL, especially on mainframes.
 
 ## COBOL vs Java
-| Aspect         | COBOL                          | Java                  |
-|----------------|-------------------------------|-----------------------|
-| Syntax         | Verbose, English-like          | Concise, C-like       |
-| Paradigm       | Procedural                    | Object-Oriented       |
-| Platform       | Mainframes, legacy systems     | Cross-platform (JVM)  |
-| Use Cases      | Business, finance, batch jobs  | Web, mobile, desktop  |
+
+| Aspect    | COBOL                         | Java                 |
+| --------- | ----------------------------- | -------------------- |
+| Syntax    | Verbose, English-like         | Concise, C-like      |
+| Paradigm  | Procedural                    | Object-Oriented      |
+| Platform  | Mainframes, legacy systems    | Cross-platform (JVM) |
+| Use Cases | Business, finance, batch jobs | Web, mobile, desktop |
 
 ## Mainframe Context & File Types
 
 - **COBOL Programs**:
-  - Source code files (`.cob`, `.cbl`) written in COBOL containing business logic and data processing. Comparable to `.java` or `.py` files. 
+  - Source code files (`.cob`, `.cbl`) written in COBOL containing business logic and data processing. Comparable to `.java` or `.py` files.
 - **Copybooks**:
   - Reusable code or data structure snippets (`.cpy`), included in COBOL programs using the `COPY` statement. Analogous to Java imports or Python modules, often used for shared data definitions (e.g., record layouts).
 - **JCL Scripts**:
   - Job Control Language files (`.jcl`) are Scripts used to run and schedule COBOL programs on mainframes. JCL is similar to shell scripts or Windows batch files, controlling program execution, input/output files and job sequencing.
-- **Datasets**: 
+- **Datasets**:
   - Files or databases on the mainframe, used to store input/output data. Datasets can be sequential files (like CSVs), VSAM files (indexed), or DB2 tables (relational). Analogous to files or SQL tables in Java applications.
-- **Utilities**: 
+- **Utilities**:
   - System tools or programs for common tasks such as file copying, sorting, or data conversion. Examples include `IEBGENER` (copy files), `SORT` (sort data) and `IDCAMS` (manage VSAM datasets). These are similar to Unix command-line utilities like `cp`, `sort`, or `awk`.
 
 ---
@@ -211,17 +214,19 @@ A COBOL program is divided into four main divisions, each with specific sections
 
        STOP RUN.                             * End program
 ```
+
 ---
 
 ## Key Concepts & Terminology
+
 - **Mainframe Terms vs Java Terms**:
-  | Mainframe/COBOL      | Java Equivalent                |
+  | Mainframe/COBOL | Java Equivalent |
   |----------------------|-------------------------------|
-  | Program (COBOL)      | Class or main method          |
-  | Copybook             | Import/module/shared class     |
-  | JCL                  | Shell script/Batch file       |
-  | Dataset              | File/Database table           |
-  | Utility (SORT, etc.) | Command-line tool/Library     |
+  | Program (COBOL) | Class or main method |
+  | Copybook | Import/module/shared class |
+  | JCL | Shell script/Batch file |
+  | Dataset | File/Database table |
+  | Utility (SORT, etc.) | Command-line tool/Library |
 
 - **Other Concepts**:
   - **Batch Processing**: COBOL is often used for batch jobs—processing large volumes of data in scheduled runs, similar to Java batch frameworks (e.g., Spring Batch).
@@ -239,103 +244,111 @@ A COBOL program is divided into four main divisions, each with specific sections
 In COBOL, keywords (reserved words) are predefined words that have special meaning to the compiler. You cannot use them as variable names or identifiers. They define structure, actions, or data descriptions. Here are the main categories of COBOL keywords, organized for clarity:
 
 ### 1. Program Structure Keywords
-| Keyword                | Purpose                                         |
-|------------------------|-------------------------------------------------|
-| IDENTIFICATION DIVISION| Start of the program description.               |
-| ENVIRONMENT DIVISION   | Specifies hardware and I/O environment.         |
-| DATA DIVISION          | Defines variables, files and data areas.       |
-| PROCEDURE DIVISION     | Contains the actual program logic.              |
-| PROGRAM-ID             | Declares program name.                          |
-| SECTION                | Groups related paragraphs.                      |
-| PARAGRAPH              | Defines a logical block of statements.          |
-| STOP RUN               | Terminates the program.                         |
-| EXIT PROGRAM           | Returns control from a subprogram.              |
+
+| Keyword                 | Purpose                                  |
+| ----------------------- | ---------------------------------------- |
+| IDENTIFICATION DIVISION | Start of the program description.        |
+| ENVIRONMENT DIVISION    | Specifies hardware and I/O environment.  |
+| DATA DIVISION           | Defines variables, files and data areas. |
+| PROCEDURE DIVISION      | Contains the actual program logic.       |
+| PROGRAM-ID              | Declares program name.                   |
+| SECTION                 | Groups related paragraphs.               |
+| PARAGRAPH               | Defines a logical block of statements.   |
+| STOP RUN                | Terminates the program.                  |
+| EXIT PROGRAM            | Returns control from a subprogram.       |
 
 ### 2. Input/Output (I/O) Keywords
-| Keyword      | Purpose                                                      |
-|--------------|--------------------------------------------------------------|
-| SELECT       | Declares a file for use.                                     |
-| ASSIGN       | Associates file with external device (e.g., disk).           |
-| FILE-CONTROL | Defines logical-to-physical file mapping.                    |
-| OPEN         | Opens a file for processing (OPEN INPUT, OUTPUT, etc.).      |
-| CLOSE        | Closes a file.                                               |
-| READ         | Reads a record from a file.                                  |
-| WRITE        | Writes a record to a file.                                   |
-| REWRITE      | Updates an existing record.                                  |
-| DELETE       | Deletes a record (in indexed files).                         |
-| DISPLAY      | Outputs data to the screen or console.                       |
-| ACCEPT       | Reads data from keyboard or system date/time.                |
+
+| Keyword      | Purpose                                                 |
+| ------------ | ------------------------------------------------------- |
+| SELECT       | Declares a file for use.                                |
+| ASSIGN       | Associates file with external device (e.g., disk).      |
+| FILE-CONTROL | Defines logical-to-physical file mapping.               |
+| OPEN         | Opens a file for processing (OPEN INPUT, OUTPUT, etc.). |
+| CLOSE        | Closes a file.                                          |
+| READ         | Reads a record from a file.                             |
+| WRITE        | Writes a record to a file.                              |
+| REWRITE      | Updates an existing record.                             |
+| DELETE       | Deletes a record (in indexed files).                    |
+| DISPLAY      | Outputs data to the screen or console.                  |
+| ACCEPT       | Reads data from keyboard or system date/time.           |
 
 ### 3. Data Definition Keywords (used in DATA DIVISION)
-| Keyword                | Purpose                                            |
-|------------------------|----------------------------------------------------|
-| FD                     | File Description entry.                            |
-| WORKING-STORAGE SECTION| Defines program variables.                         |
-| LINKAGE SECTION        | Parameters from calling programs.                  |
-| PIC / PICTURE          | Defines data type/format.                          |
-| VALUE                  | Assigns initial value.                             |
-| OCCURS                 | Declares an array.                                 |
-| REDEFINES              | Allows multiple layouts for same memory.           |
-| COMP / COMP-3          | Binary / packed decimal storage.                   |
-| FILLER                 | Unnamed data field (padding).                      |
-| LEVEL NUMBER           | Hierarchical level indicator (e.g., 01, 05, 10).   |
+
+| Keyword                 | Purpose                                          |
+| ----------------------- | ------------------------------------------------ |
+| FD                      | File Description entry.                          |
+| WORKING-STORAGE SECTION | Defines program variables.                       |
+| LINKAGE SECTION         | Parameters from calling programs.                |
+| PIC / PICTURE           | Defines data type/format.                        |
+| VALUE                   | Assigns initial value.                           |
+| OCCURS                  | Declares an array.                               |
+| REDEFINES               | Allows multiple layouts for same memory.         |
+| COMP / COMP-3           | Binary / packed decimal storage.                 |
+| FILLER                  | Unnamed data field (padding).                    |
+| LEVEL NUMBER            | Hierarchical level indicator (e.g., 01, 05, 10). |
 
 ### 4. Procedure/Logic Control Keywords
-| Keyword      | Purpose                                                      |
-|--------------|--------------------------------------------------------------|
-| MOVE         | Assigns a value from one variable to another.                |
-| ADD / SUBTRACT / MULTIPLY / DIVIDE | Arithmetic operations.                 |
-| COMPUTE      | General arithmetic expression evaluation.                    |
-| IF ... THEN ... ELSE | Conditional branching.                               |
-| EVALUATE     | Multi-branch conditional (like switch in C).                 |
-| PERFORM      | Executes a paragraph or section (loop or call).              |
-| GO TO        | Transfers control (discouraged in modern COBOL).             |
-| NEXT SENTENCE| Transfers control to next sentence.                          |
-| STOP RUN     | Ends program execution.                                      |
+
+| Keyword                            | Purpose                                          |
+| ---------------------------------- | ------------------------------------------------ |
+| MOVE                               | Assigns a value from one variable to another.    |
+| ADD / SUBTRACT / MULTIPLY / DIVIDE | Arithmetic operations.                           |
+| COMPUTE                            | General arithmetic expression evaluation.        |
+| IF ... THEN ... ELSE               | Conditional branching.                           |
+| EVALUATE                           | Multi-branch conditional (like switch in C).     |
+| PERFORM                            | Executes a paragraph or section (loop or call).  |
+| GO TO                              | Transfers control (discouraged in modern COBOL). |
+| NEXT SENTENCE                      | Transfers control to next sentence.              |
+| STOP RUN                           | Ends program execution.                          |
 
 ### 5. String and Data Handling Keywords
-| Keyword      | Purpose                                                      |
-|--------------|--------------------------------------------------------------|
-| STRING       | Concatenates multiple strings.                               |
-| UNSTRING     | Splits a string into parts.                                  |
-| INSPECT      | Examines or modifies strings (e.g., count, replace).         |
-| INITIALIZE   | Resets data items to default values.                         |
-| SET          | Assigns a value to index, condition, or pointer.             |
+
+| Keyword    | Purpose                                              |
+| ---------- | ---------------------------------------------------- |
+| STRING     | Concatenates multiple strings.                       |
+| UNSTRING   | Splits a string into parts.                          |
+| INSPECT    | Examines or modifies strings (e.g., count, replace). |
+| INITIALIZE | Resets data items to default values.                 |
+| SET        | Assigns a value to index, condition, or pointer.     |
 
 ### 6. File and Record Control Modifiers
-| Keyword      | Purpose                                                      |
-|--------------|--------------------------------------------------------------|
-| RECORD       | Defines a record structure.                                  |
-| KEY IS       | Defines key field for indexed files.                         |
-| ACCESS MODE  | Defines how file is accessed (SEQUENTIAL, RANDOM, etc.).     |
-| ORGANIZATION | Defines file organization (e.g., LINE SEQUENTIAL, INDEXED).  |
-| STATUS       | Captures file operation status codes.                        |
+
+| Keyword      | Purpose                                                     |
+| ------------ | ----------------------------------------------------------- |
+| RECORD       | Defines a record structure.                                 |
+| KEY IS       | Defines key field for indexed files.                        |
+| ACCESS MODE  | Defines how file is accessed (SEQUENTIAL, RANDOM, etc.).    |
+| ORGANIZATION | Defines file organization (e.g., LINE SEQUENTIAL, INDEXED). |
+| STATUS       | Captures file operation status codes.                       |
 
 ### 7. Conditions and Logical Keywords
-| Keyword      | Purpose                                                      |
-|--------------|--------------------------------------------------------------|
-| NOT          | Logical negation.                                            |
-| AND, OR      | Logical operators.                                           |
-| IS           | Used in condition checks (IS EQUAL TO).                      |
-| EQUAL, GREATER, LESS | Comparison operators.                                |
-| ZERO, SPACES, HIGH-VALUES, LOW-VALUES | Predefined literals.                |
-| TRUE, FALSE  | Boolean literals (not standard in all COBOL versions).       |
+
+| Keyword                               | Purpose                                                |
+| ------------------------------------- | ------------------------------------------------------ |
+| NOT                                   | Logical negation.                                      |
+| AND, OR                               | Logical operators.                                     |
+| IS                                    | Used in condition checks (IS EQUAL TO).                |
+| EQUAL, GREATER, LESS                  | Comparison operators.                                  |
+| ZERO, SPACES, HIGH-VALUES, LOW-VALUES | Predefined literals.                                   |
+| TRUE, FALSE                           | Boolean literals (not standard in all COBOL versions). |
 
 ### 8. Declarative and Special Purpose Keywords
-| Keyword      | Purpose                                                      |
-|--------------|--------------------------------------------------------------|
-| DECLARATIVES | Defines exception-handling routines.                         |
-| END DECLARATIVES | Ends the declarative section.                            |
-| USE AFTER ERROR | Error-handling trigger for file operations.               |
-| COPY         | Includes external source code copybooks.                     |
-| CALL         | Invokes another program.                                     |
-| CANCEL       | Unloads a called program.                                    |
-| EJECT        | Starts a new page in the source code listing.                |
-| COMMENT      | Denotes a comment line (often with an asterisk `*` in column 7). |
-| REMARK       | Another way to denote comments.                              |
-| CONTINUE     | No operation; used in condition handling.                    |
-| INITIALIZE   | Sets variables to default values.                            |
-| RETURN       | Returns from a called program.                               |
+
+| Keyword          | Purpose                                                          |
+| ---------------- | ---------------------------------------------------------------- |
+| DECLARATIVES     | Defines exception-handling routines.                             |
+| END DECLARATIVES | Ends the declarative section.                                    |
+| USE AFTER ERROR  | Error-handling trigger for file operations.                      |
+| COPY             | Includes external source code copybooks.                         |
+| CALL             | Invokes another program.                                         |
+| CANCEL           | Unloads a called program.                                        |
+| EJECT            | Starts a new page in the source code listing.                    |
+| COMMENT          | Denotes a comment line (often with an asterisk `*` in column 7). |
+| REMARK           | Another way to denote comments.                                  |
+| CONTINUE         | No operation; used in condition handling.                        |
+| INITIALIZE       | Sets variables to default values.                                |
+| RETURN           | Returns from a called program.                                   |
 
 ## COBOL Data Types & Variables
 
@@ -362,6 +375,7 @@ In COBOL, keywords (reserved words) are predefined words that have special meani
 ## File I/O in COBOL
 
 - **File Declaration** (in ENVIRONMENT and DATA DIVISION):
+
   ```cobol
   ENVIRONMENT DIVISION.
   INPUT-OUTPUT SECTION.
@@ -373,6 +387,7 @@ In COBOL, keywords (reserved words) are predefined words that have special meani
   FD  INFILE.
   01  IN-REC PIC X(100).
   ```
+
 - **File Operations** (in PROCEDURE DIVISION):
   ```cobol
   OPEN INPUT INFILE
@@ -444,6 +459,7 @@ In COBOL, keywords (reserved words) are predefined words that have special meani
 ---
 
 ## Useful Resources
+
 - [COBOL Programming Tutorials](https://www.tutorialspoint.com/cobol/index.htm)
 - [GnuCOBOL Documentation](https://open-cobol.sourceforge.io/)
 - [Java Migration Guides](https://www.oracle.com/java/technologies/migration.html)

@@ -1,12 +1,20 @@
 ---
-date: '2022-03-21T12:44:47+10:00'
+date: "2022-03-21T12:44:47+10:00"
 draft: true
-title: 'Business Requirements Document'
-tags: ['SHM', 'DNV', 'ABS', 'Structural Health Monitoring', 'Vessel Monitoring', 'Marine Software']
+title: "Business Requirements Document"
+tags:
+  [
+    "SHM",
+    "DNV",
+    "ABS",
+    "Structural Health Monitoring",
+    "Vessel Monitoring",
+    "Marine Software",
+  ]
 summary: "Smart Structural Health Monitoring "
 ---
 
-## Sensor-Based Structural Health Monitoring - ABS Smart Structural Health Monitoring  Tier Description:
+## Sensor-Based Structural Health Monitoring - ABS Smart Structural Health Monitoring Tier Description:
 
 A vessel-specific load and operation-based structural health estimation. The following are the requirements for, data collection and analysis to be employed:
 
@@ -28,15 +36,15 @@ A vessel-specific load and operation-based structural health estimation. The fol
 3. We understand that the notation relies on a monitoring system to ensure that the ship is operated within its design assumptions typically a ship-tracking digital solution (based on AIS) associated with hindcast weather data (the digital weather routing solutions available on the market would provide the expected functionalities)
 4. Practically, no impact on shipyard and limited impact on ship-owner: just subscribing to a digital ship tracking solution; there are many on the market and the cost is reasonable
 5. The notation applies to ships for which no FEM and no fatigue assessment is required.
-   → In this sense, we do not understand the last step *"Empirical analysis – Accumulated fatigue damage & damage rate estimation"*.
- 
+   → In this sense, we do not understand the last step _"Empirical analysis – Accumulated fatigue damage & damage rate estimation"_.
+
 ---
 
-# ABS Smart Structural Health Monitoring  TIER 1 Software — Competitor Analysis
+# ABS Smart Structural Health Monitoring TIER 1 Software — Competitor Analysis
 
 ## Application Context
 
-The term **ABS Smart Structural Health Monitoring  TIER 1 software** refers to specific **structural health monitoring (SHM) software** that has received an **Approval in Principle (AIP) from the American Bureau of Shipping (ABS)** under its Guide for Smart Functions for Marine Vessels and Offshore Units.
+The term **ABS Smart Structural Health Monitoring TIER 1 software** refers to specific **structural health monitoring (SHM) software** that has received an **Approval in Principle (AIP) from the American Bureau of Shipping (ABS)** under its Guide for Smart Functions for Marine Vessels and Offshore Units.
 
 **ABS**: The American Bureau of Shipping, a leading international classification society for marine and offshore assets.
 
@@ -60,7 +68,7 @@ The term **ABS Smart Structural Health Monitoring  TIER 1 software** refers to s
 - **Structural Health Indicators:** The primary function is to provide reliable indicators and insights into the structural condition of the hull based on real-time operational data.
 - **Decision Support:** Provides crew and shore-based personnel with key information to aid decision-making regarding vessel safety, maintenance scheduling, and operational limits.
 - **Scalability and Cost-Effectiveness:** Offers a scalable and less intrusive solution compared to fully sensor-equipped systems, making structural monitoring accessible to a wider range of vessel owners.
-- **Compliance & Certification:** Meets the functional and system requirements set by the ABS *Guide for Smart Functions for Marine Vessels and Offshore Units* for the Tier 1 classification.
+- **Compliance & Certification:** Meets the functional and system requirements set by the ABS _Guide for Smart Functions for Marine Vessels and Offshore Units_ for the Tier 1 classification.
 
 ### Data Points & Sources
 
@@ -115,12 +123,15 @@ Specific visual outputs or reports are proprietary, but the system provides acti
 ### Data Points
 
 #### AIS (Automatic Identification System) Data
+
 - **Data Points:** Position (Latitude/Longitude), Speed Over Ground (SOG), Course Over Ground (COG), Heading, UTC Timestamp, Vessel Identification details (MMSI, IMO number).
 
 #### Weather and Environmental Conditions (Third-Party Providers)
+
 - **Data Points:** Real-time and forecasted wave condition (height, period, direction), wind speed and direction, sea depth, bathymetry, and sea current data.
 
 #### Onboard Systems/Logbooks (Manual or Automated)
+
 - **Data Points:** Draft (forward/aft), cargo weight and distribution (loading conditions), fuel consumption, engine load/power, machinery status, and manual noon report entries.
 
 ### Data Analysis Methodology
@@ -159,7 +170,7 @@ Let's meet this "virtual doctor" for ships and see how it makes its diagnosis.
 
 In simple terms, Virtual Structural Health Monitoring (V-SHM) is a **"sensorless," cloud-based platform** that monitors a ship's structural health without requiring physical hardware like strain gauges or accelerometers. It's a software-driven approach that uses data and digital modelling to achieve what once required extensive, costly hardware. This is a fundamental shift from traditional monitoring, which relies on installing a costly and complex network of physical strain gauges that are expensive to maintain and can only measure stress at their specific installation points.
 
-The primary goal of the system is to predict structural fatigue and ensure the vessel operates safely within its official, pre-approved design limits. By continuously analysing the forces acting on the ship, V-SHM helps the crew prevent problems before they can develop. This technology is not just theoretical; it's approved by major maritime authorities like the American Bureau of Shipping (ABS) under the **Smart Structural Health Monitoring  Tier 1 notation**, confirming its credibility and reliability in real-world conditions.
+The primary goal of the system is to predict structural fatigue and ensure the vessel operates safely within its official, pre-approved design limits. By continuously analysing the forces acting on the ship, V-SHM helps the crew prevent problems before they can develop. This technology is not just theoretical; it's approved by major maritime authorities like the American Bureau of Shipping (ABS) under the **Smart Structural Health Monitoring Tier 1 notation**, confirming its credibility and reliability in real-world conditions.
 
 Now that we know what the system is, let's look at how it gathers its information. Just like a good doctor, a proper diagnosis starts by asking the right questions and collecting the right clues.
 
@@ -169,11 +180,11 @@ Now that we know what the system is, let's look at how it gathers its informatio
 
 Instead of attaching physical sensors to the hull, the V-SHM system gathers three critical types of data that, when combined, paint a complete picture of the forces acting on the ship.
 
-| Data Type | What It Is | Why It's Important (The "So What?") |
-|---|---|---|
-| **The Ship's Diary** | **Navigational Data (AIS/GPS):** This includes the vessel's precise position, speed, and heading at any given moment. | This tells the system exactly where the ship is, which way it's pointing, and how fast it's moving through the water. |
-| **The Weather Report** | **Environmental Data:** This is third-party data on wave height, period, direction, and wind speed for the ship's specific location. | This reveals the external forces from the sea and weather that are constantly pushing, pulling, and bending the ship's hull. |
-| **The Ship's Load** | **Operational Data:** This includes the ship's draft (how deep it sits in the water) and its current loading conditions (how much cargo it's carrying). | Like knowing what a patient ate for breakfast, this tells the system how the ship's own weight is distributed, which critically affects how its structure responds to stress from the waves. |
+| Data Type              | What It Is                                                                                                                                              | Why It's Important (The "So What?")                                                                                                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **The Ship's Diary**   | **Navigational Data (AIS/GPS):** This includes the vessel's precise position, speed, and heading at any given moment.                                   | This tells the system exactly where the ship is, which way it's pointing, and how fast it's moving through the water.                                                                        |
+| **The Weather Report** | **Environmental Data:** This is third-party data on wave height, period, direction, and wind speed for the ship's specific location.                    | This reveals the external forces from the sea and weather that are constantly pushing, pulling, and bending the ship's hull.                                                                 |
+| **The Ship's Load**    | **Operational Data:** This includes the ship's draft (how deep it sits in the water) and its current loading conditions (how much cargo it's carrying). | Like knowing what a patient ate for breakfast, this tells the system how the ship's own weight is distributed, which critically affects how its structure responds to stress from the waves. |
 
 Once all this information is collected, it needs to be processed and understood by the "brain" of the operation: the vessel's digital twin.
 
@@ -228,13 +239,13 @@ Bringing our analogy full circle, the V-SHM system acts as a vigilant, predictiv
 
 # Project Scope: Virtual Structural Health Monitor (V-SHM) Software
 
-This project scope outlines the development of a software solution for **Virtual Structural Health Monitoring (V-SHM)**, designed to compete with ARGUS-VM and NAPA Fleet Intelligence SHM TIER 1 solutions. The system will adhere strictly to the requirements of the ABS Guide for Smart Functions for Marine Vessels and Offshore Units to achieve ABS Smart Structural Health Monitoring  Tier 1 approval.
+This project scope outlines the development of a software solution for **Virtual Structural Health Monitoring (V-SHM)**, designed to compete with ARGUS-VM and NAPA Fleet Intelligence SHM TIER 1 solutions. The system will adhere strictly to the requirements of the ABS Guide for Smart Functions for Marine Vessels and Offshore Units to achieve ABS Smart Structural Health Monitoring Tier 1 approval.
 
 ---
 
 ## 1. Project Goal
 
-To deliver a reliable, cloud-based software solution that monitors the structural health of marine vessels using existing operational data (a "sensorless" approach), provides actionable insights to crew and shore personnel, and achieves ABS Product Design Assessment (PDA) certification for the Smart Structural Health Monitoring  Tier 1 notation.
+To deliver a reliable, cloud-based software solution that monitors the structural health of marine vessels using existing operational data (a "sensorless" approach), provides actionable insights to crew and shore personnel, and achieves ABS Product Design Assessment (PDA) certification for the Smart Structural Health Monitoring Tier 1 notation.
 
 ---
 
@@ -310,11 +321,11 @@ The project plan includes a dedicated phase for certification:
 
 The V-SHM system is entirely reliant on existing data infrastructure. We categorise inputs into three primary streams:
 
-| Data Source Stream | Specific Source Systems | Data Points Acquired | Frequency |
-|---|---|---|---|
-| **1. Navigational & Positional** | AIS Transceiver, GPS Unit | Latitude, Longitude, Heading, SOG (Speed Over Ground), COG (Course Over Ground), UTC Timestamp | Continuous/Every seconds |
-| **2. Environmental & Weather** | Third-Party Weather APIs (e.g., Meteomatics, StormGeo) | Significant Wave Height (H sub s), Wave Period (T sub p), Wave Direction, Wind Speed/Direction, Sea Current Velocity | Hourly Forecast / Real-time updates |
-| **3. Operational & Loading** | Onboard Data Acquisition System (DAS), Manual Input/Logbooks | Fwd Draft, Aft Draft, Mid Draft, Cargo Weight/Distribution, Fuel Consumption, Trim/Heel Angle, Engine RPM/Load | Varies (Hourly/Per Voyage/Real-time) |
+| Data Source Stream               | Specific Source Systems                                      | Data Points Acquired                                                                                                 | Frequency                            |
+| -------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| **1. Navigational & Positional** | AIS Transceiver, GPS Unit                                    | Latitude, Longitude, Heading, SOG (Speed Over Ground), COG (Course Over Ground), UTC Timestamp                       | Continuous/Every seconds             |
+| **2. Environmental & Weather**   | Third-Party Weather APIs (e.g., Meteomatics, StormGeo)       | Significant Wave Height (H sub s), Wave Period (T sub p), Wave Direction, Wind Speed/Direction, Sea Current Velocity | Hourly Forecast / Real-time updates  |
+| **3. Operational & Loading**     | Onboard Data Acquisition System (DAS), Manual Input/Logbooks | Fwd Draft, Aft Draft, Mid Draft, Cargo Weight/Distribution, Fuel Consumption, Trim/Heel Angle, Engine RPM/Load       | Varies (Hourly/Per Voyage/Real-time) |
 
 ---
 
@@ -385,17 +396,17 @@ The V-SHM system is entirely reliant on existing data infrastructure. We categor
 
 ## 1.1 Product Overview
 
-**V-SHM TIER 1** is a cloud-based, AI-powered structural health monitoring platform designed for vessels operating in restricted conditions. The system achieves ABS Smart Structural Health Monitoring  TIER 1 notation through a **sensorless approach**, leveraging existing operational data, AIS tracking, and environmental data to predict structural fatigue and ensure operational compliance.
+**V-SHM TIER 1** is a cloud-based, AI-powered structural health monitoring platform designed for vessels operating in restricted conditions. The system achieves ABS Smart Structural Health Monitoring TIER 1 notation through a **sensorless approach**, leveraging existing operational data, AIS tracking, and environmental data to predict structural fatigue and ensure operational compliance.
 
 ## 1.2 Key Differentiators
 
-| Feature | V-SHM TIER 1 Approach |
-|---|---|
-| **Zero Hardware** | No strain gauges, accelerometers, or physical sensors required |
-| **AI-Driven** | Machine learning models for pattern recognition and anomaly detection |
-| **Cost Efficiency** | Significant reduction in cost when compared to sensor-based systems |
-| **Rapid Deployment** | 48-hour onboarding per vessel vs. months for hardware installation |
-| **Predictive Intelligence** | Fatigue damage forecasting with 14-day advance warnings |
+| Feature                     | V-SHM TIER 1 Approach                                                 |
+| --------------------------- | --------------------------------------------------------------------- |
+| **Zero Hardware**           | No strain gauges, accelerometers, or physical sensors required        |
+| **AI-Driven**               | Machine learning models for pattern recognition and anomaly detection |
+| **Cost Efficiency**         | Significant reduction in cost when compared to sensor-based systems   |
+| **Rapid Deployment**        | 48-hour onboarding per vessel vs. months for hardware installation    |
+| **Predictive Intelligence** | Fatigue damage forecasting with 14-day advance warnings               |
 
 ## 1.3 Target Vessels
 
@@ -415,7 +426,7 @@ The V-SHM system is entirely reliant on existing data infrastructure. We categor
 
 ## 2.2 Business Objectives
 
-1. **Regulatory Compliance**: Achieve ABS Smart Structural Health Monitoring  TIER 1 certification
+1. **Regulatory Compliance**: Achieve ABS Smart Structural Health Monitoring TIER 1 certification
 2. **Market Penetration**: Capture 15% of high-speed craft market (Year 1)
 3. **Cost Leadership**: Deliver monitoring at 1/5 the cost of sensor-based solutions
 4. **Operational Excellence**: Reduce unplanned maintenance by 30%
@@ -432,7 +443,7 @@ The V-SHM system is entirely reliant on existing data infrastructure. We categor
 ```mermaid
 graph TB
     subgraph PLATFORM["V-SHM TIER 1 PLATFORM (Cloud-Hosted)"]
-        
+
         subgraph DL["DATA LAYER"]
             D1[AIS Ingestion]
             D2[Weather APIs]
@@ -480,29 +491,29 @@ graph TB
 
 ### 3.2.1 Data Layer Components
 
-| Component | Technology | Purpose |
-|---|---|---|
-| **AIS Aggregator** | Kafka Streams | Real-time position data ingestion from AIS providers |
-| **Weather Orchestrator** | Apache Airflow | Scheduled hindcast/forecast data retrieval |
-| **Vessel Data Adapter** | REST API Gateway | Standardised interface for ship systems integration |
-| **Master Data Repository** | PostgreSQL | Vessel specifications, design envelopes, S-N curves |
+| Component                  | Technology       | Purpose                                              |
+| -------------------------- | ---------------- | ---------------------------------------------------- |
+| **AIS Aggregator**         | Kafka Streams    | Real-time position data ingestion from AIS providers |
+| **Weather Orchestrator**   | Apache Airflow   | Scheduled hindcast/forecast data retrieval           |
+| **Vessel Data Adapter**    | REST API Gateway | Standardised interface for ship systems integration  |
+| **Master Data Repository** | PostgreSQL       | Vessel specifications, design envelopes, S-N curves  |
 
 ### 3.2.2 Analytics Layer Components
 
-| Component | Technology | Purpose |
-|---|---|---|
-| **AI Inference Engine** | TensorFlow Serving | Real-time ML model execution for load prediction |
-| **Load Calculator** | Python (NumPy/SciPy) | Empirical formula-based structural load computation |
-| **Fatigue Accumulator** | InfluxDB + Python | Time-series damage calculation (Palmgren-Miner) |
-| **Compliance Monitor** | Rules Engine (Drools) | Design envelope boundary checking |
+| Component               | Technology            | Purpose                                             |
+| ----------------------- | --------------------- | --------------------------------------------------- |
+| **AI Inference Engine** | TensorFlow Serving    | Real-time ML model execution for load prediction    |
+| **Load Calculator**     | Python (NumPy/SciPy)  | Empirical formula-based structural load computation |
+| **Fatigue Accumulator** | InfluxDB + Python     | Time-series damage calculation (Palmgren-Miner)     |
+| **Compliance Monitor**  | Rules Engine (Drools) | Design envelope boundary checking                   |
 
 ### 3.2.3 Presentation Layer Components
 
-| Component | Technology | Purpose |
-|---|---|---|
-| **Dashboard Backend** | Node.js (Express) | RESTful API for frontend clients |
-| **Web Frontend** | React.js | Responsive web dashboard |
-| **Mobile App** | React Native | iOS/Android native apps for alerts |
+| Component                | Technology               | Purpose                               |
+| ------------------------ | ------------------------ | ------------------------------------- |
+| **Dashboard Backend**    | Node.js (Express)        | RESTful API for frontend clients      |
+| **Web Frontend**         | React.js                 | Responsive web dashboard              |
+| **Mobile App**           | React Native             | iOS/Android native apps for alerts    |
 | **Notification Service** | Firebase Cloud Messaging | Push notifications, email, SMS alerts |
 
 ---
@@ -511,17 +522,17 @@ graph TB
 
 ### 4.1 Data Source Matrix
 
-| Source Category | Provider Examples | Update Frequency | Critical Data Points | Data Volume |
-|---|---|---|---|---|
-| **AIS Tracking** | MarineTraffic, VesselFinder, exactEarth | 10–30 seconds | Position, SOG, COG, Heading, Timestamp | ~3 KB/update |
-| **Environmental** | NOAA GFS, ECMWF, Copernicus Marine | 1–6 hours | Hs, Tp, Wave Direction, Wind Speed/Dir | ~15 KB/hour |
-| **Operational** | Ship's DAS, Noon Reports, Loading Computer | Variable (1 hr – 1 day) | Draft F/A/M, Cargo Weight, Trim, Engine Load | ~5 KB/entry |
-| **Master Data** | Classification Society, Ship Builder | Static (updates on survey) | GA Plans, Scantlings, S-N Curves, Limits | ~50 MB/vessel |
-
+| Source Category   | Provider Examples                          | Update Frequency           | Critical Data Points                         | Data Volume   |
+| ----------------- | ------------------------------------------ | -------------------------- | -------------------------------------------- | ------------- |
+| **AIS Tracking**  | MarineTraffic, VesselFinder, exactEarth    | 10–30 seconds              | Position, SOG, COG, Heading, Timestamp       | ~3 KB/update  |
+| **Environmental** | NOAA GFS, ECMWF, Copernicus Marine         | 1–6 hours                  | Hs, Tp, Wave Direction, Wind Speed/Dir       | ~15 KB/hour   |
+| **Operational**   | Ship's DAS, Noon Reports, Loading Computer | Variable (1 hr – 1 day)    | Draft F/A/M, Cargo Weight, Trim, Engine Load | ~5 KB/entry   |
+| **Master Data**   | Classification Society, Ship Builder       | Static (updates on survey) | GA Plans, Scantlings, S-N Curves, Limits     | ~50 MB/vessel |
 
 ## 4.2 Detailed Data Specifications
 
 ### 4.2.1 AIS Data Structure
+
 ```json
 {
   "message_type": "position_report",
@@ -530,7 +541,7 @@ graph TB
   "timestamp": "2025-12-03T14:23:45Z",
   "position": {
     "latitude": 1.2567,
-    "longitude": 103.8190,
+    "longitude": 103.819,
     "accuracy": "high"
   },
   "navigation": {
@@ -548,6 +559,7 @@ graph TB
 ```
 
 **Validation Rules:**
+
 - Latitude: -90 to +90
 - Longitude: -180 to +180
 - SOG: 0 to vessel_max_speed + 5 knots (outlier tolerance)
@@ -557,6 +569,7 @@ graph TB
 ---
 
 ### 4.2.2 Environmental Data Structure
+
 ```json
 {
   "source": "NOAA_GFS",
@@ -586,6 +599,7 @@ graph TB
 ```
 
 **Validation Rules:**
+
 - Hs: 0-20m (flag if >15m for coastal vessels)
 - Tp: 2-25 seconds
 - Wind speed: 0-50 m/s (flag if >25 m/s)
@@ -594,6 +608,7 @@ graph TB
 ---
 
 ### 4.2.3 Operational Data Structure
+
 ```json
 {
   "vessel_imo": 9123456,
@@ -607,9 +622,9 @@ graph TB
     "heel": 0.5,
     "cargo_weight": 450.5,
     "cargo_distribution": [
-      {"hold": "1", "weight": 120.0, "lcg": 45.2},
-      {"hold": "2", "weight": 180.5, "lcg": 55.8},
-      {"hold": "3", "weight": 150.0, "lcg": 68.5}
+      { "hold": "1", "weight": 120.0, "lcg": 45.2 },
+      { "hold": "2", "weight": 180.5, "lcg": 55.8 },
+      { "hold": "3", "weight": 150.0, "lcg": 68.5 }
     ],
     "fuel_onboard": 85.2,
     "ballast_weight": 120.0
@@ -623,6 +638,7 @@ graph TB
 ```
 
 **Validation Rules:**
+
 - Draft: Within vessel min/max operating drafts
 - Trim: Within stability book limits
 - Cargo weight: ≤ deadweight capacity
@@ -631,6 +647,7 @@ graph TB
 ---
 
 ### 4.2.4 Master Data Structure
+
 ```json
 {
   "vessel_id": "9123456",
@@ -650,12 +667,12 @@ graph TB
     "max_significant_wave_height": 2.5,
     "max_wind_speed": 20.0,
     "max_speed_in_waves": [
-      {"hs_range": [0, 1.0], "max_speed": 25.0},
-      {"hs_range": [1.0, 1.5], "max_speed": 20.0},
-      {"hs_range": [1.5, 2.5], "max_speed": 15.0}
+      { "hs_range": [0, 1.0], "max_speed": 25.0 },
+      { "hs_range": [1.0, 1.5], "max_speed": 20.0 },
+      { "hs_range": [1.5, 2.5], "max_speed": 15.0 }
     ],
     "restricted_heading_sectors": [
-      {"wave_dir_range": [150, 210], "speed_limit": 12.0}
+      { "wave_dir_range": [150, 210], "speed_limit": 12.0 }
     ]
   },
   "structural_data": {
@@ -674,6 +691,7 @@ graph TB
 ```
 
 ## 5 Data Flow Architecture
+
 ### 5.1 End-to-End Data Flow Diagram
 
 ```mermaid
@@ -689,7 +707,7 @@ flowchart TD
     %% VALIDATION & ENRICHMENT
     subgraph VALID["VALIDATION & ENRICHMENT"]
         V1[Schema Check\nJSON Schema] -->|pass| V2[Outlier Det.\n3-sigma rule] -->|pass| V3[Gap Filling\nAI Model]
-        
+
         SYNC["Temporal Synchronization\n· Nearest neighbor interpolation for weather\n· Linear interpolation for draft between reports"]
     end
 
@@ -780,15 +798,15 @@ flowchart TD
 
 ## 5.2 Data Processing Latency Budget
 
-| Stage | Target Latency | Technology | Notes |
-|---|---|---|---|
-| AIS Provider + Kafka | 5-10 seconds | REST API polling | Depends on provider SLA |
-| Kafka + Validation | <1 second | Stream processing | In-memory operations |
-| Validation + Enrichment | 2-3 seconds | AI gap-filling | CPU-accelerated inference |
-| Analytics (Load Calc) | 1-2 seconds | Python/NumPy | Vectorized operations |
-| Fatigue Update | 5-10 seconds | Time-series DB write | Batch micro-writes |
-| Alert Generation | <1 second | Rules engine | Event-driven triggers |
-| **Total (Position + Alert)** | **15-30 seconds** | **End-to-end** | **Target: <60s compliance** |
+| Stage                        | Target Latency    | Technology           | Notes                       |
+| ---------------------------- | ----------------- | -------------------- | --------------------------- |
+| AIS Provider + Kafka         | 5-10 seconds      | REST API polling     | Depends on provider SLA     |
+| Kafka + Validation           | <1 second         | Stream processing    | In-memory operations        |
+| Validation + Enrichment      | 2-3 seconds       | AI gap-filling       | CPU-accelerated inference   |
+| Analytics (Load Calc)        | 1-2 seconds       | Python/NumPy         | Vectorized operations       |
+| Fatigue Update               | 5-10 seconds      | Time-series DB write | Batch micro-writes          |
+| Alert Generation             | <1 second         | Rules engine         | Event-driven triggers       |
+| **Total (Position + Alert)** | **15-30 seconds** | **End-to-end**       | **Target: <60s compliance** |
 
 ---
 
@@ -799,6 +817,7 @@ flowchart TD
 #### 6.1.1 Primary Model: Load Prediction Neural Network
 
 **Model Architecture:**
+
 ```
 Input Layer (12 features)
     +
@@ -816,16 +835,19 @@ Output Layer (4 outputs, Linear)
 ```
 
 **Training Data Requirements:**
+
 - Historical dataset: 100,000+ vessel-hours across 50+ vessels
 - Features: SOG, COG, Hs, Tp, wave direction, draft, trim, displacement, encounter angle, hull form coefficients
 - Labels: Calculated loads from empirical formulas (initial training), refined with in-service validation data
 
 **Model Performance Metrics:**
+
 - MAE (Mean Absolute Error): <5% of design limit
 - R² Score: >0.92
 - Inference time: <50ms per prediction
 
 **Update Frequency:**
+
 - Retraining: Quarterly with new operational data
 - Online learning: Disabled (maintain model stability for regulatory approval)
 
@@ -834,12 +856,14 @@ Output Layer (4 outputs, Linear)
 **Model Type:** Isolation Forest (Unsupervised)
 
 **Purpose:** Detect unusual operational patterns that may indicate:
+
 - Sensor malfunction
 - Unreported damage
 - Operational envelope violations
 - Data quality issues
 
 **Features:**
+
 - Stress-to-environment ratios
 - Speed-in-waves compliance
 - Loading pattern deviations
@@ -854,6 +878,7 @@ Output Layer (4 outputs, Linear)
 **Purpose:** Fill missing data gaps when AIS/weather data is temporarily unavailable
 
 **Capabilities:**
+
 - Interpolate position for gaps <30 minutes
 - Estimate draft based on recent loading patterns
 - Predict wave conditions from nearby grid points
@@ -867,6 +892,7 @@ Output Layer (4 outputs, Linear)
 #### 6.2.1 Wave-Induced Load Calculation
 
 **For High-Speed Craft (Primary Target):**
+
 ```python
 def calculate_slam_load(vessel, speed, Hs, Tp, encounter_angle):
     """
@@ -896,6 +922,7 @@ def calculate_slam_load(vessel, speed, Hs, Tp, encounter_angle):
 ```
 
 **For Conventional Hull Forms:**
+
 ```python
 def calculate_wave_bending(vessel, Hs, Tp, encounter_angle):
     """
@@ -926,6 +953,7 @@ def calculate_wave_bending(vessel, Hs, Tp, encounter_angle):
 ### 6.2.2 Fatigue Damage Calculation
 
 **Rainflow Counting Implementation:**
+
 ```python
 def rainflow_count(stress_history):
     """
@@ -969,6 +997,7 @@ def rainflow_count(stress_history):
 ```
 
 **Palmgren-Miner Damage Summation:**
+
 ```python
 def calculate_fatigue_damage(stress_cycles, vessel_section):
     """
@@ -1008,6 +1037,7 @@ def calculate_fatigue_damage(stress_cycles, vessel_section):
 ### 6.3 Compliance Monitoring Logic
 
 **Design Envelope Check:**
+
 ```python
 def check_design_envelope_compliance(vessel_state, design_envelope):
     """
@@ -1066,15 +1096,18 @@ def check_design_envelope_compliance(vessel_state, design_envelope):
 ---
 
 ## 7. Core Workflows
+
 ## 7. Core Workflows
 
 ### 7.1 Vessel Onboarding Workflow
+
 ```
 VESSEL ONBOARDING PROCESS
 (Target: 48 hours)
 ```
 
 **STEP 1: INITIAL DATA COLLECTION (Day 0, Hours 0-4)**
+
 - Input: Vessel IMO number
 - Action: Automated scraping of public registries
   - IHS Sea-web database query
@@ -1084,6 +1117,7 @@ VESSEL ONBOARDING PROCESS
 - Human Verification: Fleet manager reviews auto-populated data
 
 **STEP 2: TECHNICAL SPECIFICATION UPLOAD (Day 0, Hours 4-8)**
+
 - Input: PDF/DWG files from ship owner
   - General arrangement plan
   - Midship section drawing
@@ -1098,6 +1132,7 @@ VESSEL ONBOARDING PROCESS
 - Human Verification: Marine engineer validates extraction accuracy
 
 **STEP 3: DIGITAL TWIN GENERATION (Day 0-1, Hours 8-24)**
+
 - Input: Validated master data
 - Action: Automated hydrodynamic model creation
   - Hull form discretization (100 stations)
@@ -1109,6 +1144,7 @@ VESSEL ONBOARDING PROCESS
 - Quality Check: Compare calculated vs. design displacement (±2% tolerance)
 
 **STEP 4: DATA SOURCE INTEGRATION (Day 1, Hours 24-32)**
+
 - AIS Connection:
   - Register vessel MMSI with AIS provider API
   - Set up real-time webhook for position updates
@@ -1124,6 +1160,7 @@ VESSEL ONBOARDING PROCESS
 - Output: Data pipeline operational
 
 **STEP 5: BASELINE CALIBRATION (Day 1-2, Hours 32-48)**
+
 - Input: 90 days of historical AIS + weather data
 - Action: Retrospective analysis
   - Calculate historical load exposure
@@ -1137,6 +1174,7 @@ VESSEL ONBOARDING PROCESS
   - Estimated pre-monitoring fatigue accumulation
 
 **STEP 6: GO-LIVE & HANDOVER (Day 2, Hour 48)**
+
 - Dashboard activation: User accounts created
 - Training: 1-hour webinar for ship crew + shore staff
 - Alert configuration: Set notification preferences
@@ -1147,11 +1185,13 @@ VESSEL ONBOARDING PROCESS
   - Fatigue accumulation tracking started
 
 **POST-ONBOARDING**
+
 - Week 1: Daily check-ins with fleet manager
 - Month 1: Review initial findings report
 - Month 3: System performance review & fine-tuning
 
 **Onboarding Success Criteria:**
+
 - ✓ AIS position updates received every <5 minutes
 - ✓ Weather data matched to position within 0.5° lat/lon
 - ✓ Digital twin calculates loads within ±10% of empirical formulas
@@ -1161,6 +1201,7 @@ VESSEL ONBOARDING PROCESS
 ---
 
 ### 7.2 Real-Time Monitoring Workflow
+
 ```
 CONTINUOUS MONITORING LOOP (1-minute cycle)
 ```
@@ -1265,18 +1306,22 @@ CONTINUOUS MONITORING LOOP (1-minute cycle)
   - TTL: 5 minutes (stale data protection)
 
 **01:00 - LOOP RESTART**
+
 - Repeat cycle for all vessels in fleet (parallel processing)
 
 ---
 
 ### 7.3 Alert Response Workflow
+
 ```
 ALERT RESPONSE & ESCALATION
 ```
 
 **ALERT GENERATION (system)**
+
 - Condition Detected: e.g., Wave height exceeding 80% of limit
 - Alert Record Created:
+
 ```json
 {
   "alert_id": "ALT-2025-0003",
@@ -1289,7 +1334,7 @@ ALERT RESPONSE & ESCALATION
   "threshold": 2.0,
   "limit": 2.5,
   "recommendation": "Monitor conditions, reduce speed if Hs exceeds 2.3m",
-  "vessel_position": {"lat": 1.25, "lon": 103.82},
+  "vessel_position": { "lat": 1.25, "lon": 103.82 },
   "status": "ACTIVE",
   "acknowledged": false
 }
@@ -1298,6 +1343,7 @@ ALERT RESPONSE & ESCALATION
 - Notification Dispatch
 
 **LEVEL 1: YELLOW ALERT (Information/Caution)**
+
 - Notification Channels:
   - Dashboard: Popup banner (dismissible after 30 sec)
   - Email: Send to shore operations team
@@ -1309,6 +1355,7 @@ ALERT RESPONSE & ESCALATION
 - Escalation: None (unless condition worsens)
 
 **LEVEL 2: ORANGE ALERT (Warning)**
+
 - Notification Channels:
   - Dashboard: Persistent modal (requires acknowledgment)
   - Email: Send to shore ops + Fleet manager
@@ -1329,6 +1376,7 @@ ALERT RESPONSE & ESCALATION
     - Notification: "Condition normalized" email
 
 **LEVEL 3: RED ALERT (Critical)**
+
 - Notification Channels:
   - Dashboard: Full-screen alert (cannot be dismissed)
   - Email: Fleet manager + Marine superintendent + Emergency contact
@@ -1354,6 +1402,7 @@ ALERT RESPONSE & ESCALATION
   - Requires: Preventive action plan approved
 
 **USER ACKNOWLEDGMENT FLOW**
+
 - Step 1: User receives notification
 - Step 2: User clicks alert in dashboard
 - Step 3: System displays:
@@ -1374,6 +1423,7 @@ ALERT RESPONSE & ESCALATION
 - Step 6: Alert remains visible until condition resolves
 
 **RECURRING ALERT MANAGEMENT**
+
 - Scenario: Same vessel triggers same alert multiple times
 - Logic:
   - IF alert re-occurs within 30 minutes: Don't re-send notifications
@@ -1386,6 +1436,7 @@ ALERT RESPONSE & ESCALATION
   - Option to "Snooze" yellow alerts for 24 hours (requires justification)
 
 **POST-ALERT ANALYSIS**
+
 - Automatic Report Generation (24 hours after resolution):
   - Alert timeline (trigger + acknowledgment + resolution)
   - Vessel track during incident
@@ -1397,7 +1448,6 @@ ALERT RESPONSE & ESCALATION
   - Alert frequency trends (per vessel, per fleet)
   - Response time metrics (KPI: acknowledge <30 min for ORANGE)
   - False positive rate (target: <5%)
-
 
 ## 7.4 Monthly Reporting Workflow
 
@@ -1488,31 +1538,31 @@ ALERT RESPONSE & ESCALATION
 
 ### 9.1 Technology Stack
 
-| Layer | Component | Technology | Justification |
-|---|---|---|---|
-| **Frontend** | Web Dashboard | React.js 18 + TypeScript | Industry standard, component reusability |
-| | Mobile Apps | React Native | Code sharing with web, single dev team |
-| | Map Library | Mapbox GL JS | Marine features, offline tiles support |
-| | Charts | Chart.js + D3.js | Lightweight + custom visualisations |
-| **Backend** | API Gateway | Node.js (Express) | Non-blocking I/O for real-time data |
-| | Analytics Engine | Python 3.11 (FastAPI) | NumPy/SciPy for numerical computing |
-| | ML Inference | TensorFlow Serving | CPU acceleration, model versioning |
-| | Rules Engine | Drools (Java) | Complex business rules, ABS compliance logic |
-| **Data** | Time-Series DB | InfluxDB 2.x | Optimised for sensor-like data streams |
-| | Relational DB | PostgreSQL 15 + PostGIS | Geospatial queries, ACID compliance |
-| | Cache | Redis 7 | Sub-millisecond read latency |
-| | Message Queue | Apache Kafka | Stream processing, data pipeline |
-| **AI/ML** | Training | Python (TensorFlow/Keras) | Model development, hyperparameter tuning |
-| | Feature Store | Feast | Consistent features for training/serving |
-| | Experiment Tracking | MLflow | Model versioning, performance comparison |
-| **Infrastructure** | Cloud Provider | AWS (primary) or Azure | Global availability, maritime-grade SLA |
-| | Container Orchestration | Kubernetes (EKS/AKS) | Auto-scaling, rolling updates |
-| | CI/CD | GitLab CI/CD | Automated testing, deployment |
-| | Monitoring | Prometheus + Grafana | System health metrics, SLA tracking |
-| | Logging | ELK Stack (Elasticsearch/Logstash/Kibana) | Centralised log analysis |
-| **Security** | API Authentication | JWT + OAuth 2.0 | Stateless, industry standard |
-| | Encryption | TLS 1.3, AES-256 | Data in transit & at rest |
-| | Secrets Management | HashiCorp Vault | API keys, database credentials |
+| Layer              | Component               | Technology                                | Justification                                |
+| ------------------ | ----------------------- | ----------------------------------------- | -------------------------------------------- |
+| **Frontend**       | Web Dashboard           | React.js 18 + TypeScript                  | Industry standard, component reusability     |
+|                    | Mobile Apps             | React Native                              | Code sharing with web, single dev team       |
+|                    | Map Library             | Mapbox GL JS                              | Marine features, offline tiles support       |
+|                    | Charts                  | Chart.js + D3.js                          | Lightweight + custom visualisations          |
+| **Backend**        | API Gateway             | Node.js (Express)                         | Non-blocking I/O for real-time data          |
+|                    | Analytics Engine        | Python 3.11 (FastAPI)                     | NumPy/SciPy for numerical computing          |
+|                    | ML Inference            | TensorFlow Serving                        | CPU acceleration, model versioning           |
+|                    | Rules Engine            | Drools (Java)                             | Complex business rules, ABS compliance logic |
+| **Data**           | Time-Series DB          | InfluxDB 2.x                              | Optimised for sensor-like data streams       |
+|                    | Relational DB           | PostgreSQL 15 + PostGIS                   | Geospatial queries, ACID compliance          |
+|                    | Cache                   | Redis 7                                   | Sub-millisecond read latency                 |
+|                    | Message Queue           | Apache Kafka                              | Stream processing, data pipeline             |
+| **AI/ML**          | Training                | Python (TensorFlow/Keras)                 | Model development, hyperparameter tuning     |
+|                    | Feature Store           | Feast                                     | Consistent features for training/serving     |
+|                    | Experiment Tracking     | MLflow                                    | Model versioning, performance comparison     |
+| **Infrastructure** | Cloud Provider          | AWS (primary) or Azure                    | Global availability, maritime-grade SLA      |
+|                    | Container Orchestration | Kubernetes (EKS/AKS)                      | Auto-scaling, rolling updates                |
+|                    | CI/CD                   | GitLab CI/CD                              | Automated testing, deployment                |
+|                    | Monitoring              | Prometheus + Grafana                      | System health metrics, SLA tracking          |
+|                    | Logging                 | ELK Stack (Elasticsearch/Logstash/Kibana) | Centralised log analysis                     |
+| **Security**       | API Authentication      | JWT + OAuth 2.0                           | Stateless, industry standard                 |
+|                    | Encryption              | TLS 1.3, AES-256                          | Data in transit & at rest                    |
+|                    | Secrets Management      | HashiCorp Vault                           | API keys, database credentials               |
 
 ---
 
@@ -1575,14 +1625,14 @@ ALERT RESPONSE & ESCALATION
 
 #### Performance Targets
 
-| Metric | Target | Measurement Method |
-|---|---|---|
-| API Response Time (p95) | <500ms | CloudWatch custom metrics |
-| Dashboard Load Time | <3 seconds | Lighthouse CI |
-| Position-to-Alert Latency | <60 seconds | End-to-end trace |
-| Concurrent Users | 500+ | Load testing (JMeter) |
-| Data Ingestion Rate | 10,000 messages/sec | Kafka lag monitoring |
-| Database Query Time (p95) | <100ms | RDS Performance Insights |
+| Metric                    | Target              | Measurement Method        |
+| ------------------------- | ------------------- | ------------------------- |
+| API Response Time (p95)   | <500ms              | CloudWatch custom metrics |
+| Dashboard Load Time       | <3 seconds          | Lighthouse CI             |
+| Position-to-Alert Latency | <60 seconds         | End-to-end trace          |
+| Concurrent Users          | 500+                | Load testing (JMeter)     |
+| Data Ingestion Rate       | 10,000 messages/sec | Kafka lag monitoring      |
+| Database Query Time (p95) | <100ms              | RDS Performance Insights  |
 
 #### Scalability Design
 
@@ -1626,48 +1676,49 @@ ALERT RESPONSE & ESCALATION
 
 ### 9.5 Data Retention Policy
 
-| Data Category | Retention Period | Storage Tier | Justification |
-|---|---|---|---|
-| Real-time position data | 90 days | Hot (InfluxDB) | Operational analysis |
-| Historical position | 7 years | Warm (S3 Standard-IA) | Regulatory requirement (ABS) |
-| Calculated loads | 7 years | Warm (S3) | Survey evidence |
-| Fatigue damage log | Vessel lifetime | Warm (S3) | Permanent structural record |
-| Alert records | 7 years | Warm (RDS + S3) | Audit trail |
-| Monthly reports | 7 years | Cold (S3 Glacier) | Class compliance |
-| System logs | 1 year | Warm (CloudWatch) | Debugging, security |
+| Data Category           | Retention Period | Storage Tier          | Justification                |
+| ----------------------- | ---------------- | --------------------- | ---------------------------- |
+| Real-time position data | 90 days          | Hot (InfluxDB)        | Operational analysis         |
+| Historical position     | 7 years          | Warm (S3 Standard-IA) | Regulatory requirement (ABS) |
+| Calculated loads        | 7 years          | Warm (S3)             | Survey evidence              |
+| Fatigue damage log      | Vessel lifetime  | Warm (S3)             | Permanent structural record  |
+| Alert records           | 7 years          | Warm (RDS + S3)       | Audit trail                  |
+| Monthly reports         | 7 years          | Cold (S3 Glacier)     | Class compliance             |
+| System logs             | 1 year           | Warm (CloudWatch)     | Debugging, security          |
 
 ---
 
 ## 10. Compliance & Certification
 
-### 10.1 ABS Smart Structural Health Monitoring  TIER 1 Compliance Checklist
+### 10.1 ABS Smart Structural Health Monitoring TIER 1 Compliance Checklist
 
-| Requirement | Implementation | Verification Method | Status |
-|---|---|---|---|
-| **Data Collection** | | | |
-| Vessel-specific environmental loads | ✓ AIS + hindcast weather integration | Data pipeline audit | Design |
-| Operational data (cargo, speed, draft) | ✓ DAS integration + manual entry | Data completeness report | Design |
-| **Analysis** | | | |
-| Empirical structural load calculation | ✓ Slamming + wave bending models | Validation against class rules | In Progress |
-| Fatigue damage accumulation | ✓ Rainflow + Palmgren-Miner | Comparison with FEM analysis | In Progress |
-| Damage rate trending | ✓ Time-series analytics | Historical data review | Design |
-| **System Requirements** | | | |
-| No physical sensors required | ✓ 100% data-driven approach | System architecture review | Complete |
-| Design envelope compliance | ✓ Real-time monitoring + alerts | Test scenarios | In Progress |
-| Audit trail maintenance | ✓ Immutable logs (7-year retention) | Database schema review | Design |
-| **Documentation** | | | |
-| Software specification document | ✓ This document | ABS review submission | Complete |
-| Validation test plan | ⚠ In development | ITP preparation | Planned |
-| User operation manual | ⚠ In development | Draft review | Planned |
-| **Certification Path** | | | |
-| Product Design Assessment (PDA) | Target: Q2 2026 | ABS formal submission | Planned |
-| Software Provider Certification | ISO 9001 implementation | External audit | Planned |
+| Requirement                            | Implementation                       | Verification Method            | Status      |
+| -------------------------------------- | ------------------------------------ | ------------------------------ | ----------- |
+| **Data Collection**                    |                                      |                                |             |
+| Vessel-specific environmental loads    | ✓ AIS + hindcast weather integration | Data pipeline audit            | Design      |
+| Operational data (cargo, speed, draft) | ✓ DAS integration + manual entry     | Data completeness report       | Design      |
+| **Analysis**                           |                                      |                                |             |
+| Empirical structural load calculation  | ✓ Slamming + wave bending models     | Validation against class rules | In Progress |
+| Fatigue damage accumulation            | ✓ Rainflow + Palmgren-Miner          | Comparison with FEM analysis   | In Progress |
+| Damage rate trending                   | ✓ Time-series analytics              | Historical data review         | Design      |
+| **System Requirements**                |                                      |                                |             |
+| No physical sensors required           | ✓ 100% data-driven approach          | System architecture review     | Complete    |
+| Design envelope compliance             | ✓ Real-time monitoring + alerts      | Test scenarios                 | In Progress |
+| Audit trail maintenance                | ✓ Immutable logs (7-year retention)  | Database schema review         | Design      |
+| **Documentation**                      |                                      |                                |             |
+| Software specification document        | ✓ This document                      | ABS review submission          | Complete    |
+| Validation test plan                   | ⚠ In development                    | ITP preparation                | Planned     |
+| User operation manual                  | ⚠ In development                    | Draft review                   | Planned     |
+| **Certification Path**                 |                                      |                                |             |
+| Product Design Assessment (PDA)        | Target: Q2 2026                      | ABS formal submission          | Planned     |
+| Software Provider Certification        | ISO 9001 implementation              | External audit                 | Planned     |
 
 ---
 
 ### 10.2 Certification Roadmap
 
 #### Phase 1: Pre-Submission (Months 1–3)
+
 - Complete system development
 - Internal validation testing
 - Documentation preparation:
@@ -1677,12 +1728,14 @@ ALERT RESPONSE & ESCALATION
   - Failure modes analysis
 
 #### Phase 2: ABS Engagement (Months 4–6)
+
 - Initial consultation with ABS surveyor
 - Submission of preliminary documentation
 - Technical review meetings
 - Address ABS comments and queries
 
 #### Phase 3: Validation Testing (Months 7–9)
+
 - Deploy system on 3 pilot vessels
 - Collect 90 days of operational data
 - Parallel comparison with empirical calculations
@@ -1692,12 +1745,14 @@ ALERT RESPONSE & ESCALATION
   - Alert system reliability
 
 #### Phase 4: Formal Approval (Months 10–12)
+
 - Submit complete documentation package
 - ABS witness testing (if required)
 - Address final findings
 - Receive Product Design Assessment certificate
 
 #### Phase 5: Market Launch (Month 13+)
+
 - Commercial availability
 - Marketing to vessel operators
 - Class notation assignment to enrolled vessels
@@ -1708,27 +1763,26 @@ ALERT RESPONSE & ESCALATION
 
 ### Appendix A: Glossary
 
-| Term | Definition |
-|---|---|
-| **ABS** | American Bureau of Shipping — Classification society |
-| **AIS** | Automatic Identification System — Maritime vessel tracking |
-| **Digital Twin** | Virtual model that simulates physical vessel behaviour |
-| **Hindcast** | Historical weather data reconstructed from models |
-| **Hs** | Significant wave height — Average height of highest 1/3 of waves |
-| **Palmgren-Miner Rule** | Linear damage accumulation theory for fatigue |
-| **Rainflow Counting** | Algorithm to extract stress cycles from time-series |
-| **S-N Curve** | Stress vs. Number of cycles fatigue characterisation |
-| **Tp** | Peak wave period — Time between successive wave crests |
-| **UVSR** | Unified Vessel State Record — Synchronised data snapshot |
-
-
+| Term                    | Definition                                                       |
+| ----------------------- | ---------------------------------------------------------------- |
+| **ABS**                 | American Bureau of Shipping — Classification society             |
+| **AIS**                 | Automatic Identification System — Maritime vessel tracking       |
+| **Digital Twin**        | Virtual model that simulates physical vessel behaviour           |
+| **Hindcast**            | Historical weather data reconstructed from models                |
+| **Hs**                  | Significant wave height — Average height of highest 1/3 of waves |
+| **Palmgren-Miner Rule** | Linear damage accumulation theory for fatigue                    |
+| **Rainflow Counting**   | Algorithm to extract stress cycles from time-series              |
+| **S-N Curve**           | Stress vs. Number of cycles fatigue characterisation             |
+| **Tp**                  | Peak wave period — Time between successive wave crests           |
+| **UVSR**                | Unified Vessel State Record — Synchronised data snapshot         |
 
 # V-SHM BRD — Implementation Readiness & Gap Analysis
 
 ## AI/ML Training Data — Sources & Gap Analysis
 
 ### AIS Data (Best Free Source)
-- 
+
+-
 - **NOAA AIS Data** — Free historical AIS for US waters, downloadable by year/region. Massive dataset.
   ```
   https://marinecadastre.gov/data
@@ -1798,12 +1852,12 @@ ALERT RESPONSE & ESCALATION
 
 Here's what the BRD says vs. what you actually need:
 
-| What BRD Says | What's Missing |
-|---|---|
-| "100,000+ vessel-hours across 50+ vessels" | Doesn't say what type of vessels or how to source them |
-| "Features: SOG, COG, Hs, Tp, draft..." | Doesn't define the label generation strategy |
+| What BRD Says                                      | What's Missing                                              |
+| -------------------------------------------------- | ----------------------------------------------------------- |
+| "100,000+ vessel-hours across 50+ vessels"         | Doesn't say what type of vessels or how to source them      |
+| "Features: SOG, COG, Hs, Tp, draft..."             | Doesn't define the label generation strategy                |
 | "Labels: Calculated loads from empirical formulas" | The empirical formulas are themselves incomplete pseudocode |
-| "Refined with in-service validation data" | No strategy for getting this before launch |
+| "Refined with in-service validation data"          | No strategy for getting this before launch                  |
 
 ---
 
@@ -1817,7 +1871,7 @@ This is the most critical gap. To train the neural network you need:
 The labels (actual structural loads) require either:
 
 1. Physical strain gauges on real vessels — expensive
-2. Running a hydrodynamic simulation (FEM/BEM) using software like ANSYS AQWA to *generate* synthetic labels — requires specialist + software license
+2. Running a hydrodynamic simulation (FEM/BEM) using software like ANSYS AQWA to _generate_ synthetic labels — requires specialist + software license
 3. Using empirical formulas to generate synthetic labels — but those formulas are incomplete in the BRD
 
 ---
@@ -1825,17 +1879,20 @@ The labels (actual structural loads) require either:
 ## Practical Strategy — Bootstrapping Without Full Data
 
 ### Phase 1 — Empirical-Only (No AI, MVP)
+
 - Implement empirical models properly using DNV-RP-C205 [this, I think](https://fenix.tecnico.ulisboa.pt/downloadFile/1689468335664874/DNVGL-RP-C205_2017-Environment.pdf)
 - Use AIS + ERA5 as inputs
 - Skip the neural network entirely for MVP
 - This is fully achievable with free data + a naval architect
 
 ### Phase 2 — Synthetic Label Generation
+
 - Partner with a naval architecture firm to run hydrodynamic simulations on a few vessel types
 - Use simulation outputs as training labels
 - Train the neural network on synthetic data
 
 ### Phase 3 — Real-World Refinement
+
 - As paying customers onboard, collect real operational feedback
 - Retrain model with real-world corrections
 - Model improves over time with more customers (network effect)
@@ -1844,14 +1901,14 @@ The labels (actual structural loads) require either:
 
 ## Free Data You Can Start With Today
 
-| Dataset | Link | What You Get |
-|---|---|---|
-| NOAA AIS | `https://marinecadastre.gov/data` | Historical vessel positions, speed, heading |
-| ERA5 Hindcast | `https://cds.climate.copernicus.eu` | 40 years of wave, wind, current data |
-| CMEMS Marine | `https://marine.copernicus.eu` | Real-time + hindcast ocean data with API |
-| NOAA WAVEWATCH III | `https://polar.ncep.noaa.gov/waves/hindcasts` | Global wave model hindcast |
-| DNV S-N Curves | `https://rules.dnv.com` | Fatigue reference data (free account) |
-| DNV-RP-C205 | `https://www.dnv.com/oilgas/download/dnv-rp-c205-environmental-conditions-and-environmental-loads.html` | Empirical load formula reference |
+| Dataset            | Link                                                                                                    | What You Get                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| NOAA AIS           | `https://marinecadastre.gov/data`                                                                       | Historical vessel positions, speed, heading |
+| ERA5 Hindcast      | `https://cds.climate.copernicus.eu`                                                                     | 40 years of wave, wind, current data        |
+| CMEMS Marine       | `https://marine.copernicus.eu`                                                                          | Real-time + hindcast ocean data with API    |
+| NOAA WAVEWATCH III | `https://polar.ncep.noaa.gov/waves/hindcasts`                                                           | Global wave model hindcast                  |
+| DNV S-N Curves     | `https://rules.dnv.com`                                                                                 | Fatigue reference data (free account)       |
+| DNV-RP-C205        | `https://www.dnv.com/oilgas/download/dnv-rp-c205-environmental-conditions-and-environmental-loads.html` | Empirical load formula reference            |
 
 ---
 
@@ -1863,7 +1920,7 @@ That still requires the specialist hydrodynamics work to generate synthetic labe
 
 > **Recommended starting point:** Phase 1 empirical-only MVP using DNV-RP-C205 formulas
 > with NOAA AIS + ERA5 inputs. This sidesteps the AI training data problem entirely
-> and is sufficient for ABS Smart Structural Health Monitoring  Tier 1 certification at MVP stage.
+> and is sufficient for ABS Smart Structural Health Monitoring Tier 1 certification at MVP stage.
 
 # Final Analysis of the BRD — What You Can Build Now vs. What You Can't
 
@@ -1877,13 +1934,13 @@ That still requires the specialist hydrodynamics work to generate synthetic labe
 - Infrastructure architecture (AWS)
 - Compliance checklist
 
-## Critical - Grey Areas 
+## Critical - Grey Areas
 
 ### 1. The Digital Twin — The Biggest Gap
 
 This is the **core Enginer of the entire product** and the document totally ignores or purposefully removed (section 8?) this:
 
-- It says "hull form discretization (100 stations)" and "RAO calculation" but gives zero detail on *how* to actually build one
+- It says "hull form discretization (100 stations)" and "RAO calculation" but gives zero detail on _how_ to actually build one
 - RAO tables (Response Amplitude Operators) require specialist hydrodynamic software like **ANSYS AQWA, WAMIT, or NAPA** — these cost ~$50,000–$210,000/year in licensing alone, then training etc.
 - The document assumes you can "automatically generate" a digital twin from uploaded PDFs — this is **extremely non-trivial** and is essentially unsolved as a fully automated process
 - A **naval architect** needs to be involved here. This cannot be pure software engineering
@@ -1968,15 +2025,15 @@ Final_Load = 0.6 × AI_Prediction + 0.4 × Empirical
 
 ## Honest Summary
 
-| Area | Completeness | Notes |
-|---|---|---|
-| System architecture | 75% | Good skeleton, gaps in detail |
-| Data ingestion | 60% | Schemas defined, integration specs missing |
-| Digital twin / hydrodynamics | 15% | Dangerously underspecified |
-| AI/ML models | 40% | Architecture described, no training data strategy |
-| Empirical calculations | 50% | Pseudocode only, references external standards |
-| UI/UX | 20% | Described in words, no wireframes |
-| ABS certification process | 70% | Roadmap exists, actual submission content unclear |
+| Area                         | Completeness | Notes                                             |
+| ---------------------------- | ------------ | ------------------------------------------------- |
+| System architecture          | 75%          | Good skeleton, gaps in detail                     |
+| Data ingestion               | 60%          | Schemas defined, integration specs missing        |
+| Digital twin / hydrodynamics | 15%          | Dangerously underspecified                        |
+| AI/ML models                 | 40%          | Architecture described, no training data strategy |
+| Empirical calculations       | 50%          | Pseudocode only, references external standards    |
+| UI/UX                        | 20%          | Described in words, no wireframes                 |
+| ABS certification process    | 70%          | Roadmap exists, actual submission content unclear |
 
 ---
 
@@ -1998,13 +2055,13 @@ These are platform components you can implement immediately without specialist i
 
 These **cannot be built from this document alone**:
 
-| Blocker | What You Need |
-|---|---|
-| Digital twin generation | Licensed naval architect + hydrodynamic software (AQWA/WAMIT) |
-| RAO table computation | Hydrodynamics consultant or existing vessel RAO datasets |
-| Empirical slam/bending formulas | Direct access to DNV-RP-C205, ABS HSC Guide, IACS UR S11 |
-| AI model training | 100,000+ hours of historical vessel + structural data |
-| ABS certification submission | ABS-approved marine engineer to author design basis documents |
+| Blocker                         | What You Need                                                 |
+| ------------------------------- | ------------------------------------------------------------- |
+| Digital twin generation         | Licensed naval architect + hydrodynamic software (AQWA/WAMIT) |
+| RAO table computation           | Hydrodynamics consultant or existing vessel RAO datasets      |
+| Empirical slam/bending formulas | Direct access to DNV-RP-C205, ABS HSC Guide, IACS UR S11      |
+| AI model training               | 100,000+ hours of historical vessel + structural data         |
+| ABS certification submission    | ABS-approved marine engineer to author design basis documents |
 
 ---
 
@@ -2023,7 +2080,7 @@ The Approach is a **two-track delivery**:
 
 ## 1. Pre-Commence Requirements
 
-These are business, procurement and specialist decisions that block the analytical core of the product. 
+These are business, procurement and specialist decisions that block the analytical core of the product.
 The platform scaffolding (infra, UI, pipelines) can start immediately — but the structural analysis engine cannot be built until these are resolved.
 
 ### 1.1 Hard Blockers — Must Resolve Before first Sprint (Analytical Track)
@@ -2095,17 +2152,17 @@ The platform scaffolding (infra, UI, pipelines) can start immediately — but th
 
 ### Phase 1 — Design & Architecture
 
-| Work Stream | Deliverable | Owner | Man-Days | Build Status |
-|---|---|---|:--------:|:---:|
-| System Architecture | Cloud infrastructure design (AWS EKS, RDS, Kafka, InfluxDB) | EigenAI |    4     | ✅ Can Build |
-| System Architecture | Multi-tenancy & RBAC design document | EigenAI |    3     | ✅ Can Build |
-| Data Architecture | Full data schema definitions (AIS, weather, ops, master) | EigenAI |    3     | ✅ Can Build |
-| Data Architecture | Data flow & pipeline architecture diagram | EigenAI |    2     | ✅ Can Build |
-| API Design | REST API specification (OpenAPI 3.0) | EigenAI |    3     | ✅ Can Build |
-| UX/UI Design | Wireframes: Fleet map, vessel detail, alert log, fatigue module | EigenAI |    8     | ✅ Can Build |
-| UX/UI Design | UI component library & design system | EigenAI |    5     | ✅ Can Build |
-| Naval Architecture | Digital twin methodology specification | Naval Arch. |   10?    | ⛔ Blocked |
-| Naval Architecture | Empirical formula selection & validation plan | Naval Arch. |    8?    | ⛔ Blocked |
+| Work Stream         | Deliverable                                                     | Owner       | Man-Days | Build Status |
+| ------------------- | --------------------------------------------------------------- | ----------- | :------: | :----------: |
+| System Architecture | Cloud infrastructure design (AWS EKS, RDS, Kafka, InfluxDB)     | EigenAI     |    4     | ✅ Can Build |
+| System Architecture | Multi-tenancy & RBAC design document                            | EigenAI     |    3     | ✅ Can Build |
+| Data Architecture   | Full data schema definitions (AIS, weather, ops, master)        | EigenAI     |    3     | ✅ Can Build |
+| Data Architecture   | Data flow & pipeline architecture diagram                       | EigenAI     |    2     | ✅ Can Build |
+| API Design          | REST API specification (OpenAPI 3.0)                            | EigenAI     |    3     | ✅ Can Build |
+| UX/UI Design        | Wireframes: Fleet map, vessel detail, alert log, fatigue module | EigenAI     |    8     | ✅ Can Build |
+| UX/UI Design        | UI component library & design system                            | EigenAI     |    5     | ✅ Can Build |
+| Naval Architecture  | Digital twin methodology specification                          | Naval Arch. |   10?    |  ⛔ Blocked  |
+| Naval Architecture  | Empirical formula selection & validation plan                   | Naval Arch. |    8?    |  ⛔ Blocked  |
 
 **Phase 1 Total: ~46 MD** (28 MD EigenAI | 18? MD Naval Arch.)
 
@@ -2113,20 +2170,20 @@ The platform scaffolding (infra, UI, pipelines) can start immediately — but th
 
 ### Phase 2 — Infrastructure Setup
 
-| Work Stream | Deliverable | Owner | Man-Days | Build Status |
-|---|---|---|:---:|:---:|
-| Cloud Setup | AWS EKS cluster + VPC networking | EigenAI | 4 | ✅ Can Build |
-| Cloud Setup | RDS PostgreSQL (multi-AZ) + PostGIS extension | EigenAI | 2 | ✅ Can Build |
-| Cloud Setup | InfluxDB / AWS Timestream (time-series DB) | EigenAI | 2 | ✅ Can Build |
-| Cloud Setup | Apache Kafka (MSK) cluster setup + topic configuration | EigenAI | 3 | ✅ Can Build |
-| Cloud Setup | Redis ElastiCache cluster | EigenAI | 1 | ✅ Can Build |
-| Cloud Setup | S3 buckets + lifecycle policies (7-year retention) | EigenAI | 2 | ✅ Can Build |
-| DevOps | CI/CD pipelines (GitLab CI) | EigenAI | 4 | ✅ Can Build |
-| DevOps | Prometheus + Grafana monitoring stack | EigenAI | 3 | ✅ Can Build |
-| DevOps | ELK stack (centralised logging) | EigenAI | 3 | ✅ Can Build |
-| Security | JWT + OAuth 2.0 authentication framework | EigenAI | 4 | ✅ Can Build |
-| Security | HashiCorp Vault (secrets management) | EigenAI | 2 | ✅ Can Build |
-| Security | TLS 1.3 + AES-256 encryption at rest and in transit | EigenAI | 2 | ✅ Can Build |
+| Work Stream | Deliverable                                            | Owner   | Man-Days | Build Status |
+| ----------- | ------------------------------------------------------ | ------- | :------: | :----------: |
+| Cloud Setup | AWS EKS cluster + VPC networking                       | EigenAI |    4     | ✅ Can Build |
+| Cloud Setup | RDS PostgreSQL (multi-AZ) + PostGIS extension          | EigenAI |    2     | ✅ Can Build |
+| Cloud Setup | InfluxDB / AWS Timestream (time-series DB)             | EigenAI |    2     | ✅ Can Build |
+| Cloud Setup | Apache Kafka (MSK) cluster setup + topic configuration | EigenAI |    3     | ✅ Can Build |
+| Cloud Setup | Redis ElastiCache cluster                              | EigenAI |    1     | ✅ Can Build |
+| Cloud Setup | S3 buckets + lifecycle policies (7-year retention)     | EigenAI |    2     | ✅ Can Build |
+| DevOps      | CI/CD pipelines (GitLab CI)                            | EigenAI |    4     | ✅ Can Build |
+| DevOps      | Prometheus + Grafana monitoring stack                  | EigenAI |    3     | ✅ Can Build |
+| DevOps      | ELK stack (centralised logging)                        | EigenAI |    3     | ✅ Can Build |
+| Security    | JWT + OAuth 2.0 authentication framework               | EigenAI |    4     | ✅ Can Build |
+| Security    | HashiCorp Vault (secrets management)                   | EigenAI |    2     | ✅ Can Build |
+| Security    | TLS 1.3 + AES-256 encryption at rest and in transit    | EigenAI |    2     | ✅ Can Build |
 
 **Phase 2 Total: 32 MD** (32 MD EigenAI)
 
@@ -2134,19 +2191,19 @@ The platform scaffolding (infra, UI, pipelines) can start immediately — but th
 
 ### Phase 3 — Data Ingestion Pipelines
 
-| Work Stream | Deliverable | Owner | Man-Days | Build Status |
-|---|---|---|:---:|:---:|
-| AIS Integration | AIS provider API connector (commercial provider) | EigenAI | 5 | ✅ Can Build |
-| AIS Integration | AIS data validation & schema enforcement | EigenAI | 3 | ✅ Can Build |
-| AIS Integration | Kafka topic setup + AIS stream consumer | EigenAI | 2 | ✅ Can Build |
-| Weather Integration | Weather API connector (ERA5 / NOAA WAVEWATCH III) | EigenAI | 5 | ✅ Can Build |
-| Weather Integration | Spatial bi-linear interpolation engine | EigenAI | 4 | ✅ Can Build |
-| Weather Integration | Hindcast vs. forecast routing logic | EigenAI | 3 | ⚠️ Partial |
-| Operational Data | DAS / noon report parser (email + API intake) | EigenAI | 5 | ✅ Can Build |
-| Operational Data | Manual data entry form (draft, cargo, trim) | EigenAI | 3 | ✅ Can Build |
-| Validation Engine | Unified outlier detection (3-sigma rule) | EigenAI | 4 | ✅ Can Build |
-| Validation Engine | Temporal synchronisation — Unified Vessel State Record | EigenAI | 4 | ✅ Can Build |
-| Validation Engine | AI gap-filling model (BiLSTM for missing data) | EigenAI | 10 | ⚠️ Partial |
+| Work Stream         | Deliverable                                            | Owner   | Man-Days | Build Status |
+| ------------------- | ------------------------------------------------------ | ------- | :------: | :----------: |
+| AIS Integration     | AIS provider API connector (commercial provider)       | EigenAI |    5     | ✅ Can Build |
+| AIS Integration     | AIS data validation & schema enforcement               | EigenAI |    3     | ✅ Can Build |
+| AIS Integration     | Kafka topic setup + AIS stream consumer                | EigenAI |    2     | ✅ Can Build |
+| Weather Integration | Weather API connector (ERA5 / NOAA WAVEWATCH III)      | EigenAI |    5     | ✅ Can Build |
+| Weather Integration | Spatial bi-linear interpolation engine                 | EigenAI |    4     | ✅ Can Build |
+| Weather Integration | Hindcast vs. forecast routing logic                    | EigenAI |    3     |  ⚠️ Partial  |
+| Operational Data    | DAS / noon report parser (email + API intake)          | EigenAI |    5     | ✅ Can Build |
+| Operational Data    | Manual data entry form (draft, cargo, trim)            | EigenAI |    3     | ✅ Can Build |
+| Validation Engine   | Unified outlier detection (3-sigma rule)               | EigenAI |    4     | ✅ Can Build |
+| Validation Engine   | Temporal synchronisation — Unified Vessel State Record | EigenAI |    4     | ✅ Can Build |
+| Validation Engine   | AI gap-filling model (BiLSTM for missing data)         | EigenAI |    10    |  ⚠️ Partial  |
 
 **Phase 3 Total: ~48 MD** (48 MD EigenAI)
 
@@ -2154,16 +2211,16 @@ The platform scaffolding (infra, UI, pipelines) can start immediately — but th
 
 ### Phase 4 — Vessel Onboarding & Master Data
 
-| Work Stream | Deliverable | Owner | Man-Days | Build Status |
-|---|---|---|:--------:|:---:|
-| Vessel Registry | Vessel master data schema + PostgreSQL tables | EigenAI |    3     | ✅ Can Build |
-| Vessel Registry | IHS Sea-web / public registry scraper | EigenAI |    4     | ✅ Can Build |
-| Vessel Registry | Manual vessel spec upload UI (PDF/DWG file intake) | EigenAI |    3     | ✅ Can Build |
-| AI Doc Parser | PDF parser for principal dimensions extraction | EigenAI |    10    | ⚠️ Partial |
-| Digital Twin Gen. | Automated hull discretisation (100 stations) | Naval Arch. |   15?    | ⛔ Blocked |
-| Digital Twin Gen. | RAO table computation (15 periods × 12 headings per vessel) | Naval Arch. |   15?    | ⛔ Blocked |
-| Digital Twin Gen. | Pressure distribution + structural stress point mapping | Naval Arch. |   10?    | ⛔ Blocked |
-| Calibration | 90-day historical AIS retroactive baseline calculation | EigenAI |    6     | ⚠️ Partial |
+| Work Stream       | Deliverable                                                 | Owner       | Man-Days | Build Status |
+| ----------------- | ----------------------------------------------------------- | ----------- | :------: | :----------: |
+| Vessel Registry   | Vessel master data schema + PostgreSQL tables               | EigenAI     |    3     | ✅ Can Build |
+| Vessel Registry   | IHS Sea-web / public registry scraper                       | EigenAI     |    4     | ✅ Can Build |
+| Vessel Registry   | Manual vessel spec upload UI (PDF/DWG file intake)          | EigenAI     |    3     | ✅ Can Build |
+| AI Doc Parser     | PDF parser for principal dimensions extraction              | EigenAI     |    10    |  ⚠️ Partial  |
+| Digital Twin Gen. | Automated hull discretisation (100 stations)                | Naval Arch. |   15?    |  ⛔ Blocked  |
+| Digital Twin Gen. | RAO table computation (15 periods × 12 headings per vessel) | Naval Arch. |   15?    |  ⛔ Blocked  |
+| Digital Twin Gen. | Pressure distribution + structural stress point mapping     | Naval Arch. |   10?    |  ⛔ Blocked  |
+| Calibration       | 90-day historical AIS retroactive baseline calculation      | EigenAI     |    6     |  ⚠️ Partial  |
 
 **Phase 4 Total: ~66 MD** (26 MD EigenAI | 40? MD Naval Arch.)
 
@@ -2171,21 +2228,21 @@ The platform scaffolding (infra, UI, pipelines) can start immediately — but th
 
 ### Phase 5 — Analytics Engine
 
-| Work Stream | Deliverable | Owner | Man-Days | Build Status |
-|---|---|---|:--------:|:---:|
-| Empirical Models | Slamming load model (DNV-RP-C205 / ABS HSC Guide) | Naval Arch. |   15?    | ⛔ Blocked |
-| Empirical Models | Wave bending moment — RAO-based strip theory | Naval Arch. |   15?    | ⛔ Blocked |
-| Empirical Models | Ensemble weighting logic (AI + empirical fusion) | EigenAI + NA |    5?    | ⚠️ Partial |
-| AI Load Model | Training data sourcing strategy & pipeline | EigenAI |   10?    | ⚠️ Partial |
-| AI Load Model | Neural network training (12-feature input, 4-output) | EigenAI |   20?    | ⛔ Blocked |
-| AI Load Model | Anomaly detection model (Isolation Forest) | EigenAI |    6     | ✅ Can Build |
-| AI Load Model | Model versioning & MLflow experiment tracking | EigenAI |    3     | ✅ Can Build |
-| Fatigue Calc. | Rainflow cycle counting (ASTM E1049) | EigenAI |    6     | ✅ Can Build |
-| Fatigue Calc. | Palmgren-Miner damage summation engine | EigenAI |    6     | ✅ Can Build |
-| Fatigue Calc. | S-N curve database integration (DNV D-curve) | EigenAI + NA |    4?    | ⚠️ Partial |
-| Fatigue Calc. | Cumulative damage register per critical section | EigenAI |    4     | ✅ Can Build |
-| Compliance | Design envelope checker (Hs, speed, heading limits) | EigenAI |    6     | ✅ Can Build |
-| Compliance | Alert rule engine (GREEN / YELLOW / ORANGE / RED) | EigenAI |    4     | ✅ Can Build |
+| Work Stream      | Deliverable                                          | Owner        | Man-Days | Build Status |
+| ---------------- | ---------------------------------------------------- | ------------ | :------: | :----------: |
+| Empirical Models | Slamming load model (DNV-RP-C205 / ABS HSC Guide)    | Naval Arch.  |   15?    |  ⛔ Blocked  |
+| Empirical Models | Wave bending moment — RAO-based strip theory         | Naval Arch.  |   15?    |  ⛔ Blocked  |
+| Empirical Models | Ensemble weighting logic (AI + empirical fusion)     | EigenAI + NA |    5?    |  ⚠️ Partial  |
+| AI Load Model    | Training data sourcing strategy & pipeline           | EigenAI      |   10?    |  ⚠️ Partial  |
+| AI Load Model    | Neural network training (12-feature input, 4-output) | EigenAI      |   20?    |  ⛔ Blocked  |
+| AI Load Model    | Anomaly detection model (Isolation Forest)           | EigenAI      |    6     | ✅ Can Build |
+| AI Load Model    | Model versioning & MLflow experiment tracking        | EigenAI      |    3     | ✅ Can Build |
+| Fatigue Calc.    | Rainflow cycle counting (ASTM E1049)                 | EigenAI      |    6     | ✅ Can Build |
+| Fatigue Calc.    | Palmgren-Miner damage summation engine               | EigenAI      |    6     | ✅ Can Build |
+| Fatigue Calc.    | S-N curve database integration (DNV D-curve)         | EigenAI + NA |    4?    |  ⚠️ Partial  |
+| Fatigue Calc.    | Cumulative damage register per critical section      | EigenAI      |    4     | ✅ Can Build |
+| Compliance       | Design envelope checker (Hs, speed, heading limits)  | EigenAI      |    6     | ✅ Can Build |
+| Compliance       | Alert rule engine (GREEN / YELLOW / ORANGE / RED)    | EigenAI      |    4     | ✅ Can Build |
 
 **Phase 5 Total: ~104 MD** (74 MD EigenAI | 30? MD Naval Arch.)
 
@@ -2193,17 +2250,17 @@ The platform scaffolding (infra, UI, pipelines) can start immediately — but th
 
 ### Phase 6 — Presentation Layer
 
-| Work Stream | Deliverable | Owner | Man-Days | Build Status |
-|---|---|---|:---:|:---:|
-| Web Dashboard | Fleet map (Mapbox GL JS, colour-coded vessel icons) | EigenAI | 8 | ✅ Can Build |
-| Web Dashboard | Vessel detail panel (stress gauges, operational limits) | EigenAI | 6 | ✅ Can Build |
-| Web Dashboard | Alert log UI (filter, sort, acknowledge workflow) | EigenAI | 6 | ✅ Can Build |
-| Web Dashboard | Fatigue life module (damage gauge + 12-month trend) | EigenAI | 6 | ✅ Can Build |
-| Web Dashboard | Historical voyage track overlay | EigenAI | 4 | ✅ Can Build |
-| Mobile App | React Native iOS/Android app (alerts + map) | EigenAI | 15 | ✅ Can Build |
-| Notifications | Multi-channel alert dispatcher (email / SMS / push) | EigenAI | 6 | ✅ Can Build |
-| Reporting | Monthly PDF report generation pipeline | EigenAI | 8 | ✅ Can Build |
-| Reporting | CSV data export + webhook API for fleet mgmt. systems | EigenAI | 3 | ✅ Can Build |
+| Work Stream   | Deliverable                                             | Owner   | Man-Days | Build Status |
+| ------------- | ------------------------------------------------------- | ------- | :------: | :----------: |
+| Web Dashboard | Fleet map (Mapbox GL JS, colour-coded vessel icons)     | EigenAI |    8     | ✅ Can Build |
+| Web Dashboard | Vessel detail panel (stress gauges, operational limits) | EigenAI |    6     | ✅ Can Build |
+| Web Dashboard | Alert log UI (filter, sort, acknowledge workflow)       | EigenAI |    6     | ✅ Can Build |
+| Web Dashboard | Fatigue life module (damage gauge + 12-month trend)     | EigenAI |    6     | ✅ Can Build |
+| Web Dashboard | Historical voyage track overlay                         | EigenAI |    4     | ✅ Can Build |
+| Mobile App    | React Native iOS/Android app (alerts + map)             | EigenAI |    15    | ✅ Can Build |
+| Notifications | Multi-channel alert dispatcher (email / SMS / push)     | EigenAI |    6     | ✅ Can Build |
+| Reporting     | Monthly PDF report generation pipeline                  | EigenAI |    8     | ✅ Can Build |
+| Reporting     | CSV data export + webhook API for fleet mgmt. systems   | EigenAI |    3     | ✅ Can Build |
 
 **Phase 6 Total: 62 MD** (62 MD EigenAI | 0 MD Naval Arch.)
 
@@ -2211,17 +2268,17 @@ The platform scaffolding (infra, UI, pipelines) can start immediately — but th
 
 ### Phase 7 — ABS Certification & Validation
 
-| Work Stream | Deliverable | Owner | Man-Days | Build Status |
-|---|---|---|:--------:|:---:|
-| Documentation | Functional specification document (ABS format) | EigenAI + NA |    8?    | ⚠️ Partial |
-| Documentation | Design basis document + failure modes analysis | Naval Arch. |   12?    | ⛔ Blocked |
-| Documentation | Inspection Test Plan (ITP) for ABS review | Naval Arch. |    8?    | ⛔ Blocked |
-| Documentation | User operation manual | EigenAI |    6     | ✅ Can Build |
-| Validation | 3-vessel pilot deployment (90-day data capture) | EigenAI + NA |   20?    | ⚠️ Partial |
-| Validation | Load calculation accuracy validation report (±10% target) | Naval Arch. |   15?    | ⛔ Blocked |
-| ABS Submission | PDA formal submission + ABS witness testing | Naval Arch. |   20?    | ⛔ Blocked |
-| Cybersecurity | IACS UR E26/E27 compliance assessment | Naval Arch. |    6?    | ⛔ Blocked |
-| Cybersecurity | ISO 27001 / SOC 2 Type II preparation | Naval Arch. |   10?    | ⛔ Blocked |
+| Work Stream    | Deliverable                                               | Owner        | Man-Days | Build Status |
+| -------------- | --------------------------------------------------------- | ------------ | :------: | :----------: |
+| Documentation  | Functional specification document (ABS format)            | EigenAI + NA |    8?    |  ⚠️ Partial  |
+| Documentation  | Design basis document + failure modes analysis            | Naval Arch.  |   12?    |  ⛔ Blocked  |
+| Documentation  | Inspection Test Plan (ITP) for ABS review                 | Naval Arch.  |    8?    |  ⛔ Blocked  |
+| Documentation  | User operation manual                                     | EigenAI      |    6     | ✅ Can Build |
+| Validation     | 3-vessel pilot deployment (90-day data capture)           | EigenAI + NA |   20?    |  ⚠️ Partial  |
+| Validation     | Load calculation accuracy validation report (±10% target) | Naval Arch.  |   15?    |  ⛔ Blocked  |
+| ABS Submission | PDA formal submission + ABS witness testing               | Naval Arch.  |   20?    |  ⛔ Blocked  |
+| Cybersecurity  | IACS UR E26/E27 compliance assessment                     | Naval Arch.  |    6?    |  ⛔ Blocked  |
+| Cybersecurity  | ISO 27001 / SOC 2 Type II preparation                     | Naval Arch.  |   10?    |  ⛔ Blocked  |
 
 **Phase 7 Total: ~105 MD** (34 MD EigenAI | 71? MD Naval Arch.)
 
@@ -2229,20 +2286,21 @@ The platform scaffolding (infra, UI, pipelines) can start immediately — but th
 
 ## 3. Phase Summary
 
-| Phase | EigenAI (MD) | Naval Arch. (MD) | Total (MD) | Overall Status |
-|---|:------------:|:----------------:|:---:|:---:|
-| Phase 1 — Design & Architecture |      28      |        18        | 46 | ⚠️ Partial |
-| Phase 2 — Infrastructure Setup |      32      |        0         | 32 | ✅ Can Build |
-| Phase 3 — Data Ingestion Pipelines |      48      |        0         | 48 | ⚠️ Partial |
-| Phase 4 — Vessel Onboarding & Master Data |      26      |        40        | 66 | ⛔ Blocked |
-| Phase 5 — Analytics Engine |      74      |        30        | 104 | ⛔ Blocked |
-| Phase 6 — Presentation Layer |      62      |        0         | 62 | ✅ Can Build |
-| Phase 7 — Certification & Validation |      34      |        71        | 105 | ⛔ Blocked |
-| **TOTAL** |  **320 MD**  |    **143 MD**    | **463 MD** | |
-| **EigenAI-Only Track** |  **320 MD**  |        —         | **320 MD** | ✅ Can Build |
-| **Full Product (both tracks)** |      —       |        —         | **463 MD** | ⛔ Blocked |
+| Phase                                     | EigenAI (MD) | Naval Arch. (MD) | Total (MD) | Overall Status |
+| ----------------------------------------- | :----------: | :--------------: | :--------: | :------------: |
+| Phase 1 — Design & Architecture           |      28      |        18        |     46     |   ⚠️ Partial   |
+| Phase 2 — Infrastructure Setup            |      32      |        0         |     32     |  ✅ Can Build  |
+| Phase 3 — Data Ingestion Pipelines        |      48      |        0         |     48     |   ⚠️ Partial   |
+| Phase 4 — Vessel Onboarding & Master Data |      26      |        40        |     66     |   ⛔ Blocked   |
+| Phase 5 — Analytics Engine                |      74      |        30        |    104     |   ⛔ Blocked   |
+| Phase 6 — Presentation Layer              |      62      |        0         |     62     |  ✅ Can Build  |
+| Phase 7 — Certification & Validation      |      34      |        71        |    105     |   ⛔ Blocked   |
+| **TOTAL**                                 |  **320 MD**  |    **143 MD**    | **463 MD** |                |
+| **EigenAI-Only Track**                    |  **320 MD**  |        —         | **320 MD** |  ✅ Can Build  |
+| **Full Product (both tracks)**            |      —       |        —         | **463 MD** |   ⛔ Blocked   |
 
 **Notes:**
+
 - 320 MD EigenAI-only track = ~64 weeks solo, ~16 weeks with a team of 4, ~11 weeks with a team of 6
 - Naval arch. track (143 MD) runs in parallel — it does not add to calendar time if contracted simultaneously
 - With parallel execution (both tracks running from Week 1), realistic delivery to pilot-ready is ~20–24 weeks

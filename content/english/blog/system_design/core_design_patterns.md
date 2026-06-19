@@ -5,7 +5,9 @@ title = '23 Core Design Patterns'
 tags = ['Core Design Patterns', 'Interview']
 summary = 'Core design patterns are proven, reusable solutions to frequently occurring problems in software design. '
 +++
-Core design patterns are proven, reusable solutions to frequently occurring problems in software design. Catalogued by the "Gang of Four" (Gamma, Helm, Johnson, Vlissides) in their seminal 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software*, these 23 patterns are language-agnostic blueprints.
+
+Core design patterns are proven, reusable solutions to frequently occurring problems in software design. Catalogued by the "Gang of Four" (Gamma, Helm, Johnson, Vlissides) in their seminal 1994 book _Design Patterns: Elements of Reusable Object-Oriented Software_, these 23 patterns are language-agnostic blueprints.
+
 ## Software Design Principles
 
 Software design principles are fundamental guidelines that help developers create maintainable, scalable, and robust software. These principles often underpin the design patterns discussed below.
@@ -43,6 +45,7 @@ Creational patterns abstract the object instantiation process, decoupling a syst
 Ensures a class has only one instance throughout the lifetime of an application and provides a single, globally accessible point of access to it. The class itself is responsible for controlling its instantiation, preventing any external code from calling the constructor directly. This is useful for managing shared resources such as configuration objects, connection pools, or logging services, where multiple instances would cause inconsistent behaviour or wasted resources.
 
 **Example (Java):**
+
 ```java
 public class Singleton {
     // volatile ensures changes are visible across threads immediately
@@ -65,6 +68,7 @@ public class Singleton {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Singleton {
@@ -92,6 +96,7 @@ classDiagram
 Defines an interface or abstract class for creating a single object, but delegates the responsibility of deciding which concrete class to instantiate to its subclasses. Rather than calling a constructor directly, client code calls a factory method, allowing the subclass to determine the type of object created. This promotes loose coupling because the client depends on the abstract type, not on any specific implementation.
 
 **Example (Java):**
+
 ```java
 public abstract class Animal {
     public abstract String speak();
@@ -126,6 +131,7 @@ public class CatFactory extends AnimalFactory {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Animal {
@@ -175,6 +181,7 @@ classDiagram
 Provides an interface for creating **families** of related or dependent objects without specifying their concrete classes. Where the Factory Method creates one product, the Abstract Factory creates a suite of products that are designed to work together. Swapping the factory implementation changes the entire product family in one place, guaranteeing consistency across the family.
 
 **Example (Java):**
+
 ```java
 public interface Button {
     void paint();
@@ -219,6 +226,7 @@ public class MacFactory implements GUIFactory {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Button {
@@ -283,6 +291,7 @@ classDiagram
 Separates the construction of a complex object from its final representation, allowing the same construction process to produce different representations. Instead of a large constructor with many optional parameters (the "telescoping constructor" anti-pattern), the Builder pattern uses a dedicated Builder object that assembles the target object step by step via clearly named methods. This results in more readable, flexible, and maintainable object construction code.
 
 **Example (Java):**
+
 ```java
 public class Burger {
     private final boolean cheese;
@@ -323,6 +332,7 @@ public class Burger {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Burger {
@@ -360,6 +370,7 @@ classDiagram
 Creates new objects by copying (cloning) an existing object, known as the prototype. Rather than instantiating a new object from scratch via a constructor, the client asks the prototype to clone itself. This is particularly useful when object creation is expensive (e.g., involves database lookups or complex computation) and the new object is only a slight variation of an existing one. Care must be taken to distinguish between **shallow copies** (references are shared) and **deep copies** (all referenced objects are also duplicated).
 
 **Example (Java):**
+
 ```java
 public abstract class Shape implements Cloneable {
     private String colour;
@@ -397,6 +408,7 @@ public class Circle extends Shape {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Shape {
@@ -436,6 +448,7 @@ Structural patterns deal with object and class composition, describing how class
 Converts the interface of a class into another interface that clients expect, allowing classes with incompatible interfaces to collaborate. It acts as a wrapper around an existing class, translating calls from the client into calls the adaptee understands. There are two variants: the **Object Adapter** (uses composition — holds an instance of the adaptee) and the **Class Adapter** (uses multiple inheritance — only possible in languages that support it).
 
 **Example (Java):**
+
 ```java
 // Target interface that the client expects
 public interface USASocket {
@@ -464,6 +477,7 @@ public class SocketAdapter implements USASocket {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class USASocket {
@@ -500,6 +514,7 @@ classDiagram
 Decouples an abstraction from its implementation so that both can vary independently. Rather than using inheritance to bind an abstraction tightly to its implementation, the Bridge pattern uses composition — the abstraction holds a reference to an implementor object. This avoids the combinatorial explosion of subclasses that would result from trying to cover every combination of abstraction and implementation through inheritance alone.
 
 **Example (Java):**
+
 ```java
 // Implementor — defines the interface for implementation classes
 public interface DrawingAPI {
@@ -540,6 +555,7 @@ public class Circle extends Shape {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class DrawingAPI {
@@ -590,6 +606,7 @@ classDiagram
 Composes objects into tree structures to represent part-whole hierarchies. Composite lets clients treat individual objects (leaves) and compositions of objects (composites) uniformly through a common interface. This is the structural foundation for any tree-like structure — file systems, UI component hierarchies, organisational charts, and so on.
 
 **Example (Java):**
+
 ```java
 // Component — the common interface for both leaves and composites
 public interface FileSystemComponent {
@@ -629,6 +646,7 @@ public class Directory implements FileSystemComponent {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class FileSystemComponent {
@@ -673,6 +691,7 @@ classDiagram
 Dynamically adds new responsibilities or behaviours to an individual object at runtime, without modifying the original class or affecting other objects of the same type. Decorators implement the same interface as the component they wrap, making them transparent to the client. They can be stacked in any order to compose complex behaviour from simple, single-purpose wrappers, offering a flexible alternative to subclassing for extending functionality.
 
 **Example (Java):**
+
 ```java
 // Component interface
 public interface Coffee {
@@ -711,6 +730,7 @@ public class SugarDecorator extends CoffeeDecorator {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Coffee {
@@ -763,6 +783,7 @@ classDiagram
 Provides a simplified, unified interface to a complex subsystem or set of subsystems. The Facade does not prevent clients from accessing the subsystem directly if they need to, but it reduces the learning curve and dependency footprint for common use cases. It promotes layered architecture by defining clear entry points into each subsystem layer.
 
 **Example (Java):**
+
 ```java
 // Subsystem classes — complex internal components
 public class CPU {
@@ -803,6 +824,7 @@ public class ComputerFacade {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class ComputerFacade {
@@ -848,6 +870,7 @@ classDiagram
 Reduces memory consumption by sharing as much data as possible between a large number of fine-grained objects. The pattern separates an object's state into **intrinsic state** (shared, context-independent data stored in the flyweight) and **extrinsic state** (context-specific data passed in by the client at the time of use). A factory manages a pool of flyweight instances, returning an existing one when the same intrinsic state is requested.
 
 **Example (Java):**
+
 ```java
 import java.util.HashMap;
 import java.util.Map;
@@ -884,6 +907,7 @@ public class TreeTypeFactory {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class TreeType {
@@ -917,6 +941,7 @@ classDiagram
 Provides a surrogate or placeholder for another object to control access to it. The proxy implements the same interface as the real subject, making it transparent to the client. Common proxy variants include: **Virtual Proxy** (defers expensive object creation until needed — lazy loading), **Protection Proxy** (controls access based on permissions), **Remote Proxy** (represents an object in a different address space or server), and **Caching Proxy** (stores results of expensive operations and returns them for repeated requests).
 
 **Example (Java):**
+
 ```java
 public interface Subject {
     void request();
@@ -952,6 +977,7 @@ public class Proxy implements Subject {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Subject {
@@ -993,6 +1019,7 @@ Behavioural patterns are concerned with algorithms and the assignment of respons
 Passes a request along a chain of potential handlers until one of them handles it (or the chain is exhausted). Each handler in the chain decides either to process the request or to forward it to the next handler. This decouples the sender of a request from its receiver and allows the chain to be assembled dynamically at runtime.
 
 **Example (Java):**
+
 ```java
 // Abstract Handler — defines the interface and holds the next handler reference
 public abstract class SupportHandler {
@@ -1035,6 +1062,7 @@ public class Management extends SupportHandler {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class SupportHandler {
@@ -1077,6 +1105,7 @@ classDiagram
 Encapsulates a request as a standalone object, containing all information needed to execute the action: the receiver, the method, and any parameters. This decouples the object that invokes the operation from the object that performs it. The Command object can be stored, queued, logged, or passed around, enabling powerful features like undo/redo, macro recording, transactional behaviour, and scheduling.
 
 **Example (Java):**
+
 ```java
 // Command interface
 public interface Command {
@@ -1119,6 +1148,7 @@ public class RemoteControl {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Command {
@@ -1163,6 +1193,7 @@ classDiagram
 Defines a representation for a language's grammar and provides an interpreter that uses that representation to interpret sentences in the language. Each grammar rule is mapped to a class, and the abstract syntax tree (AST) of an expression is composed of these classes. The `interpret` method on each node evaluates the expression in context.
 
 **Example (Java):**
+
 ```java
 import java.util.Map;
 
@@ -1199,6 +1230,7 @@ public class AddExpression implements Expression {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Expression {
@@ -1242,6 +1274,7 @@ classDiagram
 Provides a standard way to sequentially access elements of a collection without exposing its underlying representation (array, linked list, tree, etc.). By abstracting traversal behind an interface, the same client code can iterate over different collection types uniformly, and multiple iterators can traverse the same collection concurrently with independent cursors.
 
 **Example (Java):**
+
 ```java
 import java.util.Iterator;
 import java.util.List;
@@ -1273,6 +1306,7 @@ public class NameCollection implements Iterable<String> {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Iterator~T~ {
@@ -1316,6 +1350,7 @@ classDiagram
 Defines an object that encapsulates how a set of objects interact, promoting loose coupling by preventing objects from referring to each other directly. Instead of many-to-many dependencies between components, each component only knows about the mediator and communicates through it. This centralises complex interaction logic in one place and makes individual components easier to reuse and test.
 
 **Example (Java):**
+
 ```java
 // Mediator interface
 public interface ChatMediator {
@@ -1371,6 +1406,7 @@ public class ChatRoom implements ChatMediator {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class ChatMediator {
@@ -1418,6 +1454,7 @@ classDiagram
 Captures and externalises an object's internal state at a point in time so that the object can be restored to that state later, **without violating encapsulation**. The originator creates a memento containing a snapshot of its state; a caretaker stores and manages the memento but cannot inspect its contents. This is the canonical mechanism for implementing undo/redo.
 
 **Example (Java):**
+
 ```java
 // Memento — stores a snapshot of the Originator's state; opaque to the Caretaker
 public class EditorMemento {
@@ -1455,6 +1492,7 @@ public class UndoManager {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class EditorMemento {
@@ -1498,6 +1536,7 @@ classDiagram
 Defines a one-to-many dependency between objects so that when one object (the **subject** or **publisher**) changes state, all its dependents (**observers** or **subscribers**) are notified and updated automatically. This establishes a push-based event mechanism that promotes loose coupling — the subject knows nothing about its observers beyond the observer interface.
 
 **Example (Java):**
+
 ```java
 import java.util.ArrayList;
 import java.util.List;
@@ -1536,6 +1575,7 @@ public class Logger implements Observer {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class Observer {
@@ -1575,6 +1615,7 @@ classDiagram
 Allows an object to alter its behaviour when its internal state changes, appearing to change its class. State-specific behaviour is delegated to separate state objects, removing large conditional (`if`/`switch`) blocks from the context class. Transitions between states are managed either by the context or by the state objects themselves.
 
 **Example (Java):**
+
 ```java
 // State interface
 public interface TrafficLightState {
@@ -1620,6 +1661,7 @@ public class TrafficLight {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class TrafficLightState {
@@ -1669,6 +1711,7 @@ classDiagram
 Defines a family of algorithms, encapsulates each one in a separate class, and makes them interchangeable. The client selects and injects a strategy at runtime, allowing the algorithm to vary independently from the client that uses it. This eliminates conditional logic that selects between algorithms and makes it easy to add new algorithms without modifying existing code (Open/Closed Principle).
 
 **Example (Java):**
+
 ```java
 // Strategy interface
 public interface SortStrategy {
@@ -1705,6 +1748,7 @@ public class Sorter {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class SortStrategy {
@@ -1747,6 +1791,7 @@ classDiagram
 Defines the **skeleton** of an algorithm in a base class, deferring one or more steps to subclasses. The overall structure and sequence of the algorithm are fixed in the base class (`final` method), but certain steps are declared abstract, allowing subclasses to provide specific implementations without altering the algorithm's structure. This is a classic application of the Hollywood Principle: "Don't call us, we'll call you."
 
 **Example (Java):**
+
 ```java
 public abstract class DataProcessor {
     // Template method — defines the fixed algorithm skeleton; cannot be overridden
@@ -1776,6 +1821,7 @@ public class CSVDataProcessor extends DataProcessor {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class DataProcessor {
@@ -1813,6 +1859,7 @@ classDiagram
 Represents an operation to be performed on elements of an object structure, defined separately from the elements themselves. A visitor object is passed to each element, which calls back the visitor with itself (`accept`/`visit` double dispatch). This allows you to add new operations to an existing object structure without modifying the element classes — instead, you add a new visitor class.
 
 **Example (Java):**
+
 ```java
 // Visitor interface — declares a visit method for each concrete element type
 public interface TaxVisitor {
@@ -1854,6 +1901,7 @@ public class TaxCalculator implements TaxVisitor {
 ```
 
 **Class Diagram**
+
 ```mermaid
 classDiagram
     class TaxVisitor {

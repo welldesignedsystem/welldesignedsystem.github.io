@@ -17,5 +17,3 @@ Work in Progress 👷
 - [LocalWP](https://localwp.com/) — a free, cross-platform app that runs a fully isolated WordPress site on your machine with one click. No need to configure Apache, MySQL or PHP manually; Local handles all of that in the background.
 - Pair it with a lightweight block theme like **Astra** (use the **Astra Starter Template** plugin for pre-built demo sites) and page builders like **Spectra** or **Elementor** to quickly stand up landing pages, sales funnels and content layouts without touching code.
 - Use [LottieFiles](https://lottiefiles.com/) for lightweight, scalable animations on landing pages — export as Lottie JSON and embed via script or a Lottie plugin.
-
-

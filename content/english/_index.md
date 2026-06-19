@@ -1,7 +1,7 @@
 ---
 # Banner
 banner:
-  title: "\"The Well Designed System\""
+  title: '"The Well Designed System"'
   content: "The Well-Designed System is a technical blog built by two software engineers passionate about clean architecture, elegant design and thoughtful engineering."
   image: "/images/banner/1.png"
   button:
@@ -27,7 +27,6 @@ features:
       enable: false
       label: "Get Started Now"
       link: "#"
-
 #  - title: "Discover the Key Features Of Hugo"
 #    image: "/images/service-2.png"
 #    content: "Hugo is an all-in-one web framework for building fast, content-focused websites. It offers a range of exciting features for developers and website creators. Some of the key features are:"

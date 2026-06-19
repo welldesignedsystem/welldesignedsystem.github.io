@@ -14,6 +14,7 @@ Python's built-in data types: int, float, complex, str, bool.
 Collections: list, tuple, set, dict with mutability and time complexities for common operations.
 
 ### Basic Data Types
+
 ```python
 # Numbers
 x = 42          # int
@@ -31,6 +32,7 @@ flag = True
 ```
 
 ### Collections
+
 ```python
 # Lists (mutable, ordered)
 nums = [1, 2, 3]
@@ -53,19 +55,21 @@ person["city"] = "NYC"
 ```
 
 ### Time Complexity of Operations
-| Operation | List | Dict | Set | Tuple |
-|-----------|------|------|-----|-------|
-| Access | O(1) | O(1) | N/A | O(1) |
-| Search | O(n) | O(1) | O(1) | O(n) |
-| Insert | O(n) | O(1) | O(1) | N/A |
-| Delete | O(n) | O(1) | O(1) | N/A |
-| Append | O(1) | N/A | N/A | N/A |
+
+| Operation | List | Dict | Set  | Tuple |
+| --------- | ---- | ---- | ---- | ----- |
+| Access    | O(1) | O(1) | N/A  | O(1)  |
+| Search    | O(n) | O(1) | O(1) | O(n)  |
+| Insert    | O(n) | O(1) | O(1) | N/A   |
+| Delete    | O(n) | O(1) | O(1) | N/A   |
+| Append    | O(1) | N/A  | N/A  | N/A   |
 
 ## Control Flow & Functions
 
 Conditionals, loops, list comprehensions, functions, lambdas, higher-order functions.
 
 ### Conditionals & Loops
+
 ```python
 # if-elif-else
 if x > 0:
@@ -97,6 +101,7 @@ evens = [x for x in range(20) if x % 2 == 0]
 ```
 
 ### Functions
+
 ```python
 def greet(name, greeting="Hello"):
     """Function with default parameter"""
@@ -132,27 +137,28 @@ print(apply_operation(square, [1, 2, 3]))    # [1, 4, 9]
 Classes, inheritance, magic methods, encapsulation.
 
 ### Classes and Inheritance
+
 ```python
 class Animal:
     species_count = 0  # Class variable — shared across all instances
-    
+
     def __init__(self, name, age):
         self.name = name  # Instance variable — unique to each instance
         self.age = age
         Animal.species_count += 1
-    
+
     def speak(self):
         raise NotImplementedError("Subclass must implement")
-    
+
     @property
     def is_adult(self):
         return self.age >= 3
-    
+
     @classmethod
     def get_species_count(cls):
         # cls refers to the class itself, not an instance; used to access class-level data
         return cls.species_count
-    
+
     @staticmethod
     def animal_sound():
         # No access to class or instance; useful for utility functions logically grouped with the class
@@ -162,7 +168,7 @@ class Dog(Animal):
     def __init__(self, name, age, breed):
         super().__init__(name, age)  # Calls parent __init__
         self.breed = breed
-    
+
     def speak(self):
         return f"{self.name} says Woof!"
 
@@ -190,6 +196,7 @@ print(Bird.__mro__)                 # Shows method resolution order
 ```
 
 ### Magic Methods (Dunder Methods)
+
 Magic methods (surrounded by double underscores) let you define how objects behave with built-in operations like `+`, `==`, `len()`, `[]`, and printing.
 
 ```python
@@ -197,31 +204,31 @@ class Vector:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-    
+
     def __str__(self):
         # Called by print() and str() — human-readable representation
         return f"Vector({self.x}, {self.y})"
-    
+
     def __repr__(self):
         # Called by repr() and in the REPL — unambiguous, developer-facing representation
         return f"Vector(x={self.x}, y={self.y})"
-    
+
     def __eq__(self, other):
         # Called when using == operator
         return self.x == other.x and self.y == other.y
-    
+
     def __add__(self, other):
         # Called when using + operator
         return Vector(self.x + other.x, self.y + other.y)
-    
+
     def __len__(self):
         # Called by len() — must return an integer
         return int((self.x**2 + self.y**0.5))
-    
+
     def __getitem__(self, key):
         # Called when using [] indexing
         return [self.x, self.y][key]
-    
+
     def __call__(self):
         # Makes the object callable like a function: obj()
         return f"Vector magnitude: {len(self)}"
@@ -239,6 +246,7 @@ print(v3())               # Calls __call__: Vector magnitude: 7
 ```
 
 ### Encapsulation and Properties
+
 Encapsulation hides internal state. In Python, `_name` is a convention for "protected" (don't touch from outside), and `__name` triggers name mangling (Python renames it to `_ClassName__name`) to prevent accidental access from subclasses.
 
 ```python
@@ -246,19 +254,19 @@ class BankAccount:
     def __init__(self, initial_balance=0):
         self._balance = initial_balance  # Protected — by convention, avoid direct access
         self.__account_number = "12345"  # Private — name-mangled to _BankAccount__account_number
-    
+
     @property
     def balance(self):
         # Getter — allows read access via account.balance (no parentheses)
         return self._balance
-    
+
     @balance.setter
     def balance(self, value):
         # Setter — called when assigning: account.balance = 500
         if value < 0:
             raise ValueError("Balance cannot be negative")
         self._balance = value
-    
+
     def deposit(self, amount):
         self._balance += amount
 
@@ -278,6 +286,7 @@ print(account._BankAccount__account_number)  # "12345" — accessible but discou
 Decorators wrap a function or class to modify or extend its behaviour without changing its source code. They are applied with the `@decorator` syntax.
 
 ### Function Decorators
+
 ```python
 import functools
 import time
@@ -326,6 +335,7 @@ print(result)  # "Success!" (after any retries), with timing printed by @timer
 ```
 
 ### Class Decorators
+
 A class decorator takes a class and returns a replacement callable, allowing you to modify or wrap the class itself.
 
 ```python
@@ -353,6 +363,7 @@ print(db1.connection)      # Connected
 ## Iterators and Generators
 
 ### Iterators
+
 An iterator is any object with `__iter__` and `__next__` methods. `__iter__` returns the iterator object itself; `__next__` returns the next value or raises `StopIteration` when exhausted.
 
 ```python
@@ -360,10 +371,10 @@ class NumberSequence:
     def __init__(self, start, end):
         self.start = start
         self.end = end
-    
+
     def __iter__(self):
         return self
-    
+
     def __next__(self):
         if self.start >= self.end:
             raise StopIteration
@@ -381,6 +392,7 @@ print(next(seq))  # 2
 ```
 
 ### Generators
+
 Generators are functions that use `yield` to produce values lazily (one at a time), pausing execution between yields. They are memory-efficient for large sequences because they don't build the full list in memory.
 
 ```python
@@ -460,7 +472,7 @@ class DatabaseConnection:
     def __enter__(self):
         print("Connecting to database")
         return self  # Value bound to the 'as' variable
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         print("Closing database connection")
         if exc_type:
@@ -499,6 +511,7 @@ with timer_context():
 Python manages memory automatically using reference counting plus a cyclic garbage collector for circular references.
 
 ### Reference Counting
+
 Every object tracks how many references point to it. When the count reaches zero, memory is freed immediately.
 
 ```python
@@ -513,6 +526,7 @@ del a  # Now ref count hits 0 — object is freed
 ```
 
 ### Weak References
+
 A weak reference points to an object without incrementing its reference count, allowing the object to be garbage collected normally. This is useful for avoiding circular reference memory leaks (e.g., parent↔child relationships).
 
 ```python
@@ -540,6 +554,7 @@ print(node2.parent())        # None — object was collected since no strong ref
 ## Functional Programming
 
 ### Map, Filter, Reduce
+
 These are higher-order functions that operate on iterables. In modern Python, list comprehensions are often preferred for readability, but map/filter/reduce are still widely used.
 
 ```python
@@ -568,6 +583,7 @@ print(double(7))  # 14
 ```
 
 ### Closures
+
 A closure is an inner function that remembers variables from its enclosing scope even after the outer function has returned. The `nonlocal` keyword is needed to rebind (not just read) a variable from the enclosing scope.
 
 ```python
@@ -633,6 +649,7 @@ with open('data.csv', 'w', newline='') as f:
 A module is a single `.py` file; a package is a directory containing an `__init__.py` and multiple modules. The `if __name__ == "__main__"` guard lets a file run code when executed directly but not when imported.
 
 ### Creating Modules
+
 ```python
 # math_utils.py
 def add(a, b):
@@ -649,6 +666,7 @@ if __name__ == "__main__":
 ```
 
 ### Importing
+
 ```python
 import math_utils                      # Access via math_utils.add()
 from math_utils import add, PI         # Import specific names directly
@@ -662,6 +680,7 @@ print(module.add(1, 2))  # 3
 ```
 
 ## Regular Expressions
+
 Regular expressions (regex) are patterns for matching text. `re.findall` returns all matches; `re.search` returns the first match object; `re.sub` replaces matches. Compile patterns with `re.compile` when reusing them multiple times for better performance.
 
 ```python
@@ -693,6 +712,7 @@ matches = email_regex.findall(text)
 Use **threading** for I/O-bound tasks (network, disk) where threads spend time waiting. Use **multiprocessing** for CPU-bound tasks to bypass the GIL and use multiple CPU cores.
 
 ### Threading
+
 ```python
 import threading
 import time
@@ -731,6 +751,7 @@ print(shared_resource)  # 100 (safe — no race condition)
 ```
 
 ### Multiprocessing
+
 ```python
 import multiprocessing
 
@@ -747,6 +768,7 @@ if __name__ == "__main__":
 ## Error Handling & Debugging
 
 ### Exception Hierarchy
+
 Python exceptions form a class hierarchy. Catch specific exceptions before broad ones (`Exception` catches almost everything except system-exit signals).
 
 ```python
@@ -777,6 +799,7 @@ except ValidationError as e:
 ```
 
 ### Debugging Techniques
+
 ```python
 import logging
 import pdb
@@ -809,26 +832,27 @@ def problematic_function():
 ## Data Structures Implementation
 
 ### Stack
+
 A stack is a Last-In-First-Out (LIFO) structure. Python's list works well as a stack since `append` and `pop` are both O(1).
 
 ```python
 class Stack:
     def __init__(self):
         self.items = []
-    
+
     def push(self, item):
         self.items.append(item)
-    
+
     def pop(self):
         if self.is_empty():
             raise IndexError("Stack is empty")
         return self.items.pop()
-    
+
     def peek(self):
         if self.is_empty():
             raise IndexError("Stack is empty")
         return self.items[-1]
-    
+
     def is_empty(self):
         return len(self.items) == 0
 
@@ -843,6 +867,7 @@ print(s.pop())   # 2
 ```
 
 ### Queue
+
 A queue is a First-In-First-Out (FIFO) structure. Use `collections.deque` instead of a list because `popleft()` is O(1) vs O(n) for `list.pop(0)`.
 
 ```python
@@ -851,15 +876,15 @@ from collections import deque
 class Queue:
     def __init__(self):
         self.items = deque()
-    
+
     def enqueue(self, item):
         self.items.append(item)
-    
+
     def dequeue(self):
         if self.is_empty():
             raise IndexError("Queue is empty")
         return self.items.popleft()
-    
+
     def is_empty(self):
         return len(self.items) == 0
 
@@ -873,6 +898,7 @@ print(q.dequeue())  # 'b'
 ```
 
 ### Linked List
+
 A linked list stores elements as nodes, each pointing to the next. Unlike lists, insertion/deletion at the head is O(1), but random access is O(n).
 
 ```python
@@ -884,38 +910,38 @@ class ListNode:
 class LinkedList:
     def __init__(self):
         self.head = None
-    
+
     def append(self, val):
         # Add to end — O(n) because we must traverse to find the tail
         new_node = ListNode(val)
         if not self.head:
             self.head = new_node
             return
-        
+
         current = self.head
         while current.next:
             current = current.next
         current.next = new_node
-    
+
     def prepend(self, val):
         # Add to front — O(1)
         new_node = ListNode(val)
         new_node.next = self.head
         self.head = new_node
-    
+
     def delete(self, val):
         # Remove first occurrence of val — O(n)
         if not self.head:
             return
-        
+
         if self.head.val == val:
             self.head = self.head.next
             return
-        
+
         current = self.head
         while current.next and current.next.val != val:
             current = current.next
-        
+
         if current.next:
             current.next = current.next.next
 
@@ -938,6 +964,7 @@ ll.delete(2)
 ## Built-in Functions & Libraries
 
 ### Collections Module
+
 The `collections` module provides specialised container types that extend Python's built-ins.
 
 ```python
@@ -966,6 +993,7 @@ print(p[0])       # 10 — still accessible by index
 ```
 
 ### Itertools
+
 `itertools` provides fast, memory-efficient tools for working with iterators and combinatorics.
 
 ```python
@@ -994,6 +1022,7 @@ for key, group in grouped:
 ## Common Gotchas & Best Practices
 
 ### Mutable Default Arguments
+
 Default argument values are evaluated **once** at function definition, not on each call. Using a mutable object (like a list) as a default causes it to persist across calls.
 
 ```python
@@ -1017,6 +1046,7 @@ print(append_to_list(2))  # [2] — correct
 ```
 
 ### Late Binding Closures
+
 Lambda (and def) bodies are not evaluated until the function is called. Variables from the enclosing scope are looked up at call time, not at definition time.
 
 ```python
@@ -1036,6 +1066,7 @@ print([f() for f in functions])  # [0, 1, 2]
 ```
 
 ### Shallow vs Deep Copy
+
 A shallow copy creates a new outer container but still references the same inner objects. A deep copy recursively copies everything.
 
 ```python
@@ -1053,6 +1084,7 @@ print(deep)     # [[1, 2], [3, 4]] — fully independent, not affected
 ## Testing
 
 ### Unit Testing
+
 `unittest` is Python's built-in testing framework. `setUp` runs before each test method, providing a fresh fixture. Use `assert*` methods for readable failure messages.
 
 ```python
@@ -1061,7 +1093,7 @@ import unittest
 class Calculator:
     def add(self, a, b):
         return a + b
-    
+
     def divide(self, a, b):
         if b == 0:
             raise ValueError("Cannot divide by zero")
@@ -1071,10 +1103,10 @@ class TestCalculator(unittest.TestCase):
     def setUp(self):
         # Runs before each test — creates a fresh Calculator instance
         self.calc = Calculator()
-    
+
     def test_add(self):
         self.assertEqual(self.calc.add(2, 3), 5)
-    
+
     def test_divide_by_zero(self):
         with self.assertRaises(ValueError):
             self.calc.divide(10, 0)
@@ -1084,6 +1116,7 @@ if __name__ == "__main__":
 ```
 
 ### Pytest (More Popular)
+
 Pytest uses plain `assert` statements and discovers tests automatically (any file/function prefixed with `test_`). Fixtures replace `setUp`/`tearDown` with a more composable, reusable pattern.
 
 ```python
@@ -1112,6 +1145,7 @@ def test_with_fixture(calculator):
 ## Performance & Optimization
 
 ### Timing Code
+
 ```python
 import timeit
 
@@ -1128,6 +1162,7 @@ cProfile.run('slow_function()')
 ```
 
 ### Memory Usage
+
 ```python
 import sys
 from memory_profiler import profile  # pip install memory-profiler
@@ -1146,6 +1181,7 @@ print(f"Size: {sys.getsizeof(data)} bytes")  # Size of the list object itself (n
 ## Common Interview Questions & Patterns
 
 ### String Manipulation
+
 ```python
 def is_palindrome(s):
     """Check if string is palindrome (ignore case, spaces, punctuation)"""
@@ -1161,7 +1197,7 @@ def first_non_repeating_char(s):
     char_count = {}
     for char in s:
         char_count[char] = char_count.get(char, 0) + 1
-    
+
     for char in s:
         if char_count[char] == 1:
             return char
@@ -1174,6 +1210,7 @@ print(first_non_repeating_char("aabbcde"))           # 'c'
 ```
 
 ### Array Problems
+
 ```python
 def find_missing_number(nums):
     """Find missing number in range [0, n] using the arithmetic sum formula"""
@@ -1191,17 +1228,17 @@ def merge_intervals(intervals):
     """Merge overlapping intervals — sort by start, then extend the last merged interval if overlap"""
     if not intervals:
         return []
-    
+
     intervals.sort(key=lambda x: x[0])
     merged = [intervals[0]]
-    
+
     for current in intervals[1:]:
         last = merged[-1]
         if current[0] <= last[1]:
             merged[-1] = [last[0], max(last[1], current[1])]
         else:
             merged.append(current)
-    
+
     return merged
 
 # Usage
@@ -1266,7 +1303,7 @@ class Positive:
 
 class Account:
     balance = Positive()  # Descriptor assigned as a class attribute
-    
+
     def __init__(self, balance):
         self.balance = balance  # Calls Positive.__set__
 
@@ -1481,6 +1518,7 @@ print(http_status(404))  # Not Found
 Async programming allows a single thread to handle many I/O-bound tasks concurrently by suspending (not blocking) at `await` points, letting other coroutines run while waiting. Use `asyncio` for I/O-bound concurrency; it does **not** help with CPU-bound tasks (use multiprocessing for those).
 
 ### Introduction to AsyncIO
+
 ```python
 import asyncio
 
@@ -1507,6 +1545,7 @@ asyncio.run(main())
 ```
 
 ### Concurrent Execution
+
 ```python
 # Running tasks concurrently
 async def task1():
@@ -1522,13 +1561,13 @@ async def main():
     # Total time ≈ max(1s, 2s) = 2s, not 3s
     results = await asyncio.gather(task1(), task2())
     print(results)  # ['Task 1 complete', 'Task 2 complete']
-    
+
     # Method 2: create_task — schedules coroutines as Tasks (gives more control, e.g., cancellation)
     t1 = asyncio.create_task(task1())
     t2 = asyncio.create_task(task2())
     result1 = await t1
     result2 = await t2
-    
+
     # Method 3: as_completed — yields tasks as they finish (not in submission order)
     tasks = [task1(), task2()]
     for coro in asyncio.as_completed(tasks):
@@ -1539,6 +1578,7 @@ asyncio.run(main())
 ```
 
 ### Event Loop
+
 The event loop is the core scheduler that drives coroutines, manages I/O, and dispatches callbacks. In most cases you use `asyncio.run()` and never touch the loop directly.
 
 ```python
@@ -1568,6 +1608,7 @@ asyncio.run(schedule_callback())
 ```
 
 ### Async Context Managers
+
 Async context managers use `__aenter__` and `__aexit__` (both coroutines) so setup/teardown can themselves await async operations (e.g., opening a network connection).
 
 ```python
@@ -1576,11 +1617,11 @@ class AsyncDatabase:
         print("Connecting to database")
         await asyncio.sleep(1)
         return self
-    
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         print("Closing database connection")
         await asyncio.sleep(1)
-    
+
     async def query(self, sql):
         await asyncio.sleep(0.5)
         return f"Results for: {sql}"
@@ -1613,6 +1654,7 @@ asyncio.run(main())
 ```
 
 ### Async Iterators and Generators
+
 Async iterators use `__aiter__` and `__anext__`; async generators use `yield` inside an `async def`. Both allow `async for` to iterate while awaiting between steps.
 
 ```python
@@ -1621,10 +1663,10 @@ class AsyncCounter:
     def __init__(self, start, end):
         self.current = start
         self.end = end
-    
+
     def __aiter__(self):
         return self
-    
+
     async def __anext__(self):
         if self.current >= self.end:
             raise StopAsyncIteration
@@ -1653,6 +1695,7 @@ asyncio.run(main())
 ```
 
 ### Synchronization Primitives
+
 Async synchronization primitives work like their threading counterparts but are non-blocking — they suspend the coroutine rather than blocking the entire thread.
 
 ```python
@@ -1711,10 +1754,10 @@ async def consumer(id):
 async def main():
     producers = [asyncio.create_task(producer(i)) for i in range(2)]
     consumers = [asyncio.create_task(consumer(i)) for i in range(2)]
-    
+
     await asyncio.gather(*producers)
     await queue.join()  # Wait until all items have been processed (task_done called for each)
-    
+
     for c in consumers:
         c.cancel()
 
@@ -1722,6 +1765,7 @@ asyncio.run(main())
 ```
 
 ### Error Handling
+
 ```python
 async def failing_task():
     await asyncio.sleep(1)
@@ -1733,7 +1777,7 @@ async def main():
         await failing_task()
     except ValueError as e:
         print(f"Caught: {e}")
-    
+
     # gather — by default, the first exception cancels remaining tasks and re-raises
     try:
         await asyncio.gather(
@@ -1742,7 +1786,7 @@ async def main():
         )
     except ValueError:
         print("First exception stops all")
-    
+
     # return_exceptions=True — exceptions are returned as values instead of being raised;
     # allows all tasks to complete and lets you inspect each result individually
     results = await asyncio.gather(
@@ -1751,7 +1795,7 @@ async def main():
         return_exceptions=True
     )
     print(results)  # [ValueError('Something went wrong'), None]
-    
+
     # TaskGroup (Python 3.11+) — preferred modern approach; raises ExceptionGroup if any task fails
     async with asyncio.TaskGroup() as group:
         group.create_task(failing_task())
@@ -1762,6 +1806,7 @@ asyncio.run(main())
 ```
 
 ### Timeouts and Cancellation
+
 ```python
 async def long_running_task():
     try:
@@ -1778,7 +1823,7 @@ async def main():
         result = await asyncio.wait_for(long_running_task(), timeout=2)
     except asyncio.TimeoutError:
         print("Task timed out")
-    
+
     # Method 2: Manual cancellation — useful when you need to cancel based on external conditions
     task = asyncio.create_task(long_running_task())
     await asyncio.sleep(1)
@@ -1787,7 +1832,7 @@ async def main():
         await task
     except asyncio.CancelledError:
         print("Task cancelled manually")
-    
+
     # Method 3: shield — protects a task from being cancelled by an outer cancellation;
     # the shield itself raises CancelledError but the inner task keeps running
     task = asyncio.create_task(long_running_task())
@@ -1801,6 +1846,7 @@ asyncio.run(main())
 ```
 
 ### Async HTTP Requests with aiohttp
+
 `aiohttp` is the standard async HTTP library. Using a single shared `ClientSession` is more efficient than creating one per request (reuses TCP connections).
 
 ```python
@@ -1816,7 +1862,7 @@ async def main():
     async with aiohttp.ClientSession() as session:
         # Single request
         html = await fetch_url(session, "https://example.com")
-        
+
         # Multiple concurrent requests — total time ≈ slowest request, not sum of all
         urls = [
             "https://example.com",
@@ -1825,7 +1871,7 @@ async def main():
         ]
         tasks = [fetch_url(session, url) for url in urls]
         results = await asyncio.gather(*tasks)
-        
+
         # POST request with JSON body
         async with session.post(
             "https://httpbin.org/post",
@@ -1838,6 +1884,7 @@ asyncio.run(main())
 ```
 
 ### Running Blocking Code
+
 Blocking code (e.g., `time.sleep`, synchronous file I/O, CPU-heavy computation) will freeze the event loop if called directly from a coroutine. Use `run_in_executor` to offload it to a thread or process pool.
 
 ```python
@@ -1857,19 +1904,19 @@ async def main():
         None, blocking_io  # None = use default ThreadPoolExecutor
     )
     print(result)
-    
+
     # Method 2: Custom thread pool — useful when you need to control concurrency
     with ThreadPoolExecutor(max_workers=3) as executor:
         result = await asyncio.get_event_loop().run_in_executor(
             executor, blocking_io
         )
-    
+
     # Method 3: Process pool for CPU-bound tasks — bypasses the GIL for true parallelism
     with ProcessPoolExecutor() as executor:
         result = await asyncio.get_event_loop().run_in_executor(
             executor, cpu_bound_task, 1000000
         )
-    
+
     # Method 4: asyncio.to_thread (Python 3.9+) — cleaner syntax for thread offloading
     result = await asyncio.to_thread(blocking_io)
     print(result)
@@ -1878,6 +1925,7 @@ asyncio.run(main())
 ```
 
 ### Async File I/O with aiofiles
+
 Standard file I/O is blocking. `aiofiles` wraps file operations so they run in a thread pool, keeping the event loop responsive.
 
 ```python
@@ -1902,7 +1950,7 @@ async def main():
     await write_file('test.txt', 'Hello, async world!')
     content = await read_file('test.txt')
     print(content)
-    
+
     # Concurrent file operations — all writes happen concurrently
     tasks = [
         write_file(f'file{i}.txt', f'Content {i}')
@@ -1914,6 +1962,7 @@ asyncio.run(main())
 ```
 
 ### Async Database Operations
+
 Async database drivers (e.g., `asyncpg`, `aiomysql`) allow database queries to be non-blocking — the event loop can handle other work while waiting for query results.
 
 ```python
@@ -1926,15 +1975,15 @@ async def postgres_example():
         user='user', password='password',
         database='testdb', host='localhost'
     )
-    
+
     # Use $1, $2, ... placeholders (parameterized queries — safe from SQL injection)
     values = await conn.fetch('SELECT * FROM users WHERE age > $1', 25)
-    
+
     # Transaction — both operations succeed or both are rolled back
     async with conn.transaction():
         await conn.execute('INSERT INTO users VALUES ($1, $2)', 'Alice', 30)
         await conn.execute('UPDATE accounts SET balance = balance - $1', 100)
-    
+
     await conn.close()
 
 # MySQL example
@@ -1945,18 +1994,19 @@ async def mysql_example():
         user='user', password='password',
         db='testdb'
     )
-    
+
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
             await cur.execute("SELECT * FROM users")
             rows = await cur.fetchall()
             print(rows)
-    
+
     pool.close()
     await pool.wait_closed()
 ```
 
 ### WebSocket Server
+
 WebSockets provide full-duplex (two-way) persistent connections over HTTP — useful for real-time apps (chat, live data feeds).
 
 ```python
@@ -1986,6 +2036,7 @@ async def client():
 ```
 
 ### Subprocess Management
+
 `asyncio.create_subprocess_shell` runs shell commands without blocking the event loop, allowing other coroutines to continue while the process executes.
 
 ```python
@@ -1995,9 +2046,9 @@ async def run_command(cmd):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE
     )
-    
+
     stdout, stderr = await process.communicate()
-    
+
     if process.returncode == 0:
         return stdout.decode()
     else:
@@ -2016,10 +2067,10 @@ async def stream_output(cmd):
         cmd,
         stdout=asyncio.subprocess.PIPE
     )
-    
+
     async for line in process.stdout:
         print(line.decode().strip())
-    
+
     await process.wait()
 
 # Usage

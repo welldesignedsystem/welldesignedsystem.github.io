@@ -10,7 +10,7 @@ SOAP (Simple Object Access Protocol) web services are a mature, contract-driven 
 
 ## Overall idea
 
-SOAP is a **protocol**, not a style. It defines a strict envelope-based message format, a service description language (WSDL), and a suite of WS-* extensions for security, reliability, and transactions. The key insight: SOAP trades flexibility for **formal guarantees**.
+SOAP is a **protocol**, not a style. It defines a strict envelope-based message format, a service description language (WSDL), and a suite of WS-\* extensions for security, reliability, and transactions. The key insight: SOAP trades flexibility for **formal guarantees**.
 
 The running example throughout these notes is a **Payment Service** that can process payments and look up transaction status. This is a classic enterprise SOAP use case—financial operations demand formal contracts, auditable messages, and message-level security.
 
@@ -77,12 +77,12 @@ Every SOAP message is an XML document with a fixed structure. Below are a comple
 </soap:Envelope>
 ```
 
-| Part | Purpose |
-|---|---|
-| `Envelope` | Root element — signals this is a SOAP message |
-| `Header` | Optional metadata: auth tokens, correlation IDs, routing hints |
-| `Body` | The actual request or response payload |
-| `Fault` | Standardised error structure, inside `Body` on failure |
+| Part       | Purpose                                                        |
+| ---------- | -------------------------------------------------------------- |
+| `Envelope` | Root element — signals this is a SOAP message                  |
+| `Header`   | Optional metadata: auth tokens, correlation IDs, routing hints |
+| `Body`     | The actual request or response payload                         |
+| `Fault`    | Standardised error structure, inside `Body` on failure         |
 
 The `Header` is where most of the interesting enterprise patterns live. WS-Security puts credentials here. WS-Addressing puts routing instructions here. WS-ReliableMessaging puts sequence numbers here.
 
@@ -280,7 +280,7 @@ The Payment Service exposes two operations: `ProcessPayment` (submit a new payme
 
 - **types** defines the schema. Both operations share the `PaymentFault` fault element — define shared types once.
 - **messages** are thin wrappers — each just points to one schema element using the `document/literal` pattern.
-- **portType** is the abstract interface. Notice each operation explicitly names its input, output, *and* fault — error paths are first-class citizens.
+- **portType** is the abstract interface. Notice each operation explicitly names its input, output, _and_ fault — error paths are first-class citizens.
 - **binding** wires the abstract interface to SOAP 1.1 over HTTP. The `soapAction` header tells intermediaries and firewalls which operation is being invoked without parsing the body.
 - **service** gives the single network address. A service can expose multiple ports (e.g. HTTP and JMS) each with a different binding.
 
@@ -288,13 +288,13 @@ The Payment Service exposes two operations: `ProcessPayment` (submit a new payme
 
 ## Binding Styles
 
-When WSDL describes *how* to serialise a message over the wire, you choose a **binding style**:
+When WSDL describes _how_ to serialise a message over the wire, you choose a **binding style**:
 
-| Style | What goes in the body | Use when |
-|---|---|---|
-| `document / literal` | Entire XML document, validated by schema | Modern standard; tooling-friendly |
-| `rpc / literal` | Wrapper element named after the operation | Legacy; still common in older systems |
-| `rpc / encoded` | SOAP encoding rules (deprecated) | Avoid — interop nightmare |
+| Style                | What goes in the body                     | Use when                              |
+| -------------------- | ----------------------------------------- | ------------------------------------- |
+| `document / literal` | Entire XML document, validated by schema  | Modern standard; tooling-friendly     |
+| `rpc / literal`      | Wrapper element named after the operation | Legacy; still common in older systems |
+| `rpc / encoded`      | SOAP encoding rules (deprecated)          | Avoid — interop nightmare             |
 
 **Default to `document/literal wrapped`** in any new SOAP service. It gives you full schema validation and plays nicely with every major SOAP stack.
 
@@ -367,6 +367,7 @@ A SOAP fault is the protocol-level equivalent of an HTTP error status — but wi
 ```
 
 `faultcode` has two top-level values you need to know:
+
 - **`soap:Client`** — the caller sent a bad request (don't retry as-is)
 - **`soap:Server`** — the server had an internal error (may be safe to retry)
 
@@ -376,7 +377,7 @@ The `<detail>` element is your extensibility point. Map it to the `PaymentFault`
 
 ## WS-Security
 
-WS-Security (WSS) is the most commonly encountered WS-* extension. It lets you attach security tokens directly to the SOAP header — useful when the transport (e.g. an ESB hop) isn't end-to-end TLS.
+WS-Security (WSS) is the most commonly encountered WS-\* extension. It lets you attach security tokens directly to the SOAP header — useful when the transport (e.g. an ESB hop) isn't end-to-end TLS.
 
 Common patterns:
 
@@ -480,12 +481,12 @@ A signed body means integrity is guaranteed at the **message** level, not just t
 
 SOAP operations aren't always request/response. The four standard MEPs:
 
-| Pattern | Description | Example |
-|---|---|---|
-| Request–Response | Client sends, server replies | `ProcessPayment` above |
-| One-Way | Client fires and forgets | Audit log submission |
+| Pattern          | Description                      | Example                      |
+| ---------------- | -------------------------------- | ---------------------------- |
+| Request–Response | Client sends, server replies     | `ProcessPayment` above       |
+| One-Way          | Client fires and forgets         | Audit log submission         |
 | Solicit–Response | Server initiates, client replies | Rare; mostly async callbacks |
-| Notification | Server pushes with no reply | Event streams |
+| Notification     | Server pushes with no reply      | Event streams                |
 
 ### One-Way example — Audit Log Submission
 
@@ -594,24 +595,26 @@ This is why enterprises adopted SOAP for ESB (Enterprise Service Bus) architectu
 
 ## SOAP vs REST — When to Reach for Each
 
-| | SOAP | REST |
-|---|---|---|
-| Contract | Formal WSDL, strict schema | Optional OpenAPI, flexible |
-| Message format | XML only | JSON, XML, anything |
-| Statefulness | Can model stateful conversations | Stateless by design |
-| Security | WS-Security (message-level) | OAuth 2.0, TLS (transport-level) |
-| Reliability | WS-ReliableMessaging built-in | Application-layer concern |
-| Transactions | WS-AtomicTransaction | Application-layer concern |
-| Tooling | Strong in Java/.NET enterprise stacks | Universal |
-| Use cases | Finance, healthcare, government, telcos | Public APIs, mobile backends, microservices |
+|                | SOAP                                    | REST                                        |
+| -------------- | --------------------------------------- | ------------------------------------------- |
+| Contract       | Formal WSDL, strict schema              | Optional OpenAPI, flexible                  |
+| Message format | XML only                                | JSON, XML, anything                         |
+| Statefulness   | Can model stateful conversations        | Stateless by design                         |
+| Security       | WS-Security (message-level)             | OAuth 2.0, TLS (transport-level)            |
+| Reliability    | WS-ReliableMessaging built-in           | Application-layer concern                   |
+| Transactions   | WS-AtomicTransaction                    | Application-layer concern                   |
+| Tooling        | Strong in Java/.NET enterprise stacks   | Universal                                   |
+| Use cases      | Finance, healthcare, government, telcos | Public APIs, mobile backends, microservices |
 
 Choose SOAP when:
+
 - You need **formal, auditable contracts** (regulatory environments)
 - You need **message-level security** across intermediaries
 - You're integrating with an existing enterprise system that already speaks SOAP
 - You need **built-in WS-ReliableMessaging** guarantees
 
 Choose REST when:
+
 - You're building public-facing APIs
 - Your clients are browsers or mobile apps
 - Developer experience and iteration speed matter most
@@ -620,15 +623,15 @@ Choose REST when:
 
 ## Tooling Quick Reference
 
-| Tool | Purpose |
-|---|---|
-| **wsdl2java** (Apache CXF) | Generate Java client stubs from WSDL |
-| **wsimport** (JAX-WS) | Built-in JDK tool for the same |
-| **dotnet-svcutil** | .NET equivalent |
-| **SoapUI / ReadyAPI** | Manual testing, contract validation, mocking |
-| **Postman** | Supports raw SOAP requests |
-| **Wireshark** | Packet-level debugging of SOAP over HTTP |
-| **XML Spy / Oxygen** | Schema and WSDL editing |
+| Tool                       | Purpose                                      |
+| -------------------------- | -------------------------------------------- |
+| **wsdl2java** (Apache CXF) | Generate Java client stubs from WSDL         |
+| **wsimport** (JAX-WS)      | Built-in JDK tool for the same               |
+| **dotnet-svcutil**         | .NET equivalent                              |
+| **SoapUI / ReadyAPI**      | Manual testing, contract validation, mocking |
+| **Postman**                | Supports raw SOAP requests                   |
+| **Wireshark**              | Packet-level debugging of SOAP over HTTP     |
+| **XML Spy / Oxygen**       | Schema and WSDL editing                      |
 
 **`wsdl2java` quickstart** (Apache CXF):
 
@@ -683,7 +686,7 @@ try {
 
 ## Key Takeaways
 
-- SOAP is a **protocol with formal guarantees** — envelope structure, typed contracts via WSDL, and a rich WS-* extension ecosystem
+- SOAP is a **protocol with formal guarantees** — envelope structure, typed contracts via WSDL, and a rich WS-\* extension ecosystem
 - Always use **document/literal wrapped** binding style in new services
 - **WS-Security** provides message-level integrity and confidentiality that survives multi-hop routing — Username Tokens for service identity, X.509 signatures for tamper-proof payloads
 - SOAP faults are structured — use `faultcode` to distinguish client vs server errors and map `<detail>` to your schema-defined fault type

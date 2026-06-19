@@ -14,10 +14,11 @@ The AI that actually does things. A complete guide to OpenClaw — what it is, h
 
 OpenClaw is not a chatbot wrapper. It is a full agent runtime: a persistent, self-hosted Node.js process that turns an LLM into a stateful, tool-using assistant. It runs as a daemon on your machine, connects to 24+ messaging platforms, executes real actions (shell commands, file writes, browser automation, API calls), and maintains memory across every conversation.
 
-Written in TypeScript (with a Swift component for native macOS/iOS), licensed MIT, hosted at `github.com/openclaw/openclaw`. 
-- As of May 2026 the repository has **369K+ stars**, 76K+ forks, and 136 releases — making it one of the fastest-growing open-source repositories in GitHub history. 
-- The project was created by Austrian developer **Peter Steinberger** as a personal side project in November 2025, originally under the name **Clawdbot** (a pun on Claude that Anthropic's legal team took issue with). 
-- It was briefly renamed **Moltbot** in late January 2026 before settling on **OpenClaw**. 
+Written in TypeScript (with a Swift component for native macOS/iOS), licensed MIT, hosted at `github.com/openclaw/openclaw`.
+
+- As of May 2026 the repository has **369K+ stars**, 76K+ forks, and 136 releases — making it one of the fastest-growing open-source repositories in GitHub history.
+- The project was created by Austrian developer **Peter Steinberger** as a personal side project in November 2025, originally under the name **Clawdbot** (a pun on Claude that Anthropic's legal team took issue with).
+- It was briefly renamed **Moltbot** in late January 2026 before settling on **OpenClaw**.
 - In February 2026, Steinberger joined OpenAI, and a non-profit foundation was announced to steward the project going forward.
 
 ---
@@ -32,6 +33,7 @@ Everything flows through a single long-lived Node.js Gateway process. No microse
 
 The Gateway runs eight core subsystems in parallel:
 **(H-HAS-CCCP)**
+
 - **Channel Bridges** — persistent connections to each messaging platform
 - **Session Manager** — owns all conversation state and DM scope rules
 - **Command Queue** — lane-aware FIFO that prevents concurrent agent collisions
@@ -45,6 +47,7 @@ The Gateway runs eight core subsystems in parallel:
 
 The embedded runtime that does the actual inference work (pi-mono was contributed by Mario Zechner):
 **(CM-PT-SSSS)**
+
 - **Prompt Assembly** — builds a dynamic system prompt from many sources each run
 - **Tool Execution** — runs tools between inference rounds (the agentic loop)
 - **Compaction Pipeline** — manages context window as conversations grow
@@ -84,11 +87,13 @@ The `onboard` wizard: gateway setup → workspace creation → channel pairing �
 
 This section shows a pragmatic, example-based way to run OpenClaw in Docker and connect a Telegram bot. Replace the placeholders below with the official image name, environment keys, and configuration values from the OpenClaw docs for production use.
 
-1) Create a Telegram bot
+1. Create a Telegram bot
+
 - Open a chat with BotFather in Telegram.
 - Run `/newbot`, follow the prompts and copy the bot token (looks like `123456:ABC-DEF...`).
 
-2) Prepare environment variables
+2. Prepare environment variables
+
 - Create a file named `.env` next to your `docker-compose.yml` with at least these variables (use strong tokens):
 
 ```env
@@ -97,7 +102,8 @@ OPENCLAW_GATEWAY_TOKEN=generate-a-strong-token-here
 TZ=UTC
 ```
 
-3) Example `docker-compose.yml` (template)
+3. Example `docker-compose.yml` (template)
+
 - This example uses the official Node image to install `openclaw` at container start. If an official `openclaw` image exists, prefer that instead and remove the install step.
 
 ```yaml
@@ -116,7 +122,7 @@ services:
       - "18789:18789" # Gateway WS (loopback-only recommended behind a proxy)
 ```
 
-4) Start the container
+4. Start the container
 
 ```bash
 docker compose up -d
@@ -124,7 +130,8 @@ docker compose up -d
 docker compose logs -f openclaw
 ```
 
-5) Pair Telegram and finish onboarding
+5. Pair Telegram and finish onboarding
+
 - Run the interactive onboard flow (recommended):
 
 ```bash
@@ -136,6 +143,7 @@ docker compose exec openclaw openclaw onboard
 If you prefer non-interactive setup, place the `TELEGRAM_BOT_TOKEN` in your `agent.yaml` or environment (matching the key the OpenClaw release expects) and restart the container. Use the `openclaw pairing approve <channel> <code>` command for inbound approvals when required.
 
 Notes and hardening
+
 - Use an official OpenClaw Docker image if available (faster startup, smaller surface).
 - Run the container with a non-root user where possible and mount a read-only workspace for skill code if you need extra isolation.
 - Avoid exposing the Gateway port publicly; use a reverse proxy and allowlist domains / IPs.
@@ -148,6 +156,7 @@ Notes and hardening
 The Gateway exposes a typed WebSocket API on port `127.0.0.1:18789` by default. All clients — CLI, macOS app, mobile nodes, automations — connect over this single WebSocket.
 
 **Wire format:**
+
 - Transport: WebSocket, text frames, JSON payloads
 - First frame must be a `connect` handshake
 - Requests: `{type:"req", id, method, params}` → `{type:"res", id, ok, payload|error}`
@@ -155,6 +164,7 @@ The Gateway exposes a typed WebSocket API on port `127.0.0.1:18789` by default. 
 - Idempotency keys required on all side-effecting methods (`send`, `agent`) for safe retries
 
 **Connection lifecycle:**
+
 ```
 Client                    Gateway
 |---- req:connect ------->|
@@ -179,9 +189,11 @@ All WebSocket clients declare a **device identity** on connect. Trust tiers:
 - Gateway auth token (`OPENCLAW_GATEWAY_TOKEN`) applies to all connections
 
 Inbound DMs (**Direct Messages**) from new senders get a pairing code:
+
 ```bash
 openclaw pairing approve <channel> <code>
 ```
+
 Approved senders go on a local allowlist. Public inbound DMs require explicit opt-in (`dmPolicy="open"`).
 
 ---
@@ -190,32 +202,32 @@ Approved senders go on a local allowlist. Public inbound DMs require explicit op
 
 Each bridge translates platform-specific events into a normalized internal envelope. The Gateway holds exactly one session per platform per host.
 
-| Platform | What it is | Protocol / SDK |
-|---|---|---|
-| WhatsApp | Chat/messaging via WhatsApp | **Baileys** — a WhatsApp Web protocol client library for Node.js |
-| Telegram | Chat/messaging via Telegram | **grammY** — modern TypeScript/Node.js Telegram bot framework |
-| Discord | Community chat and voice platform | discord.js / similar — popular Node.js Discord libraries |
-| Slack | Team collaboration and chat platform | **@slack/web-api** / Bolt — official Slack SDKs for bots and apps |
-| Signal | Encrypted messaging service | signal-cli or community bridges — CLI/bridge tools for Signal bots |
-| iMessage | Apple messaging on macOS/iOS | macOS native integrations / community bridges |
-| WebChat | Browser-based chat UI | Static UI over Gateway WS API |
-| Matrix | Open standard decentralised chat | matrix-bot-sdk / matrix-js-sdk |
-| Nostr | Decentralised pub/sub social/chat protocol | Nostr client libraries |
-| IRC | Classic chat network protocol | IRC client libraries / adapters |
-| Mattermost | Open source team chat platform | Mattermost SDKs / drivers |
-| Teams | Microsoft team collaboration and chat | Microsoft Bot Framework / Teams SDK |
-| Google Chat | Google Workspace chat service | Google Chat API / SDKs |
-| LINE | Asian messaging platform | LINE Messaging API SDKs |
-| WeChat | Chinese messaging and social platform | WeChat SDKs / web protocol bridges |
-| QQ | Chinese messaging platform | QQ SDKs or community bridges |
-| Zalo | Vietnamese chat and social app | Zalo SDKs |
-| Zalo Personal | Personal version of Zalo chat | Personal Zalo bridges / community tools |
-| Feishu | Chinese enterprise collaboration platform | Feishu (Lark) SDKs |
-| Nextcloud Talk | Self-hosted chat/video meetings | Nextcloud Talk APIs / adapters |
-| Synology Chat | Synology NAS chat application | Synology Chat APIs |
-| Tlon | Specialized or emerging chat protocols | Platform-specific adapters |
-| Twitch | Live streaming chat | tmi.js / Twitch chat adapters |
-| Other | Miscellaneous chat platforms and bridges | Various official or community SDKs and protocol adapters |
+| Platform       | What it is                                 | Protocol / SDK                                                     |
+| -------------- | ------------------------------------------ | ------------------------------------------------------------------ |
+| WhatsApp       | Chat/messaging via WhatsApp                | **Baileys** — a WhatsApp Web protocol client library for Node.js   |
+| Telegram       | Chat/messaging via Telegram                | **grammY** — modern TypeScript/Node.js Telegram bot framework      |
+| Discord        | Community chat and voice platform          | discord.js / similar — popular Node.js Discord libraries           |
+| Slack          | Team collaboration and chat platform       | **@slack/web-api** / Bolt — official Slack SDKs for bots and apps  |
+| Signal         | Encrypted messaging service                | signal-cli or community bridges — CLI/bridge tools for Signal bots |
+| iMessage       | Apple messaging on macOS/iOS               | macOS native integrations / community bridges                      |
+| WebChat        | Browser-based chat UI                      | Static UI over Gateway WS API                                      |
+| Matrix         | Open standard decentralised chat           | matrix-bot-sdk / matrix-js-sdk                                     |
+| Nostr          | Decentralised pub/sub social/chat protocol | Nostr client libraries                                             |
+| IRC            | Classic chat network protocol              | IRC client libraries / adapters                                    |
+| Mattermost     | Open source team chat platform             | Mattermost SDKs / drivers                                          |
+| Teams          | Microsoft team collaboration and chat      | Microsoft Bot Framework / Teams SDK                                |
+| Google Chat    | Google Workspace chat service              | Google Chat API / SDKs                                             |
+| LINE           | Asian messaging platform                   | LINE Messaging API SDKs                                            |
+| WeChat         | Chinese messaging and social platform      | WeChat SDKs / web protocol bridges                                 |
+| QQ             | Chinese messaging platform                 | QQ SDKs or community bridges                                       |
+| Zalo           | Vietnamese chat and social app             | Zalo SDKs                                                          |
+| Zalo Personal  | Personal version of Zalo chat              | Personal Zalo bridges / community tools                            |
+| Feishu         | Chinese enterprise collaboration platform  | Feishu (Lark) SDKs                                                 |
+| Nextcloud Talk | Self-hosted chat/video meetings            | Nextcloud Talk APIs / adapters                                     |
+| Synology Chat  | Synology NAS chat application              | Synology Chat APIs                                                 |
+| Tlon           | Specialized or emerging chat protocols     | Platform-specific adapters                                         |
+| Twitch         | Live streaming chat                        | tmi.js / Twitch chat adapters                                      |
+| Other          | Miscellaneous chat platforms and bridges   | Various official or community SDKs and protocol adapters           |
 
 ---
 
@@ -224,6 +236,7 @@ Each bridge translates platform-specific events into a normalized internal envel
 **Step 1: Intake & Routing**
 
 Channel bridge normalizes the message → Session Manager resolves a session key based on `dmScope`:
+
 - `main` — all DMs share one session (continuity across channels/devices)
 - `per-peer` — isolated by sender ID
 - `per-channel-peer` — isolated by channel + sender (recommended for multi-user setups)
@@ -240,6 +253,7 @@ Global Lane (main)          maxConcurrent: 4 (configurable)
 ```
 
 Queue modes — controls how new messages interact with an active run:
+
 - `collect` (default) — coalesce queued messages into a single followup turn
 - `steer` — inject into current run, cancelling pending tool calls at next boundary
 - `followup` — wait for current run to finish, then start new turn
@@ -283,20 +297,20 @@ Text deltas stream in real time. Tool start/update/end events emit on a separate
 
 ## Core Tools (Always Available, No Skill Required)
 
-| Tool | What it does |
-|---|---|
-| `read` / `write` / `edit` | File system operations |
-| `exec` / `process` | Shell command execution + background process management |
-| `browser` | Browser automation via Chrome DevTools Protocol (CDP) |
-| `web_search` / `web_fetch` | Real-time web access |
-| `message` | Cross-channel messaging |
-| `cron` | Scheduled job creation and management |
-| `memory_search` / `memory_get` | Semantic retrieval over persistent memory |
-| `sessions_spawn` / `sessions_send` | Sub-agent orchestration |
-| `nodes` | Paired device control (camera, screen, location, mic) |
-| `canvas` | Render a live interactive canvas |
-| `speak` / `listen` | Voice I/O on macOS, iOS, Android |
-| `webhook_receive` | Receive inbound HTTP webhooks |
+| Tool                               | What it does                                            |
+| ---------------------------------- | ------------------------------------------------------- |
+| `read` / `write` / `edit`          | File system operations                                  |
+| `exec` / `process`                 | Shell command execution + background process management |
+| `browser`                          | Browser automation via Chrome DevTools Protocol (CDP)   |
+| `web_search` / `web_fetch`         | Real-time web access                                    |
+| `message`                          | Cross-channel messaging                                 |
+| `cron`                             | Scheduled job creation and management                   |
+| `memory_search` / `memory_get`     | Semantic retrieval over persistent memory               |
+| `sessions_spawn` / `sessions_send` | Sub-agent orchestration                                 |
+| `nodes`                            | Paired device control (camera, screen, location, mic)   |
+| `canvas`                           | Render a live interactive canvas                        |
+| `speak` / `listen`                 | Voice I/O on macOS, iOS, Android                        |
+| `webhook_receive`                  | Receive inbound HTTP webhooks                           |
 
 ---
 
@@ -450,14 +464,14 @@ Fully air-gapped deployments are supported via Ollama:
 
 ## Agent Configuration Files
 
-| File | Purpose |
-|---|---|
-| `AGENTS.md` | Operating instructions — what the agent should and shouldn't do |
-| `SOUL.md` | Persona, tone, communication style |
-| `TOOLS.md` | Notes on local tools available to this agent |
-| `IDENTITY.md` | Agent name and vibe |
-| `USER.md` | User profile — preferences, routines, ongoing context |
-| `HEARTBEAT.md` | Periodic task checklist — defines proactive behavior |
+| File           | Purpose                                                         |
+| -------------- | --------------------------------------------------------------- |
+| `AGENTS.md`    | Operating instructions — what the agent should and shouldn't do |
+| `SOUL.md`      | Persona, tone, communication style                              |
+| `TOOLS.md`     | Notes on local tools available to this agent                    |
+| `IDENTITY.md`  | Agent name and vibe                                             |
+| `USER.md`      | User profile — preferences, routines, ongoing context           |
+| `HEARTBEAT.md` | Periodic task checklist — defines proactive behavior            |
 
 All files truncated at `bootstrapMaxChars` (default 20,000 chars) during prompt assembly.
 
@@ -500,14 +514,14 @@ clawhub inspect <slug>                # Inspect a skill without installing
 
 ## OpenClaw vs AutoGPT
 
-| Feature | OpenClaw | AutoGPT Latest |
-|---|---|---|
-| Plugin security | ClawHub + VirusTotal + ClawScan | Unverified GitHub imports |
-| State persistence | SQLite, ACID | File-based JSON, corruption-prone |
-| Observability | Built-in dashboard + OpenTelemetry + Prometheus | External logging, manual integration |
-| Local LLM | Native via Ollama, hardware acceleration | Via third-party bridges |
-| Runtime security | Proxyline egress control + fs-safe | Host-level only |
-| Multi-channel | 24+ messaging platforms | Limited |
-| Subagents | ✅ Yes (concurrency: 8) | Limited |
-| Voice I/O | ✅ macOS, iOS, Android | ❌ No |
-| GitHub stars | 369K+ | Significantly fewer |
+| Feature           | OpenClaw                                        | AutoGPT Latest                       |
+| ----------------- | ----------------------------------------------- | ------------------------------------ |
+| Plugin security   | ClawHub + VirusTotal + ClawScan                 | Unverified GitHub imports            |
+| State persistence | SQLite, ACID                                    | File-based JSON, corruption-prone    |
+| Observability     | Built-in dashboard + OpenTelemetry + Prometheus | External logging, manual integration |
+| Local LLM         | Native via Ollama, hardware acceleration        | Via third-party bridges              |
+| Runtime security  | Proxyline egress control + fs-safe              | Host-level only                      |
+| Multi-channel     | 24+ messaging platforms                         | Limited                              |
+| Subagents         | ✅ Yes (concurrency: 8)                         | Limited                              |
+| Voice I/O         | ✅ macOS, iOS, Android                          | ❌ No                                |
+| GitHub stars      | 369K+                                           | Significantly fewer                  |

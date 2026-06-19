@@ -5,6 +5,7 @@ title = "Data Structure Algorithms"
 tags = ['Data Structures', 'Algorithms', 'DSA', 'Coding Interview']
 summary = "Curated list of classic data structure and algorithm problems commonly asked in technical interviews, organized by topic." 
 +++
+
 ---
 
 ## Arrays & Strings
@@ -191,8 +192,8 @@ summary = "Curated list of classic data structure and algorithm problems commonl
 - **Russian Doll Envelopes** (Find maximum number of envelopes you can put inside each other. [Google])
 - **Burst Balloons** (Find maximum coins you can collect by bursting balloons. [Google])
 - **Stone Game** (Determine if first player can win the stone game. [Amazon])
-- **Regular Expression Matching** (Implement regex matching with '.' and '*'. [Google])
-- **Wildcard Matching** (Implement wildcard pattern matching with '?' and '*'. [Google])
+- **Regular Expression Matching** (Implement regex matching with '.' and '\*'. [Google])
+- **Wildcard Matching** (Implement wildcard pattern matching with '?' and '\*'. [Google])
 - **Interleaving String** (Check if s3 is formed by interleaving s1 and s2. [Facebook])
 - **Distinct Subsequences** (Count distinct subsequences of s in t. [Google])
 - **Scramble String** (Check if one string is a scrambled string of another. [Google])

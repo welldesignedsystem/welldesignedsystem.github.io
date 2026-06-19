@@ -8,33 +8,34 @@ summary = "Comprehensive Guide to mastering Anomaly Detection in Machine Learnin
 
 ## Terminology
 
-| Term | Meaning |
-|------|---------|
-| **Spread / Dispersion** | How far data points are from the center or each other. Low spread = tight cluster, high spread = wide scatter. Measured by variance, std dev, IQR, MAD. |
-| **Outlier / Anomaly** | A data point that differs significantly from the rest — unusual enough to warrant investigation. |
-| **Normal Distribution** | Bell-shaped, symmetric curve where mean = median = mode. Many statistical methods assume this. |
-| **Skewed Distribution** | Asymmetric tail on one side. Mean shifts toward the tail; median is a better center measure. |
-| **Robust** | Not overly affected by outliers or non-normal data. Median and MAD are robust; mean and std dev are not. |
-| **Univariate** | Analyzing one variable at a time (e.g., checking each column for outliers separately). |
-| **Multivariate** | Analyzing multiple variables together — an outlier may only appear unusual when you consider relationships between variables. |
-| **Percentile** | The value below which a given percentage of data falls (e.g., 95th percentile means 95% of values are below it). |
-| **Z-score** | How many standard deviations a value is from the mean. Used to flag outliers when data is normal. |
-| **Standardization / Normalization** | Scaling features so they're comparable — critical when using distance-based methods like kNN, LOF. |
+| Term                                | Meaning                                                                                                                                                 |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Spread / Dispersion**             | How far data points are from the center or each other. Low spread = tight cluster, high spread = wide scatter. Measured by variance, std dev, IQR, MAD. |
+| **Outlier / Anomaly**               | A data point that differs significantly from the rest — unusual enough to warrant investigation.                                                        |
+| **Normal Distribution**             | Bell-shaped, symmetric curve where mean = median = mode. Many statistical methods assume this.                                                          |
+| **Skewed Distribution**             | Asymmetric tail on one side. Mean shifts toward the tail; median is a better center measure.                                                            |
+| **Robust**                          | Not overly affected by outliers or non-normal data. Median and MAD are robust; mean and std dev are not.                                                |
+| **Univariate**                      | Analyzing one variable at a time (e.g., checking each column for outliers separately).                                                                  |
+| **Multivariate**                    | Analyzing multiple variables together — an outlier may only appear unusual when you consider relationships between variables.                           |
+| **Percentile**                      | The value below which a given percentage of data falls (e.g., 95th percentile means 95% of values are below it).                                        |
+| **Z-score**                         | How many standard deviations a value is from the mean. Used to flag outliers when data is normal.                                                       |
+| **Standardization / Normalization** | Scaling features so they're comparable — critical when using distance-based methods like kNN, LOF.                                                      |
 
 ## Distribution Types
 
 [Distribution types notebook](https://github.com/welldesignedsystem/friendly-fortnight/blob/main/blog/distribution_types.ipynb) — interactive code for all four distributions below.
 
-| Distribution | Shape | Properties | Used When |
-|-------------|-------|------------|-----------|
-| **Uniform** | Flat, constant height | Every value equally likely, no peaks | Random sampling, simulations, baseline comparisons |
-| **Normal** | Bell-shaped, symmetric | Mean = median = mode, 68-95-99.7 rule | Natural measurements (height, error), most statistical methods assume this |
-| **Exponential** | Starts high, decays right | Positive skew, memoryless, models waiting times | Time between events (arrivals, failures, requests) |
-| **Lognormal** | Right-skewed, long tail | Logarithm is normal, values are positive | Income, stock prices, property values — cluster low but can spike high |
+| Distribution    | Shape                     | Properties                                      | Used When                                                                  |
+| --------------- | ------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------- |
+| **Uniform**     | Flat, constant height     | Every value equally likely, no peaks            | Random sampling, simulations, baseline comparisons                         |
+| **Normal**      | Bell-shaped, symmetric    | Mean = median = mode, 68-95-99.7 rule           | Natural measurements (height, error), most statistical methods assume this |
+| **Exponential** | Starts high, decays right | Positive skew, memoryless, models waiting times | Time between events (arrivals, failures, requests)                         |
+| **Lognormal**   | Right-skewed, long tail   | Logarithm is normal, values are positive        | Income, stock prices, property values — cluster low but can spike high     |
 
 ## Statistical Measures - Descriptive Statistics
 
 ### Mean
+
 - **What:** Average of all values (sum ÷ count)
 - **Use when:** Normal distributions, no outliers, need interpretability
 - **Don't use when:** Outliers present, skewed data (income, response times)
@@ -43,6 +44,7 @@ summary = "Comprehensive Guide to mastering Anomaly Detection in Machine Learnin
 ![mean.png](../img/mean.png)
 
 ### Median
+
 - **What:** Middle value when sorted (50th percentile)
 - **Use when:** Outliers exist, skewed distributions, need robust center
 - **Don't use when:** Perfect normal data, need mathematical operations, very small samples
@@ -51,6 +53,7 @@ summary = "Comprehensive Guide to mastering Anomaly Detection in Machine Learnin
 ![median.png](../img/median.png)
 
 ### Variance
+
 - **What:** Average squared distance from mean
 - **Use when:** Measuring spread, normal data, statistical modeling
 - **Don't use when:** Outliers present, need interpretable units, heavy-tailed distributions
@@ -59,6 +62,7 @@ summary = "Comprehensive Guide to mastering Anomaly Detection in Machine Learnin
 ![variance.png](../img/variance.png)
 
 ### Percentiles
+
 - **What:** Value below which X% of data falls (e.g., 25th, 95th)
 - **Use when:** Setting thresholds, skewed data, SLA monitoring (p99 latency)
 - **Don't use when:** Small datasets (<30), need smooth math properties
@@ -69,9 +73,11 @@ summary = "Comprehensive Guide to mastering Anomaly Detection in Machine Learnin
 ---
 
 ## Robust Statistical Methods
+
 The below is used for univariate outlier detection and spread measurement when data is non-normal or contains outliers.
 
 ### Standard Deviation
+
 - **What:** Square root of variance (spread in original units)
 - **Use when:** Describing spread, normal data, Z-scores, confidence intervals
 - **Don't use when:** Outliers present, skewed data (use IQR/MAD instead)
@@ -85,6 +91,7 @@ The below is used for univariate outlier detection and spread measurement when d
 ![std_dev.png](../img/std_dev.png)
 
 ### Median Absolute Deviation (MAD) ⭐
+
 - **What:** Median of absolute deviations from median (robust spread measure)
 - **Use when:** Outliers present, skewed data, production systems, finance/manufacturing
 - **Don't use when:** Perfect normal data where standard deviation suffices
@@ -99,17 +106,20 @@ The below is used for univariate outlier detection and spread measurement when d
 ![mad.png](../img/mad.png)
 
 ### Interquartile Range (IQR)
+
 - **What:** Distance between 75th and 25th percentiles (middle 50% spread)
 - **Use when:** Outlier detection, box plots, skewed distributions, quick EDA
 - **Don't use when:** Small samples (<20), need precise statistical modeling
 
 ### Tukey's Fences
+
 - **What:** Outlier boundaries at Q1 - 1.5×IQR and Q3 + 1.5×IQR
 - **Use when:** Quick outlier flagging, exploratory analysis, box plot rules
 - **Don't use when:** Need domain-specific thresholds, multivariate data
 - Box Plot is one of the visualization that often uses Tukey's fences
 
 ### Z-Score (Standard Score)
+
 - **What**: Number of standard deviations a value is from the mean: (x - mean) / SD
 - **Use when**: Normal data, standardizing features, detecting outliers in clean data (|z| > 3)
 - **Don't use when**: Outliers present (use Modified Z-score), skewed data, small samples
@@ -118,6 +128,7 @@ The below is used for univariate outlier detection and spread measurement when d
 ![img.png](../img/z.png)
 
 ### Modified Z-Score
+
 - **What:** Z-score using median and MAD instead of mean and SD
 - **Use when:** Outliers contaminate mean/SD, need robust standardization
 - **Don't use when:** Clean normal data, classical Z-score works fine
@@ -422,21 +433,26 @@ _Practice: High-dimensional data, fraud detection datasets, log anomalies_
 ---
 
 ## Phase 4: One-Class Classification
+
 ### **Core Concepts**
+
 - Novelty detection vs outlier detection vs rare class problems
 - When you have "normal" examples but few/no anomaly examples
 
 ### **Key Algorithms**
+
 - One-Class SVM (OC-SVM)
 - Support Vector Data Description (SVDD)
 - When to use vs two-class classification
 
 ### **Real Applications:**
+
 - Manufacturing quality control (learning from "good" products)
 - Network intrusion (training only on normal traffic)
 - Equipment health monitoring (baseline from healthy operation)
 
 ### **Visualization Integration:**
+
 - Decision boundary visualization
 - Support vector plots
 - Score distributions for normal vs novel data
@@ -446,24 +462,29 @@ _Practice: Imbalanced datasets, cases where anomalies are undefined during train
 ---
 
 ## Phase 5: Dimensionality Reduction & Autoencoders
+
 ### **PCA for Anomaly Detection**
+
 - Reconstruction error approach
 - Hotelling's T² and SPE (Q-statistic)
 - Incremental PCA for streaming data ⭐
 
 ### **Autoencoders ⭐⭐**
+
 - Vanilla autoencoders
 - Variational autoencoders (VAE)
 - Reconstruction error as anomaly score
 - Choosing architecture and bottleneck size
 
 ### **Visualization Integration:**
+
 - PCA scatter plots (2D/3D projections)
 - Reconstruction error histograms
 - Original vs reconstructed comparisons
 - Latent space visualization
 
 _When to Use:_
+
 - High-dimensional data (images, multi-sensor systems)
 - Complex, non-linear patterns
 - When you need feature learning
@@ -473,28 +494,34 @@ _Practice: Image anomalies, multi-sensor industrial data, network packet inspect
 ---
 
 ## Phase 6: Time Series Anomaly Detection
+
 ### **Time Series Fundamentals**
+
 - Stationarity, trend, seasonality
 - Autocorrelation basics
 - Moving averages and exponential smoothing
 
 ### **Classical & Statistical Methods**
+
 - Control charts: CUSUM, EWMA ⭐⭐
 - Seasonal decomposition (STL)
 - ARIMA-based residual analysis
 
 ### **Probabilistic Methods **
+
 - Bayesian change point detection
 - Hidden Markov Models (HMM) for state-based anomalies
 - Probabilistic forecasting with uncertainty bounds
 
 ### **ML Approaches ⭐**
+
 - LSTM autoencoders
 - Facebook Prophet anomaly detection
 - Matrix Profile (exact motif/discord discovery)
 - Isolation Forest on windowed features
 
 ### **Visualization Integration:**
+
 - Time series plots with anomaly overlays
 - Control charts with control limits
 - Seasonal decomposition plots
@@ -506,35 +533,42 @@ _Practice: Server logs, sensor streams, financial time series, DevOps metrics_
 ---
 
 ## Phase 7: Streaming & Online Detection ⭐⭐
+
 ### **Core Streaming Concepts**
+
 - Sliding window techniques
 - Fixed vs adaptive windows
 - Memory vs accuracy tradeoffs
 
 ### **Streaming Algorithms**
+
 - Incremental PCA
 - Online Isolation Forest variants
 - Reservoir sampling for large streams
 - Count-Min Sketch for frequency estimation
 
 ### **Concept Drift Detection ⭐**
+
 - ADWIN (Adaptive Windowing)
 - DDM (Drift Detection Method)
 - Page-Hinkley test
 - When to retrain models
 
 ### **Real-Time Scoring**
+
 - Latency requirements
 - Batch scoring vs real-time inference
 - Feature computation in streaming context
 
 ### **Visualization Integration:**
+
 - Real-time dashboards (Grafana, Kibana)
 - Rolling statistics plots
 - Drift detection visualizations
 - Alert timelines
 
 ### **Applications:**
+
 - Log monitoring and security
 - IoT sensor networks
 - Real-time fraud detection
@@ -545,30 +579,36 @@ _Practice: Kafka/streaming data, build real-time detection pipeline with live da
 ---
 
 ## Phase 8: Graph-Based Anomaly Detection ⭐
+
 ### **Graph Anomaly Types**
+
 - Node anomalies (unusual entities)
 - Edge anomalies (unusual relationships)
 - Subgraph anomalies (unusual communities)
 
 ### **Classical Methods**
+
 - Degree-based detection
 - Community detection outliers
 - Ego network features
 - PageRank anomalies
 
 ### **Graph Neural Networks ⭐**
+
 - Graph Convolutional Networks (GCN) basics
 - Graph autoencoders
 - Temporal graph networks
 - When deep learning on graphs is worth it
 
 ### **Visualization Integration:**
+
 - Network graphs with anomaly highlighting
 - Degree distribution plots
 - Community structure visualization
 - Temporal graph evolution
 
 ### **Real Applications:**
+
 - Fraud ring detection (financial networks)
 - Cybersecurity (attack pattern graphs)
 - Social network abuse detection
@@ -579,19 +619,23 @@ _Practice: Transaction networks, social graphs, communication patterns_
 ---
 
 ## Phase 9: Production & Evaluation
+
 ### **Evaluation Without Ground Truth ⭐⭐**
+
 - Precision at k
 - Volume under surface (VUS)
 - Expert validation workflows
 - A/B testing anomaly systems
 
 ### **Evaluation With Labels**
+
 - Why accuracy is misleading
 - Precision, Recall, F1
 - ROC-AUC, PR-AUC curves
 - Point-adjust metrics for time series
 
 ### **Handling Label Uncertainty ⭐**
+
 - Positive-Unlabeled (PU) learning
 - Weak supervision strategies
 - Noisy label handling
@@ -599,12 +643,14 @@ _Practice: Transaction networks, social graphs, communication patterns_
 - Active learning for labeling efficiency
 
 ### **Threshold Selection ⭐**
+
 - Statistical approaches (percentile, MAD-based)
 - Business-driven thresholds
 - Dynamic thresholds
 - Multi-threshold strategies
 
 ### **Production Challenges**
+
 - Class imbalance (99.9% normal data)
 - Alert fatigue management
 - Explainability and debugging false positives
@@ -613,12 +659,14 @@ _Practice: Transaction networks, social graphs, communication patterns_
 - Feature drift detection
 
 ### **Deployment Patterns**
+
 - Batch vs streaming architectures
 - Lambda architecture
 - Feature stores
 - Model serving infrastructure
 
 ### **Production Dashboards ⭐⭐**
+
 - Monitoring system health
 - Anomaly rate trends
 - False positive/negative tracking
@@ -630,7 +678,9 @@ _Practice: End-to-end production pipeline with monitoring dashboards and alertin
 ---
 
 ## Key Libraries & Tools to Master
+
 ### **Python Ecosystem:**
+
 - PyOD - 40+ algorithms, unified API
 - scikit-learn - IsolationForest, LOF, OneClassSVM
 - stumpy - Matrix Profile for time series
@@ -640,31 +690,37 @@ _Practice: End-to-end production pipeline with monitoring dashboards and alertin
 - PyTorch Geometric - Graph neural networks
 
 ### **Visualization Libraries ⭐⭐**
+
 - Matplotlib/Seaborn - static plots, histograms, box plots
 - Plotly ⭐ - interactive plots and dashboards
 - Altair - declarative visualization
 - hvPlot - easy interactive plots from pandas
 
 ### **Production Dashboards:**
+
 - Grafana ⭐⭐ - time series monitoring (industry standard)
 - Kibana - log visualization
 - Streamlit - rapid ML app prototyping
 - Plotly Dash - production-grade dashboards
 
 ### **Production Tools:**
+
 - MLflow - experiment tracking
 - Docker - containerization
 - Apache Kafka - streaming
 - FastAPI - model serving
 
 ### **Notebooks:**
+
 - Jupyter - interactive exploration
 - Observable - web-based viz notebooks
 
 ---
 
 ## Visual Detection Workflow (Core Practice)
+
 ### **Standard Workflow:**
+
 - Histogram/box plot → identify distribution type
 - Time series plot → spot temporal patterns
 - Scatter/pair plots → find multivariate outliers
@@ -679,10 +735,9 @@ _This workflow should be practiced in every phase_
 ---
 
 ### Removed from Consideration (Not Practically Used)
+
 - ❌ Grubbs' test, Dixon's Q test - rarely used at scale
 - ❌ t-SNE as detection method - visualization only, not detection
 - ❌ K-means as primary detector - pedagogical only
 - ❌ GAN-based anomaly detection - unstable, low ROI in production
 - ❌ Connectivity-based outlier factor - LOF is better
-
-

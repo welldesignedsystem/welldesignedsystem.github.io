@@ -8,10 +8,10 @@ summary = "Kong is an open-source cloud-native API gateway for managing securing
 
 ## What is Kong
 
-- Kong is an open-source cloud-native API gateway built on top of **Nginx** with **Lua** scripting for extensibility. 
+- Kong is an open-source cloud-native API gateway built on top of **Nginx** with **Lua** scripting for extensibility.
 - It acts as a reverse proxy that sits in front of your APIs and handles routing, authentication, rate limiting, load balancing, observability and more.
   - Forward proxy (aka just "proxy"): sits in front of clients/Hides the client. Example: when in your office network (or connecting using VPN from home), when you browse the web traffic goes through a forward proxy that filters/caches/logs outbound HTTP requests. Thats how they block chatgpt, gemini etc..
-  - Reverse proxy: sits in front of servers/Hides the server. The client talks to the reverse proxy and has no idea the backend exists. 
+  - Reverse proxy: sits in front of servers/Hides the server. The client talks to the reverse proxy and has no idea the backend exists.
 
 ## Core Architecture
 
@@ -22,33 +22,25 @@ Kong splits its responsibilities into two logical roles:
 
 In **Traditional mode** both planes run in the same process. In **Hybrid mode** they are separated — one CP pushes config to many DP nodes.
 
-```
-                    ┌─────────────┐
-                    │  Admin API  │
-                    │  (Control   │
-                    │   Plane)    │
-                    └──────┬──────┘
-                           │ config push
-              ┌────────────┼────────────┐
-              │            │            │
-         ┌────▼───┐   ┌────▼───┐   ┌────▼───┐
-         │ Data   │   │ Data   │   │ Data   │
-         │ Plane  │   │ Plane  │   │ Plane  │
-         └────────┘   └────────┘   └────────┘
+```mermaid
+flowchart TB
+    CP["Control Plane<br/>Admin API"] -->|config push| DP1["Data Plane"]
+    CP -->|config push| DP2["Data Plane"]
+    CP -->|config push| DP3["Data Plane"]
 ```
 
 ## Key Entities
 
 All six are **configuration objects**. You define them via the Admin API (REST calls) or a declarative YAML/JSON file (DB-less mode). Kong stores them in PostgreSQL and the Data Plane reads them at runtime.
 
-| Entity | What it is |
-|--------|------------|
-| **Service** | A config entry that tells Kong: "there is a backend at this address." Points to a URL or **Upstream** object. Kong is the proxy; Service is just a label that abstracts the backend. |
-| **Route** | "If an incoming request matches these rules (path, method, host, headers), send it to this **Service**." Routes are how Kong decides where traffic goes. |
-| **Upstream** | "Treat these backend instances as a load-balanced pool." An **Upstream** names the pool and configures the algorithm (round-robin, least-connections, etc.) and health checks. |
-| **Target** | A single backend instance (IP:port) inside an **Upstream** pool. Kong health-checks each Target and routes only to healthy ones. |
-| **Consumer** | An API user. You attach auth credentials, rate-limit tiers, or ACLs to a Consumer so Kong can enforce who gets what. |
-| **Plugin** | Code that runs at a specific phase in the request pipeline (before forwarding, after response, etc.). Plugins add auth, logging, rate limiting, transformation, CORS, etc. — without touching the backend code. |
+| Entity       | What it is                                                                                                                                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Service**  | A config entry that tells Kong: "there is a backend at this address." Points to a URL or **Upstream** object. Kong is the proxy; Service is just a label that abstracts the backend.                            |
+| **Route**    | "If an incoming request matches these rules (path, method, host, headers), send it to this **Service**." Routes are how Kong decides where traffic goes.                                                        |
+| **Upstream** | "Treat these backend instances as a load-balanced pool." An **Upstream** names the pool and configures the algorithm (round-robin, least-connections, etc.) and health checks.                                  |
+| **Target**   | A single backend instance (IP:port) inside an **Upstream** pool. Kong health-checks each Target and routes only to healthy ones.                                                                                |
+| **Consumer** | An API user. You attach auth credentials, rate-limit tiers, or ACLs to a Consumer so Kong can enforce who gets what.                                                                                            |
+| **Plugin**   | Code that runs at a specific phase in the request pipeline (before forwarding, after response, etc.). Plugins add auth, logging, rate limiting, transformation, CORS, etc. — without touching the backend code. |
 
 Example — all six entities in a single declarative config:
 
@@ -95,8 +87,9 @@ What happens when a request arrives:
 
 Request flow:
 
-```
-Client → Route → Service → Plugin Chain → Upstream → Target
+```mermaid
+flowchart LR
+    Client --> Route --> Service --> PluginChain["Plugin Chain"] --> Upstream --> Target
 ```
 
 ## Deployment Modes
@@ -105,17 +98,10 @@ Client → Route → Service → Plugin Chain → Upstream → Target
 
 Kong nodes connect to a shared **PostgreSQL** database for configuration. Every node has both CP and DP capabilities running in the same process. Simplest to set up but requires database management. (Cassandra was supported before Kong 3.4 but is now removed — PostgreSQL is the only supported database.)
 
-```
-┌──────────┐     ┌──────────┐
-│ Kong DB  │     │ Kong DB  │
-│ Node     │     │ Node     │
-└──────────┘     └──────────┘
-       │               │
-       └───────┬───────┘
-               │
-         ┌─────▼─────┐
-         │ PostgreSQL│
-         └───────────┘
+```mermaid
+flowchart BT
+    N1["Kong DB Node"] --> DB[("PostgreSQL")]
+    N2["Kong DB Node"] --> DB
 ```
 
 ### DB-less Mode
@@ -137,15 +123,9 @@ services:
 
 Separates CP and DP. The CP manages the database and Admin API. DPs are stateless and receive config from the CP over a TLS-secured connection. This is the production-recommended topology for horizontal scaling.
 
-```
-┌─────────────┐
-│   Control   │ ← Admin API, DB
-│   Plane     │
-└──────┬──────┘
-       │ (cluster port)
-  ┌────┴────┐
-  │   DP    │  ... scale horizontally
-  └─────────┘
+```mermaid
+flowchart TB
+    CP["Control Plane<br/>Admin API, DB"] -->|cluster port| DP["Data Plane<br/>...scale horizontally"]
 ```
 
 ### Kubernetes Ingress Controller
@@ -187,37 +167,38 @@ spec:
 
 Plugins run in phases within Kong's Nginx worker:
 
-```
-Certificate → Rewrite → Access → (upstream proxy) → Header Filter → Body Filter → Log
+```mermaid
+flowchart LR
+    Certificate --> Rewrite --> Access --> Upstream["(upstream proxy)"] --> HeaderFilter["Header Filter"] --> BodyFilter["Body Filter"] --> Log
 ```
 
 Plugins can be applied globally or scoped to a Service, Route, or Consumer. Custom plugins are written in Lua (or Go using Go PDK).
 
 Popular plugins:
 
-| Plugin | Purpose |
-|--------|---------|
-| `rate-limiting` | Rate limit requests per consumer or IP |
-| `key-auth` | API key authentication |
-| `jwt` | JWT validation |
-| `cors` | Cross-Origin Resource Sharing |
-| `ip-restriction` | Allow/deny by IP or CIDR |
-| `prometheus` | Expose metrics in Prometheus format |
+| Plugin                  | Purpose                                    |
+| ----------------------- | ------------------------------------------ |
+| `rate-limiting`         | Rate limit requests per consumer or IP     |
+| `key-auth`              | API key authentication                     |
+| `jwt`                   | JWT validation                             |
+| `cors`                  | Cross-Origin Resource Sharing              |
+| `ip-restriction`        | Allow/deny by IP or CIDR                   |
+| `prometheus`            | Expose metrics in Prometheus format        |
 | `file-log` / `http-log` | Request logging to files or HTTP endpoints |
-| `aws-lambda` | Proxy requests to AWS Lambda |
+| `aws-lambda`            | Proxy requests to AWS Lambda               |
 
 ## M2M Authentication
 
 Kong supports several approaches for machine-to-machine (service-to-service) authentication, applied via plugins on the Service or Route:
 
-| Approach | Plugin / Method | What happens |
-|----------|----------------|--------------|
-| **API Key** | `key-auth` | Service A sends a static key in a header (`apikey: <key>`). Kong validates against the Consumer's stored credentials. Simple but key rotation is manual. |
-| **JWT** | `jwt` | Service A presents a signed JWT. Kong verifies the signature (HS256/RS256), expiry and claims before proxying. |
-| **OAuth2 / OIDC with external Auth Server** | `openid-connect` | Service A gets a token from a separate Auth Server (Keycloak, Okta, Auth0, etc.) via `client_credentials` grant. Kong introspects or validates the JWT locally. |
-| **Kong as OAuth2 provider** | `oauth2` | Kong acts as its own mini Auth Server — Service A calls Kong's token endpoint with `client_id` + `client_secret`, Kong issues and validates tokens itself. No external Auth Server needed. |
-| **mTLS** | built-in TCP/TLS layer | Both sides present TLS client certificates. Kong verifies the client cert against a trusted CA. No shared secrets but requires certificate management. |
-| **Basic Auth** | `basic-auth` | Service A sends `Authorization: Basic base64(username:password)`. Kong decodes and matches against the Consumer's stored credentials. Works for M2M but less common — credentials are static with no expiry and the base64 decode step adds nothing over `key-auth`. |
+| Approach                                    | Plugin / Method        | What happens                                                                                                                                                                                                                                                         |
+| ------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **API Key**                                 | `key-auth`             | Service A sends a static key in a header (`apikey: <key>`). Kong validates against the Consumer's stored credentials. Simple but key rotation is manual.                                                                                                             |
+| **JWT**                                     | `jwt`                  | Service A presents a signed JWT. Kong verifies the signature (HS256/RS256), expiry and claims before proxying.                                                                                                                                                       |
+| **OAuth2 / OIDC with external Auth Server** | `openid-connect`       | Service A gets a token from a separate Auth Server (Keycloak, Okta, Auth0, etc.) via `client_credentials` grant. Kong introspects or validates the JWT locally.                                                                                                      |
+| **Kong as OAuth2 provider**                 | `oauth2`               | Kong acts as its own mini Auth Server — Service A calls Kong's token endpoint with `client_id` + `client_secret`, Kong issues and validates tokens itself. No external Auth Server needed.                                                                           |
+| **mTLS**                                    | built-in TCP/TLS layer | Both sides present TLS client certificates. Kong verifies the client cert against a trusted CA. No shared secrets but requires certificate management.                                                                                                               |
+| **Basic Auth**                              | `basic-auth`           | Service A sends `Authorization: Basic base64(username:password)`. Kong decodes and matches against the Consumer's stored credentials. Works for M2M but less common — credentials are static with no expiry and the base64 decode step adds nothing over `key-auth`. |
 
 The two most common in practice: **OAuth2 Client Credentials** (token-based, short-lived, revocable) and **API Key** (simple, static).
 
@@ -271,13 +252,13 @@ When using the `jwt` plugin with asymmetric algorithms (RS256, ES256, ES384, etc
 }
 ```
 
-| Field | Meaning |
-|-------|---------|
-| `kty` | Key type — `"EC"` (elliptic curve) or `"RSA"` |
-| `crv` | Curve (for EC keys) — e.g. `"P-256"`, `"P-384"` |
-| `x`, `y` | Public point coordinates (base64url-encoded) |
-| `d` | Private key scalar (base64url-encoded) — keep secret! |
-| `alg` | Intended algorithm — `"RS256"`, `"ES256"`, `"ES384"`, etc. |
+| Field    | Meaning                                                    |
+| -------- | ---------------------------------------------------------- |
+| `kty`    | Key type — `"EC"` (elliptic curve) or `"RSA"`              |
+| `crv`    | Curve (for EC keys) — e.g. `"P-256"`, `"P-384"`            |
+| `x`, `y` | Public point coordinates (base64url-encoded)               |
+| `d`      | Private key scalar (base64url-encoded) — keep secret!      |
+| `alg`    | Intended algorithm — `"RS256"`, `"ES256"`, `"ES384"`, etc. |
 
 **Why asymmetric signing?** The client signs with the private key (kept secret on its side). Anyone with the public key can verify. No shared secret to leak or rotate. Kong stores only the public JWK (no `d` field) on the Consumer — if Kong is compromised, the signing keys are not exposed.
 
@@ -291,4 +272,3 @@ curl -X POST http://localhost:8001/consumers/my-service/jwt \
 ```
 
 The client uses the full JWK (with `d`) to sign JWT tokens and sends them with each request. Kong decodes the payload, verifies the signature against the stored public key, checks expiry and claims — all without talking to any external service.
-

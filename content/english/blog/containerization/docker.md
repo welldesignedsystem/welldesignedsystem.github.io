@@ -145,6 +145,7 @@ docker image ls --digests     # Show image digests
 ### Volume Management
 
 Docker volume basics:
+
 - Named volumes: Managed by Docker and stored under Docker’s data directory; portable across containers and survive container removal.
 - Anonymous volumes: Created implicitly (no name) and can be harder to manage; useful for quick runs but less ideal for long-term persistence.
 - Bind mounts: Map a host path into a container; great for development and sharing files, but path must exist and host permissions apply.
@@ -181,6 +182,7 @@ docker run --mount source=VOLUME_NAME,target=/path,readonly IMAGE
 ### Network Management
 
 Docker networking basics:
+
 - Bridge network: The default local, single-host network type. Containers get IPs on a private subnet and can reach each other on that bridge. Host access is via published ports (e.g., -p 8080:80). User-defined bridges also provide built-in DNS so containers can resolve each other by name.
 - Network driver: The implementation backing a network (bridge, host, macvlan, overlay). Bridge is single-host; overlay spans multiple hosts in a swarm/cluster.
 - Subnet: The IP range allocated to a Docker network, defined in CIDR notation (e.g., 172.18.0.0/16). It determines the pool from which container IPs are assigned.
@@ -338,10 +340,10 @@ metadata:
   name: simple-app
 spec:
   containers:
-  - name: app
-    image: myapp:latest
-    ports:
-    - containerPort: 8080
+    - name: app
+      image: myapp:latest
+      ports:
+        - containerPort: 8080
 ```
 
 ### Sidecar Pattern
@@ -355,18 +357,18 @@ metadata:
   name: sidecar-example
 spec:
   containers:
-  - name: main-app
-    image: myapp:latest
-    ports:
-    - containerPort: 8080
-  - name: log-shipper
-    image: fluent/fluentd:latest
-    volumeMounts:
-    - name: logs
-      mountPath: /var/log
+    - name: main-app
+      image: myapp:latest
+      ports:
+        - containerPort: 8080
+    - name: log-shipper
+      image: fluent/fluentd:latest
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log
   volumes:
-  - name: logs
-    emptyDir: {}
+    - name: logs
+      emptyDir: {}
 ```
 
 **Use Cases**: Log collection, monitoring agents, service mesh proxies, configuration synchronization.
@@ -382,14 +384,14 @@ metadata:
   name: ambassador-example
 spec:
   containers:
-  - name: app
-    image: myapp:latest
-    ports:
-    - containerPort: 8080
-  - name: ambassador
-    image: envoyproxy/envoy:latest
-    ports:
-    - containerPort: 9901
+    - name: app
+      image: myapp:latest
+      ports:
+        - containerPort: 8080
+    - name: ambassador
+      image: envoyproxy/envoy:latest
+      ports:
+        - containerPort: 9901
 ```
 
 **Use Cases**: Database proxy, API gateway, circuit breaker, rate limiting.
@@ -405,16 +407,16 @@ metadata:
   name: adapter-example
 spec:
   containers:
-  - name: app
-    image: myapp:latest
-  - name: adapter
-    image: prometheus-adapter:latest
-    volumeMounts:
-    - name: metrics
-      mountPath: /metrics
+    - name: app
+      image: myapp:latest
+    - name: adapter
+      image: prometheus-adapter:latest
+      volumeMounts:
+        - name: metrics
+          mountPath: /metrics
   volumes:
-  - name: metrics
-    emptyDir: {}
+    - name: metrics
+      emptyDir: {}
 ```
 
 **Use Cases**: Metrics normalization, log format conversion, monitoring data transformation.
@@ -430,15 +432,15 @@ metadata:
   name: init-container-example
 spec:
   initContainers:
-  - name: init-db
-    image: busybox:latest
-    command: ['sh', '-c', 'until nc -z db 5432; do sleep 1; done']
-  - name: migration
-    image: myapp-migrations:latest
-    command: ['npm', 'run', 'migrate']
+    - name: init-db
+      image: busybox:latest
+      command: ["sh", "-c", "until nc -z db 5432; do sleep 1; done"]
+    - name: migration
+      image: myapp-migrations:latest
+      command: ["npm", "run", "migrate"]
   containers:
-  - name: app
-    image: myapp:latest
+    - name: app
+      image: myapp:latest
 ```
 
 **Use Cases**: Database migrations, waiting for dependencies, configuration setup, secret fetching.
@@ -454,19 +456,19 @@ metadata:
   name: multi-container
 spec:
   containers:
-  - name: web
-    image: nginx:latest
-    volumeMounts:
-    - name: shared-data
-      mountPath: /usr/share/nginx/html
-  - name: content-generator
-    image: content-gen:latest
-    volumeMounts:
-    - name: shared-data
-      mountPath: /data
+    - name: web
+      image: nginx:latest
+      volumeMounts:
+        - name: shared-data
+          mountPath: /usr/share/nginx/html
+    - name: content-generator
+      image: content-gen:latest
+      volumeMounts:
+        - name: shared-data
+          mountPath: /data
   volumes:
-  - name: shared-data
-    emptyDir: {}
+    - name: shared-data
+      emptyDir: {}
 ```
 
 **Use Cases**: Web server with content generator, application with cache warmer, streaming data processor.
@@ -504,12 +506,12 @@ spec:
   minReplicas: 2
   maxReplicas: 10
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
 ```
 
 ### NetworkPolicy (Default deny + allow to DB)
@@ -538,12 +540,12 @@ spec:
     matchLabels: { tier: db }
   policyTypes: [Ingress]
   ingress:
-  - from:
-    - podSelector:
-        matchLabels: { tier: web }
-    ports:
-    - protocol: TCP
-      port: 5432
+    - from:
+        - podSelector:
+            matchLabels: { tier: web }
+      ports:
+        - protocol: TCP
+          port: 5432
 ```
 
 ### Affinity / Anti-affinity
@@ -566,23 +568,22 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values: [myapp]
-              topologyKey: kubernetes.io/hostname
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values: [myapp]
+                topologyKey: kubernetes.io/hostname
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: In
-                values: [zone-a, zone-b]
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values: [zone-a, zone-b]
 ```
-
 
 ## Best Practices
 
@@ -626,4 +627,3 @@ spec:
 5. **Testing**: Add integration tests against cluster services; use ephemeral namespaces per test run.
 6. **CI/CD integration**: Automate image build, push, and kubectl/Helm deploy steps.
 7. **Registry management**: Use private registries and imagePullSecrets; tag images semantically.
-

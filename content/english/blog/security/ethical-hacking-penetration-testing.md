@@ -34,11 +34,11 @@ Before learning defence or offence, understand the attack model. Lockheed Martin
 
 ## The Three Security Concepts Everything Else Derives From
 
-| Concept | Meaning | Example Attack |
-|---|---|---|
-| **Confidentiality** | Data only visible to authorised parties | Data breach, SQLi dumping DB |
-| **Integrity** | Data cannot be tampered with | MITM altering requests, XSS modifying DOM |
-| **Availability** | System is up and accessible | DDoS, ransomware |
+| Concept             | Meaning                                 | Example Attack                            |
+| ------------------- | --------------------------------------- | ----------------------------------------- |
+| **Confidentiality** | Data only visible to authorised parties | Data breach, SQLi dumping DB              |
+| **Integrity**       | Data cannot be tampered with            | MITM altering requests, XSS modifying DOM |
+| **Availability**    | System is up and accessible             | DDoS, ransomware                          |
 
 Every vulnerability you find will damage one or more of these. Always frame findings in these terms when reporting.
 
@@ -58,21 +58,21 @@ Layer 1 — Physical      → cables, hardware (beyond most pentest scope)
 
 **Ports you must know by memory:**
 
-| Port | Protocol | Why attackers target it |
-|---|---|---|
-| 21 | FTP | Often anonymous login, cleartext creds |
-| 22 | SSH | Brute force, weak keys |
-| 23 | Telnet | Cleartext — replace with SSH immediately |
-| 25 | SMTP | Email relay abuse, user enumeration |
-| 53 | DNS | Zone transfer leaks full network map |
-| 80/443 | HTTP/HTTPS | Web app attacks (entire OWASP Top 10) |
-| 139/445 | SMB | EternalBlue (MS17-010), pass-the-hash |
-| 3306 | MySQL | Direct DB access if exposed |
-| 3389 | RDP | Brute force, BlueKeep (CVE-2019-0708) |
-| 5432 | PostgreSQL | Direct DB access |
-| 6379 | Redis | No-auth default, RCE possible |
-| 8080/8443 | Alt HTTP/HTTPS | Dev servers, admin panels |
-| 27017 | MongoDB | No-auth default, full DB exposed |
+| Port      | Protocol       | Why attackers target it                  |
+| --------- | -------------- | ---------------------------------------- |
+| 21        | FTP            | Often anonymous login, cleartext creds   |
+| 22        | SSH            | Brute force, weak keys                   |
+| 23        | Telnet         | Cleartext — replace with SSH immediately |
+| 25        | SMTP           | Email relay abuse, user enumeration      |
+| 53        | DNS            | Zone transfer leaks full network map     |
+| 80/443    | HTTP/HTTPS     | Web app attacks (entire OWASP Top 10)    |
+| 139/445   | SMB            | EternalBlue (MS17-010), pass-the-hash    |
+| 3306      | MySQL          | Direct DB access if exposed              |
+| 3389      | RDP            | Brute force, BlueKeep (CVE-2019-0708)    |
+| 5432      | PostgreSQL     | Direct DB access                         |
+| 6379      | Redis          | No-auth default, RCE possible            |
+| 8080/8443 | Alt HTTP/HTTPS | Dev servers, admin panels                |
+| 27017     | MongoDB        | No-auth default, full DB exposed         |
 
 ---
 
@@ -92,11 +92,11 @@ Layer 1 — Physical      → cables, hardware (beyond most pentest scope)
 
 ## Pen Test Types
 
-| Type | Prior Knowledge | Simulates | Best For |
-|---|---|---|---|
-| **Black box** | None | External attacker | External perimeter review |
-| **Grey box** | Credentials, architecture docs | Insider threat, compromised user | Web app + API testing |
-| **White box** | Full source code, infra access | Developer / DevSecOps review | Deep code + config audit |
+| Type          | Prior Knowledge                | Simulates                        | Best For                  |
+| ------------- | ------------------------------ | -------------------------------- | ------------------------- |
+| **Black box** | None                           | External attacker                | External perimeter review |
+| **Grey box**  | Credentials, architecture docs | Insider threat, compromised user | Web app + API testing     |
+| **White box** | Full source code, infra access | Developer / DevSecOps review     | Deep code + config audit  |
 
 **As a developer testing your own app:** Grey box is most practical. You already know the stack. Use that knowledge to inform your testing, not skip steps.
 
@@ -111,6 +111,7 @@ Passive recon means gathering intelligence without sending a single packet to yo
 **Why attackers spend most time here:** The more you know before attacking, the more targeted and effective your attacks become. A good attacker can identify the exact version of software running on a server from public DNS and certificate data alone — then search for known CVEs for that version.
 
 **What you are looking for:**
+
 - Subdomains (each is a potential entry point)
 - Technology stack (framework, server, CDN, CMS)
 - Exposed services (S3 buckets, dev environments, staging servers)
@@ -208,6 +209,7 @@ site:target.com filetype:bak
 ```
 
 **Wider OSINT sources:**
+
 - **Shodan** (`shodan.io`) — search engine for internet-connected devices. Finds open ports, banners, default creds on routers/cameras/industrial systems without touching the target.
 - **theHarvester** — scrapes emails, IPs, hostnames from Google, Bing, LinkedIn, Twitter
 - **GitHub** (`github.com/search`) — search for `org:target.com password` or `org:target.com api_key` — developers accidentally commit secrets constantly
@@ -262,6 +264,7 @@ nmap --script=dns-zone-transfer target.com -p 53       # DNS zone transfer
 ```
 
 **Understanding output:**
+
 ```text
 PORT     STATE  SERVICE  VERSION
 22/tcp   open   ssh      OpenSSH 7.6p1 Ubuntu
@@ -269,6 +272,7 @@ PORT     STATE  SERVICE  VERSION
 443/tcp  open   ssl/http Apache httpd 2.4.29
 3306/tcp open   mysql    MySQL 5.7.38
 ```
+
 This tells you: SSH is running (brute force candidate), Apache version (search CVEs), MySQL is exposed to the network (critical misconfiguration — databases should never be internet-facing).
 
 ## Web Application Scanning
@@ -305,6 +309,7 @@ feroxbuster -u https://target.com -w wordlist.txt --depth 3
 ```
 
 **What to look for in results:**
+
 - `200 OK` — endpoint exists and is accessible
 - `301/302` — redirect (may reveal internal path structure)
 - `401` — exists but requires auth (authentication target)
@@ -321,35 +326,35 @@ feroxbuster -u https://target.com -w wordlist.txt --depth 3
 
 OWASP (Open Web Application Security Project) publishes the 10 most critical web vulnerabilities. This is the universal reference for web app security. Every web application assessment starts here.
 
-| ID | Vulnerability | What It Means | Common Cause | Example |
-|---|---|---|---|---|
-| **A01** | Broken Access Control | Users can access resources/actions they should not | Missing authorisation checks | User A views User B's profile by changing `?id=2` to `?id=3` (IDOR) |
-| **A02** | Cryptographic Failures | Sensitive data exposed due to weak/missing encryption | MD5/SHA1 for passwords, HTTP instead of HTTPS, keys in code | Password reset token predictable, PII stored in plaintext |
-| **A03** | Injection | Untrusted data sent to an interpreter as a command | No input sanitisation | `' OR 1=1--` in login form dumps entire user table |
-| **A04** | Insecure Design | Architectural flaws that no implementation fix can solve | No threat modelling, no security requirements | Password reset via easily-guessed security questions |
-| **A05** | Security Misconfiguration | Default configs, unnecessary features enabled, verbose errors | Lazy deployment, no hardening | Stack trace revealed in 500 error, default admin/admin credentials |
-| **A06** | Vulnerable Components | Using libraries/frameworks with known CVEs | Outdated dependencies | log4j 2.14 with Log4Shell (CVE-2021-44228) in production |
-| **A07** | Auth Failures | Broken authentication lets attackers assume other identities | Weak session management, no MFA, credential stuffing | JWT with `alg:none`, session token not invalidated on logout |
-| **A08** | Software Integrity Failures | Untrusted code or updates executed | No signature verification | npm package with malicious update, insecure CI/CD pipeline |
-| **A09** | Logging Failures | Attacks go undetected, forensics impossible | No audit trail, logging passwords | Failed login attempts not logged, no alerts on privilege escalation |
-| **A10** | SSRF | Server makes requests to attacker-controlled URLs | User-controlled URLs passed to server-side HTTP clients | `?url=http://169.254.169.254/latest/meta-data/` leaks AWS credentials |
+| ID      | Vulnerability               | What It Means                                                 | Common Cause                                                | Example                                                               |
+| ------- | --------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------- |
+| **A01** | Broken Access Control       | Users can access resources/actions they should not            | Missing authorisation checks                                | User A views User B's profile by changing `?id=2` to `?id=3` (IDOR)   |
+| **A02** | Cryptographic Failures      | Sensitive data exposed due to weak/missing encryption         | MD5/SHA1 for passwords, HTTP instead of HTTPS, keys in code | Password reset token predictable, PII stored in plaintext             |
+| **A03** | Injection                   | Untrusted data sent to an interpreter as a command            | No input sanitisation                                       | `' OR 1=1--` in login form dumps entire user table                    |
+| **A04** | Insecure Design             | Architectural flaws that no implementation fix can solve      | No threat modelling, no security requirements               | Password reset via easily-guessed security questions                  |
+| **A05** | Security Misconfiguration   | Default configs, unnecessary features enabled, verbose errors | Lazy deployment, no hardening                               | Stack trace revealed in 500 error, default admin/admin credentials    |
+| **A06** | Vulnerable Components       | Using libraries/frameworks with known CVEs                    | Outdated dependencies                                       | log4j 2.14 with Log4Shell (CVE-2021-44228) in production              |
+| **A07** | Auth Failures               | Broken authentication lets attackers assume other identities  | Weak session management, no MFA, credential stuffing        | JWT with `alg:none`, session token not invalidated on logout          |
+| **A08** | Software Integrity Failures | Untrusted code or updates executed                            | No signature verification                                   | npm package with malicious update, insecure CI/CD pipeline            |
+| **A09** | Logging Failures            | Attacks go undetected, forensics impossible                   | No audit trail, logging passwords                           | Failed login attempts not logged, no alerts on privilege escalation   |
+| **A10** | SSRF                        | Server makes requests to attacker-controlled URLs             | User-controlled URLs passed to server-side HTTP clients     | `?url=http://169.254.169.254/latest/meta-data/` leaks AWS credentials |
 
 ### OWASP API Security Top 10
 
 APIs have their own distinct vulnerability class — critical for developers:
 
-| ID | Vulnerability | Example |
-|---|---|---|
-| **API1** | Broken Object Level Auth | `GET /api/orders/1234` — change 1234 to any number |
-| **API2** | Broken Authentication | JWT secret is "secret", tokens never expire |
-| **API3** | Broken Object Property Level Auth | Response includes `isAdmin: false` — try sending `isAdmin: true` |
-| **API4** | Unrestricted Resource Consumption | No rate limiting on `/api/send-email`, `/api/sms` |
-| **API5** | Broken Function Level Auth | Regular user calls `DELETE /api/admin/users/5` |
-| **API6** | Unrestricted Access to Sensitive Business Flows | Unlimited coupon redemption, account enumeration via password reset |
-| **API7** | SSRF | API fetches external URLs based on user input |
-| **API8** | Security Misconfiguration | CORS allows `*`, debug mode on, verbose errors |
-| **API9** | Improper Inventory Management | Forgot old `/api/v1/` endpoint still live and unpatched |
-| **API10** | Unsafe Consumption of APIs | App trusts third-party API response without validation |
+| ID        | Vulnerability                                   | Example                                                             |
+| --------- | ----------------------------------------------- | ------------------------------------------------------------------- |
+| **API1**  | Broken Object Level Auth                        | `GET /api/orders/1234` — change 1234 to any number                  |
+| **API2**  | Broken Authentication                           | JWT secret is "secret", tokens never expire                         |
+| **API3**  | Broken Object Property Level Auth               | Response includes `isAdmin: false` — try sending `isAdmin: true`    |
+| **API4**  | Unrestricted Resource Consumption               | No rate limiting on `/api/send-email`, `/api/sms`                   |
+| **API5**  | Broken Function Level Auth                      | Regular user calls `DELETE /api/admin/users/5`                      |
+| **API6**  | Unrestricted Access to Sensitive Business Flows | Unlimited coupon redemption, account enumeration via password reset |
+| **API7**  | SSRF                                            | API fetches external URLs based on user input                       |
+| **API8**  | Security Misconfiguration                       | CORS allows `*`, debug mode on, verbose errors                      |
+| **API9**  | Improper Inventory Management                   | Forgot old `/api/v1/` endpoint still live and unpatched             |
+| **API10** | Unsafe Consumption of APIs                      | App trusts third-party API response without validation              |
 
 ### CVE and CVSS
 
@@ -368,15 +373,16 @@ Integrity (I):          None / Low / High
 Availability (A):       None / Low / High
 ```
 
-| CVSS Score | Severity | Action |
-|---|---|---|
-| 9.0–10.0 | **Critical** | Fix immediately, escalate to management |
-| 7.0–8.9 | **High** | Fix within days |
-| 4.0–6.9 | **Medium** | Fix within sprint |
-| 0.1–3.9 | **Low** | Fix in backlog |
-| 0.0 | **Informational** | Document, review policy |
+| CVSS Score | Severity          | Action                                  |
+| ---------- | ----------------- | --------------------------------------- |
+| 9.0–10.0   | **Critical**      | Fix immediately, escalate to management |
+| 7.0–8.9    | **High**          | Fix within days                         |
+| 4.0–6.9    | **Medium**        | Fix within sprint                       |
+| 0.1–3.9    | **Low**           | Fix in backlog                          |
+| 0.0        | **Informational** | Document, review policy                 |
 
 **Where to look up CVEs:**
+
 - `https://nvd.nist.gov` — NIST National Vulnerability Database (authoritative)
 - `https://www.cvedetails.com` — more user-friendly, searchable by product
 - `https://exploit-db.com` — CVEs with working exploit code
@@ -385,17 +391,17 @@ Availability (A):       None / Low / High
 
 CWE is the **root cause** classification — the type of coding mistake. CVE is an instance; CWE is the pattern.
 
-| CWE | Weakness | Common CVEs |
-|---|---|---|
-| CWE-79 | Cross-Site Scripting (XSS) | Reflected, stored, DOM-based |
-| CWE-89 | SQL Injection | Any unsanitised SQL query |
-| CWE-22 | Path Traversal | `../../etc/passwd` |
-| CWE-78 | OS Command Injection | `; ls -la` injected into shell command |
-| CWE-287 | Improper Authentication | Weak session tokens, JWT bypass |
-| CWE-200 | Exposure of Sensitive Information | Stack traces, verbose errors |
-| CWE-352 | CSRF | Cross-site request forgery |
-| CWE-918 | SSRF | Server-side request forgery |
-| CWE-611 | XXE | XML external entity injection |
+| CWE     | Weakness                          | Common CVEs                            |
+| ------- | --------------------------------- | -------------------------------------- |
+| CWE-79  | Cross-Site Scripting (XSS)        | Reflected, stored, DOM-based           |
+| CWE-89  | SQL Injection                     | Any unsanitised SQL query              |
+| CWE-22  | Path Traversal                    | `../../etc/passwd`                     |
+| CWE-78  | OS Command Injection              | `; ls -la` injected into shell command |
+| CWE-287 | Improper Authentication           | Weak session tokens, JWT bypass        |
+| CWE-200 | Exposure of Sensitive Information | Stack traces, verbose errors           |
+| CWE-352 | CSRF                              | Cross-site request forgery             |
+| CWE-918 | SSRF                              | Server-side request forgery            |
+| CWE-611 | XXE                               | XML external entity injection          |
 
 ---
 
@@ -412,6 +418,7 @@ Exploitation proves that a vulnerability is real and exploitable — not just th
 Burp Suite is the central tool for all web application testing. It acts as a proxy between your browser and the target, letting you intercept, inspect, and modify every HTTP/S request and response in real time.
 
 **Setup:**
+
 ```
 1. Launch Burp Suite
 2. Go to Proxy → Options → confirm listener on 127.0.0.1:8080
@@ -424,17 +431,18 @@ Burp Suite is the central tool for all web application testing. It acts as a pro
 
 **Core Burp modules:**
 
-| Module | Purpose | How to Use |
-|---|---|---|
-| **Proxy** | Intercept all HTTP/S traffic | Browse normally, every request is captured |
-| **Repeater** | Manually send/modify single requests | Right-click request → Send to Repeater → modify and replay |
-| **Intruder** | Automated fuzzing and brute force | Mark payload positions with `§`, set payload list, run attack |
-| **Scanner** (Pro) | Automated vulnerability detection | Right-click → Scan, or run active scan on whole site |
-| **Decoder** | Encode/decode base64, URL, hex, JWT | Paste token → auto-detect and decode |
-| **Comparer** | Diff two requests/responses | Highlight subtle differences between similar responses |
-| **Logger** | Full request history | Review everything sent during a session |
+| Module            | Purpose                              | How to Use                                                    |
+| ----------------- | ------------------------------------ | ------------------------------------------------------------- |
+| **Proxy**         | Intercept all HTTP/S traffic         | Browse normally, every request is captured                    |
+| **Repeater**      | Manually send/modify single requests | Right-click request → Send to Repeater → modify and replay    |
+| **Intruder**      | Automated fuzzing and brute force    | Mark payload positions with `§`, set payload list, run attack |
+| **Scanner** (Pro) | Automated vulnerability detection    | Right-click → Scan, or run active scan on whole site          |
+| **Decoder**       | Encode/decode base64, URL, hex, JWT  | Paste token → auto-detect and decode                          |
+| **Comparer**      | Diff two requests/responses          | Highlight subtle differences between similar responses        |
+| **Logger**        | Full request history                 | Review everything sent during a session                       |
 
 **Practical Burp workflow for an API:**
+
 ```text
 1. Browse every endpoint in your app with Burp intercepting
 2. Review all requests in HTTP History
@@ -449,6 +457,7 @@ Burp Suite is the central tool for all web application testing. It acts as a pro
 SQL injection occurs when user input is inserted into a SQL query without sanitisation. The attacker can alter the query logic.
 
 **Manual testing — always try these first:**
+
 ```text
 '                          → syntax error means SQL is reflected
 ' OR 1=1--                 → bypass login (returns first row)
@@ -458,6 +467,7 @@ admin'--                   → comment out password check
 ```
 
 **sqlmap — automated SQLi:**
+
 ```bash
 # Basic detection
 sqlmap -u "https://target.com/product?id=1"
@@ -486,6 +496,7 @@ sqlmap -u "https://target.com/" --cookie="session=abc123; user=1" -p user
 ```
 
 **SQLi types:**
+
 - **Error-based:** Database error message reveals data — direct and obvious
 - **Boolean-based blind:** Ask true/false questions (`' AND 1=1--` vs `' AND 1=2--`) — different responses reveal data bit by bit
 - **Time-based blind:** Inject `SLEEP(5)` — if response delays, injection works
@@ -496,6 +507,7 @@ sqlmap -u "https://target.com/" --cookie="session=abc123; user=1" -p user
 XSS injects JavaScript into a page that executes in another user's browser. It steals cookies, redirects users, or performs actions on their behalf.
 
 **Manual payloads:**
+
 ```javascript
 // Basic test — does JS execute?
 <script>alert(1)</script>
@@ -511,6 +523,7 @@ XSS injects JavaScript into a page that executes in another user's browser. It s
 ```
 
 **XSS types:**
+
 - **Reflected:** Payload in URL parameter, reflected in response — affects whoever clicks the crafted link
 - **Stored (Persistent):** Payload saved in database (comment, username), served to all users — most dangerous
 - **DOM-based:** JavaScript on the page writes attacker-controlled data to the DOM — no server interaction needed
@@ -520,6 +533,7 @@ XSS injects JavaScript into a page that executes in another user's browser. It s
 ## Authentication and Session Attacks
 
 **JWT (JSON Web Token) attacks:**
+
 ```bash
 # JWT structure: header.payload.signature (base64 encoded)
 # Decode at jwt.io
@@ -536,6 +550,7 @@ hashcat -a 0 -m 16500 jwt_token.txt wordlist.txt
 ```
 
 **Session token analysis:**
+
 ```bash
 # Collect 10+ session tokens, check for patterns
 # Base64 decode them — are they sequential? Timestamp-based? Predictable?
@@ -544,6 +559,7 @@ echo "c2Vzc2lvbjoxMjM0NTY=" | base64 -d
 ```
 
 **Credential attacks with Hydra:**
+
 ```bash
 # HTTP POST login form brute force
 hydra -L users.txt -P passwords.txt target.com \
@@ -563,6 +579,7 @@ hydra -L users.txt -P passwords.txt target.com http-get /admin/
 ```
 
 **Default credentials to always try:**
+
 ```text
 admin:admin
 admin:password
@@ -578,6 +595,7 @@ guest:guest
 SSRF makes the server issue HTTP requests on your behalf. Because the request comes from the server, it can reach internal services that you cannot access directly.
 
 **Common injection points:**
+
 ```text
 ?url=
 ?redirect=
@@ -589,6 +607,7 @@ Webhook URLs, avatar URLs, PDF generators, link preview generators
 ```
 
 **Attack payloads:**
+
 ```bash
 # Cloud metadata — leaks IAM credentials in AWS, GCP, Azure
 # AWS
@@ -616,12 +635,14 @@ Webhook URLs, avatar URLs, PDF generators, link preview generators
 Offline cracking is performed on password hashes you have already obtained (e.g. from a database dump). You are not attacking the server — you are running computations locally.
 
 **Identify hash type:**
+
 ```bash
 hashid hash.txt
 hash-identifier "5f4dcc3b5aa765d61d8327deb882cf99"  # MD5 = "password"
 ```
 
 **Hashcat modes:**
+
 ```bash
 # -m flag specifies hash type
 # -a flag specifies attack mode (0=wordlist, 3=brute force, 6=hybrid)
@@ -649,6 +670,7 @@ hashcat -m 0 hashes.txt -a 3 ?a?a?a?a?a?a
 ```
 
 **Common wordlists:**
+
 ```
 rockyou.txt                                    # 14M common passwords
 SecLists/Passwords/                            # collection of specialised lists
@@ -687,6 +709,7 @@ use post/multi/recon/local_exploit_suggester  # find privesc paths
 Post-exploitation answers the question: **"If an attacker got in here, how bad could it get?"** This phase assesses the blast radius of a successful compromise. Many organisations fixate on perimeter security but have no internal controls — once inside, everything is accessible.
 
 **What you are assessing:**
+
 - Can you escalate from low-privileged user to root/admin?
 - Can you access other machines on the network (lateral movement)?
 - Can you access sensitive data: PII, credentials, backups, source code?
@@ -777,13 +800,13 @@ Invoke-AllChecks     # PowerUp function — finds all privesc paths
 
 After compromising one machine, check if you can reach others.
 
-| Technique | How It Works | Tool |
-|---|---|---|
-| **Pass-the-Hash** | Use NTLM hash without cracking it | `crackmapexec`, `pth-winexe` |
-| **Pass-the-Ticket** | Reuse Kerberos ticket (golden/silver ticket) | `mimikatz`, `impacket` |
-| **SSH Key Reuse** | Private key on one machine works on others | Manual `ssh -i key user@host` |
-| **Credential Reuse** | Same password used on multiple systems | Spray found credentials |
-| **Pivoting** | Route traffic through compromised host to internal network | `sshuttle`, Metasploit `route` |
+| Technique            | How It Works                                               | Tool                           |
+| -------------------- | ---------------------------------------------------------- | ------------------------------ |
+| **Pass-the-Hash**    | Use NTLM hash without cracking it                          | `crackmapexec`, `pth-winexe`   |
+| **Pass-the-Ticket**  | Reuse Kerberos ticket (golden/silver ticket)               | `mimikatz`, `impacket`         |
+| **SSH Key Reuse**    | Private key on one machine works on others                 | Manual `ssh -i key user@host`  |
+| **Credential Reuse** | Same password used on multiple systems                     | Spray found credentials        |
+| **Pivoting**         | Route traffic through compromised host to internal network | `sshuttle`, Metasploit `route` |
 
 ```bash
 # CrackMapExec — Swiss army knife for Windows network lateral movement
@@ -806,6 +829,7 @@ python3 wmiexec.py domain/user:pass@target       # shell via WMI (stealthier)
 The report is the product. Everything else — the scanning, the exploitation, the late nights in a terminal — is work in service of the report. A finding that is not clearly communicated is a finding that will not be fixed.
 
 **A good report answers three questions for every finding:**
+
 1. What is the issue and where exactly is it?
 2. What could an attacker do with it?
 3. How do you fix it?
@@ -899,6 +923,7 @@ Understanding what you are supposed to be testing helps you know what to look fo
 A WAF sits in front of the web app and blocks malicious requests (SQLi, XSS payloads, path traversal).
 
 **Detect a WAF:**
+
 ```bash
 wafw00f https://target.com     # identifies WAF vendor
 # Common: Cloudflare, AWS WAF, Akamai, Imperva, F5
@@ -935,14 +960,14 @@ Content-Security-Policy: script-src 'unsafe-inline'  # allows inline scripts —
 
 Every web app should have these headers. Missing ones are findings:
 
-| Header | Purpose | Correct Value |
-|---|---|---|
-| `Content-Security-Policy` | Prevent XSS | Strict policy, no `unsafe-inline` |
-| `X-Frame-Options` | Prevent clickjacking | `DENY` or `SAMEORIGIN` |
-| `X-Content-Type-Options` | Prevent MIME sniffing | `nosniff` |
-| `Strict-Transport-Security` | Force HTTPS | `max-age=31536000; includeSubDomains` |
-| `Referrer-Policy` | Limit referrer leakage | `no-referrer` or `strict-origin` |
-| `Permissions-Policy` | Restrict browser features | Disable unused APIs |
+| Header                      | Purpose                   | Correct Value                         |
+| --------------------------- | ------------------------- | ------------------------------------- |
+| `Content-Security-Policy`   | Prevent XSS               | Strict policy, no `unsafe-inline`     |
+| `X-Frame-Options`           | Prevent clickjacking      | `DENY` or `SAMEORIGIN`                |
+| `X-Content-Type-Options`    | Prevent MIME sniffing     | `nosniff`                             |
+| `Strict-Transport-Security` | Force HTTPS               | `max-age=31536000; includeSubDomains` |
+| `Referrer-Policy`           | Limit referrer leakage    | `no-referrer` or `strict-origin`      |
+| `Permissions-Policy`        | Restrict browser features | Disable unused APIs                   |
 
 ```bash
 # Check all security headers at once
@@ -970,29 +995,29 @@ curl -I https://target.com
 
 ## By Category
 
-| Category | Tool | Platform | Key Use | Cost |
-|---|---|---|---|---|
-| **Proxy / Intercept** | Burp Suite | All | Web app testing | Free / Pro $450/yr |
-| **Network Scanner** | Nmap | All | Port/service scanning | Free |
-| **Web Scanner** | Nuclei | All | CVE/config scanning | Free |
-| **Web Scanner** | Nikto | All | Basic web checks | Free |
-| **Fuzzer** | ffuf | All | Path/param fuzzing | Free |
-| **Fuzzer** | gobuster | All | Dir brute force | Free |
-| **SQLi** | sqlmap | All | Automated SQL injection | Free |
-| **Brute Force** | Hydra | All | Credential attacks | Free |
-| **Password Crack** | Hashcat | All | Offline hash cracking | Free |
-| **Exploitation** | Metasploit | All | Known exploit framework | Free |
-| **Recon** | subfinder | All | Subdomain discovery | Free |
-| **Recon** | amass | All | Subdomain + OSINT | Free |
-| **Recon** | theHarvester | All | Email/domain OSINT | Free |
-| **Recon** | Shodan | Web | Internet device search | Free / Paid |
-| **Privesc** | LinPEAS | Linux | Automated privesc checks | Free |
-| **Privesc** | WinPEAS | Windows | Automated privesc checks | Free |
-| **Windows** | CrackMapExec | Linux | AD/SMB lateral movement | Free |
-| **Windows** | Impacket | Linux | Windows protocol attacks | Free |
-| **TLS** | testssl.sh | Linux | TLS vulnerability scan | Free |
-| **WAF** | wafw00f | All | WAF detection | Free |
-| **OS** | Kali Linux | — | All tools pre-installed | Free |
+| Category              | Tool         | Platform | Key Use                  | Cost               |
+| --------------------- | ------------ | -------- | ------------------------ | ------------------ |
+| **Proxy / Intercept** | Burp Suite   | All      | Web app testing          | Free / Pro $450/yr |
+| **Network Scanner**   | Nmap         | All      | Port/service scanning    | Free               |
+| **Web Scanner**       | Nuclei       | All      | CVE/config scanning      | Free               |
+| **Web Scanner**       | Nikto        | All      | Basic web checks         | Free               |
+| **Fuzzer**            | ffuf         | All      | Path/param fuzzing       | Free               |
+| **Fuzzer**            | gobuster     | All      | Dir brute force          | Free               |
+| **SQLi**              | sqlmap       | All      | Automated SQL injection  | Free               |
+| **Brute Force**       | Hydra        | All      | Credential attacks       | Free               |
+| **Password Crack**    | Hashcat      | All      | Offline hash cracking    | Free               |
+| **Exploitation**      | Metasploit   | All      | Known exploit framework  | Free               |
+| **Recon**             | subfinder    | All      | Subdomain discovery      | Free               |
+| **Recon**             | amass        | All      | Subdomain + OSINT        | Free               |
+| **Recon**             | theHarvester | All      | Email/domain OSINT       | Free               |
+| **Recon**             | Shodan       | Web      | Internet device search   | Free / Paid        |
+| **Privesc**           | LinPEAS      | Linux    | Automated privesc checks | Free               |
+| **Privesc**           | WinPEAS      | Windows  | Automated privesc checks | Free               |
+| **Windows**           | CrackMapExec | Linux    | AD/SMB lateral movement  | Free               |
+| **Windows**           | Impacket     | Linux    | Windows protocol attacks | Free               |
+| **TLS**               | testssl.sh   | Linux    | TLS vulnerability scan   | Free               |
+| **WAF**               | wafw00f      | All      | WAF detection            | Free               |
+| **OS**                | Kali Linux   | —        | All tools pre-installed  | Free               |
 
 ## Essential Wordlists (SecLists)
 
@@ -1028,7 +1053,7 @@ Disallow: /private-folder/
 - HTML meta tag: add to the page head to prevent indexing by browsers and well-behaved crawlers
 
 ```html
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="noindex, nofollow" />
 ```
 
 - HTTP header (server side): useful for binary files or responses without HTML
@@ -1048,6 +1073,7 @@ Header set X-Robots-Tag "noindex, nofollow"
 - Static-site tools: for Hugo add the meta tag in your head partial or set a page param and render the `noindex` meta from your layout. For files served directly create an index.html with the meta tag and route access through authentication when needed.
 
 Notes:
+
 - `robots.txt`, `meta` and `X-Robots-Tag` are advisory; some crawlers or data collectors ignore them
 - For true confidentiality restrict access with authentication, remove the content from public buckets, or host it on a private network
 
@@ -1087,26 +1113,26 @@ Ongoing
 
 ## Practice Environments
 
-| Platform | URL | Type | Level |
-|---|---|---|---|
-| **PortSwigger Web Academy** | portswigger.net/web-security | Web app labs | Beginner → Advanced |
-| **TryHackMe** | tryhackme.com | Guided paths | Beginner → Intermediate |
-| **HackTheBox** | hackthebox.com | CTF machines | Intermediate → Expert |
-| **DVWA** | github.com/digininja/DVWA | Local web app | Beginner |
-| **WebGoat** | owasp.org/WebGoat | Local web app | Beginner → Intermediate |
-| **OWASP crAPI** | github.com/OWASP/crAPI | API security | Intermediate |
-| **VulnHub** | vulnhub.com | Downloadable VMs | All levels |
-| **PentesterLab** | pentesterlab.com | Web + code review | Beginner → Advanced |
+| Platform                    | URL                          | Type              | Level                   |
+| --------------------------- | ---------------------------- | ----------------- | ----------------------- |
+| **PortSwigger Web Academy** | portswigger.net/web-security | Web app labs      | Beginner → Advanced     |
+| **TryHackMe**               | tryhackme.com                | Guided paths      | Beginner → Intermediate |
+| **HackTheBox**              | hackthebox.com               | CTF machines      | Intermediate → Expert   |
+| **DVWA**                    | github.com/digininja/DVWA    | Local web app     | Beginner                |
+| **WebGoat**                 | owasp.org/WebGoat            | Local web app     | Beginner → Intermediate |
+| **OWASP crAPI**             | github.com/OWASP/crAPI       | API security      | Intermediate            |
+| **VulnHub**                 | vulnhub.com                  | Downloadable VMs  | All levels              |
+| **PentesterLab**            | pentesterlab.com             | Web + code review | Beginner → Advanced     |
 
 ## Certifications (if pursuing professional pentesting)
 
-| Cert | Issuer | Focus | Difficulty |
-|---|---|---|---|
-| **eJPT** | INE | Entry-level pentesting | Beginner |
-| **PNPT** | TCM Security | Practical, no MCQ | Intermediate |
-| **OSCP** | OffSec | Gold standard, 24hr exam | Hard |
-| **CEH** | EC-Council | Theory-heavy, less respected technically | Intermediate |
-| **BSCP** | PortSwigger | Burp Suite / web app | Intermediate |
+| Cert     | Issuer       | Focus                                    | Difficulty   |
+| -------- | ------------ | ---------------------------------------- | ------------ |
+| **eJPT** | INE          | Entry-level pentesting                   | Beginner     |
+| **PNPT** | TCM Security | Practical, no MCQ                        | Intermediate |
+| **OSCP** | OffSec       | Gold standard, 24hr exam                 | Hard         |
+| **CEH**  | EC-Council   | Theory-heavy, less respected technically | Intermediate |
+| **BSCP** | PortSwigger  | Burp Suite / web app                     | Intermediate |
 
 ---
 

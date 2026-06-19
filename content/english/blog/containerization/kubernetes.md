@@ -15,7 +15,9 @@ Kubernetes (K8s) is an open-source container orchestration platform that automat
 A Kubernetes cluster is composed of two main types of nodes:
 
 ### 1. Control Plane Nodes
+
 Control plane nodes are responsible for managing the overall state of the cluster. They make global decisions about the cluster (such as scheduling), maintain cluster state and handle cluster events. Key components running on control plane nodes include:
+
 - **kube-apiserver:** Serves the Kubernetes API and is the entry point for all administrative tasks.
 - **etcd:** A distributed key-value store that holds all cluster data.
 - **kube-scheduler:** Assigns workloads (pods) to worker nodes based on resource availability and policies.
@@ -23,12 +25,15 @@ Control plane nodes are responsible for managing the overall state of the cluste
 - **cloud-controller-manager:** Integrates with cloud provider APIs (if applicable).
 
 ### 2. Worker Nodes
+
 Worker nodes (sometimes called minions) are where the actual application workloads run. Each worker node contains the necessary services to run containers and communicate with the control plane. Key components include:
+
 - **kubelet:** An agent that ensures containers are running in a Pod as expected. It is the component actually responsible for starting containers on the node, as instructed by the control plane after the scheduler assigns a Pod to this node.
 - **kube-proxy:** Handles network routing and load balancing for services.
 - **Container runtime:** Software responsible for running containers (e.g., containerd, Docker).
 
 ### Node Summary
+
 - **Control Plane Nodes:** Manage the cluster, maintain desired state and orchestrate workloads.
 - **Worker Nodes:** Run application containers and report status to the control plane.
 
@@ -41,6 +46,7 @@ Both node types are essential for a functioning Kubernetes cluster. In productio
 A Pod is the smallest deployable unit in Kubernetes. It represents a single instance of a running process and can contain one or more containers that share network and storage resources.
 
 **Key Characteristics:**
+
 - Pods share the same network namespace (same IP address and port space)
 - Containers within a Pod can communicate via localhost
 - Pods are ephemeral and can be replaced at any time
@@ -58,17 +64,17 @@ metadata:
     environment: production
 spec:
   containers:
-  - name: nginx
-    image: nginx:1.21
-    ports:
-    - containerPort: 80
-    resources:
-      requests:
-        memory: "64Mi"
-        cpu: "250m"
-      limits:
-        memory: "128Mi"
-        cpu: "500m"
+    - name: nginx
+      image: nginx:1.21
+      ports:
+        - containerPort: 80
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
 ```
 
 ### ReplicaSets
@@ -91,10 +97,10 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.21
-        ports:
-        - containerPort: 80
+        - name: nginx
+          image: nginx:1.21
+          ports:
+            - containerPort: 80
 ```
 
 ### Deployments
@@ -102,6 +108,7 @@ spec:
 Deployments provide declarative updates for Pods and ReplicaSets. They are the recommended way to manage stateless applications in Kubernetes.
 
 **Features:**
+
 - Rolling updates and rollbacks
 - Scaling up and down
 - Pause and resume deployments
@@ -131,29 +138,29 @@ spec:
         version: v1
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.21
-        ports:
-        - containerPort: 80
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 80
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: 80
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "250m"
-          limits:
-            memory: "256Mi"
-            cpu: "500m"
+        - name: nginx
+          image: nginx:1.21
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
 ```
 
 ### StatefulSets
@@ -161,6 +168,7 @@ spec:
 StatefulSets manage stateful applications with stable network identities and persistent storage. Use them for databases, message queues, or any application requiring stable identifiers.
 
 **Features:**
+
 - Stable, unique network identifiers
 - Stable, persistent storage
 - Ordered, graceful deployment and scaling
@@ -183,21 +191,21 @@ spec:
         app: mongodb
     spec:
       containers:
-      - name: mongodb
-        image: mongo:5.0
-        ports:
-        - containerPort: 27017
-        volumeMounts:
-        - name: data
-          mountPath: /data/db
+        - name: mongodb
+          image: mongo:5.0
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
   volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
 ```
 
 ### DaemonSets
@@ -221,21 +229,21 @@ spec:
         app: fluentd
     spec:
       containers:
-      - name: fluentd
-        image: fluent/fluentd:latest
-        volumeMounts:
-        - name: varlog
-          mountPath: /var/log
-        - name: varlibdockercontainers
-          mountPath: /var/lib/docker/containers
-          readOnly: true
+        - name: fluentd
+          image: fluent/fluentd:latest
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+            - name: varlibdockercontainers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
       volumes:
-      - name: varlog
-        hostPath:
-          path: /var/log
-      - name: varlibdockercontainers
-        hostPath:
-          path: /var/lib/docker/containers
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
 ```
 
 ### Services
@@ -243,6 +251,7 @@ spec:
 Services provide stable network endpoints for accessing Pods. They enable load balancing and service discovery.
 
 **Service Types:**
+
 - **ClusterIP** (default): Internal cluster IP, accessible only within cluster
 - **NodePort**: Exposes service on each node's IP at a static port
 - **LoadBalancer**: Creates external load balancer (cloud provider)
@@ -258,9 +267,9 @@ spec:
   selector:
     app: web
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
+    - protocol: TCP
+      port: 80
+      targetPort: 80
   sessionAffinity: ClientIP
 ---
 apiVersion: v1
@@ -272,10 +281,10 @@ spec:
   selector:
     app: mongodb
   ports:
-  - protocol: TCP
-    port: 27017
-    targetPort: 27017
-  clusterIP: None  # Headless service for StatefulSet
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  clusterIP: None # Headless service for StatefulSet
 ```
 
 ### Ingress
@@ -293,27 +302,27 @@ metadata:
 spec:
   ingressClassName: nginx
   tls:
-  - hosts:
-    - example.com
-    secretName: example-tls
+    - hosts:
+        - example.com
+      secretName: example-tls
   rules:
-  - host: example.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: web-service
-            port:
-              number: 80
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: api-service
-            port:
-              number: 8080
+    - host: example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 80
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 8080
 ```
 
 ### ConfigMaps and Secrets
@@ -339,7 +348,7 @@ metadata:
   name: app-secrets
 type: Opaque
 data:
-  database_password: cGFzc3dvcmQxMjM=  # base64 encoded
+  database_password: cGFzc3dvcmQxMjM= # base64 encoded
   api_key: YXBpa2V5MTIzNDU2Nzg=
 ```
 
@@ -352,32 +361,32 @@ metadata:
   name: app-pod
 spec:
   containers:
-  - name: app
-    image: myapp:latest
-    env:
-    - name: DATABASE_HOST
-      valueFrom:
-        configMapKeyRef:
-          name: app-config
-          key: database_host
-    - name: DATABASE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: app-secrets
-          key: database_password
-    volumeMounts:
-    - name: config-volume
-      mountPath: /etc/config
-    - name: secret-volume
-      mountPath: /etc/secrets
-      readOnly: true
+    - name: app
+      image: myapp:latest
+      env:
+        - name: DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: database_host
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database_password
+      volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+        - name: secret-volume
+          mountPath: /etc/secrets
+          readOnly: true
   volumes:
-  - name: config-volume
-    configMap:
-      name: app-config
-  - name: secret-volume
-    secret:
-      secretName: app-secrets
+    - name: config-volume
+      configMap:
+        name: app-config
+    - name: secret-volume
+      secret:
+        secretName: app-secrets
 ```
 
 ## Init Containers in Kubernetes
@@ -395,14 +404,14 @@ metadata:
   name: nginx-with-init
 spec:
   initContainers:
-  - name: init-myservice
-    image: busybox
-    command: ['sh', '-c', 'echo Initializing... && sleep 5']
+    - name: init-myservice
+      image: busybox
+      command: ["sh", "-c", "echo Initializing... && sleep 5"]
   containers:
-  - name: nginx
-    image: nginx:latest
-    ports:
-    - containerPort: 80
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
 ```
 
 ### Advanced Init Container Example
@@ -414,26 +423,31 @@ metadata:
   name: advanced-init
 spec:
   initContainers:
-  - name: wait-for-db
-    image: busybox:1.35
-    command: ['sh', '-c', 'until nslookup mongodb-service; do echo waiting for db; sleep 2; done']
-  - name: db-migration
-    image: myapp-migrations:latest
-    env:
-    - name: DATABASE_URL
-      valueFrom:
-        secretKeyRef:
-          name: db-secrets
-          key: url
-    command: ['npm', 'run', 'migrate']
-  - name: seed-data
-    image: myapp-seeder:latest
-    command: ['python', 'seed.py']
+    - name: wait-for-db
+      image: busybox:1.35
+      command:
+        [
+          "sh",
+          "-c",
+          "until nslookup mongodb-service; do echo waiting for db; sleep 2; done",
+        ]
+    - name: db-migration
+      image: myapp-migrations:latest
+      env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: url
+      command: ["npm", "run", "migrate"]
+    - name: seed-data
+      image: myapp-seeder:latest
+      command: ["python", "seed.py"]
   containers:
-  - name: app
-    image: myapp:latest
-    ports:
-    - containerPort: 8080
+    - name: app
+      image: myapp:latest
+      ports:
+        - containerPort: 8080
 ```
 
 ### Applying the Pod Manifest and Getting Pod Status
@@ -449,6 +463,7 @@ To check the status of the Pod:
 ```sh
 kubectl get pod nginx-with-init
 ```
+
 This will show the current status of the Pod, including whether the init container has completed and the main container is running.
 
 ## Volumes in Kubernetes
@@ -469,15 +484,16 @@ Temporary storage created for a Pod, deleted when the Pod is removed. Useful for
 
 ```yaml
 volumes:
-- name: cache
-  emptyDir:
-    sizeLimit: 1Gi
-    medium: Memory  # Use RAM for faster access
+  - name: cache
+    emptyDir:
+      sizeLimit: 1Gi
+      medium: Memory # Use RAM for faster access
 ```
 
 ### hostPath
 
 Mounts a file or directory from the host node's filesystem into the Pod. Useful for accessing host resources, logs, or tools. Type of file or directory on the host. Options include:
+
 - `DirectoryOrCreate`: Creates a directory if it does not exist.
 - `Directory`: Must already exist and be a directory.
 - `FileOrCreate`: Creates a file if it does not exist.
@@ -486,10 +502,10 @@ Mounts a file or directory from the host node's filesystem into the Pod. Useful 
 
 ```yaml
 volumes:
-- name: host-logs
-  hostPath:
-    path: /var/log/myapp
-    type: DirectoryOrCreate
+  - name: host-logs
+    hostPath:
+      path: /var/log/myapp
+      type: DirectoryOrCreate
 ```
 
 ### configMap
@@ -498,13 +514,13 @@ A `configMap` volume provides configuration data to Pods as files or environment
 
 ```yaml
 volumes:
-- name: config
-  configMap:
-    name: app-config
-    items:
-    - key: config.yaml
-      path: config.yaml
-      mode: 0644
+  - name: config
+    configMap:
+      name: app-config
+      items:
+        - key: config.yaml
+          path: config.yaml
+          mode: 0644
 ```
 
 ### secret
@@ -513,15 +529,15 @@ A `secret` volume is used to pass sensitive information, such as passwords, OAut
 
 ```yaml
 volumes:
-- name: secrets
-  secret:
-    secretName: app-secrets
-    defaultMode: 0400
-    items:
-    - key: tls.crt
-      path: tls/cert.pem
-    - key: tls.key
-      path: tls/key.pem
+  - name: secrets
+    secret:
+      secretName: app-secrets
+      defaultMode: 0400
+      items:
+        - key: tls.crt
+          path: tls/cert.pem
+        - key: tls.key
+          path: tls/key.pem
 ```
 
 ### persistentVolumeClaim (PVC)
@@ -535,7 +551,7 @@ metadata:
   name: app-storage
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi
@@ -547,15 +563,15 @@ metadata:
   name: app-with-pvc
 spec:
   containers:
-  - name: app
-    image: myapp:latest
-    volumeMounts:
-    - name: persistent-storage
-      mountPath: /data
+    - name: app
+      image: myapp:latest
+      volumeMounts:
+        - name: persistent-storage
+          mountPath: /data
   volumes:
-  - name: persistent-storage
-    persistentVolumeClaim:
-      claimName: app-storage
+    - name: persistent-storage
+      persistentVolumeClaim:
+        claimName: app-storage
 ```
 
 ### nfs
@@ -564,11 +580,11 @@ Network File System volume for sharing data across multiple Pods.
 
 ```yaml
 volumes:
-- name: shared-data
-  nfs:
-    server: nfs-server.example.com
-    path: /exports/data
-    readOnly: false
+  - name: shared-data
+    nfs:
+      server: nfs-server.example.com
+      path: /exports/data
+      readOnly: false
 ```
 
 ### projected
@@ -577,16 +593,16 @@ Combines multiple volume sources into a single directory.
 
 ```yaml
 volumes:
-- name: all-in-one
-  projected:
-    sources:
-    - configMap:
-        name: app-config
-    - secret:
-        name: app-secrets
-    - serviceAccountToken:
-        path: token
-        expirationSeconds: 3600
+  - name: all-in-one
+    projected:
+      sources:
+        - configMap:
+            name: app-config
+        - secret:
+            name: app-secrets
+        - serviceAccountToken:
+            path: token
+            expirationSeconds: 3600
 ```
 
 ### Example: Pod with emptyDir and hostPath Volumes
@@ -598,24 +614,25 @@ metadata:
   name: volume-demo
 spec:
   containers:
-  - name: app
-    image: busybox
-    command: ['sh', '-c', 'echo Hello > /data/message && sleep 3600']
-    volumeMounts:
-    - name: cache-volume
-      mountPath: /data
-    - name: host-logs
-      mountPath: /host-logs
+    - name: app
+      image: busybox
+      command: ["sh", "-c", "echo Hello > /data/message && sleep 3600"]
+      volumeMounts:
+        - name: cache-volume
+          mountPath: /data
+        - name: host-logs
+          mountPath: /host-logs
   volumes:
-  - name: cache-volume
-    emptyDir: {}
-  - name: host-logs
-    hostPath:
-      path: /var/log
-      type: Directory
+    - name: cache-volume
+      emptyDir: {}
+    - name: host-logs
+      hostPath:
+        path: /var/log
+        type: Directory
 ```
 
 In this example:
+
 - `cache-volume` uses `emptyDir` for temporary storage shared within the Pod.
 - `host-logs` mounts the host's `/var/log` directory into the Pod.
 
@@ -634,25 +651,25 @@ metadata:
   name: sidecar-pattern
 spec:
   containers:
-  - name: main-app
-    image: nginx:1.21
-    ports:
-    - containerPort: 80
-    volumeMounts:
-    - name: logs
-      mountPath: /var/log/nginx
-  - name: log-aggregator
-    image: fluent/fluentd:latest
-    volumeMounts:
-    - name: logs
-      mountPath: /var/log/nginx
-      readOnly: true
-    env:
-    - name: FLUENT_ELASTICSEARCH_HOST
-      value: "elasticsearch.logging"
+    - name: main-app
+      image: nginx:1.21
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log/nginx
+    - name: log-aggregator
+      image: fluent/fluentd:latest
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log/nginx
+          readOnly: true
+      env:
+        - name: FLUENT_ELASTICSEARCH_HOST
+          value: "elasticsearch.logging"
   volumes:
-  - name: logs
-    emptyDir: {}
+    - name: logs
+      emptyDir: {}
 ```
 
 ### 2. Ambassador Pattern
@@ -668,24 +685,24 @@ metadata:
   name: ambassador-pattern
 spec:
   containers:
-  - name: app
-    image: myapp:latest
-    env:
-    - name: DATABASE_HOST
-      value: "localhost"  # Connects to ambassador
-    - name: DATABASE_PORT
-      value: "5432"
-  - name: postgres-ambassador
-    image: envoyproxy/envoy:v1.24
-    ports:
-    - containerPort: 5432
-    volumeMounts:
-    - name: envoy-config
-      mountPath: /etc/envoy
+    - name: app
+      image: myapp:latest
+      env:
+        - name: DATABASE_HOST
+          value: "localhost" # Connects to ambassador
+        - name: DATABASE_PORT
+          value: "5432"
+    - name: postgres-ambassador
+      image: envoyproxy/envoy:v1.24
+      ports:
+        - containerPort: 5432
+      volumeMounts:
+        - name: envoy-config
+          mountPath: /etc/envoy
   volumes:
-  - name: envoy-config
-    configMap:
-      name: envoy-proxy-config
+    - name: envoy-config
+      configMap:
+        name: envoy-proxy-config
 ```
 
 ### 3. Adapter Pattern
@@ -701,24 +718,24 @@ metadata:
   name: adapter-pattern
 spec:
   containers:
-  - name: legacy-app
-    image: legacy-app:1.0
-    ports:
-    - containerPort: 8080
-    volumeMounts:
-    - name: metrics
-      mountPath: /var/metrics
-  - name: prometheus-adapter
-    image: prom/prometheus-adapter:latest
-    ports:
-    - containerPort: 9090
-    volumeMounts:
-    - name: metrics
-      mountPath: /var/metrics
-      readOnly: true
+    - name: legacy-app
+      image: legacy-app:1.0
+      ports:
+        - containerPort: 8080
+      volumeMounts:
+        - name: metrics
+          mountPath: /var/metrics
+    - name: prometheus-adapter
+      image: prom/prometheus-adapter:latest
+      ports:
+        - containerPort: 9090
+      volumeMounts:
+        - name: metrics
+          mountPath: /var/metrics
+          readOnly: true
   volumes:
-  - name: metrics
-    emptyDir: {}
+    - name: metrics
+      emptyDir: {}
 ```
 
 ### 4. Init Container Pattern
@@ -743,29 +760,29 @@ spec:
         app: myapp
     spec:
       initContainers:
-      - name: wait-for-services
-        image: busybox:1.35
-        command:
-        - sh
-        - -c
-        - |
-          until nc -z database-service 5432 && nc -z redis-service 6379; do
-            echo "Waiting for services..."
-            sleep 2
-          done
-      - name: run-migrations
-        image: myapp-migrations:latest
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: db-credentials
-              key: url
+        - name: wait-for-services
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z database-service 5432 && nc -z redis-service 6379; do
+                echo "Waiting for services..."
+                sleep 2
+              done
+        - name: run-migrations
+          image: myapp-migrations:latest
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: url
       containers:
-      - name: app
-        image: myapp:latest
-        ports:
-        - containerPort: 8080
+        - name: app
+          image: myapp:latest
+          ports:
+            - containerPort: 8080
 ```
 
 ### 5. Multi-Container Pod Pattern
@@ -779,29 +796,29 @@ metadata:
   name: multi-container
 spec:
   containers:
-  - name: web-server
-    image: nginx:1.21
-    ports:
-    - containerPort: 80
-    volumeMounts:
-    - name: shared-data
-      mountPath: /usr/share/nginx/html
-  - name: content-puller
-    image: appropriate/curl:latest
-    command:
-    - sh
-    - -c
-    - |
-      while true; do
-        curl -o /data/index.html https://api.example.com/content
-        sleep 300
-      done
-    volumeMounts:
-    - name: shared-data
-      mountPath: /data
+    - name: web-server
+      image: nginx:1.21
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: shared-data
+          mountPath: /usr/share/nginx/html
+    - name: content-puller
+      image: appropriate/curl:latest
+      command:
+        - sh
+        - -c
+        - |
+          while true; do
+            curl -o /data/index.html https://api.example.com/content
+            sleep 300
+          done
+      volumeMounts:
+        - name: shared-data
+          mountPath: /data
   volumes:
-  - name: shared-data
-    emptyDir: {}
+    - name: shared-data
+      emptyDir: {}
 ```
 
 ### 6. Self-Aware Pattern
@@ -818,42 +835,42 @@ metadata:
     version: v1
 spec:
   containers:
-  - name: app
-    image: myapp:latest
-    env:
-    - name: POD_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.name
-    - name: POD_NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
-    - name: POD_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.podIP
-    - name: NODE_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: spec.nodeName
-    - name: SERVICE_ACCOUNT
-      valueFrom:
-        fieldRef:
-          fieldPath: spec.serviceAccountName
-    volumeMounts:
-    - name: podinfo
-      mountPath: /etc/podinfo
+    - name: app
+      image: myapp:latest
+      env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+      volumeMounts:
+        - name: podinfo
+          mountPath: /etc/podinfo
   volumes:
-  - name: podinfo
-    downwardAPI:
-      items:
-      - path: "labels"
-        fieldRef:
-          fieldPath: metadata.labels
-      - path: "annotations"
-        fieldRef:
-          fieldPath: metadata.annotations
+    - name: podinfo
+      downwardAPI:
+        items:
+          - path: "labels"
+            fieldRef:
+              fieldPath: metadata.labels
+          - path: "annotations"
+            fieldRef:
+              fieldPath: metadata.annotations
 ```
 
 ### 7. Controller Pattern
@@ -874,12 +891,12 @@ kind: ClusterRole
 metadata:
   name: custom-controller-role
 rules:
-- apiGroups: [""]
-  resources: ["pods", "services"]
-  verbs: ["get", "list", "watch", "create", "update", "delete"]
-- apiGroups: ["apps"]
-  resources: ["deployments"]
-  verbs: ["get", "list", "watch", "create", "update", "delete"]
+  - apiGroups: [""]
+    resources: ["pods", "services"]
+    verbs: ["get", "list", "watch", "create", "update", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "create", "update", "delete"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -890,9 +907,9 @@ roleRef:
   kind: ClusterRole
   name: custom-controller-role
 subjects:
-- kind: ServiceAccount
-  name: custom-controller
-  namespace: default
+  - kind: ServiceAccount
+    name: custom-controller
+    namespace: default
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -910,8 +927,8 @@ spec:
     spec:
       serviceAccountName: custom-controller
       containers:
-      - name: controller
-        image: custom-controller:latest
+        - name: controller
+          image: custom-controller:latest
 ```
 
 ## Storage Patterns
@@ -930,7 +947,7 @@ spec:
     storage: 100Gi
   volumeMode: Filesystem
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   local:
@@ -938,11 +955,11 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - worker-node-1
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - worker-node-1
 ```
 
 ### 2. Shared Storage Pattern
@@ -959,15 +976,15 @@ spec:
     storage: 500Gi
   volumeMode: Filesystem
   accessModes:
-  - ReadWriteMany
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: nfs
   nfs:
     server: nfs-server.example.com
     path: /exports/shared
   mountOptions:
-  - hard
-  - nfsvers=4.1
+    - hard
+    - nfsvers=4.1
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -975,7 +992,7 @@ metadata:
   name: shared-storage
 spec:
   accessModes:
-  - ReadWriteMany
+    - ReadWriteMany
   storageClassName: nfs
   resources:
     requests:
@@ -1006,7 +1023,7 @@ metadata:
   name: dynamic-storage
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   storageClassName: fast-ssd
   resources:
     requests:
@@ -1035,7 +1052,7 @@ spec:
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 100Gi
@@ -1052,16 +1069,16 @@ metadata:
   name: resource-best-practices
 spec:
   containers:
-  - name: app
-    image: myapp:latest
-    resources:
-      requests:
-        memory: "256Mi"
-        cpu: "500m"
-      limits:
-        memory: "512Mi"
-        cpu: "1000m"
-    # Resource quotas at namespace level
+    - name: app
+      image: myapp:latest
+      resources:
+        requests:
+          memory: "256Mi"
+          cpu: "500m"
+        limits:
+          memory: "512Mi"
+          cpu: "1000m"
+      # Resource quotas at namespace level
 ---
 apiVersion: v1
 kind: ResourceQuota
@@ -1083,19 +1100,19 @@ metadata:
   namespace: production
 spec:
   limits:
-  - max:
-      memory: "2Gi"
-      cpu: "2"
-    min:
-      memory: "128Mi"
-      cpu: "100m"
-    default:
-      memory: "512Mi"
-      cpu: "500m"
-    defaultRequest:
-      memory: "256Mi"
-      cpu: "250m"
-    type: Container
+    - max:
+        memory: "2Gi"
+        cpu: "2"
+      min:
+        memory: "128Mi"
+        cpu: "100m"
+      default:
+        memory: "512Mi"
+        cpu: "500m"
+      defaultRequest:
+        memory: "256Mi"
+        cpu: "250m"
+      type: Container
 ```
 
 ### Health Checks
@@ -1107,43 +1124,43 @@ metadata:
   name: health-checks
 spec:
   containers:
-  - name: app
-    image: myapp:latest
-    ports:
-    - containerPort: 8080
-    # Liveness probe - restart if fails
-    livenessProbe:
-      httpGet:
-        path: /healthz
-        port: 8080
-        httpHeaders:
-        - name: X-Health-Check
-          value: liveness
-      initialDelaySeconds: 30
-      periodSeconds: 10
-      timeoutSeconds: 5
-      successThreshold: 1
-      failureThreshold: 3
-    # Readiness probe - remove from service if fails
-    readinessProbe:
-      httpGet:
-        path: /ready
-        port: 8080
-      initialDelaySeconds: 10
-      periodSeconds: 5
-      timeoutSeconds: 3
-      successThreshold: 1
-      failureThreshold: 3
-    # Startup probe - protects slow-starting containers
-    startupProbe:
-      httpGet:
-        path: /startup
-        port: 8080
-      initialDelaySeconds: 0
-      periodSeconds: 10
-      timeoutSeconds: 3
-      successThreshold: 1
-      failureThreshold: 30
+    - name: app
+      image: myapp:latest
+      ports:
+        - containerPort: 8080
+      # Liveness probe - restart if fails
+      livenessProbe:
+        httpGet:
+          path: /healthz
+          port: 8080
+          httpHeaders:
+            - name: X-Health-Check
+              value: liveness
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 3
+      # Readiness probe - remove from service if fails
+      readinessProbe:
+        httpGet:
+          path: /ready
+          port: 8080
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        timeoutSeconds: 3
+        successThreshold: 1
+        failureThreshold: 3
+      # Startup probe - protects slow-starting containers
+      startupProbe:
+        httpGet:
+          path: /startup
+          port: 8080
+        initialDelaySeconds: 0
+        periodSeconds: 10
+        timeoutSeconds: 3
+        successThreshold: 1
+        failureThreshold: 30
 ```
 
 ### Security Best Practices
@@ -1161,28 +1178,28 @@ spec:
     seccompProfile:
       type: RuntimeDefault
   containers:
-  - name: app
-    image: myapp:latest
-    securityContext:
-      allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: true
-      runAsNonRoot: true
-      runAsUser: 1000
-      capabilities:
-        drop:
-        - ALL
-        add:
-        - NET_BIND_SERVICE
-    volumeMounts:
-    - name: tmp
-      mountPath: /tmp
-    - name: cache
-      mountPath: /app/cache
+    - name: app
+      image: myapp:latest
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000
+        capabilities:
+          drop:
+            - ALL
+          add:
+            - NET_BIND_SERVICE
+      volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /app/cache
   volumes:
-  - name: tmp
-    emptyDir: {}
-  - name: cache
-    emptyDir: {}
+    - name: tmp
+      emptyDir: {}
+    - name: cache
+      emptyDir: {}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -1190,3 +1207,4 @@ metadata:
   name: app-service-account
 automountServiceAccountToken: false
 ---
+```

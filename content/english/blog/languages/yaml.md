@@ -37,7 +37,7 @@ YAML files typically use `.yaml` or `.yml` extensions.
 # Comments must start with the hash symbol (#)
 # They can appear anywhere in the file
 
-key: value  # Inline comments are also supported
+key: value # Inline comments are also supported
 ```
 
 ### Key-Value Pairs
@@ -103,11 +103,11 @@ name: John Doe
 company: Tech Corp
 
 # Single-quoted strings (literal)
-message: 'Hello, World!'
+message: "Hello, World!"
 path: 'C:\Users\John'
 
 # Double-quoted strings (can use escape sequences)
-greeting: "Hello, \"World\"!"
+greeting: 'Hello, "World"!'
 newline: "Line 1\nLine 2"
 
 # Multi-word strings
@@ -239,7 +239,7 @@ person:
     zip: 10001
 
 # Flow style
-coordinates: {x: 10, y: 20, z: 30}
+coordinates: { x: 10, y: 20, z: 30 }
 
 # Nested dictionaries
 company:
@@ -396,8 +396,7 @@ ordered_map: !!omap
 : value for the long key
 
 # More practical example
-? !!str "line1\nline2"
-: "multi-line key with value"
+!!str "line1\nline2": "multi-line key with value"
 ```
 
 ### Special Characters and Escaping
@@ -443,9 +442,9 @@ person:
 
 ```yaml
 # Quote when necessary
-version: "1.0"  # Without quotes: numeric
-port: "8080"    # Without quotes: numeric
-flag: "yes"     # Without quotes: boolean
+version: "1.0" # Without quotes: numeric
+port: "8080" # Without quotes: numeric
+flag: "yes" # Without quotes: boolean
 
 # No quotes needed for simple strings
 name: John Doe
@@ -461,9 +460,9 @@ path: "C:\\Users\\Documents"
 ```yaml
 # Server configuration
 server:
-  host: localhost  # Development environment
-  port: 8080       # Default HTTP port
-  
+  host: localhost # Development environment
+  port: 8080 # Default HTTP port
+
   # SSL configuration (production only)
   ssl:
     enabled: true
@@ -522,6 +521,7 @@ logging:
 ### 6. Validate YAML Files
 
 Always validate your YAML files using tools like:
+
 - Online validators (yamllint.com)
 - Command-line tools (yamllint)
 - IDE plugins
@@ -533,7 +533,7 @@ Always validate your YAML files using tools like:
 ### 1. Docker Compose
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   web:
@@ -581,17 +581,17 @@ spec:
         app: nginx
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.14.2
-        ports:
-        - containerPort: 80
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
+        - name: nginx
+          image: nginx:1.14.2
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
 ```
 
 ### 3. CI/CD Pipeline (GitHub Actions)
@@ -608,29 +608,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Run tests
-      run: npm test
-    
-    - name: Build
-      run: npm run build
-    
-    - name: Deploy
-      if: github.ref == 'refs/heads/main'
-      run: npm run deploy
-      env:
-        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy
+        if: github.ref == 'refs/heads/main'
+        run: npm run deploy
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
 ```
 
 ### 4. Application Configuration
@@ -656,10 +656,10 @@ database:
     port: 5432
     name: myapp_db
     username: dbuser
-    password: ${DB_PASSWORD}  # Environment variable
+    password: ${DB_PASSWORD} # Environment variable
     pool_size: 10
     timeout: 30
-  
+
   replica:
     host: db-replica.example.com
     port: 5432
@@ -695,12 +695,12 @@ features:
 - name: Deploy Web Application
   hosts: webservers
   become: yes
-  
+
   vars:
     app_name: myapp
     app_version: 1.0.0
     deploy_path: /var/www/{{ app_name }}
-  
+
   tasks:
     - name: Install required packages
       apt:
@@ -710,22 +710,22 @@ features:
           - python3-pip
         state: present
         update_cache: yes
-    
+
     - name: Create application directory
       file:
         path: "{{ deploy_path }}"
         state: directory
         owner: www-data
         group: www-data
-        mode: '0755'
-    
+        mode: "0755"
+
     - name: Copy application files
       copy:
         src: ./app/
         dest: "{{ deploy_path }}"
         owner: www-data
         group: www-data
-    
+
     - name: Start nginx service
       service:
         name: nginx
@@ -882,10 +882,12 @@ doc2: second
 ## Additional Resources
 
 ### Official Documentation
+
 - [YAML Official Specification](https://yaml.org/spec/)
 - [YAML Reference Card](https://yaml.org/refcard.html)
 
 ### Tools and Libraries
+
 - **Python**: PyYAML, ruamel.yaml
 - **JavaScript**: js-yaml, yaml
 - **Go**: gopkg.in/yaml.v3
@@ -893,6 +895,7 @@ doc2: second
 - **Java**: SnakeYAML
 
 ### Learning Resources
+
 - YAML Tutorial: https://www.cloudbees.com/blog/yaml-tutorial-everything-you-need-get-started
 - Interactive YAML Parser: https://yaml-online-parser.appspot.com/
 - YAML Lint: https://www.yamllint.com/
@@ -904,6 +907,7 @@ doc2: second
 YAML is a powerful and flexible data serialization format that balances human readability with machine parseability. By following the syntax rules and best practices outlined in this guide, you can effectively use YAML for configuration files, data exchange and infrastructure as code.
 
 Key takeaways:
+
 - Always use spaces (never tabs) for indentation
 - Be consistent with your formatting
 - Quote strings when necessary
