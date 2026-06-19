@@ -1,5 +1,5 @@
 +++
-date = '2026-06-19T12:00:00+10:00'
+date = '2025-06-19T12:00:00+10:00'
 draft = false
 title = 'Microservice Design Patterns'
 tags = ['Microservices', 'System Design', 'Architecture', 'Saga', 'CQRS', 'API Gateway', 'Service Discovery']
