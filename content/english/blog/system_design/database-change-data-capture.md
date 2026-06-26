@@ -23,6 +23,7 @@ def create_order(order):
 ```
 
 **Failure scenarios:**
+
 1. DB write succeeds, Kafka write fails → inconsistent state (event lost)
 2. Kafka write succeeds, DB write fails → phantom event
 3. Network partition: either side may commit, giving distributed inconsistency
@@ -33,14 +34,14 @@ CDC eliminates dual writes by making the database the single source of truth and
 
 ### When CDC Makes Sense
 
-| Scenario | CDC vs Direct Publish |
-|---|---|
-| Microservices need consistent events | CDC — no dual-write risk |
-| Populating a search index (Elasticsearch, Meilisearch) | CDC — avoids synchronisation code |
-| Caching layer invalidation (Redis) | CDC — guaranteed delivery |
-| Data lake ingestion (S3 + Athena) | CDC — captures deletes and updates |
-| Audit logging | CDC — captures all changes, even from bulk operations |
-| Replicating to another database | CDC — lower latency than ETL batch |
+| Scenario                                               | CDC vs Direct Publish                                 |
+| ------------------------------------------------------ | ----------------------------------------------------- |
+| Microservices need consistent events                   | CDC — no dual-write risk                              |
+| Populating a search index (Elasticsearch, Meilisearch) | CDC — avoids synchronisation code                     |
+| Caching layer invalidation (Redis)                     | CDC — guaranteed delivery                             |
+| Data lake ingestion (S3 + Athena)                      | CDC — captures deletes and updates                    |
+| Audit logging                                          | CDC — captures all changes, even from bulk operations |
+| Replicating to another database                        | CDC — lower latency than ETL batch                    |
 
 ---
 
@@ -63,16 +64,16 @@ Database → WAL/Transaction Log → Log Reader → Change Events → Kafka / Pu
 
 **Database-specific implementations:**
 
-| Database | Log Source | Connector Examples |
-|---|---|---|
-| PostgreSQL | WAL (pgoutput, wal2json, decoderbufs) | Debezium, pglogical |
-| MySQL | Binary log (binlog) — row-based format required | Debezium, Maxwell, DMS |
-| MariaDB | Binary log | Debezium |
-| SQL Server | Transaction Log (CDC tables via sys.fn_cdc) | Debezium, DMS |
-| Oracle | LogMiner / XStream / Redo Logs | Debezium, OGG, DMS |
-| MongoDB | Oplog / Change Streams | Debezium, Kafka Connect |
-| DynamoDB | DynamoDB Streams (Kinesis-backed) | Lambda, KCL |
-| Cosmos DB | Change Feed | Azure Functions |
+| Database   | Log Source                                      | Connector Examples      |
+| ---------- | ----------------------------------------------- | ----------------------- |
+| PostgreSQL | WAL (pgoutput, wal2json, decoderbufs)           | Debezium, pglogical     |
+| MySQL      | Binary log (binlog) — row-based format required | Debezium, Maxwell, DMS  |
+| MariaDB    | Binary log                                      | Debezium                |
+| SQL Server | Transaction Log (CDC tables via sys.fn_cdc)     | Debezium, DMS           |
+| Oracle     | LogMiner / XStream / Redo Logs                  | Debezium, OGG, DMS      |
+| MongoDB    | Oplog / Change Streams                          | Debezium, Kafka Connect |
+| DynamoDB   | DynamoDB Streams (Kinesis-backed)               | Lambda, KCL             |
+| Cosmos DB  | Change Feed                                     | Azure Functions         |
 
 ### 2. Trigger-Based CDC
 
@@ -96,10 +97,12 @@ CREATE TRIGGER trg_order_changes
 ```
 
 **Pros:**
+
 - Works with any database (even those without exposed transaction logs)
 - No special permissions required
 
 **Cons:**
+
 - Significant performance impact (triggers execute in the same transaction)
 - Does not capture schema changes, TRUNCATE, COPY or direct file-level modifications
 - Triggers add latency to every write transaction
@@ -123,6 +126,7 @@ LIMIT 1000;
 ```
 
 **Limitations:**
+
 - Does not capture **deletes** — you need soft deletes or a tombstone mechanism
 - Misses changes from bulk operations that bypass `updated_at` (e.g. direct SQL, backfills)
 - Polling latency (seconds to minutes depending on poll interval)
@@ -195,11 +199,11 @@ Each Debezium connector is a Kafka Connect source connector that:
   "schema": {
     "type": "struct",
     "fields": [
-      {"field": "before", "type": "struct", "optional": true},
-      {"field": "after", "type": "struct", "optional": true},
-      {"field": "source", "type": "struct"},
-      {"field": "op", "type": "string"},
-      {"field": "ts_ms", "type": "int64"}
+      { "field": "before", "type": "struct", "optional": true },
+      { "field": "after", "type": "struct", "optional": true },
+      { "field": "source", "type": "struct" },
+      { "field": "op", "type": "string" },
+      { "field": "ts_ms", "type": "int64" }
     ]
   },
   "payload": {
@@ -232,6 +236,7 @@ Each Debezium connector is a Kafka Connect source connector that:
 ```
 
 **`op` field values:**
+
 - `c` — Create (INSERT)
 - `r` — Read (initial snapshot)
 - `u` — Update
@@ -265,14 +270,14 @@ Each Debezium connector is a Kafka Connect source connector that:
 }
 ```
 
-| Parameter | Purpose |
-|---|---|
-| `plugin.name` | The logical decoding plugin — `pgoutput` (default PG 14+), `wal2json`, `decoderbufs` |
-| `slot.name` | The Postgres replication slot name — each connector needs a unique slot |
-| `snapshot.mode` | `initial` (snapshot then stream), `never` (stream only), `always` (resnapshot), `no_data` (schema only) |
-| `tombstones.on.delete` | Emit a tombstone (null value) after a delete event for log compaction |
-| `publication.autocreate.mode` | `all_tables`, `filtered`, `disabled` |
-| `heartbeat.interval.ms` | Send heartbeats on idle connections to prevent replication slot lag |
+| Parameter                     | Purpose                                                                                                 |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `plugin.name`                 | The logical decoding plugin — `pgoutput` (default PG 14+), `wal2json`, `decoderbufs`                    |
+| `slot.name`                   | The Postgres replication slot name — each connector needs a unique slot                                 |
+| `snapshot.mode`               | `initial` (snapshot then stream), `never` (stream only), `always` (resnapshot), `no_data` (schema only) |
+| `tombstones.on.delete`        | Emit a tombstone (null value) after a delete event for log compaction                                   |
+| `publication.autocreate.mode` | `all_tables`, `filtered`, `disabled`                                                                    |
+| `heartbeat.interval.ms`       | Send heartbeats on idle connections to prevent replication slot lag                                     |
 
 ### PostgreSQL Replication Slot Management
 
@@ -302,14 +307,14 @@ Debezium captures schema changes via the `schema_only` recovery mode or by conne
 
 ### Failure Modes
 
-| Failure | Impact | Mitigation |
-|---|---|---|
-| Source DB restarts | Connector resumes from last committed offset | Built-in (Kafka Connect source offset) |
-| Kafka unavailable | Logs accumulate in Debezium's buffer; WAL grows | Set `max.request.size`; monitor WAL size |
-| Schema change breaks deserialisation | Connector fails; events cannot be parsed | Use Schema Registry with `schema.compatibility` |
-| Network partition | Connector cannot read WAL; WAL accumulation | Set `heartbeat.interval.ms`; use `wal2json` streaming |
-| Connector OOM | JVM heap exhaustion | Tune `offset.flush.timeout.ms`, `max.batch.size` |
-| Corrupted offset topic | Connector loses position → resnapshot or re-stream from latest | Periodic offset backups; use Kafka with `min.insync.replicas` |
+| Failure                              | Impact                                                         | Mitigation                                                    |
+| ------------------------------------ | -------------------------------------------------------------- | ------------------------------------------------------------- |
+| Source DB restarts                   | Connector resumes from last committed offset                   | Built-in (Kafka Connect source offset)                        |
+| Kafka unavailable                    | Logs accumulate in Debezium's buffer; WAL grows                | Set `max.request.size`; monitor WAL size                      |
+| Schema change breaks deserialisation | Connector fails; events cannot be parsed                       | Use Schema Registry with `schema.compatibility`               |
+| Network partition                    | Connector cannot read WAL; WAL accumulation                    | Set `heartbeat.interval.ms`; use `wal2json` streaming         |
+| Connector OOM                        | JVM heap exhaustion                                            | Tune `offset.flush.timeout.ms`, `max.batch.size`              |
+| Corrupted offset topic               | Connector loses position → resnapshot or re-stream from latest | Periodic offset backups; use Kafka with `min.insync.replicas` |
 
 ---
 
@@ -364,14 +369,14 @@ Source DB → DMS Replication Instance (EC2) → Target DB / S3 / Kinesis
 
 ### DMS Limitations vs Debezium
 
-| Aspect | DMS | Debezium + Kafka |
-|---|---|---|
-| Event schema | Fixed — DMS normalises column types | Custom Avro/JSON/Protobuf |
-| Target options | DB, S3, Kinesis, Kafka, Redshift | Any Kafka sink |
-| Schema evolution | Limited (must stop task, change mapping) | Schema Registry handles |
-| Latency | 1–10s typically | Sub-second |
-| Cost | Pay per replication instance + storage | Pay for Kafka + Kafka Connect |
-| LOB support | Up to 32 MB (configurable) | No special handling needed |
+| Aspect           | DMS                                      | Debezium + Kafka              |
+| ---------------- | ---------------------------------------- | ----------------------------- |
+| Event schema     | Fixed — DMS normalises column types      | Custom Avro/JSON/Protobuf     |
+| Target options   | DB, S3, Kinesis, Kafka, Redshift         | Any Kafka sink                |
+| Schema evolution | Limited (must stop task, change mapping) | Schema Registry handles       |
+| Latency          | 1–10s typically                          | Sub-second                    |
+| Cost             | Pay per replication instance + storage   | Pay for Kafka + Kafka Connect |
+| LOB support      | Up to 32 MB (configurable)               | No special handling needed    |
 
 DMS is best when you need a managed, no-code replication to another database or S3. Debezium is better when you need fine-grained event-driven architecture with Kafka.
 
@@ -409,11 +414,11 @@ DynamoDB Table → DynamoDB Stream → AWS Lambda / KCL Consumer → Downstream
   "eventSourceARN": "arn:aws:dynamodb:...",
   "dynamodb": {
     "ApproximateCreationDateTime": 1750000000,
-    "Keys": {"order_id": {"S": "ORD-001"}},
+    "Keys": { "order_id": { "S": "ORD-001" } },
     "NewImage": {
-      "order_id": {"S": "ORD-001"},
-      "status": {"S": "PENDING"},
-      "total": {"N": "299.99"}
+      "order_id": { "S": "ORD-001" },
+      "status": { "S": "PENDING" },
+      "total": { "N": "299.99" }
     },
     "OldImage": null,
     "SequenceNumber": "100000000001",
@@ -470,13 +475,13 @@ MongoDB offers CDC natively through Change Streams, available since MongoDB 3.6.
 ```javascript
 const pipeline = [
   { $match: { "fullDocument.status": "SHIPPED" } },
-  { $project: { "fullDocument.orderId": 1, "operationType": 1 } }
+  { $project: { "fullDocument.orderId": 1, operationType: 1 } },
 ];
 
 const changeStream = db.collection("orders").watch(pipeline, {
   // Resume from a specific token
   resumeAfter: savedResumeToken,
-  fullDocument: "updateLookup"
+  fullDocument: "updateLookup",
 });
 
 changeStream.on("change", (change) => {
@@ -555,6 +560,7 @@ Application → (insert into orders + outbox) → Postgres WAL → Debezium → 
 ```
 
 This gives:
+
 - No polling overhead
 - Sub-second event delivery
 - Strict ordering per aggregate (outbox events are inserted in transaction order)
@@ -562,13 +568,13 @@ This gives:
 
 ### Outbox vs Pure CDC
 
-| Aspect | Pure CDC | Outbox |
-|---|---|---|
-| Coupling | No application changes | Must insert into outbox table |
-| Event design | Raw DB rows (including internal columns) | Explicit event schema per domain event |
-| Deletes | Captured naturally | Must be modelled as a domain event |
-| Schema changes | Risk of breaking downstream consumers | Controlled — outbox table schema is stable |
-| Multiple events per DB change | Not possible (one row → one event) | One DB change can produce many events |
+| Aspect                        | Pure CDC                                 | Outbox                                     |
+| ----------------------------- | ---------------------------------------- | ------------------------------------------ |
+| Coupling                      | No application changes                   | Must insert into outbox table              |
+| Event design                  | Raw DB rows (including internal columns) | Explicit event schema per domain event     |
+| Deletes                       | Captured naturally                       | Must be modelled as a domain event         |
+| Schema changes                | Risk of breaking downstream consumers    | Controlled — outbox table schema is stable |
+| Multiple events per DB change | Not possible (one row → one event)       | One DB change can produce many events      |
 
 **Recommendation:** Use Outbox + CDC together. Insert domain events into the outbox table; let Debezium stream them.
 
@@ -584,10 +590,12 @@ This gives:
 ### Achieving Exactly-Once
 
 **At the source:**
+
 - Use a transaction log (WAL, binlog) with atomic offset management
 - Debezium commits offsets to Kafka with the same transactional semantics (`exactly.once` support with Kafka transactions)
 
 **At the sink:**
+
 - Make downstream consumers idempotent:
   - Elasticsearch: `_id` = `<table>|<pk>`, use upsert
   - S3: write to `s3://bucket/year/month/day/hour/<table>/<pk>.json`
@@ -617,12 +625,12 @@ Debezium can be configured to use Kafka's exactly-once semantics:
 
 ### Database Impact
 
-| CDC Method | CPU Overhead | Storage Overhead | WAL Growth |
-|---|---|---|---|
-| Log-based (Debezium) | < 5% on idle reads | ~ 0% (reads existing log) | Depends on `max_slot_wal_keep_size` |
-| Trigger-based | 10–25% per write | Shadow table adds storage | N/A |
-| Timestamp-based | Varies by poll frequency | `updated_at` column (negligible) | N/A |
-| DynamoDB Streams | ~ 0% (AWS managed) | Stream data (24h retention) | N/A |
+| CDC Method           | CPU Overhead             | Storage Overhead                 | WAL Growth                          |
+| -------------------- | ------------------------ | -------------------------------- | ----------------------------------- |
+| Log-based (Debezium) | < 5% on idle reads       | ~ 0% (reads existing log)        | Depends on `max_slot_wal_keep_size` |
+| Trigger-based        | 10–25% per write         | Shadow table adds storage        | N/A                                 |
+| Timestamp-based      | Varies by poll frequency | `updated_at` column (negligible) | N/A                                 |
+| DynamoDB Streams     | ~ 0% (AWS managed)       | Stream data (24h retention)      | N/A                                 |
 
 ### Kafka Connect Tuning for High-Volume CDC
 
@@ -647,30 +655,30 @@ Debezium can be configured to use Kafka's exactly-once semantics:
 
 ### Monitoring Metrics
 
-| Metric | Tool | Alert Threshold |
-|---|---|---|
-| Replication slot lag (bytes) | `pg_replication_slots` PG view | > 500 MB |
-| Kafka Connect lag (records behind) | Kafka consumer group offset | > 10,000 per partition |
-| Debezium snapshot progress | `debezium-metrics` JMX MBeans | Stalled > 5 minutes |
-| WAL generation rate | CloudWatch / pg_stat_statements | > 2x baseline for 10 min |
-| Connector failure rate | Kafka Connect REST API (`/connectors/<name>/status`) | Any failure |
+| Metric                             | Tool                                                 | Alert Threshold          |
+| ---------------------------------- | ---------------------------------------------------- | ------------------------ |
+| Replication slot lag (bytes)       | `pg_replication_slots` PG view                       | > 500 MB                 |
+| Kafka Connect lag (records behind) | Kafka consumer group offset                          | > 10,000 per partition   |
+| Debezium snapshot progress         | `debezium-metrics` JMX MBeans                        | Stalled > 5 minutes      |
+| WAL generation rate                | CloudWatch / pg_stat_statements                      | > 2x baseline for 10 min |
+| Connector failure rate             | Kafka Connect REST API (`/connectors/<name>/status`) | Any failure              |
 
 ---
 
 ## Summary Decision Matrix
 
-| Requirement | Best Approach |
-|---|---|
-| Real-time event stream from Postgres | Debezium (pgoutput plugin) |
-| Real-time event stream from MySQL | Debezium (binlog, row-based) |
-| Replicate to data warehouse | DMS (managed, no Kafka) |
-| AWS-native DynamoDB to Lambda | DynamoDB Streams |
-| MongoDB to Elasticsearch | Kafka Connect (Debezium source, Elasticsearch sink) |
-| No extra infrastructure | Trigger-based CDC (small scale) |
-| Exactly-once semantics | Outbox + CDC + idempotent sink |
-| Schema evolution support | Debezium + Avro + Schema Registry |
-| High-volume (10k+ events/sec) | Debezium + Kafka (tuned) |
-| Event-driven microservices | Outbox pattern + CDC |
-| Backfill old data | Debezium incremental snapshot |
-| Embedded CDC in a Quarkus service | Debezium Quarkus Extension (3.4+) |
-| DynamoDB changes beyond 24h retention | DynamoDB Streams → Kinesis Data Streams |
+| Requirement                           | Best Approach                                       |
+| ------------------------------------- | --------------------------------------------------- |
+| Real-time event stream from Postgres  | Debezium (pgoutput plugin)                          |
+| Real-time event stream from MySQL     | Debezium (binlog, row-based)                        |
+| Replicate to data warehouse           | DMS (managed, no Kafka)                             |
+| AWS-native DynamoDB to Lambda         | DynamoDB Streams                                    |
+| MongoDB to Elasticsearch              | Kafka Connect (Debezium source, Elasticsearch sink) |
+| No extra infrastructure               | Trigger-based CDC (small scale)                     |
+| Exactly-once semantics                | Outbox + CDC + idempotent sink                      |
+| Schema evolution support              | Debezium + Avro + Schema Registry                   |
+| High-volume (10k+ events/sec)         | Debezium + Kafka (tuned)                            |
+| Event-driven microservices            | Outbox pattern + CDC                                |
+| Backfill old data                     | Debezium incremental snapshot                       |
+| Embedded CDC in a Quarkus service     | Debezium Quarkus Extension (3.4+)                   |
+| DynamoDB changes beyond 24h retention | DynamoDB Streams → Kinesis Data Streams             |

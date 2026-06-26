@@ -1,7 +1,7 @@
 +++
 date = '2026-06-15T12:00:00+10:00'
 draft = false
-title = 'Context Engineering'
+title = 'Context Engineering for Claude Code'
 tags = ['Context Engineering', 'Claude Code', 'Coding Agent', 'Design Patterns', 'LLM']
 summary = "Design patterns, best practices and caveats for engineering context in AI coding agents with Claude Code."
 +++
@@ -9,9 +9,9 @@ summary = "Design patterns, best practices and caveats for engineering context i
 ## What Is Context Engineering
 
 - The practice of deliberately designing, structuring and optimizing context provided to an LLM to produce more accurate, reliable outputs.
-- It's the natural next level of prompt engineering 
+- It's the natural next level of prompt engineering
 - While Prompt engineering: writing LLM instructions, Context engineering: manages entire context state — system prompts, tools, MCP, data sources, conversation history
-- Model has a limited attention span and Every token depletes the attention budget. 
+- Model has a limited attention span and Every token depletes the attention budget.
 - As context grows, recall accuracy decreases -> this is also called **Context Rot**
 - Guiding principle: Smallest possible set of high-signal tokens that maximize likelihood of desired outcome (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
 
@@ -34,6 +34,7 @@ summary = "Design patterns, best practices and caveats for engineering context i
     User: ...
     Assistant: ...
   ```
+
 - The context space occupied/Cost induced by CLAUDE.md is fixed - whether you use the session to write 1 single prompt or many. So keep it small and applicable to all prompts Not all prompts require all that info.
 - Every token competes for attention on every user turn
 - Anthropic guidance: for every line ask "would the agent make a mistake without this?" If not, delete it (https://docs.anthropic.com/en/docs/claude-code/overview)
@@ -58,6 +59,7 @@ Python monorepo, uv workspaces. Core packages: core/, api/, cli/.
 - Uses `paths` **glob** in **frontmatter** to control activation — the filename is just a label, not the trigger:
 
 e.g. **database.md**
+
 ```markdown
 ---
 paths:
@@ -67,9 +69,11 @@ paths:
 ---
 
 # Database Conventions
+
 - Use `VARCHAR(255)` for short strings
 - Always include `created_at` and `updated_at`
 ```
+
 Example project tree:
 
 ```
@@ -94,7 +98,7 @@ project/
     └── schema/init.sql             # → database.md
 ```
 
-- Claude Code reads the `paths` globs at session start and loads the rule body only when the agent's file operations match one of them. 
+- Claude Code reads the `paths` globs at session start and loads the rule body only when the agent's file operations match one of them.
 - A file like `frontend/tests/App.test.tsx` can match **multiple rules** (react-components + python-testing), each adding its domain knowledge when needed — without polluting context during unrelated work.
 
 ### Skills — On-Demand Workflows

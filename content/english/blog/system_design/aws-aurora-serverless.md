@@ -52,18 +52,18 @@ Released 2018. Still available but on a deprecation path; new workloads should u
 
 ### v1 Limitations
 
-| Limitation | Detail |
-|---|---|
-| No read replicas | Single writer only; no horizontal read scaling |
-| Single AZ compute | Compute runs in one AZ; storage is multi-AZ |
-| Cold start latency | 20–40s on resume — unsuitable for latency-sensitive applications |
-| Coarse scaling | Discrete ACU steps with up to 5-minute cooldown between scale events |
-| No Performance Insights | Not available on v1 |
-| No RDS Proxy | v1 cannot use RDS Proxy |
-| No Backtrack | Not supported |
-| Engine versions | Aurora MySQL 5.7 and Aurora PostgreSQL 10 only |
-| Max ACU | 256 ACU (512 GiB RAM) |
-| No Global Database | Not supported |
+| Limitation              | Detail                                                               |
+| ----------------------- | -------------------------------------------------------------------- |
+| No read replicas        | Single writer only; no horizontal read scaling                       |
+| Single AZ compute       | Compute runs in one AZ; storage is multi-AZ                          |
+| Cold start latency      | 20–40s on resume — unsuitable for latency-sensitive applications     |
+| Coarse scaling          | Discrete ACU steps with up to 5-minute cooldown between scale events |
+| No Performance Insights | Not available on v1                                                  |
+| No RDS Proxy            | v1 cannot use RDS Proxy                                              |
+| No Backtrack            | Not supported                                                        |
+| Engine versions         | Aurora MySQL 5.7 and Aurora PostgreSQL 10 only                       |
+| Max ACU                 | 256 ACU (512 GiB RAM)                                                |
+| No Global Database      | Not supported                                                        |
 
 ### When v1 May Still Be Appropriate
 
@@ -79,26 +79,27 @@ Released 2022; pause/resume capability added in 2023. The recommended deployment
 
 ### How v2 Differs From v1
 
-| Feature | v1 | v2 |
-|---|---|---|
-| Read replicas | No | Yes — up to 15, each auto-scaling independently |
-| Multi-AZ | No | Yes |
-| Scaling granularity | Discrete steps, cooldown | Continuous, sub-second |
-| Pause (zero-cost idle) | Yes | Yes (added 2023) |
-| Scaling time | Minutes | 1–2 seconds typical |
-| Connection management | Direct | RDS Proxy supported and recommended |
-| Data API | Yes | Yes |
-| Engine versions | MySQL 5.7, PG 10 | MySQL 8.0, PG 15+ |
-| ACU minimum | 1 | 0 (when paused) or 0.5 (always-on) |
-| ACU maximum | 256 | 256 per instance |
-| Billing | ACU-hour | ACU-second |
-| Global Database | No | Yes (supported since late 2023) |
-| Graviton processors | No | Yes (Graviton2/3) |
-| Aurora I/O-Optimized | No | Yes |
+| Feature                | v1                       | v2                                              |
+| ---------------------- | ------------------------ | ----------------------------------------------- |
+| Read replicas          | No                       | Yes — up to 15, each auto-scaling independently |
+| Multi-AZ               | No                       | Yes                                             |
+| Scaling granularity    | Discrete steps, cooldown | Continuous, sub-second                          |
+| Pause (zero-cost idle) | Yes                      | Yes (added 2023)                                |
+| Scaling time           | Minutes                  | 1–2 seconds typical                             |
+| Connection management  | Direct                   | RDS Proxy supported and recommended             |
+| Data API               | Yes                      | Yes                                             |
+| Engine versions        | MySQL 5.7, PG 10         | MySQL 8.0, PG 15+                               |
+| ACU minimum            | 1                        | 0 (when paused) or 0.5 (always-on)              |
+| ACU maximum            | 256                      | 256 per instance                                |
+| Billing                | ACU-hour                 | ACU-second                                      |
+| Global Database        | No                       | Yes (supported since late 2023)                 |
+| Graviton processors    | No                       | Yes (Graviton2/3)                               |
+| Aurora I/O-Optimized   | No                       | Yes                                             |
 
 ### v2 Architecture in Detail
 
 **Capacity range per instance:**
+
 - Minimum: 0.5 ACU (1 GiB RAM) in always-on mode; 0 ACU when paused
 - Maximum: 256 ACU (512 GiB RAM) per instance
 - Up to 15 reader replicas, each scaling independently within the cluster's configured ACU range
@@ -114,6 +115,7 @@ Aurora v2 evaluates scaling every second using four signals:
 Scale-down is more conservative: the instance waits for CPU and memory to stabilise before reducing ACU to avoid thrashing. There is no user-configurable cooldown; AWS manages this internally.
 
 **Pause and resume (v2, added 2023):**
+
 - Configurable idle timeout (minimum 5 minutes)
 - On pause, compute is deallocated; you pay only for storage
 - On resume, cold start is faster than v1: typically 5–15 seconds (v2 benefits from the warm pool and Graviton)
@@ -128,24 +130,26 @@ AWS maintains a pool of pre-warmed Graviton instances per ACU tier in each Regio
 `max_connections` in v2 scales with ACU. The formula differs by engine:
 
 **Aurora MySQL:**
+
 ```
 max_connections = LEAST(GREATEST(({DBInstanceClassMemory}/12582880), 25), 16000)
 ```
 
 Approximate values:
 
-| ACU | RAM | max_connections (MySQL) |
-|---|---|---|
-| 0.5 | 1 GiB | ~80 |
-| 1 | 2 GiB | ~160 |
-| 2 | 4 GiB | ~320 |
-| 4 | 8 GiB | ~640 |
-| 8 | 16 GiB | ~1,270 |
-| 16 | 32 GiB | ~2,560 |
-| 64 | 128 GiB | ~10,240 |
-| 128 | 256 GiB | ~16,000 (cap) |
+| ACU | RAM     | max_connections (MySQL) |
+| --- | ------- | ----------------------- |
+| 0.5 | 1 GiB   | ~80                     |
+| 1   | 2 GiB   | ~160                    |
+| 2   | 4 GiB   | ~320                    |
+| 4   | 8 GiB   | ~640                    |
+| 8   | 16 GiB  | ~1,270                  |
+| 16  | 32 GiB  | ~2,560                  |
+| 64  | 128 GiB | ~10,240                 |
+| 128 | 256 GiB | ~16,000 (cap)           |
 
 **Aurora PostgreSQL:**
+
 ```
 max_connections = LEAST({DBInstanceClassMemory}/9531392, 5000)
 ```
@@ -157,12 +161,14 @@ Because connections are limited at low ACU, RDS Proxy is strongly recommended fo
 RDS Proxy sits between your application and Aurora. It maintains a persistent connection pool to Aurora and multiplexes many application connections through a smaller set of database connections.
 
 Benefits for v2:
+
 - Avoids exhausting `max_connections` at low ACU levels
 - Provides IAM-based authentication (avoids storing DB credentials in app code)
 - Reduces failover impact during Multi-AZ switchover — the proxy absorbs the reconnection burst
 - Enables connection reuse across Lambda invocations
 
 Trade-offs:
+
 - RDS Proxy adds 1–2ms latency per query
 - Prevents v2 pause (a cluster with RDS Proxy attached cannot pause)
 - Costs approximately $0.015 per vCPU per hour (based on the endpoint's connection capacity)
@@ -192,6 +198,7 @@ for record in response['records']:
 ```
 
 **Data API characteristics:**
+
 - Stateless — no persistent connection; each call establishes and closes a connection internally
 - Supports transactions: `begin_transaction`, `commit_transaction`, `rollback_transaction`
 - 1 MB response size limit per call — unsuitable for large BLOB retrieval or bulk exports
@@ -216,10 +223,12 @@ Each Region's serverless cluster scales its ACU range independently. A secondary
 Introduced in 2023, I/O-Optimized is a storage configuration option for Aurora (available on v2 and provisioned) that eliminates per-I/O charges in exchange for a higher storage rate.
 
 **Standard pricing:**
+
 - Storage: $0.10/GB-month
 - I/O: $0.20 per 1 million requests
 
 **I/O-Optimized pricing:**
+
 - Storage: $0.225/GB-month
 - I/O: $0.00 (no per-I/O charge)
 
@@ -262,12 +271,14 @@ aws rds modify-db-cluster \
 ## Pricing Model
 
 ### v1
+
 - Pay per ACU-hour consumed while active
 - $0.00 per ACU-hour when paused (storage and I/O charges continue)
 - Storage ($0.10/GB-month) and I/O ($0.20/million requests) charged separately
 - No RDS Proxy available
 
 ### v2
+
 - Pay per ACU-second in 1-second increments
 - Minimum charge when always-on: 0.5 ACU × seconds running
 - $0.00 ACU charge when paused (storage charges continue)
@@ -278,12 +289,12 @@ aws rds modify-db-cluster \
 
 Prices shown are for ap-southeast-2 (Sydney) as of mid-2026. Check the AWS pricing page for current figures.
 
-| Scenario | Provisioned db.r6g.large (on-demand) | Provisioned db.r6g.large (1yr reserved) | Serverless v2 (0.5–8 ACU) |
-|---|---|---|---|
-| Always-on, ~1 ACU load | ~$0.34/hr | ~$0.21/hr | ~$0.12/hr |
-| Always-on, ~4 ACU sustained | ~$0.34/hr | ~$0.21/hr | ~$0.48/hr |
-| 8 hr/day active, 16 hr idle (0.5 ACU) | ~$0.34/hr (wasted) | ~$0.21/hr (wasted) | ~$0.18/hr avg |
-| Burst to 8 ACU for 1hr/day | Not possible without resize | Not possible | Only pay for burst duration |
+| Scenario                              | Provisioned db.r6g.large (on-demand) | Provisioned db.r6g.large (1yr reserved) | Serverless v2 (0.5–8 ACU)   |
+| ------------------------------------- | ------------------------------------ | --------------------------------------- | --------------------------- |
+| Always-on, ~1 ACU load                | ~$0.34/hr                            | ~$0.21/hr                               | ~$0.12/hr                   |
+| Always-on, ~4 ACU sustained           | ~$0.34/hr                            | ~$0.21/hr                               | ~$0.48/hr                   |
+| 8 hr/day active, 16 hr idle (0.5 ACU) | ~$0.34/hr (wasted)                   | ~$0.21/hr (wasted)                      | ~$0.18/hr avg               |
+| Burst to 8 ACU for 1hr/day            | Not possible without resize          | Not possible                            | Only pay for burst duration |
 
 The `db.r6g.large` has 2 vCPUs and 16 GiB RAM — roughly equivalent to 8 ACU. At sustained 8 ACU, provisioned reserved is materially cheaper. At variable load averaging 2 ACU, v2 wins.
 
@@ -332,6 +343,7 @@ aws rds create-integration \
 ```
 
 Considerations for serverless clusters:
+
 - The source Aurora cluster must be running (not paused) for replication to proceed; lag accumulates during pause and catches up on resume
 - Binlog retention must be enabled on the Aurora cluster (`binlog_format=ROW`, `binlog_row_image=FULL`)
 - Zero-ETL adds a small but non-zero write overhead to the source cluster (binlog generation); account for this in your ACU sizing
@@ -343,24 +355,28 @@ Considerations for serverless clusters:
 ### From Provisioned Aurora to Serverless v2
 
 **Option 1: Snapshot restore**
+
 - Take a manual snapshot of the provisioned cluster
 - Restore the snapshot to a new Aurora Serverless v2 cluster
 - Test the new cluster, then cut over DNS/endpoint
 - Downtime: duration of snapshot restore (minutes to hours depending on data volume)
 
 **Option 2: Aurora cloning (zero-copy)**
+
 - Clone the provisioned cluster — Aurora cloning uses copy-on-write at the storage layer, completing in seconds regardless of data volume
 - The clone can be configured as serverless v2
 - Test the clone, then switch the application endpoint
 - Downtime: near-zero for clone creation; endpoint switch is a brief DNS change
 
 **Option 3: Blue/Green Deployment (recommended for minimal downtime)**
+
 - RDS Blue/Green creates a staging copy of the cluster and maintains replication between them
 - Modify the green (staging) cluster to serverless v2 configuration
 - Validate, then trigger a switchover — Blue/Green manages the cutover with typically < 1 minute downtime
 - Requires engine version compatibility between blue and green
 
 **Option 4: AWS DMS with CDC**
+
 - Use AWS DMS to perform an initial full load followed by continuous change data capture (CDC) replication
 - Allows extended parallel running of old and new clusters
 - Best for situations where zero downtime is required and the above options are impractical
@@ -384,18 +400,18 @@ Engine version compatibility testing is the most time-consuming step. Aurora MyS
 
 ### Key CloudWatch Metrics
 
-| Metric | Namespace | What to Watch |
-|---|---|---|
-| `ServerlessDatabaseCapacity` | `AWS/RDS` | Current ACU consumption in real time |
-| `ACUUtilization` | `AWS/RDS` | Percent of max ACU used — alert at >85% for 5 min |
-| `DatabaseConnections` | `AWS/RDS` | Active connections — alert at >80% of `max_connections` |
-| `ReadLatency` | `AWS/RDS` | Storage read latency — alert at >10ms |
-| `WriteLatency` | `AWS/RDS` | Storage write latency — alert at >10ms |
-| `DMLThroughput` | `AWS/RDS` | Rows written per second — baseline and alert on 3× deviation |
-| `VolumeReadIOPs` | `AWS/RDS` | Used to evaluate I/O-Optimized switch-over |
-| `VolumeWriteIOPs` | `AWS/RDS` | Same |
-| `FreeableMemory` | `AWS/RDS` | Low value indicates memory pressure, scaling should occur |
-| `CommitLatency` | `AWS/RDS` | Transaction commit time — useful for identifying lock contention |
+| Metric                       | Namespace | What to Watch                                                    |
+| ---------------------------- | --------- | ---------------------------------------------------------------- |
+| `ServerlessDatabaseCapacity` | `AWS/RDS` | Current ACU consumption in real time                             |
+| `ACUUtilization`             | `AWS/RDS` | Percent of max ACU used — alert at >85% for 5 min                |
+| `DatabaseConnections`        | `AWS/RDS` | Active connections — alert at >80% of `max_connections`          |
+| `ReadLatency`                | `AWS/RDS` | Storage read latency — alert at >10ms                            |
+| `WriteLatency`               | `AWS/RDS` | Storage write latency — alert at >10ms                           |
+| `DMLThroughput`              | `AWS/RDS` | Rows written per second — baseline and alert on 3× deviation     |
+| `VolumeReadIOPs`             | `AWS/RDS` | Used to evaluate I/O-Optimized switch-over                       |
+| `VolumeWriteIOPs`            | `AWS/RDS` | Same                                                             |
+| `FreeableMemory`             | `AWS/RDS` | Low value indicates memory pressure, scaling should occur        |
+| `CommitLatency`              | `AWS/RDS` | Transaction commit time — useful for identifying lock contention |
 
 ### Recommended Alarms
 
@@ -484,16 +500,16 @@ Performance Insights is the primary tool for identifying queries that are drivin
 
 ## Summary Decision Matrix
 
-| Requirement | Recommended Choice |
-|---|---|
-| Sporadic dev/test workload, zero idle cost | v2 with pause enabled |
-| Variable production traffic | v2 + RDS Proxy |
-| Steady high-throughput OLTP (>30% sustained utilisation) | Provisioned Aurora + reserved instances |
-| Read scaling needed | v2 with reader replicas |
-| Multi-AZ required | v2 or provisioned |
-| Global multi-Region | v2 + Aurora Global Database |
-| Lambda-native, no persistent connections | v2 + Data API |
-| Write-heavy with high I/O | v2 + I/O-Optimized storage |
-| MySQL 5.7 locked | Provisioned Aurora MySQL 5.7 (plan migration) |
-| Near-real-time analytics on Aurora data | v2 + Zero-ETL to Redshift |
-| Must minimise per-query latency | Provisioned Aurora (1–3ms less overhead than v2) |
+| Requirement                                              | Recommended Choice                               |
+| -------------------------------------------------------- | ------------------------------------------------ |
+| Sporadic dev/test workload, zero idle cost               | v2 with pause enabled                            |
+| Variable production traffic                              | v2 + RDS Proxy                                   |
+| Steady high-throughput OLTP (>30% sustained utilisation) | Provisioned Aurora + reserved instances          |
+| Read scaling needed                                      | v2 with reader replicas                          |
+| Multi-AZ required                                        | v2 or provisioned                                |
+| Global multi-Region                                      | v2 + Aurora Global Database                      |
+| Lambda-native, no persistent connections                 | v2 + Data API                                    |
+| Write-heavy with high I/O                                | v2 + I/O-Optimized storage                       |
+| MySQL 5.7 locked                                         | Provisioned Aurora MySQL 5.7 (plan migration)    |
+| Near-real-time analytics on Aurora data                  | v2 + Zero-ETL to Redshift                        |
+| Must minimise per-query latency                          | Provisioned Aurora (1–3ms less overhead than v2) |

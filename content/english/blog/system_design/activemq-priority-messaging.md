@@ -14,16 +14,16 @@ Amazon MQ is the AWS managed message broker service. It supports two engines: Ac
 
 Understanding what AWS manages versus what you control is essential before configuring priority.
 
-| Concern | Self-Hosted ActiveMQ | Amazon MQ |
-|---|---|---|
-| `activemq.xml` | Full control | Partial — via broker configuration API |
-| KahaDB tuning | Full control | **Not exposed** — AWS manages persistence |
-| OS / JVM | You manage | AWS manages |
-| Network connectors | You configure | Handled by active/standby topology |
-| TLS certificates | You manage | AWS Certificate Manager or auto-managed |
-| Upgrades | Manual | Managed maintenance windows |
-| Scaling | Manual | Instance type selection |
-| Monitoring | Self-hosted (JMX, logs) | CloudWatch metrics + broker logs |
+| Concern            | Self-Hosted ActiveMQ    | Amazon MQ                                 |
+| ------------------ | ----------------------- | ----------------------------------------- |
+| `activemq.xml`     | Full control            | Partial — via broker configuration API    |
+| KahaDB tuning      | Full control            | **Not exposed** — AWS manages persistence |
+| OS / JVM           | You manage              | AWS manages                               |
+| Network connectors | You configure           | Handled by active/standby topology        |
+| TLS certificates   | You manage              | AWS Certificate Manager or auto-managed   |
+| Upgrades           | Manual                  | Managed maintenance windows               |
+| Scaling            | Manual                  | Instance type selection                   |
+| Monitoring         | Self-hosted (JMX, logs) | CloudWatch metrics + broker logs          |
 
 **The key constraint:** Amazon MQ does not give you direct file system access to the broker. You cannot edit `activemq.xml` directly. Configuration is applied through the **Amazon MQ broker configuration** resource (an XML document managed via the AWS Console, CLI, or CloudFormation), and not all settings available in self-hosted ActiveMQ are supported.
 
@@ -37,11 +37,11 @@ Amazon MQ supports ActiveMQ engine versions 5.15.x, 5.16.x, and 5.17.x (check th
 
 ### Deployment Modes
 
-| Mode | Description | Priority Behaviour |
-|---|---|---|
-| Single-instance broker | One broker, no HA | Standard priority support |
-| Active/standby broker | Two brokers across AZs, shared Amazon EFS storage | Priority state preserved on failover |
-| Active/standby with NFS | Same, using NFS-backed Amazon EFS | Identical — failover is transparent to priority cursor |
+| Mode                    | Description                                       | Priority Behaviour                                     |
+| ----------------------- | ------------------------------------------------- | ------------------------------------------------------ |
+| Single-instance broker  | One broker, no HA                                 | Standard priority support                              |
+| Active/standby broker   | Two brokers across AZs, shared Amazon EFS storage | Priority state preserved on failover                   |
+| Active/standby with NFS | Same, using NFS-backed Amazon EFS                 | Identical — failover is transparent to priority cursor |
 
 **Active/standby is the production-recommended deployment.** On failover, the standby broker reads the same underlying store (Amazon EFS) as the failed active broker. Priority ordering is preserved because the KahaDB journal on EFS is intact — the standby replays it in priority order provided `sortedStore="true"` is configured.
 
@@ -181,10 +181,9 @@ This is the XML you upload as the broker configuration. It only includes element
 ### CloudFormation
 
 ```yaml
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 
 Resources:
-
   MQBrokerConfig:
     Type: AWS::AmazonMQ::Configuration
     Properties:
@@ -376,9 +375,7 @@ IAM controls the management plane (creating brokers, updating configurations, re
     {
       "Sid": "MQSecretsAccess",
       "Effect": "Allow",
-      "Action": [
-        "secretsmanager:GetSecretValue"
-      ],
+      "Action": ["secretsmanager:GetSecretValue"],
       "Resource": "arn:aws:secretsmanager:ap-southeast-2:123456789012:secret:/mq/*"
     },
     {
@@ -406,16 +403,16 @@ Amazon MQ publishes broker and queue-level metrics to CloudWatch automatically. 
 
 **Key metrics for priority queue health:**
 
-| Metric | Namespace | Dimension | What to Watch |
-|---|---|---|---|
-| `QueueSize` | `AWS/AmazonMQ` | `Queue`, `Broker` | Total pending messages. Growth indicates consumer lag. |
-| `EnqueueCount` | `AWS/AmazonMQ` | `Queue`, `Broker` | Messages entering per period. |
-| `DequeueCount` | `AWS/AmazonMQ` | `Queue`, `Broker` | Messages leaving per period. |
-| `DispatchCount` | `AWS/AmazonMQ` | `Queue`, `Broker` | Messages dispatched (not yet acked). |
-| `ExpiredCount` | `AWS/AmazonMQ` | `Queue`, `Broker` | Messages expired due to TTL — indicates starvation risk. |
-| `MemoryUsage` | `AWS/AmazonMQ` | `Broker` | Broker heap usage — spikes during deep priority queue sorting. |
-| `StorePercentUsage` | `AWS/AmazonMQ` | `Broker` | KahaDB disk usage on EFS — alert at 70%. |
-| `HeapUsage` | `AWS/AmazonMQ` | `Broker` | JVM heap — alert at 80%. |
+| Metric              | Namespace      | Dimension         | What to Watch                                                  |
+| ------------------- | -------------- | ----------------- | -------------------------------------------------------------- |
+| `QueueSize`         | `AWS/AmazonMQ` | `Queue`, `Broker` | Total pending messages. Growth indicates consumer lag.         |
+| `EnqueueCount`      | `AWS/AmazonMQ` | `Queue`, `Broker` | Messages entering per period.                                  |
+| `DequeueCount`      | `AWS/AmazonMQ` | `Queue`, `Broker` | Messages leaving per period.                                   |
+| `DispatchCount`     | `AWS/AmazonMQ` | `Queue`, `Broker` | Messages dispatched (not yet acked).                           |
+| `ExpiredCount`      | `AWS/AmazonMQ` | `Queue`, `Broker` | Messages expired due to TTL — indicates starvation risk.       |
+| `MemoryUsage`       | `AWS/AmazonMQ` | `Broker`          | Broker heap usage — spikes during deep priority queue sorting. |
+| `StorePercentUsage` | `AWS/AmazonMQ` | `Broker`          | KahaDB disk usage on EFS — alert at 70%.                       |
+| `HeapUsage`         | `AWS/AmazonMQ` | `Broker`          | JVM heap — alert at 80%.                                       |
 
 ### CloudWatch Alarms
 
@@ -469,51 +466,51 @@ aws cloudwatch put-metric-alarm \
 ### CloudWatch Dashboard (CDK)
 
 ```typescript
-import * as cw from 'aws-cdk-lib/aws-cloudwatch';
+import * as cw from "aws-cdk-lib/aws-cloudwatch";
 
-const dashboard = new cw.Dashboard(this, 'MQPriorityDashboard', {
-  dashboardName: 'AmazonMQ-Priority-Health',
+const dashboard = new cw.Dashboard(this, "MQPriorityDashboard", {
+  dashboardName: "AmazonMQ-Priority-Health",
 });
 
 dashboard.addWidgets(
   new cw.GraphWidget({
-    title: 'Queue Depth by Queue',
+    title: "Queue Depth by Queue",
     left: [
       new cw.Metric({
-        namespace: 'AWS/AmazonMQ',
-        metricName: 'QueueSize',
-        dimensionsMap: { Broker: 'priority-broker', Queue: 'ORDERS' },
-        label: 'ORDERS',
-        statistic: 'Maximum',
+        namespace: "AWS/AmazonMQ",
+        metricName: "QueueSize",
+        dimensionsMap: { Broker: "priority-broker", Queue: "ORDERS" },
+        label: "ORDERS",
+        statistic: "Maximum",
         period: Duration.minutes(1),
       }),
       new cw.Metric({
-        namespace: 'AWS/AmazonMQ',
-        metricName: 'QueueSize',
-        dimensionsMap: { Broker: 'priority-broker', Queue: 'DLQ.ORDERS' },
-        label: 'DLQ.ORDERS',
-        statistic: 'Maximum',
+        namespace: "AWS/AmazonMQ",
+        metricName: "QueueSize",
+        dimensionsMap: { Broker: "priority-broker", Queue: "DLQ.ORDERS" },
+        label: "DLQ.ORDERS",
+        statistic: "Maximum",
         period: Duration.minutes(1),
       }),
     ],
   }),
   new cw.GraphWidget({
-    title: 'Broker Resource Usage',
+    title: "Broker Resource Usage",
     left: [
       new cw.Metric({
-        namespace: 'AWS/AmazonMQ',
-        metricName: 'HeapUsage',
-        dimensionsMap: { Broker: 'priority-broker' },
-        label: 'Heap %',
-        statistic: 'Average',
+        namespace: "AWS/AmazonMQ",
+        metricName: "HeapUsage",
+        dimensionsMap: { Broker: "priority-broker" },
+        label: "Heap %",
+        statistic: "Average",
         period: Duration.minutes(1),
       }),
       new cw.Metric({
-        namespace: 'AWS/AmazonMQ',
-        metricName: 'StorePercentUsage',
-        dimensionsMap: { Broker: 'priority-broker' },
-        label: 'Store %',
-        statistic: 'Maximum',
+        namespace: "AWS/AmazonMQ",
+        metricName: "StorePercentUsage",
+        dimensionsMap: { Broker: "priority-broker" },
+        label: "Store %",
+        statistic: "Maximum",
         period: Duration.minutes(1),
       }),
     ],
@@ -904,11 +901,11 @@ public class OrderConsumer {
 
 ### Instance Sizing vs Priority Overhead
 
-| Instance | Throughput (no priority) | Throughput (priority, 3 levels) | Notes |
-|---|---|---|---|
-| `mq.m5.large` | ~5,000 msg/sec | ~3,500–4,250 msg/sec | Fine for moderate workloads |
-| `mq.m5.xlarge` | ~15,000 msg/sec | ~11,000–13,500 msg/sec | Standard production choice |
-| `mq.m5.2xlarge` | ~30,000 msg/sec | ~22,000–27,000 msg/sec | High-volume priority workloads |
+| Instance        | Throughput (no priority) | Throughput (priority, 3 levels) | Notes                          |
+| --------------- | ------------------------ | ------------------------------- | ------------------------------ |
+| `mq.m5.large`   | ~5,000 msg/sec           | ~3,500–4,250 msg/sec            | Fine for moderate workloads    |
+| `mq.m5.xlarge`  | ~15,000 msg/sec          | ~11,000–13,500 msg/sec          | Standard production choice     |
+| `mq.m5.2xlarge` | ~30,000 msg/sec          | ~22,000–27,000 msg/sec          | High-volume priority workloads |
 
 Figures are approximate and vary with message size, persistence settings, and consumer prefetch.
 
@@ -917,6 +914,7 @@ Figures are approximate and vary with message size, persistence settings, and co
 Active/standby Amazon MQ brokers store KahaDB on Amazon EFS. EFS adds latency compared to local NVMe in self-hosted deployments. With `sortedStore="true"`, each priority-indexed write involves an EFS operation. On multi-AZ deployments this is across an AZ boundary.
 
 Expected EFS impact on priority write path:
+
 - EFS throughput mode: **Bursting** — suitable for most workloads; latency spikes under sustained load
 - EFS throughput mode: **Provisioned** — recommended for deep priority queues with frequent writes (> 10,000 persistent priority messages/sec)
 
@@ -967,6 +965,7 @@ Amazon MQ pricing on AWS has three components:
 **Data transfer** — standard AWS data transfer rates apply. Intra-VPC traffic (same AZ) between your application and the broker is free. Cross-AZ traffic (application in AZ-a, broker endpoint in AZ-b) incurs standard cross-AZ data transfer charges.
 
 **Cost optimisation tips:**
+
 - Use `gcInactiveDestinations="true"` with `inactiveTimoutBeforeGC` in the broker config to automatically delete queues that have been empty for a configured period. Stale queues with priority config still allocate resources.
 - Set TTLs on low-priority messages to bound storage growth.
 - Use Reserved Instance pricing for active/standby broker pairs that run 24/7.
@@ -977,17 +976,17 @@ Amazon MQ pricing on AWS has three components:
 
 ### Key Flags Available on Amazon MQ
 
-| Flag | Available on Amazon MQ | Notes |
-|---|---|---|
-| `prioritizedMessages="true"` | Yes | Core priority flag |
-| `sortedStore="true"` | Yes | Recommended with persistence |
-| `optimizedDispatch="true"` | Yes | Recommended for throughput |
-| `prefetchPerLevel` | Yes | Via `priorityQueueCursor` config |
-| `concurrentStoreAndDispatchQueues` | **No** — managed by AWS | Set correctly by AWS on 5.15.9+ |
-| `<persistenceAdapter>` (KahaDB) | **No** | Managed by AWS |
-| `<transportConnectors>` | **No** | Managed by AWS |
-| `<networkConnectors>` | **No** | Use Amazon MQ network of brokers feature |
-| `<systemUsage>` | Partially | Some memory settings accepted |
+| Flag                               | Available on Amazon MQ  | Notes                                    |
+| ---------------------------------- | ----------------------- | ---------------------------------------- |
+| `prioritizedMessages="true"`       | Yes                     | Core priority flag                       |
+| `sortedStore="true"`               | Yes                     | Recommended with persistence             |
+| `optimizedDispatch="true"`         | Yes                     | Recommended for throughput               |
+| `prefetchPerLevel`                 | Yes                     | Via `priorityQueueCursor` config         |
+| `concurrentStoreAndDispatchQueues` | **No** — managed by AWS | Set correctly by AWS on 5.15.9+          |
+| `<persistenceAdapter>` (KahaDB)    | **No**                  | Managed by AWS                           |
+| `<transportConnectors>`            | **No**                  | Managed by AWS                           |
+| `<networkConnectors>`              | **No**                  | Use Amazon MQ network of brokers feature |
+| `<systemUsage>`                    | Partially               | Some memory settings accepted            |
 
 ### Recommended activemq.xml for Amazon MQ
 
