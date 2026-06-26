@@ -9,7 +9,7 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 | `npm run dev`            | Hugo dev server (localhost:1313, live reload; **no drafts** — use `hugo server -D` for drafts) |
 | `npm run build`          | Production build (gc, minify, template metrics)                                                |
 | `npm run preview`        | Dev server, production env, template metrics                                                   |
-| `npm run format`         | Prettier only — **no linter, no typecheck**                                                    |
+| `npm run format`         | Prettier only (with `prettier-plugin-go-template` + `prettier-plugin-tailwindcss`) — **no linter, no typecheck** |
 | `npm run update-modules` | Update all Hugo module deps                                                                    |
 
 **CI note:** deploy.yml builds with `hugo --gc --minify --baseURL "$URL"` (not `npm run build`) so GitHub Pages injects the URL. CI uses `npm ci`.
@@ -30,10 +30,10 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 
 ## Architecture
 
-- **Theme**: `github.com/zeon-studio/hugoplate` — Hugo module (auto-downloads to `themes/hugoplate/`). Config in `config/_default/`.
+- **Theme**: `github.com/zeon-studio/hugoplate` — Hugo module (auto-downloads to `themes/hugoplate/`). Hugo module imports in `config/_default/module.toml`.
 - **Asset pipeline**: TailwindCSS v4 via `@tailwindcss/cli` (CSS config, no `tailwind.config.js`). Entrypoint: `assets/css/custom.css`.
 - **Custom plugins**: `tailwind-plugin/` (tw-bs-grid.js, tw-theme.js).
-- **Required**: Hugo extended >= 0.151.0 (per theme.toml). Go and Node.js needed locally.
+- **Required**: Hugo extended >= 0.151.0 (per `config/_default/module.toml`). Go and Node.js needed locally.
 - **Custom layouts**: only `layouts/shortcodes/` (`iframe`, `include`) — everything else inherited from the module.
 - **Build output**: `public/` — generated, not committed.
 - **Module quirk**: `hugo_stats.json` mounted with `disableWatch = true` — CSS rebuilds won't trigger on stat changes alone.
