@@ -133,7 +133,7 @@ LIMIT 1000;
 
 Some databases expose changes as a native streaming API:
 
-- **DynamoDB Streams** — ordered stream of item-level changes retained for 24 hours, backed by a Kinesis shard
+- **DynamoDB Streams** — ordered stream of item-level changes retained for 24 hours; for longer retention, route to Kinesis Data Streams (up to 365 days)
 - **MongoDB Change Streams** — oplog-based, real-time, supports resume tokens, aggregation pipeline filtering
 - **Cosmos DB Change Feed** — sorted by modification time, persisted in a container
 
@@ -143,13 +143,42 @@ These are specialised forms of log-based CDC but surfaced through a higher-level
 
 ## Debezium (The Reference Implementation)
 
-Debezium is an open-source distributed CDC platform built on Kafka Connect. It is the de-facto standard for log-based CDC.
+Debezium is an open-source distributed CDC platform built on Kafka Connect. It is the de-facto standard for log-based CDC. The current stable release is **3.4.x** (built against Kafka Connect 4.1.1). PostgreSQL 13 support was dropped as of Debezium 3.4.
 
-### Architecture
+### Deployment Modes
+
+Debezium supports two primary deployment models:
+
+**1. Kafka Connect (standalone cluster)**
+
+The traditional architecture: Debezium runs as a Kafka Connect source connector on a dedicated Connect worker cluster. This is the right choice for high-throughput, multi-table, production pipelines.
 
 ```
 Source DB → Debezium Connector (Kafka Connect worker) → Kafka Topic → Sink Connector (Elasticsearch, S3, etc.)
 ```
+
+**2. Embedded via Quarkus Extension (introduced in 3.4)**
+
+Debezium 3.4 introduced a Quarkus DevService extension that embeds CDC directly inside a Quarkus application — no separate Kafka Connect cluster required. Supported connectors: PostgreSQL, MySQL, MariaDB, MongoDB, SQL Server.
+
+```xml
+<dependency>
+    <groupId>io.debezium.quarkus</groupId>
+    <artifactId>quarkus-debezium-postgres</artifactId>
+    <version>3.4.3.Final</version>
+</dependency>
+```
+
+```properties
+# application.properties
+quarkus.debezium.name=orders-app
+quarkus.debezium.topic.prefix=prod-db
+quarkus.debezium.offset.storage=org.apache.kafka.connect.storage.FileOffsetBackingStore
+```
+
+This is well-suited for microservices that need to react to their own database changes locally, or for lower-throughput use cases where running a full Kafka Connect cluster is not justified.
+
+### Kafka Connect Architecture
 
 Each Debezium connector is a Kafka Connect source connector that:
 
@@ -182,7 +211,7 @@ Each Debezium connector is a Kafka Connect source connector that:
       "total": 299.99
     },
     "source": {
-      "version": "2.7.3.Final",
+      "version": "3.4.3.Final",
       "connector": "postgresql",
       "name": "prod-db",
       "ts_ms": 1750000000000,
@@ -359,11 +388,14 @@ DynamoDB Table → DynamoDB Stream → AWS Lambda / KCL Consumer → Downstream
 ```
 
 - A stream is enabled per table (NEW_IMAGE, OLD_IMAGE, NEW_AND_OLD_IMAGES, KEYS_ONLY)
-- Data retained for 24 hours (default) — extend with Kinesis via DynamoDB Streams to Kinesis adapter
+- **Data is retained for exactly 24 hours** — this is a hard limit with no configuration option to extend it
+- For retention beyond 24 hours, route changes to **Kinesis Data Streams** (a separate service), which supports retention up to 365 days and integrates with Kinesis Data Firehose and Kinesis Data Analytics
 - Each stream is composed of shards:
   - Shards are automatically created/removed based on table throughput
   - Ordering is guaranteed within a shard but not across shards
   - Shards are hashed by partition key
+
+> **KCL note:** DynamoDB Streams added support for Kinesis Client Library (KCL) 3.0 in June 2025, reducing compute costs by up to 33% compared to earlier KCL versions. KCL 1.x reached end-of-support on January 30, 2026 — migrate to KCL 3.x.
 
 ### Stream Record Structure
 
@@ -621,7 +653,7 @@ Debezium can be configured to use Kafka's exactly-once semantics:
 | Kafka Connect lag (records behind) | Kafka consumer group offset | > 10,000 per partition |
 | Debezium snapshot progress | `debezium-metrics` JMX MBeans | Stalled > 5 minutes |
 | WAL generation rate | CloudWatch / pg_stat_statements | > 2x baseline for 10 min |
-| Connector failure rate | Kafka Connect REST API (`/connectors//status`) | Any failure |
+| Connector failure rate | Kafka Connect REST API (`/connectors/<name>/status`) | Any failure |
 
 ---
 
@@ -640,3 +672,5 @@ Debezium can be configured to use Kafka's exactly-once semantics:
 | High-volume (10k+ events/sec) | Debezium + Kafka (tuned) |
 | Event-driven microservices | Outbox pattern + CDC |
 | Backfill old data | Debezium incremental snapshot |
+| Embedded CDC in a Quarkus service | Debezium Quarkus Extension (3.4+) |
+| DynamoDB changes beyond 24h retention | DynamoDB Streams → Kinesis Data Streams |
