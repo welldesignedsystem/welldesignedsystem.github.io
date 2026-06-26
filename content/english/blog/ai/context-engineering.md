@@ -9,11 +9,11 @@ summary = "Design patterns, best practices and caveats for engineering context i
 ## What Is Context Engineering
 
 - The practice of deliberately designing, structuring and optimizing context provided to an LLM to produce more accurate, reliable outputs.
-- Natural progression from prompt engineering — when the charging team did Balance manager Anomaly Detection in July 2025 Context engineering a term we did exactly that then.
-- Prompt engineering: writing LLM instructions.
-- Context engineering: managing entire context state — system prompts, tools, MCP, data sources, conversation history
-- Model has a limited attention span and Every token depletes the ttention budget. As context grows, recall accuracy decreases -> this is also called **Context Rot**
-- Guiding principle: smallest possible set of high-signal tokens that maximize likelihood of desired outcome (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+- It's the natural next level of prompt engineering 
+- While Prompt engineering: writing LLM instructions, Context engineering: manages entire context state — system prompts, tools, MCP, data sources, conversation history
+- Model has a limited attention span and Every token depletes the attention budget. 
+- As context grows, recall accuracy decreases -> this is also called **Context Rot**
+- Guiding principle: Smallest possible set of high-signal tokens that maximize likelihood of desired outcome (https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
 
 ---
 
@@ -21,33 +21,81 @@ summary = "Design patterns, best practices and caveats for engineering context i
 
 ### CLAUDE.md — Per-Session Foundation
 
-- Loaded at every session start, injected directly into system prompt
+- Loaded at every session start - seems like being injected directly into system prompt. Root level CLAUDE.md - They are not evicted or lazily loaded when not needed.
+- ```
+    [SYSTEM PROMPT]
+    You are Claude...
+    (tool instructions, safety rules, etc.)
+
+    [PROJECT CONTEXT]
+    Contents of CLAUDE.md
+
+    [CONVERSATION]
+    User: ...
+    Assistant: ...
+  ```
+- The context space occupied/Cost induced by CLAUDE.md is fixed - whether you use the session to write 1 single prompt or many. So keep it small and applicable to all prompts Not all prompts require all that info.
 - Every token competes for attention on every user turn
 - Anthropic guidance: for every line ask "would the agent make a mistake without this?" If not, delete it (https://docs.anthropic.com/en/docs/claude-code/overview)
-- Monorepos: `CLAUDE.md` cascades — root level + subdirectory level both load
-- Separate `CLAUDE.local.md` exists for local-only instructions (gitignored, not shared)
+- Ancestor CLAUDE.md files (above working dir): Claude walks UP the directory tree, loading every `CLAUDE.md` and `CLAUDE.local.md` found. All are **concatenated** into context (additive, not replaced), ordered from root downward. So instructions closer to your working directory get read last (higher priority).
+- Subdirectory CLAUDE.md files (below working dir): **Not loaded at session start**. They are lazy-loaded on demand when Claude reads files in that subdirectory. This means you can place focused CLAUDE.md files in subdirectories and only pay the token cost when the agent actually works in those areas — useful for any multi-module project, not just monorepos.
+- Separate `CLAUDE.local.md` exists for local-only instructions (gitignored, not shared). It sits alongside `CLAUDE.md` and is appended after it within the same directory.
 
-```
+```text
 # CLAUDE.md
 ## Project Overview
-Rust monorepo, Cargo workspaces. Core crates: core/, api/, cli/.
+Python monorepo, uv workspaces. Core packages: core/, api/, cli/.
 
 ## Conventions
-- thiserror for error types, follow Rust API Guidelines
-- Always run `cargo test` before committing
+- Use `pydantic` for data validation and settings, not dataclasses
+- Always run `pytest` before committing
 ```
 
 ### Path-Filtered Rules (.claude/rules/\*.md)
 
 - Middle ground between CLAUDE.md (always loaded) and skills (user/model invoked)
 - Loads only when file path patterns match
-- Uses `paths` glob in frontmatter to control activation
+- Uses `paths` **glob** in **frontmatter** to control activation — the filename is just a label, not the trigger:
+
+e.g. **database.md**
+```markdown
+---
+paths:
+  - "**/*.sql"
+  - "**/migrations/**"
+  - "**/schema/**"
+---
+
+# Database Conventions
+- Use `VARCHAR(255)` for short strings
+- Always include `created_at` and `updated_at`
+```
+Example project tree:
 
 ```
-.claude/rules/
-  python-testing.md    # Applies when working with test files
-  database.md          # Applies when touching SQL or schema files
+project/
+├── CLAUDE.md                        # always loaded
+├── .claude/
+│   └── rules/
+│       ├── python-testing.md        # paths: ["**/test_*.py", "**/tests/**"]
+│       ├── database.md              # paths: ["**/*.sql", "**/migrations/**", "**/schema/**"]
+│       └── react-components.md      # paths: ["**/*.tsx", "**/*.jsx"]
+│
+├── backend/
+│   ├── src/main.py
+│   ├── tests/test_api.py            # → python-testing.md
+│   └── migrations/001_users.sql     # → database.md
+│
+├── frontend/
+│   └── src/
+│       └── App.tsx                  # → react-components.md
+│
+└── database/
+    └── schema/init.sql             # → database.md
 ```
+
+- Claude Code reads the `paths` globs at session start and loads the rule body only when the agent's file operations match one of them. 
+- A file like `frontend/tests/App.test.tsx` can match **multiple rules** (react-components + python-testing), each adding its domain knowledge when needed — without polluting context during unrelated work.
 
 ### Skills — On-Demand Workflows
 
@@ -55,8 +103,8 @@ Rust monorepo, Cargo workspaces. Core crates: core/, api/, cli/.
 - Progressive disclosure: agent loads name + description at startup, full content only when task detected (https://code.claude.com/docs/en/skills)
 - Keep under 500 lines — move reference material to supporting files (https://code.claude.com/docs/en/skills)
 - Frontmatter controls:
-  - `disable-model-invocation: true` — manual-only (deploys, side effects)
-  - `user-invocable: false` — model can invoke, hidden from slash menu
+  - `disable-model-invocation: true` — manual-only (deploys, side effects), false allows invocation by intent by model.
+  - `user-invocable: false` — model can invoke, hidden from slash menu, true allows manual invocation using slash command.
   - `allowed-tools` — auto-approve tools while skill is active
   - `context: fork` — run in isolated subagent, instructions vanish after completion
 
@@ -155,19 +203,19 @@ disallowedTools: Write, Edit, Bash
 
 **Put in:**
 
-- Project structure, language, framework
-- Critical conventions — error handling, naming, style
-- Exact build/test/run commands agent would guess wrong
-- Architectural decisions and rationale
-- Security constraints ("never commit secrets")
-- "Stuck record" — mistakes the team has actually made
+- **Project structure, language, framework** — e.g. "Python monorepo with `uv` workspaces. Packages live in `packages/`, each with its own `pyproject.toml`."
+- **Critical conventions — error handling, naming, style** — e.g. "Use `pydantic` for data validation, not `dataclasses`. Use `snake_case` for variables and `PascalCase` for classes."
+- **Exact build/test/run commands agent would guess wrong** — e.g. "Run `npm run dev` for the dev server (not `npm start`, not `node server.js`). Run `nox -s tests` to test, not `pytest`."
+- **Architectural decisions and rationale** — e.g. "PostgreSQL over MySQL for JSONB support. Rationale: flexible schema for event sourcing."
+- **Security constraints ("never commit secrets")** — e.g. "Never commit `.env` files. Never hardcode API keys. Run `git secrets --scan` before every commit."
+- **"Stuck record" — mistakes the team has actually made** — e.g. "Don't import from `utils.py` directly; import from the public API in `__init__.py` — this has caused circular imports three times." or "We use `pip` not `uv` — every time someone runs `uv add` it breaks the lockfile."
 
 **Leave out:**
 
-- Lengthy reference tables, API docs, framework guides
-- Rarely-needed workflows (infrequent deploys, migrations)
-- Instructions for specific subdirectories only
-- Verbose examples
+- **Lengthy reference tables, API docs, framework guides** — e.g. don't paste the entire `numpy` function reference or a SQL cheatsheet. Link to docs instead.
+- **Rarely-needed workflows (infrequent deploys, migrations)** — e.g. don't include "how to do the quarterly database migration" or "how to rotate SSL certs." Put these in a skill.
+- **Instructions for specific subdirectories only** — e.g. don't document frontend testing conventions if the repo also has backend, data, infra code. Use path-filtered rules instead.
+- **Verbose examples** — e.g. don't include a 30-line worked example of every function. One-line patterns are fine.
 
 **Keep under 100-150 lines.** Anthropic's own CLAUDE.md fits one screen.
 
@@ -200,18 +248,18 @@ disallowedTools: Write, Edit, Bash
 
 **Don't use for:** static reference data (load as instructions), built-in tool operations (Read, Grep, Bash), one-off scripts.
 
-### Worked Example — Rust Web Service
+### Worked Example — Python Web Service
 
 ```
 project-root/
 ├── CLAUDE.md                    # 60 lines: layout, build, test, conventions
 ├── .claude/
 │   ├── settings.json            # Permissions, MCP, hooks
-│   ├── rules/postgres.md        # SQL schema conventions (applies to .sql/.rs)
+│   ├── rules/postgres.md        # SQL schema conventions (applies to .sql/.py)
 │   ├── skills/deploy/SKILL.md   # /deploy: build, test, deploy
 │   ├── skills/code-review/      # Auto-invoked on PRs
 │   └── agents/db-explorer.md    # Read-only, Haiku, postgres MCP
-└── .mcp.json                    # Shared MCP: postgres, cargo-audit
+└── .mcp.json                    # Shared MCP: postgres, bandit
 ```
 
 - CLAUDE.md: session essentials only
@@ -254,7 +302,7 @@ project-root/
     Rationale: Flexible schema for event sourcing.
 
   ## Active Context
-  - Implementing payment webhook handler (src/webhooks/payment.rs)
+  - Implementing payment webhook handler (src/webhooks/payment.py)
   - Blocked on: webhook signature verification library
 ```
 
