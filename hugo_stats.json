@@ -807,6 +807,7 @@
       "alerting--notification-framework",
       "algorithmic-scaling",
       "always-define-explicit-scope-limits",
+      "always-on-custom-instruction",
       "amazon-cloudwatch",
       "amazon-leadership-principles",
       "amazon-mq-broker-engines-and-instance-types",

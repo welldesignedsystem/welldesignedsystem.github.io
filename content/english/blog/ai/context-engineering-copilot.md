@@ -12,11 +12,8 @@ Why this matters: every token you load costs attention *and* money. Models lose 
 
 **Would copying the same sentence 10 times into copilot-instructions.md help?**
 
-A teacher made a student write a sentence 10 times and did it work - Rote repetition (copying the same thing over and over, identically) builds short-term recall, not understanding. The first repetition gets ~80% of the benefit, the second one may be ~15%, and the remaining eight are lost in day dreams. 
-
-What drives real learning (for both humans and models) is seeing the same concept from different angles. A prohibition, a positive alternative, a concrete example, a counter example, a counter intuitive example anything — each activates a different mental pathway. For the student, that builds transferable knowledge. For the model, it triggers different regions of its training distribution where the same rule was encoded in different contexts.
-
-Galileo challenged the belief held by Aristotle that a canon ball made of iron and a feather fell at the same speed, if it weren't for air resistance. [video](https://youtu.be/E43-CfukEgs?t=169)
+What drives real learning (for both humans and models) is seeing the same concept from different angles. A prohibition, a positive alternative, a concrete example, a counter example, a counter intuitive example anything — each activates a different mental pathway. 
+Galileo challenged the belief held by Aristotle that a canon ball made of iron and a feather fell at the same speed, if it weren't for air resistance. This is what develops real knowledge. For the model, even which training phase - this triggers different regions of its training distribution where the same rule was encoded in different contexts.
 
 The pattern that *actually* works for models is **multifaceted encoding**.
 
@@ -24,16 +21,16 @@ Occam's razor is a logical principle stating that when faced with competing expl
 
 ---
 
-## copilot-instructions.md (and AGENTS.md, CLAUDE.md)
+## Always on Custom instruction.
 
-The always-on workhorse. Loaded into every session, every surface, every turn. **Everything about them lives here.**
+It's always on - Loaded into every session, every single time whether you use the session for single message or many.
 
 **The three tiers of always-on:**
 - **Organization** — GitHub.com org settings. Covers all members on Chat, code review, cloud agent.
 - **Personal** — Your GitHub.com profile. Follows you everywhere.
 - **Repository** — `.github/copilot-instructions.md` (also `AGENTS.md` or `CLAUDE.md`). Applies to all files in all surfaces — VS Code, JetBrains, GitHub.com, coding agent.
 
-**The 4,000-character trap.** Copilot code review silently ignores everything beyond 4K chars. Doesn't warn you. Your 800-line masterpiece? Useless for PRs. Keep repo instructions under 200-300 lines. A crisp 200-liner *always* beats a bloated 800-liner anyway — less context rot, fewer tokens burned.
+**The character trap.** Copilot code review silently ignores everything beyond a certain number of chars (I dont know what it is here but usually 4000). Doesn't warn you. Keep repo instructions under 200-300 lines. A crisp 200-liner *always* beats a bloated 800-liner anyway — less context rot, fewer tokens burned. It's set at a platform level. 
 
 **Put in:** tech stack, exact build/test/run commands, security rules (parameterize SQL, no secrets), cross-cutting conventions (error handling, logging), architectural decisions with rationale, recurring mistakes the team has actually made.
 
