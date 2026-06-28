@@ -6,25 +6,21 @@ tags = ['Context Engineering', 'GitHub Copilot', 'Coding Agent', 'Design Pattern
 summary = "Everything about Copilot context primitives in one place per concept. No repetition, just signal."
 +++
 
-Why this matters: every token you load costs attention *and* money. Models lose recall as context grows (context rot), and Copilot now burns AI Credits ($0.01/credit) on every token in every turn. The fix is Occam's Razor for context: the smallest set of high-signal tokens that gets the right answer. Every line should pass one test — *would the agent fail without this?*
+Why this matters: every token you load costs attention *and* money. Models lose recall as context grows (context rot), and Copilot now burns AI Credits ($0.01/credit) on every token in every turn. 
 
 ---
 
 **Would copying the same sentence 10 times into copilot-instructions.md help?**
 
-If you're thinking "my teacher made me write a sentence 10 times and it worked" — did it actually? Rote repetition (copying the same thing over and over, identically) builds short-term recall, not understanding.
+A teacher made a student write a sentence 10 times and did it work - Rote repetition (copying the same thing over and over, identically) builds short-term recall, not understanding. The first repetition gets ~80% of the benefit, the second one may be ~15%, and the remaining eight are lost in day dreams. 
 
-What drives real learning (for both humans and models) is seeing the same concept from different angles. A prohibition, a positive alternative, a concrete example, a counterexample — each activates a different mental pathway. For the student, that builds transferable knowledge. For the model, it triggers different regions of its training distribution where the same rule was encoded in different contexts.
+What drives real learning (for both humans and models) is seeing the same concept from different angles. A prohibition, a positive alternative, a concrete example, a counter example, a counter intuitive example anything — each activates a different mental pathway. For the student, that builds transferable knowledge. For the model, it triggers different regions of its training distribution where the same rule was encoded in different contexts.
 
-Ten identical copies of "never commit secrets" in your instruction file: the first mention gets primacy (~80% of the benefit), the second adds marginal reinforcement (~15%), and the remaining eight fight the lost-in-the-middle effect while burning tokens and credits on every turn. You're spending credits to achieve what one well-framed sentence does. Same teacher strategy, same failure pattern.
+Galileo challenged the belief held by Aristotle that a canon ball made of iron and a feather fell at the same speed, if it weren't for air resistance. [video](https://youtu.be/E43-CfukEgs?t=169)
 
-The pattern that *actually* works for models is **multifaceted encoding**:
+The pattern that *actually* works for models is **multifaceted encoding**.
 
-Never commit secrets. Use environment variables for all credentials. Before every commit, run `git diff` to check for accidentally staged secrets. If in doubt, ask a teammate to review your diff.
-
-Same constraint expressed four ways — prohibition, positive rule, concrete action, social check. Each framing hooks a different part of the model's capability space. That's 4 lines instead of 10, covering more ground and burning fewer tokens.
-
-This is what layered encoding does across primitives: `copilot-instructions.md` prohibits, path-specific `.instructions.md` elaborates for a framework, a `preToolUse` hook enforces mechanically. Same constraint, different framings, denser model understanding. Rote repetition within a single file is the weakest form of this.
+Occam's razor is a logical principle stating that when faced with competing explanations for the same event, the simplest one is usually the correct one. if you hear gallops think horses not zebras - that's why good doctors dont give antibiotic.
 
 ---
 
