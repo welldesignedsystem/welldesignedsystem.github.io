@@ -3,152 +3,155 @@ date = '2026-06-26T12:00:00+10:00'
 draft = false
 title = 'Context Engineering for GitHub Copilot'
 tags = ['Context Engineering', 'GitHub Copilot', 'Coding Agent', 'Design Patterns', 'LLM', 'DevTools']
-summary = "Design patterns, best practices and caveats for engineering context in AI coding agents with GitHub Copilot."
+summary = "Everything about Copilot context primitives in one place per concept. No repetition, just signal."
 +++
 
-## What Is Context Engineering
-
-- The practice of deliberately designing, structuring and optimizing context provided to an LLM to produce more accurate, reliable outputs.
-- It's the natural next level of prompt engineering.
-- While prompt engineering writes LLM instructions, context engineering manages entire context state — system prompts, tools, MCP, data sources, conversation history.
-- Models have a limited attention span and every token depletes the attention budget.
-- As context grows, recall accuracy decreases — this is also called **Context Rot**.
-- Guiding principle: smallest possible set of high-signal tokens that maximize the likelihood of the desired outcome.
-- **Cost implication (June 2026):** With Copilot now on usage-based billing, every token loaded into context has a direct monetary cost. Context engineering is no longer just about quality — it's also about spend. A bloated `copilot-instructions.md` loaded on every turn costs real credits. The guiding principle above is now both a quality and a cost imperative.
+Why this matters: every token you load costs attention *and* money. Models lose recall as context grows (context rot), and Copilot now burns AI Credits ($0.01/credit) on every token in every turn. The fix is Occam's Razor for context: the smallest set of high-signal tokens that gets the right answer. Every line should pass one test — *would the agent fail without this?*
 
 ---
 
-## How Coding Agents Consume Context (GitHub Copilot)
+**Would copying the same sentence 10 times into copilot-instructions.md help?**
 
-Copilot has a fundamentally different context architecture from Claude Code. Instead of a monolithic per-session file loaded upfront, Copilot layers context from multiple sources — some always-on, some path-filtered, some on-demand — that are merged before every prompt.
+If you're thinking "my teacher made me write a sentence 10 times and it worked" — did it actually? Rote repetition (copying the same thing over and over, identically) builds short-term recall, not understanding.
 
-### Custom Instructions — Always-On Foundation
+What drives real learning (for both humans and models) is seeing the same concept from different angles. A prohibition, a positive alternative, a concrete example, a counterexample — each activates a different mental pathway. For the student, that builds transferable knowledge. For the model, it triggers different regions of its training distribution where the same rule was encoded in different contexts.
 
-Copilot supports three tiers of always-on custom instructions:
+Ten identical copies of "never commit secrets" in your instruction file: the first mention gets primacy (~80% of the benefit), the second adds marginal reinforcement (~15%), and the remaining eight fight the lost-in-the-middle effect while burning tokens and credits on every turn. You're spending credits to achieve what one well-framed sentence does. Same teacher strategy, same failure pattern.
 
-| Tier             | Scope                         | Configuration                                                  | Where it works  |
-| ---------------- | ----------------------------- | -------------------------------------------------------------- | --------------- |
-| **Organization** | All org members on GitHub.com | GitHub.com org settings (GA since April 2026)                  | GitHub.com chat, code review, cloud agent |
-| **Personal**     | Individual user               | GitHub.com profile → Personal instructions                     | GitHub.com chat |
-| **Repository**   | All files in the repo         | `.github/copilot-instructions.md`, `AGENTS.md`, or `CLAUDE.md` | All surfaces    |
+The pattern that *actually* works for models is **multifaceted encoding**:
 
-**Organization-wide instructions** became generally available in April 2026. Admins can now set default instructions that apply across all repositories in the org — covering Copilot Chat on GitHub.com, Copilot code review, and the cloud agent.
+Never commit secrets. Use environment variables for all credentials. Before every commit, run `git diff` to check for accidentally staged secrets. If in doubt, ask a teammate to review your diff.
 
-**Repository-wide instructions** (`.github/copilot-instructions.md`) are the most important for most teams — they apply to every file in every chat interaction and work across VS Code, JetBrains, GitHub.com chat and the coding agent. Keep them under ~1,000 lines (ideally 200–300) since they're loaded on every turn and consume AI Credits on every interaction.
+Same constraint expressed four ways — prohibition, positive rule, concrete action, social check. Each framing hooks a different part of the model's capability space. That's 4 lines instead of 10, covering more ground and burning fewer tokens.
 
-**When to use:**
+This is what layered encoding does across primitives: `copilot-instructions.md` prohibits, path-specific `.instructions.md` elaborates for a framework, a `preToolUse` hook enforces mechanically. Same constraint, different framings, denser model understanding. Rote repetition within a single file is the weakest form of this.
 
-- Project structure, tech stack and build/test commands
-- Universal security requirements (parameterize SQL, no secrets in code)
-- Cross-cutting conventions (error handling, logging, naming)
-- Documentation standards
-
-**When NOT to use:**
-
-- Language- or directory-specific rules (use path-specific `.instructions.md`)
-- One-off tasks (use prompt files)
-- Conditional rules that don't apply everywhere
-
-### Path-Specific Instructions (`.instructions.md`)
-
-Placed in `.github/instructions/` (or custom locations configured via `chat.instructionsFilesLocations`) with an `applyTo` frontmatter glob:
-
-```markdown
----
-applyTo: "**/*.py"
 ---
 
-# Python Conventions
+## copilot-instructions.md (and AGENTS.md, CLAUDE.md)
 
-- Use type hints for all function signatures
-- Follow PEP 8
-- Write docstrings for public functions
-```
+The always-on workhorse. Loaded into every session, every surface, every turn. **Everything about them lives here.**
 
-- Instructions only activate when Copilot works with matching files — `/init` or unrelated files do not load them.
-- Load full contents into context when matched (not progressively disclosed).
-- Multiple patterns separated by commas.
-- If both a path-specific file and `copilot-instructions.md` apply to the same file, both are used — avoid contradictory instructions.
+**The three tiers of always-on:**
+- **Organization** — GitHub.com org settings. Covers all members on Chat, code review, cloud agent.
+- **Personal** — Your GitHub.com profile. Follows you everywhere.
+- **Repository** — `.github/copilot-instructions.md` (also `AGENTS.md` or `CLAUDE.md`). Applies to all files in all surfaces — VS Code, JetBrains, GitHub.com, coding agent.
 
-### Prompt Files (`.prompt.md`)
+**The 4,000-character trap.** Copilot code review silently ignores everything beyond 4K chars. Doesn't warn you. Your 800-line masterpiece? Useless for PRs. Keep repo instructions under 200-300 lines. A crisp 200-liner *always* beats a bloated 800-liner anyway — less context rot, fewer tokens burned.
 
-Reusable, on-demand task prompts in `.github/prompts/`. Invoked via `/filename` in chat. Unlike instructions, they only run when explicitly invoked:
+**Put in:** tech stack, exact build/test/run commands, security rules (parameterize SQL, no secrets), cross-cutting conventions (error handling, logging), architectural decisions with rationale, recurring mistakes the team has actually made.
 
-```markdown
+**Leave out:** language-specific rules (use `.instructions.md`), conventions your linter already enforces, external URLs (Copilot can't fetch them), verbose examples.
+
+**Cost reality.** Under usage-based billing, a 500-line `copilot-instructions.md` loaded on every turn across long sessions adds up fast. Routine session with 50 turns × 500 lines × cached token discount ≈ still significant. Trim or pay.
+
+**Self-writing.** When Copilot makes a mistake, tell it "Extract an instruction from this so you never do it again." Compound effect — your instructions capture real failure modes, not idealized wishes.
+
+**`/init`** auto-generates `copilot-instructions.md` from your codebase. Run it once, then prune hard.
+
+**Portability.** `AGENTS.md` is an open standard supported by Copilot, Claude Code, Cursor, Devin, Gemini CLI, opencode. Use it if you want cross-tool. `copilot-instructions.md` is Copilot-only. Both work in Copilot. Pick one — don't maintain both.
+
+**CLAUDE.md** also works in Copilot. VS Code and JetBrains detect it automatically. One file, both tools. Enable/disable via `chat.useClaudeMdFile`.
+
+**Config layering** (later overrides earlier):
+1. Organization instructions (GitHub.com)
+2. Personal instructions (GitHub.com profile)
+3. Repository instructions (`copilot-instructions.md` / `AGENTS.md` / `CLAUDE.md`)
+4. Path-specific instructions (`.instructions.md`)
+5. Prompt files, agents, skills (on-demand)
+6. Your chat prompt — highest priority
+
+**Config merges, not replaces.** Omit MCP servers in your project config and you inherit the global ones. Must explicitly disable.
+
 ---
-name: explain-code
-description: "Generate a clear code explanation with examples"
-agent: agent
----
 
-Explain the following code: ${input:code:Paste your code here}
-```
+## Path-Specific Instructions (.instructions.md)
 
-- **Supported in:** VS Code, Visual Studio, JetBrains (not GitHub.com chat).
-- **Frontmatter fields:** `name`, `description`, `agent` (`ask`/`agent`/`plan`/custom agent name), `model`, `tools`, `argument-hint`.
-- **Dynamic variables:** `${input:varName:placeholder}` syntax pauses and prompts for values.
-- **Generation:** `/create-prompt` in chat.
-
-### Custom Agents (`.agent.md`)
-
-Specialized agent personas with defined scope, tools and model preferences. Two flavors:
-
-**VS Code / JetBrains local agents** (`.agent.md` in configured locations):
+In `.github/instructions/`. Only load when Copilot touches matching files. Not progressively disclosed — full content enters context on match.
 
 ```yaml
 ---
-name: docs-specialist
-description: Focused on README and documentation files
-tools: ["read", "search", "edit"]
-model: ["Claude Opus 4.5", "GPT-5.2"]
-handoffs:
-  - label: Implement Plan
-    agent: agent
-    prompt: Implement the plan outlined above.
-    send: false
+applyTo: "**/*.py"
 ---
+# Python Conventions
+- Use type hints for all signatures
+- Follow PEP 8
+- Docstrings on public functions
 ```
 
-Custom agents, sub-agents, and plan agent are now generally available in JetBrains IDEs as of March 2026.
+- Config: **full content on path match**. A 400-liner for `**/*.py` costs 400 tokens every time you touch Python.
+- If both repo instructions and path-specific instructions apply, both are used. **Behavior on conflict is non-deterministic.** Don't write contradictory rules.
+- Best for: language/framework conventions, subdirectory-specific rules, anything that only applies to part of your codebase.
+- Token cost: zero when you're working outside the matching paths — so put your Python rules in Python rules, not in `copilot-instructions.md`.
 
-**GitHub.com cloud agents** (`.github/agents/*.agent.md`, must be on default branch):
+---
 
-- Fully autonomous: edits files, creates commits, opens PRs.
-- Supports `mcp-servers` frontmatter but not `handoffs` or `argument-hint`.
-- Max body length: 30,000 characters.
-- Selected at `github.com/copilot/agents`.
+## Prompt Files (.prompt.md)
 
-### Agent Skills (`SKILL.md`)
+In `.github/prompts/`. Zero-cost until you invoke via `/name`. Task-specific templates with variables.
 
-Reusable capability files that teach compatible tools how to perform a specific task. Standardized format across Copilot, Claude Code and other agents. Native SKILL.md support landed in GitHub Copilot's agent mode in April 2026.
+```yaml
+---
+name: explain-code
+description: "Explain code with examples"
+agent: agent
+---
+Explain this: ${input:code:Paste your code here}
+```
 
-```markdown
+Key details:
+- **IDE only.** VS Code and JetBrains. Not GitHub.com chat or the coding agent.
+- `${input:varName:placeholder}` — pauses and prompts for values at invocation time.
+- `/create-prompt` generates them from chat.
+- Best for: workflows you run less than once a week. More frequent? Make a skill.
+
+---
+
+## Custom Agents (.agent.md)
+
+Specialized agent personas with their own tool access, model preferences, and context isolation.
+
+**Local agents** (`.agent.md` in VS Code / JetBrains): support `handoffs` for chaining. Each handoff gets a **clean context window** — zero conversation history pollution from the caller. `send: false` runs as isolated subagent (returns only the final result). `send: true` appends the full interaction as a message in the parent conversation.
+
+**Cloud agents** (`.github/agents/` or `agents/` at repo root): fully autonomous — edits files, creates commits, opens PRs. Always work through branches. No `handoffs` support (ignored if present). Selected at `github.com/copilot/agents`.
+
+Best for: role-specific workflows (docs specialist, code reviewer), restricted tool access (read-only agents, MCP-only agents), multi-step chains (planner → implementer → reviewer).
+
+Create agents when you need to enforce a security boundary through tool restrictions rather than prompt instructions. A docs agent with `tools: ["read", "search", "edit"]` literally cannot run `bash`.
+
+---
+
+## Agent Skills (SKILL.md)
+
+The most credit-efficient context primitive. **Progressive disclosure**: ~100 tokens at startup (name + description), full body only on intent match.
+
+```yaml
 ---
 name: write-migration
-description: Generates a database migration file following project conventions
+description: Generates a database migration file
 user-invocable: true
 disable-model-invocation: false
 ---
 ```
 
-- **Progressive disclosure:** Only `name`/`description` loaded at startup (~100 tokens). Full body loaded only when task detected.
-- **File location:** `.github/skills/<name>/SKILL.md`, `.claude/skills/<name>/SKILL.md`, or `.agents/skills/<name>/SKILL.md`.
-- **Also global:** `~/.copilot/skills/<name>/SKILL.md`.
-- **`gh skill` CLI:** Use `gh skill` (GitHub CLI 2.90.0+) to discover, install, update and publish skills from GitHub repositories. Provenance metadata is written into the SKILL.md frontmatter on install, enabling `gh skill update` to track upstream changes. Always use `gh skill preview` to inspect a skill before installing — skills can contain prompt injections or malicious scripts.
+- Place in `.github/skills/<name>/SKILL.md`, `.claude/skills/<name>/SKILL.md`, or `~/.copilot/skills/<name>/SKILL.md`.
+- **Directory name must match `name` field** or it silently fails to load.
+- Full content stays in context until compacted. Skills are standing instructions for a task, not one-time steps.
+- No `${input:varName}` support — use prompt files for dynamic input.
+- `gh skill preview` before installing. Skills can contain prompt injections.
+- Best for: domain knowledge >200 lines that shouldn't pollute context every session. Migration patterns, PR review checklists, deployment guides.
 
-### AGENTS.md — Portable Project Guidance
+| Storage approach | Startup cost | Per-task cost |
+|---|---|---|
+| `copilot-instructions.md` (500 lines) | 500 tokens, every turn | Same |
+| `.instructions.md` (300 lines) | 0 (on path match: 300) | 300 tokens |
+| Skill (400 lines) | ~100 tokens | 400 tokens only when matched |
 
-Plain Markdown (no frontmatter) at the repo root. Open standard stewarded by the Agentic AI Foundation. Acts as a README for coding agents — build steps, test commands, conventions. Supported by Copilot, Claude Code, Cursor, Devin, Gemini CLI, opencode and many others. JetBrains IDE added the ability to auto-generate an initial `AGENTS.md` via the **Generate Agent Instructions** action.
+---
 
-Conflict resolution: the closest `AGENTS.md` to the file being edited takes precedence.
+## MCP Servers (.vscode/mcp.json)
 
-### Copilot Memory
-
-Copilot can now deduce and store useful information about a repository. This memory is used by Copilot cloud agent and Copilot code review to improve the quality of their output when working in that repository over time — without requiring you to re-state context on every task. Memory is managed separately from instruction files.
-
-### MCP Servers (`.vscode/mcp.json`)
-
-Model Context Protocol servers connect the agent to external systems — databases, browsers, APIs, file systems. Configured in `.vscode/mcp.json`:
+Connect agents to external systems — databases, browsers, APIs. Tool definitions cost 50-200 tokens each. A 10-tool server eats ~500-2,000 tokens just in definitions before doing any work.
 
 ```json
 {
@@ -162,311 +165,76 @@ Model Context Protocol servers connect the agent to external systems — databas
 }
 ```
 
-- Referenced in agent `tools` arrays as `server-name/*`.
-- Secrets via `${input:varName}` — never hardcoded.
-- Workspace-scoped, shareable via version control.
-- **MCP auto-approve:** VS Code and JetBrains now support auto-approve for MCP at both server and tool level, reducing manual approval interruptions during agent sessions.
-- **Admin allowlists:** MCP server usage in Visual Studio respects allowlist policies set through GitHub. Admins can restrict which MCP servers their organization can connect to.
-- **Token cost:** Each MCP server adds tool definitions to the system prompt (~50–200 tokens per tool, ~500–2,000 for a typical 10-tool server). Prefer CLI tools (`gh`, `git`, `npm`) where possible — they have zero per-tool listing overhead.
+- **CLI tools over MCP for simple stuff.** `gh`, `git`, `npm`, `curl` have zero per-tool listing overhead. MCP only when you need structured tool contracts.
+- **Auto-approve** now supported at server and tool level in VS Code and JetBrains.
+- **Admin allowlists** — org admins can restrict which MCP servers connect.
+- **Workspace-scoped.** Committed to version control. Review MCP configs in PRs.
+- Referenced in agent `tools` as `server-name/*`.
+- Secrets via `${input:varName}` — never hardcode.
 
-### Hooks (`.github/hooks/*.json`)
+---
 
-Deterministic shell commands that fire on lifecycle events — the only way to _enforce_ rather than _suggest_ behavior. Agent hooks are now in public preview for JetBrains IDEs (March 2026), in addition to VS Code.
+## Hooks (.github/hooks/*.json)
+
+The only way to **enforce** rather than **suggest**. Shell commands on lifecycle events.
 
 ```json
 {
   "version": 1,
   "hooks": {
-    "preToolUse": [
-      {
-        "type": "command",
-        "bash": "./scripts/security-check.sh"
-      }
-    ]
+    "preToolUse": [{ "type": "command", "bash": "./scripts/security-check.sh" }]
   }
 }
 ```
 
-**Supported lifecycle events:** `userPromptSubmitted`, `preToolUse`, `postToolUse`, `errorOccurred`.
-
-Key distinction from instructions: "Don't run dangerous commands" in a `.instructions.md` file is guidance. Returning `deny` from a `preToolUse` hook is enforcement — it fires every time, regardless of how the agent was prompted.
-
-### Copilot Automations
-
-Copilot cloud agent can now run automatically, on a schedule or in response to repository events (such as an issue being opened). This enables hands-off workflows — e.g., automatically triaging new issues, generating fixes for security alerts, or running a nightly code review pass.
-
-### Copilot Desktop App and Canvas
-
-GitHub announced a dedicated Copilot desktop application with a collaborative workspace called **Canvas**, where developers can brainstorm, refine requirements, generate plans, and iterate on projects alongside AI — outside the constraints of the IDE. Canvas also introduces **Agent Merge**, which enables orchestrating multiple agents toward a combined goal, and autonomous code review features.
-
-### Agent Plugins
-
-Prepackaged bundles of skills, agents, hooks and MCP servers installable from marketplaces. Shared format between VS Code, Copilot CLI and Claude Code. Discover via `@agentPlugins` in the Extensions view, or install directly via `copilot plugin install <plugin-name>@awesome-copilot`.
-
-### Copilot Spaces (formerly Knowledge Bases)
-
-Control _what Copilot knows_ for a specific topic — repositories, files, issues, PRs, free-text content. Unlike instructions that shape _how_ Copilot behaves, Spaces control the knowledge base. Accessed via the GitHub MCP server in agent mode. Note: Spaces interactions consume AI Credits under the June 2026 billing model.
-
-### Configuration Layering (later overrides earlier)
-
-1. Organization custom instructions (GitHub.com — GA April 2026)
-2. Personal custom instructions (GitHub.com profile)
-3. Repository instructions (`.github/copilot-instructions.md`, `AGENTS.md`, `CLAUDE.md`)
-4. Path-specific instructions (`.instructions.md` files)
-5. Prompt files, agents, skills (on-demand)
-6. User's explicit chat prompt — highest priority
-
-### Context Variables: `#`, `@`, `/`
-
-Copilot Chat in VS Code uses three prefix mechanisms:
-
-| Prefix  | Purpose                                 | Examples                                                                                    |
-| ------- | --------------------------------------- | ------------------------------------------------------------------------------------------- |
-| **`/`** | Built-in commands + custom prompt files | `/explain`, `/fix`, `/tests`, `/doc`, `/your-prompt`                                        |
-| **`#`** | Attach specific context                 | `#file`, `#codebase`, `#selection`, `#editor`, `#problems`, `#changes`, `#symbol`           |
-| **`@`** | Specialist agents                       | `@workspace`, `@vscode`, `@terminal`, `@github`                                             |
-
-Combine them: `@workspace using patterns in #file:src/api/auth.ts, /fix the issue in #selection`
-
-### CLAUDE.md Compatibility
-
-VS Code automatically detects `CLAUDE.md` and applies it as always-on instructions (similar to `AGENTS.md`). Enable/disable via `chat.useClaudeMdFile` setting. JetBrains also added CLAUDE.md support in March 2026.
+- Events: `userPromptSubmitted`, `preToolUse`, `postToolUse`, `errorOccurred`.
+- "Don't run `rm -rf`" in instructions = suggestion. A `preToolUse` hook returning `deny` = enforcement.
+- **Hooks run with full VS Code privileges.** Review them like production code.
+- **Bash pattern matching is fragile.** Don't rely on `Bash(curl http://github.com *)` for security — it misses `curl -X GET https://github.com/...`. Use tool-level denials and MCP scoping instead.
+- Public preview in JetBrains (March 2026), already GA in VS Code.
 
 ---
 
-## What Goes Where: Choosing the Right Primitive
+## Context Shortcuts: `#`, `@`, `/`
 
-| Primitive                 | Loaded             | Token Cost                       | Best For                                      |
-| ------------------------- | ------------------ | -------------------------------- | --------------------------------------------- |
-| `copilot-instructions.md` | Every session      | Full content, always (AI Credits consumed every turn) | Project conventions, security, build commands |
-| `.instructions.md`        | On path match      | Full content when matched        | Language/framework-specific conventions       |
-| Prompt files              | Manual invocation  | Content only when invoked        | One-off tasks, reusable templates             |
-| Custom agents             | Manual selection   | Per-session                      | Complex multi-step workflows                  |
-| Agent skills              | On intent match    | Name/description only at startup | Reusable capabilities, cost-efficient depth   |
-| MCP servers               | On config load     | Tool defs + responses (per-tool overhead) | Live data access, API integration        |
-| Hooks                     | On lifecycle event | Event + execution overhead       | Enforcement, automation                       |
-| Copilot Spaces            | On reference       | Searched content (AI Credits)    | Task-specific knowledge                       |
-| AGENTS.md                 | Per workspace      | Full content                     | Portable project guidance                     |
-| Copilot Memory            | Automatic          | Managed by Copilot               | Persistent repo knowledge across sessions     |
-| Automations               | Scheduled/event    | Per-run agent session cost       | Hands-off recurring tasks                     |
+| Prefix | Purpose | Examples |
+|---|---|---|
+| `/` | Commands + prompt files | `/explain`, `/fix`, `/tests`, `/your-prompt` |
+| `#` | Attach context | `#file`, `#codebase`, `#selection`, `#editor` |
+| `@` | Specialist agents | `@workspace`, `@vscode`, `@terminal`, `@github` |
 
-### Repository Instructions — Do's and Don'ts
+`#codebase` does semantic search across your workspace — Copilot decides relevance. `#file` attaches specific files with known token cost. Use `#codebase` for discovery, `#file` when you know what's needed and want to control spend.
 
-**Put in:**
-
-- Project overview and tech stack
-- Build/test/run commands
-- Universal security requirements
-- Cross-cutting coding conventions
-- Project structure
-- Available scripts and MCP servers
-
-**Leave out:**
-
-- Language-specific rules (use path-specific `.instructions.md`)
-- Rarely-needed workflows (use prompt files or skills)
-- Instructions for specific subdirectories (use path-specific files)
-- Rules already enforced by linters/formatters
-- External URLs (Copilot can't fetch them — copy content inline)
-
-**Keep under 200–300 lines.** The 4,000-character limit for code review means anything beyond that is silently ignored for PR reviews. Under usage-based billing, every line also costs credits on every turn — brevity is now both a quality and a cost concern.
-
-### Path-Specific Instructions — Do's and Don'ts
-
-**Put in:** language-specific naming/style conventions, framework patterns, technology-specific security, unique rules for parts of the codebase.
-
-**Leave out:** universal conventions (put in `copilot-instructions.md`), rules enforced by linters.
-
-### Prompt Files — When to Create
-
-- Code explanations, README generation, onboarding plans
-- Tasks needing user input (`${input:varName}`)
-- Workflows you run less than once a week (if more frequent, make a skill)
-- When you need to specify `agent`, `model` or `tools` per-task
-
-### Custom Agents — When to Create
-
-- Role-specific workflows (documentation specialist, code reviewer, bug fixer)
-- Tasks needing restricted tool access (read-only agents)
-- Multi-step workflows with handoffs between agents
-- When `handoffs` can chain planning → implementation → review
-
-### Skills — When to Create
-
-- Domain knowledge shared across sessions (migration patterns, PR review checklist)
-- Capabilities that should auto-invoke based on intent
-- When progressive loading matters — keep 200+ lines out of context until needed
-- Under usage-based billing, skills are the most credit-efficient way to deliver deep, task-specific instructions: only ~100 tokens until invoked
-
-### Hooks — When to Create
-
-- Security enforcement (block `rm -rf`, `DROP TABLE`, writes to production config)
-- Compliance and auditing (log every tool call)
-- Code quality gates (auto-format after every edit)
-- Approval workflows (auto-allow safe ops, require human for sensitive ones)
+Combine them: `@workspace using patterns in #file:src/api/auth.ts, /fix #selection`
 
 ---
 
-## Design Patterns
+## Newer Primitives (June 2026)
 
-### Path-Filtered Context Separation
-
-Split concerns across files by directory/extension — `copilot-instructions.md` for universal rules, `.instructions.md` for domain-specific ones, `SKILL.md` for reusable capabilities. Each file has a narrow scope and only enters context when relevant.
-
-### Layered Instruction Strategy
-
-- **Level 1:** `copilot-instructions.md` — fast orientation, always available
-- **Level 2:** `.instructions.md` files — context on path match
-- **Level 3:** Skills + MCP — on-demand depth
-
-### Progressive Capability Loading
-
-Skills are the only Copilot primitive with true progressive disclosure. At startup, only `name`/`description` (~100 tokens) load. Full content loads only on intent match. Under token-based billing, this is the most credit-efficient pattern for deep domain knowledge. Use skills for any domain knowledge too large for instruction files.
-
-### Custom Agent as Security Boundary
-
-Define agents with minimal tool arrays — a documentation agent needs `read`, `search`, `edit` but not `bash`. Cloud agents can use `mcp-servers` frontmatter for scoped external access. Machine-enforced by tool layer, not prompt instructions.
-
-### Handoff Chains
-
-Use custom agent `handoffs` to chain specialized agents — e.g., planner → implementer → reviewer. Each agent has a clean context with focused tools.
-
-### Permission Configuration as Deployable Policy
-
-Hook-based enforcement is version-controlled, reviewed in PRs and deployed with the project. New team members inherit the policy — no tribal knowledge required.
-
-### Two-Tier Knowledge (Spaces + MCP)
-
-- Spaces: curated knowledge for task-specific grounding (feature specs, design docs)
-- MCP: live query access to external systems (APIs, databases)
-- Both accessed via the GitHub MCP server in agent mode
-
-### Separate Planning from Execution
-
-The official library demonstrates this pattern: an Implementation Planner agent that only reads the codebase and produces a plan, then hands off to a separate implementing agent. Each agent has a clear scope and tool set.
-
-### Token-Aware Context Design (New — June 2026)
-
-With usage-based billing now active, context decisions are also cost decisions. Practical rules of thumb:
-
-- Stable content (system prompt, custom instructions, tool definitions) benefits from cache reuse — the same tokens cost ~10% on repeated turns within a session.
-- A 500-line `copilot-instructions.md` loaded 50+ times per session compounds quickly; trim ruthlessly.
-- Agent mode burns credits proportional to the context it loads — use `#file` references to scope it to the files that matter, not the whole repo.
-- Skills are the cheapest way to carry deep instructions: ~100 tokens at startup, full body only when matched.
-- Prefer CLI tools (`gh`, `git`, `npm`, `curl`) over MCP servers for simple operations — CLI has zero per-tool listing overhead.
+- **Copilot Memory** — Automatically learns repo patterns across sessions. Managed by Copilot, not editable. Use for what Copilot discovers; use instructions for what you define.
+- **Copilot Spaces** (formerly Knowledge Bases) — Curated topic-specific knowledge. Accessed via GitHub MCP server. Costs AI Credits on access.
+- **Copilot Automations** — Cloud agent on a schedule or event (issue triage, security alerts, nightly review). Per-run agent cost.
+- **Desktop App + Canvas** — Collaborative workspace outside the IDE. Supports **Agent Merge** (orchestrating multiple agents toward one goal) and autonomous code review.
+- **Agent Plugins** — Prepackaged bundles from marketplaces. Plugin agents can't use `hooks`, `mcpServers` or `permissionMode`. Need those? Copy the agent to `.github/agents/` instead.
+- **Copilot Memory** — Repository-derived, managed by Copilot. Different from instructions: it's what Copilot *learns*, not what you *tell* it. Stable conventions → instructions. Discovered patterns → Memory.
 
 ---
 
-## Design Considerations & Caveats
+## 3 Patterns That Cross Primitives
 
-### Context Rot and Lost-in-the-Middle
+**Security boundaries via tool restriction.** Instructions are advisory. Tool arrays are mechanical. A documentation agent with `tools: ["read", "search", "edit"]` cannot run bash regardless of what its prompt says. Cloud agents with `mcp-servers` in frontmatter get scoped external access. Hooks with `preToolUse` denials are the nuclear option.
 
-- Repository instructions are prepended to every prompt — keep them at the top of instruction files.
-- Path-specific instructions load full content when matched — keep them under ~1,000 lines.
-- Skills are the only primitive with progressive loading — use them for anything over ~200 lines.
+**Handoff chains for context isolation.** Planner agent → implementer agent → reviewer agent. Each handoff starts with a clean context — no conversation history, no loaded files, no accumulated context rot. The sub-agent only receives the handoff prompt plus its own system instructions. Your main session stays lean.
 
-### Code Review 4,000-Character Limit
-
-Copilot code review only reads the first 4,000 characters of any instruction file. Instructions beyond this limit are ignored entirely for PR reviews. Note also that Copilot code review now runs on GitHub Actions and consumes both AI Credits and Actions minutes — design review instructions to be compact. (Does not apply to Copilot Chat or the coding agent.)
-
-### Conflicting Instructions
-
-When a path-specific `.instructions.md` and `copilot-instructions.md` both apply to the same file, both are used. Copilot's behavior when instructions conflict is non-deterministic. Design complementary, not contradictory, instructions.
-
-### Stale Instructions
-
-Repository instructions go stale as dependencies change — update them when you upgrade frameworks or drop libraries. Copilot generates code against whatever rules it has, not whatever is currently correct.
-
-### Skill Lifecycle Surprises
-
-- Skill full content loads once and stays in context until compacted.
-- Skills are for standing instructions (duration of task), not one-time steps.
-- No `context: fork` equivalent in Copilot skills (unlike Claude Code).
-- Skills don't support `${input:varName}` variables — use prompt files for dynamic input.
-
-### Prompt Files Are IDE-Only
-
-Prompt files work in VS Code, Visual Studio and JetBrains only. They do not work on GitHub.com chat or with the coding agent. For cross-surface automation, use skills or agents instead.
-
-### MCP Scoping
-
-`.vscode/mcp.json` is workspace-scoped. Cloud agents can define their own `mcp-servers` in frontmatter. Committed to version control — review MCP server configurations in PRs. Org admins can enforce allowlists restricting which MCP servers can be connected.
-
-### Hooks Execute with Full Privileges
-
-Hooks run with the same permissions as VS Code. Review hook configurations carefully — especially `preToolUse` hooks from shared repositories. Validate input JSON as untrusted.
-
-### Bash Command Pattern Fragility
-
-Pattern matching on Bash command arguments in hook matchers is unreliable. Don't rely on Bash patterns for security — use tool-level denials and MCP scoping.
-
-### Inline Suggestions Are Unaffected
-
-Custom instructions do not apply to inline code suggestions (autocomplete). They apply to Copilot Chat interactions only. Inline completions also do not consume AI Credits — only chat, agent mode, code review, CLI and cloud agent sessions do.
-
-### Spaces Repository Context Limitation
-
-When using Spaces in your IDE, repository context and uploaded files are not supported. You get text content, GitHub files, issues, PRs and space instructions only.
-
-### Usage-Based Billing and Agentic Workflows
-
-As of June 1, 2026, all Copilot plans moved to AI Credits (1 credit = $0.01). Long agent sessions using frontier models and large context windows can consume credits quickly. Set spending limits in the Copilot billing dashboard, monitor the usage dashboard, and prefer smaller, focused context over broad exploration to stay within budget. Billing is proportional to tokens consumed across input, output and cached context.
+**Self-writing instructions.** The meta-pattern: when the agent gets something wrong, say "Extract an instruction from this." The agent writes its own constraint. Over time, your instruction files converge on what the agent *actually* gets wrong, not what you *imagine* it might get wrong.
 
 ---
 
-## Things One Might Miss
+## One Big Fact to Remember
 
-### CLAUDE.md Works in Copilot Too
+**Skills are the only primitive with progressive disclosure.** At startup: ~100 tokens. Full body only on intent match. Everything else — `copilot-instructions.md`, `.instructions.md`, MCP tool defs — loads fully or not at all. If you have deep domain knowledge that doesn't belong in every session, skills are the most credit-efficient and attention-efficient way to deliver it. Under usage-based billing, this isn't just clever — it's cheaper.
 
-VS Code and JetBrains automatically detect `CLAUDE.md` and `CLAUDE.local.md` and apply them as always-on instructions. A single CLAUDE.md can serve both Claude Code and Copilot.
-
-### AGENTS.md vs copilot-instructions.md
-
-`AGENTS.md` is an open standard supported by many tools beyond Copilot (Claude Code, Cursor, Devin, Gemini CLI, opencode, etc.). `copilot-instructions.md` is Copilot-specific. Both work in Copilot. Use `AGENTS.md` if you want cross-tool portability.
-
-### `#codebase` vs Manual File Attachments
-
-`#codebase` triggers a semantic search across the entire workspace — Copilot autonomously decides relevance. `#file` attaches specific files. Use `#codebase` for broad questions and `#file` when you need precision (and want to control token cost).
-
-### Built-in MCP Server (IDE)
-
-VS Code runs a hidden IDE MCP server that the CLI connects to. Named `ide`, it exposes `mcp__ide__getDiagnostics` and `mcp__ide__executeCode`.
-
-### Config Merge (Not Replace) Gotcha
-
-Omitting `mcpServers` in project config inherits from global config. Must explicitly disable to remove. Common source of "why is this tool available?" confusion.
-
-### `/init` Generates Instructions
-
-Type `/init` in Copilot Chat to analyze the workspace and auto-generate a `.github/copilot-instructions.md`. The agent inventories the codebase and produces tailored instructions. You can also trigger this from the cloud agent panel on GitHub.com.
-
-### Self-Writing Instructions
-
-Mid-conversation, ask "Extract an instruction from this" to capture a correction as a project convention. Compound effect over time.
-
-### `/memory` Command (JetBrains)
-
-In JetBrains, use `/memory` in the chat to quickly open settings for agent instruction files — faster than navigating to settings manually.
-
-### Diagnostics View
-
-Right-click in the Chat view → **Diagnostics** to inspect all loaded instruction files and any errors. Common failures: wrong file location, `applyTo` mismatch, disabled settings.
-
-### Cloud Agent Branch Isolation
-
-Cloud agents always work through branches + PRs. They do not create branches automatically unless a tool explicitly does so. For autonomous PRs, use a cloud or background agent.
-
-### Skills Must Match Directory Name
-
-The `name` field in `SKILL.md` frontmatter must exactly match the parent directory name. Mismatched names cause silent load failures.
-
-### Plugin Agents Can't Use Hooks or MCP
-
-Plugin-sourced agents can't use `hooks`, `mcpServers` or `permissionMode`. If needed, copy the agent to `.github/agents/` or `~/.copilot/agents/`.
-
-### Copilot Memory vs Instructions
-
-Memory is repository-derived and managed by Copilot automatically. Instructions are author-defined and version-controlled. Use instructions for stable conventions; rely on Memory for Copilot to learn repository-specific patterns it discovers itself.
+Cut your `copilot-instructions.md` in half. Put the rest in skills or `.instructions.md`. Watch your credit burn drop and your output quality rise.
 
 ---
 
@@ -474,16 +242,11 @@ Memory is repository-derived and managed by Copilot automatically. Instructions 
 
 - [GitHub Copilot Customization Library](https://docs.github.com/en/copilot/tutorials/customization-library)
 - [VS Code Copilot Customization](https://code.visualstudio.com/docs/copilot/customization/overview)
-- [GitHub Copilot Custom Instructions](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions)
-- [VS Code Custom Instructions](https://code.visualstudio.com/docs/copilot/customization/custom-instructions)
-- [Agent Skills Specification](https://agentskills.io/specification)
 - [AGENTS.md Open Standard](https://agents.md/)
+- [Agent Skills Specification](https://agentskills.io/specification)
 - [Model Context Protocol](https://modelcontextprotocol.io/)
-- [Copilot Spaces](https://docs.github.com/en/copilot/concepts/context/spaces)
 - [Hooks Reference](https://docs.github.com/en/copilot/reference/hooks-configuration)
 - [About GitHub Copilot Memory](https://docs.github.com/en/copilot/concepts/memory)
-- [Copilot Automations](https://docs.github.com/en/copilot/how-tos/agents/copilot-on-github/automate-copilot)
 - [Usage-Based Billing](https://docs.github.com/en/copilot/concepts/billing/usage-based-billing-for-individuals)
-- [GitHub Copilot Notes (this site)](../copilot/)
-- [MCP Blog Post (this site)](../mcp/)
 - [Context Engineering for Claude Code (this site)](../context-engineering/)
+- [MCP Blog Post (this site)](../mcp/)
