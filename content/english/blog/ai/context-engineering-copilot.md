@@ -12,8 +12,8 @@ Why this matters: every token you load costs attention *and* money. Models lose 
 
 **Would copying the same sentence 10 times into copilot-instructions.md help?**
 
-What drives real learning (for both humans and models) is seeing the same concept from different angles. A prohibition, a positive alternative, a concrete example, a counter example, a counter intuitive example anything — each activates a different mental pathway. 
-Galileo challenged the belief held by Aristotle that a canon ball made of iron and a feather fell at the same speed, if it weren't for air resistance. This is what develops real knowledge. For the model, even which training phase - this triggers different regions of its training distribution where the same rule was encoded in different contexts.
+What drives real learning (for both humans and models) is seeing the same concept from different angles. A prohibition, a positive alternative, a concrete example, a counter example, a counter intuitive example (Galileo said a canon ball made of iron and a feather fell at the same speed, if it weren't for air resistance) anything — each activates a different mental pathway. 
+This is what develops real knowledge. For the model, even which training phase - this triggers different regions of its training distribution where the same rule was encoded in different contexts.
 
 The pattern that *actually* works for models is **multifaceted encoding**.
 
