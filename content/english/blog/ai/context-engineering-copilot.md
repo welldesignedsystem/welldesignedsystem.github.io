@@ -6,16 +6,16 @@ tags = ['Context Engineering', 'GitHub Copilot', 'Coding Agent', 'Design Pattern
 summary = "Everything about Copilot context primitives in one place per concept. No repetition, just signal."
 +++
 
-Why this matters: every token you load costs attention *and* money. Models lose recall as context grows (context rot), and Copilot now burns AI Credits ($0.01/credit) on every token in every turn. 
+Why this matters: every token you load costs attention _and_ money. Models lose recall as context grows (context rot), and Copilot now burns AI Credits ($0.01/credit) on every token in every turn.
 
 ---
 
 **Would copying the same sentence 10 times into copilot-instructions.md help?**
 
-What drives real learning (for both humans and models) is seeing the same concept from different angles. A prohibition, a positive alternative, a concrete example, a counter example, a counter intuitive example (Galileo said a canon ball made of iron and a feather fell at the same speed, if it weren't for air resistance) anything — each activates a different mental pathway. 
+What drives real learning (for both humans and models) is seeing the same concept from different angles. A prohibition, a positive alternative, a concrete example, a counter example, a counter intuitive example (Galileo said a canon ball made of iron and a feather fell at the same speed, if it weren't for air resistance) anything — each activates a different mental pathway.
 This is what develops real knowledge. For the model, even which training phase - this triggers different regions of its training distribution where the same rule was encoded in different contexts.
 
-The pattern that *actually* works for models is **multifaceted encoding**.
+The pattern that _actually_ works for models is **multifaceted encoding**.
 
 Occam's razor is a logical principle stating that when faced with competing explanations for the same event, the simplest one is usually the correct one. if you hear gallops think horses not zebras - that's why good doctors dont give antibiotic.
 
@@ -26,11 +26,12 @@ Occam's razor is a logical principle stating that when faced with competing expl
 It's always on - Loaded into every session, every single time whether you use the session for single message or many.
 
 **The three tiers of always-on:**
+
 - **Organization** — GitHub.com org settings. Covers all members on Chat, code review, cloud agent.
 - **Personal** — Your GitHub.com profile. Follows you everywhere.
 - **Repository** — `.github/copilot-instructions.md` (also `AGENTS.md` or `CLAUDE.md`). Applies to all files in all surfaces — VS Code, JetBrains, GitHub.com, coding agent.
 
-**The character trap.** Copilot code review silently ignores everything beyond a certain number of chars (I dont know what it is here but usually 4000). Doesn't warn you. Keep repo instructions under 200-300 lines. A crisp 200-liner *always* beats a bloated 800-liner anyway — less context rot, fewer tokens burned. It's set at a platform level. 
+**The character trap.** Copilot code review silently ignores everything beyond a certain number of chars (I dont know what it is here but usually 4000). Doesn't warn you. Keep repo instructions under 200-300 lines. A crisp 200-liner _always_ beats a bloated 800-liner anyway — less context rot, fewer tokens burned. It's set at a platform level.
 
 **Put in:** tech stack, exact build/test/run commands, security rules (parameterize SQL, no secrets), cross-cutting conventions (error handling, logging), architectural decisions with rationale, recurring mistakes the team has actually made.
 
@@ -47,6 +48,7 @@ It's always on - Loaded into every session, every single time whether you use th
 **CLAUDE.md** also works in Copilot. VS Code and JetBrains detect it automatically. One file, both tools. Enable/disable via `chat.useClaudeMdFile`.
 
 **Config layering** (later overrides earlier):
+
 1. Organization instructions (GitHub.com)
 2. Personal instructions (GitHub.com profile)
 3. Repository instructions (`copilot-instructions.md` / `AGENTS.md` / `CLAUDE.md`)
@@ -93,6 +95,7 @@ Explain this: ${input:code:Paste your code here}
 ```
 
 Key details:
+
 - **IDE only.** VS Code and JetBrains. Not GitHub.com chat or the coding agent.
 - `${input:varName:placeholder}` — pauses and prompts for values at invocation time.
 - `/create-prompt` generates them from chat.
@@ -134,11 +137,11 @@ disable-model-invocation: false
 - `gh skill preview` before installing. Skills can contain prompt injections.
 - Best for: domain knowledge >200 lines that shouldn't pollute context every session. Migration patterns, PR review checklists, deployment guides.
 
-| Storage approach | Startup cost | Per-task cost |
-|---|---|---|
-| `copilot-instructions.md` (500 lines) | 500 tokens, every turn | Same |
-| `.instructions.md` (300 lines) | 0 (on path match: 300) | 300 tokens |
-| Skill (400 lines) | ~100 tokens | 400 tokens only when matched |
+| Storage approach                      | Startup cost           | Per-task cost                |
+| ------------------------------------- | ---------------------- | ---------------------------- |
+| `copilot-instructions.md` (500 lines) | 500 tokens, every turn | Same                         |
+| `.instructions.md` (300 lines)        | 0 (on path match: 300) | 300 tokens                   |
+| Skill (400 lines)                     | ~100 tokens            | 400 tokens only when matched |
 
 ---
 
@@ -167,7 +170,7 @@ Connect agents to external systems — databases, browsers, APIs. Tool definitio
 
 ---
 
-## Hooks (.github/hooks/*.json)
+## Hooks (.github/hooks/\*.json)
 
 The only way to **enforce** rather than **suggest**. Shell commands on lifecycle events.
 
@@ -190,11 +193,11 @@ The only way to **enforce** rather than **suggest**. Shell commands on lifecycle
 
 ## Context Shortcuts: `#`, `@`, `/`
 
-| Prefix | Purpose | Examples |
-|---|---|---|
-| `/` | Commands + prompt files | `/explain`, `/fix`, `/tests`, `/your-prompt` |
-| `#` | Attach context | `#file`, `#codebase`, `#selection`, `#editor` |
-| `@` | Specialist agents | `@workspace`, `@vscode`, `@terminal`, `@github` |
+| Prefix | Purpose                 | Examples                                        |
+| ------ | ----------------------- | ----------------------------------------------- |
+| `/`    | Commands + prompt files | `/explain`, `/fix`, `/tests`, `/your-prompt`    |
+| `#`    | Attach context          | `#file`, `#codebase`, `#selection`, `#editor`   |
+| `@`    | Specialist agents       | `@workspace`, `@vscode`, `@terminal`, `@github` |
 
 `#codebase` does semantic search across your workspace — Copilot decides relevance. `#file` attaches specific files with known token cost. Use `#codebase` for discovery, `#file` when you know what's needed and want to control spend.
 
@@ -209,7 +212,7 @@ Combine them: `@workspace using patterns in #file:src/api/auth.ts, /fix #selecti
 - **Copilot Automations** — Cloud agent on a schedule or event (issue triage, security alerts, nightly review). Per-run agent cost.
 - **Desktop App + Canvas** — Collaborative workspace outside the IDE. Supports **Agent Merge** (orchestrating multiple agents toward one goal) and autonomous code review.
 - **Agent Plugins** — Prepackaged bundles from marketplaces. Plugin agents can't use `hooks`, `mcpServers` or `permissionMode`. Need those? Copy the agent to `.github/agents/` instead.
-- **Copilot Memory** — Repository-derived, managed by Copilot. Different from instructions: it's what Copilot *learns*, not what you *tell* it. Stable conventions → instructions. Discovered patterns → Memory.
+- **Copilot Memory** — Repository-derived, managed by Copilot. Different from instructions: it's what Copilot _learns_, not what you _tell_ it. Stable conventions → instructions. Discovered patterns → Memory.
 
 ---
 
@@ -219,7 +222,7 @@ Combine them: `@workspace using patterns in #file:src/api/auth.ts, /fix #selecti
 
 **Handoff chains for context isolation.** Planner agent → implementer agent → reviewer agent. Each handoff starts with a clean context — no conversation history, no loaded files, no accumulated context rot. The sub-agent only receives the handoff prompt plus its own system instructions. Your main session stays lean.
 
-**Self-writing instructions.** The meta-pattern: when the agent gets something wrong, say "Extract an instruction from this." The agent writes its own constraint. Over time, your instruction files converge on what the agent *actually* gets wrong, not what you *imagine* it might get wrong.
+**Self-writing instructions.** The meta-pattern: when the agent gets something wrong, say "Extract an instruction from this." The agent writes its own constraint. Over time, your instruction files converge on what the agent _actually_ gets wrong, not what you _imagine_ it might get wrong.
 
 ---
 

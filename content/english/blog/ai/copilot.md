@@ -770,11 +770,11 @@ Install from here : **https://cli.github.com**
     - You're onboarding someone to your runbooks
 
 - `gh alias` - `bash
-  gh alias set cs 'copilot suggest'
-  gh alias set ce 'copilot explain'
-  gh cs "compress all jpg files in this folder"
-  gh ce "rsync -avz --delete src/ user@host:/var/www/"
-  `
+gh alias set cs 'copilot suggest'
+gh alias set ce 'copilot explain'
+gh cs "compress all jpg files in this folder"
+gh ce "rsync -avz --delete src/ user@host:/var/www/"
+`
   > **Note:** `gh copilot` works on shell commands only — it has no awareness of your codebase, open files, or MCP servers. For anything requiring code context, use the IDE.
 
 ---
