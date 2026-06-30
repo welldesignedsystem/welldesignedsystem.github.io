@@ -211,6 +211,45 @@ Amazon MQ offers `mq.m5.large`, `mq.m5.xlarge`, `mq.m5.2xlarge`, `mq.m5.4xlarge`
 
 Priority sorting is CPU-bound during burst periods. Under-sizing the instance class is a common cause of priority dispatch latency at scale.
 
+#### ActiveMQ Priority Queues
+
+ActiveMQ handles priority through **cursor-based dispatch**, fundamentally different from RabbitMQ's enqueue-time sorting. Each consumer has a dispatch cursor that walks the queue in priority order. Messages are sorted on dispatch, not on receipt.
+
+- **Priority levels:** 0–9 per JMS spec (0 lowest, 9 highest). Default is 4. More levels increase cursor overhead — practical range is 3–5 tiers.
+- **`prioritizedMessages="true"`** — enables priority dispatch on a destination policy entry. Without this flag, priority headers are ignored.
+- **`sortedStore="true"`** — the priority queue cursor reads from the persistent store (KahaDB) in priority order rather than FIFO. Without it, only in-memory messages are sorted.
+- **`optimizedDispatch="true"`** — dispatches messages as soon as they arrive rather than waiting for a full batch. Recommended for priority queues.
+- **`concurrentStoreAndDispatchQueues`** — when disabled (which Amazon MQ enforces on 5.15.9+), the broker waits for the store to commit before dispatching, preventing priority inversion during failover.
+
+Configuring ActiveMQ priority is done through broker XML policy entries — not per-queue arguments like RabbitMQ:
+
+```xml
+<!-- Applied to a destination policy entry, not per queue -->
+<policyEntry queue="ORDERS.>"
+             prioritizedMessages="true"
+             optimizedDispatch="true">
+  <pendingQueuePolicy>
+    <priorityQueueCursor sortedStore="true"/>
+  </pendingQueuePolicy>
+  <dispatchPolicy>
+    <priorityDispatchPolicy/>
+  </dispatchPolicy>
+</policyEntry>
+```
+
+Delivering priority messages from the producer requires no broker-side setup if the destination policy is configured — the `JMSPriority` header on the JMS message is honoured automatically:
+
+```java
+// Producer — broker sorts by this value on dispatch
+Message msg = session.createTextMessage("order");
+msg.setJMSPriority(9);   // 0–9, 9 = highest
+producer.send(msg);
+```
+
+The one client-side requirement is `ExplicitQosEnabled=true` in Spring JMS — without it, `JMSPriority` is silently dropped from the wire frame.
+
+**Priority starvation** — high-priority messages arriving continuously can starve lower-priority ones indefinitely. ActiveMQ provides no built-in aging mechanism. Mitigate with the multi-queue tier pattern: separate physical queues per priority tier, each with its own consumer pool.
+
 ### RabbitMQ Engine
 
 Amazon MQ also supports RabbitMQ (3.13+), which uses a fundamentally different architecture from ActiveMQ.
