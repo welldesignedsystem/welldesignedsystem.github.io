@@ -14,10 +14,9 @@ Amazon MQ is the AWS managed message broker service supporting two engines: Apac
 
 - **Wire-level protocol** — defines the exact bytes that go over the TCP connection: framing, encoding, handshakes. You can open a raw socket and speak it byte-for-byte. OpenWire, AMQP 0-9-1, and MQTT are wire-level protocols.
 
-- **Message transfer protocol** — defines how to move a message from one peer to another at the application layer without dictating the routing/queueing model. The broker decides how to route; the protocol only handles delivery. In the AMQP 1.0 sense, 0-9-1 is both a wire protocol *and* a routing protocol in one spec — routing logic is baked into the L7 protocol itself. 1.0 is a transfer protocol — each broker maps it to its own routing model underneath.
+- **Message transfer protocol** — defines how to move a message from one peer to another at the application layer without dictating the routing/queueing model. The broker decides how to route; the protocol only handles delivery. In the AMQP 1.0 sense, 0-9-1 is both a wire protocol _and_ a routing protocol in one spec — routing logic is baked into the L7 protocol itself. 1.0 is a transfer protocol — each broker maps it to its own routing model underneath.
 
-**Note** - Both protocols discussed here operate at **OSI Layer 7 (Application Layer)** — they run over TCP (Layer 4) and define their own framing, encoding, and application semantics on top of it. The distinction below is about scope *within* the application layer.
-
+**Note** - Both protocols discussed here operate at **OSI Layer 7 (Application Layer)** — they run over TCP (Layer 4) and define their own framing, encoding, and application semantics on top of it. The distinction below is about scope _within_ the application layer.
 
 ## ActiveMQ vs RabbitMQ — Design Decision Framework
 
@@ -25,14 +24,14 @@ Choose your Amazon MQ engine based on protocol requirements, delivery semantics 
 
 ### Protocol Support
 
-| Protocol | Wire Format | Key Characteristics | Best For | ActiveMQ | RabbitMQ |
-|---|---|---|---|---|---|---|
-| **JMS** | API (not a wire protocol) | Java EE standard for messaging. Defines connection factories, destinations, message producers/consumers, and XA transactions. Under the wire it uses the broker's native protocol. | Spring / Jakarta EE apps, existing JMS investments | Native | Via AMQP bridge |
-| **AMQP 1.0** | Binary, type system | Message transfer standard — defines how to exchange messages between peers, but leaves the routing model to the implementation. Each broker maps it to its own destinations. | Cross-platform, multi-broker topologies | Native | Native |
-| **AMQP 0-9-1** | Binary, compact | Version 0.9.1 — not a predecessor of 1.0, but a separate fork. While the financial industry group stripped the spec down to a wire-level standard (1.0), RabbitMQ kept the rich routing model in the protocol itself: exchanges, queues, bindings, and flexible routing (direct, topic, fanout, headers, consistent hash). | Complex routing, polyglot environments | No | Native |
-| **STOMP** | Text, frame-based | Simple, human-readable. Easy to debug (telnet). No routing model — sends to a destination string. | Quick scripts, non-JVM clients, prototyping | Plugin | Plugin |
-| **MQTT** | Binary, ultra-lightweight | Pub-sub only, three QoS levels, persistent sessions, last-will. Minimal per-message overhead. | IoT, mobile, constrained devices | Plugin | Plugin |
-| **OpenWire** | Binary, command set | ActiveMQ's native protocol. Full JMS feature set: XA, selectors, priority headers. Failover transport provides client-side HA. | JVM/Spring apps, HA requirements | Native | No |
+| Protocol       | Wire Format               | Key Characteristics                                                                                                                                                                                                                                                                                                        | Best For                                           | ActiveMQ | RabbitMQ        |
+| -------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | -------- | --------------- |
+| **JMS**        | API (not a wire protocol) | Java EE standard for messaging. Defines connection factories, destinations, message producers/consumers, and XA transactions. Under the wire it uses the broker's native protocol.                                                                                                                                         | Spring / Jakarta EE apps, existing JMS investments | Native   | Via AMQP bridge |
+| **AMQP 1.0**   | Binary, type system       | Message transfer standard — defines how to exchange messages between peers, but leaves the routing model to the implementation. Each broker maps it to its own destinations.                                                                                                                                               | Cross-platform, multi-broker topologies            | Native   | Native          |
+| **AMQP 0-9-1** | Binary, compact           | Version 0.9.1 — not a predecessor of 1.0, but a separate fork. While the financial industry group stripped the spec down to a wire-level standard (1.0), RabbitMQ kept the rich routing model in the protocol itself: exchanges, queues, bindings, and flexible routing (direct, topic, fanout, headers, consistent hash). | Complex routing, polyglot environments             | No       | Native          |
+| **STOMP**      | Text, frame-based         | Simple, human-readable. Easy to debug (telnet). No routing model — sends to a destination string.                                                                                                                                                                                                                          | Quick scripts, non-JVM clients, prototyping        | Plugin   | Plugin          |
+| **MQTT**       | Binary, ultra-lightweight | Pub-sub only, three QoS levels, persistent sessions, last-will. Minimal per-message overhead.                                                                                                                                                                                                                              | IoT, mobile, constrained devices                   | Plugin   | Plugin          |
+| **OpenWire**   | Binary, command set       | ActiveMQ's native protocol. Full JMS feature set: XA, selectors, priority headers. Failover transport provides client-side HA.                                                                                                                                                                                             | JVM/Spring apps, HA requirements                   | Native   | No              |
 
 ### When to Choose ActiveMQ
 
@@ -117,7 +116,7 @@ When designing a system on AWS, Amazon MQ is rarely the only option. Here is how
 | `sortedStore="true"`               | Yes                     | Recommended with persistence             |
 | `optimizedDispatch="true"`         | Yes                     | Recommended for throughput               |
 | `prefetchPerLevel`                 | Yes                     | Via `priorityQueueCursor` config         |
-| `concurrentStoreAndDispatchQueues` | **No** — managed by AWS | Set correctly by AWS on 5.15.9+          |
+| `concurrentStoreAndDispatchQueues` | **No** — managed by AWS | Verify behaviour on your engine version  |
 | `<persistenceAdapter>` (KahaDB)    | **No**                  | Managed by AWS                           |
 | `<transportConnectors>`            | **No**                  | Managed by AWS                           |
 | `<networkConnectors>`              | **No**                  | Use Amazon MQ network of brokers feature |
@@ -183,12 +182,11 @@ When designing a system on AWS, Amazon MQ is rarely the only option. Here is how
 </broker>
 ```
 
-
 ## Amazon MQ Broker Engines and Instance Types
 
 ### Engine Versions
 
-Amazon MQ supports ActiveMQ engine versions 5.15.x, 5.16.x, and 5.17.x (check the AWS documentation for the currently supported minor versions). Priority behaviour is consistent across these versions, though 5.17.x includes cursor improvements that make priority sorting slightly more efficient under high load.
+Amazon MQ supports a limited set of ActiveMQ engine versions that changes over time. At the time of writing, AWS recommends ActiveMQ 5.19 and also supports ActiveMQ 5.18; older 5.15, 5.16 and 5.17 brokers have reached end of support on Amazon MQ. Check the AWS documentation or run `aws mq describe-broker-instance-options --engine-type ACTIVEMQ` before choosing an engine version.
 
 ### Deployment Modes
 
@@ -214,11 +212,11 @@ Priority sorting is CPU-bound during burst periods. Under-sizing the instance cl
 
 ActiveMQ handles priority through **cursor-based dispatch**, fundamentally different from RabbitMQ's enqueue-time sorting. Each consumer has a dispatch cursor that walks the queue in priority order. Messages are sorted on dispatch, not on receipt.
 
-- **Priority levels:** 0–9 per JMS spec (0 lowest, 9 highest). Default is 4. More levels increase cursor overhead — practical range is 3–5 tiers.
+- **Priority levels:** JMS defines 0–9 (0 lowest, 9 highest), with default priority 4. With KahaDB-backed persistent queues, ActiveMQ Classic groups persisted messages into three priority categories: low (`<4`), default (`=4`) and high (`>4`). Use a small number of meaningful tiers rather than treating all 10 values as independent lanes.
 - **`prioritizedMessages="true"`** — enables priority dispatch on a destination policy entry. Without this flag, priority headers are ignored.
 - **`sortedStore="true"`** — the priority queue cursor reads from the persistent store (KahaDB) in priority order rather than FIFO. Without it, only in-memory messages are sorted.
 - **`optimizedDispatch="true"`** — dispatches messages as soon as they arrive rather than waiting for a full batch. Recommended for priority queues.
-- **`concurrentStoreAndDispatchQueues`** — when disabled (which Amazon MQ enforces on 5.15.9+), the broker waits for the store to commit before dispatching, preventing priority inversion during failover.
+- **`concurrentStoreAndDispatchQueues`** — when disabled, the broker waits for the store to commit before dispatching, preventing priority inversion during failover. Amazon MQ manages this setting because it owns the persistence adapter.
 
 Configuring ActiveMQ priority is done through broker XML policy entries — not per-queue arguments like RabbitMQ:
 
@@ -236,16 +234,15 @@ Configuring ActiveMQ priority is done through broker XML policy entries — not 
 </policyEntry>
 ```
 
-Delivering priority messages from the producer requires no broker-side setup if the destination policy is configured — the `JMSPriority` header on the JMS message is honoured automatically:
+Delivering priority messages from the producer requires no broker-side setup if the destination policy is configured, but the producer must send the message with an explicit priority. Do not call `setJMSPriority` on the message object before sending; JMS providers overwrite provider-managed headers during send.
 
 ```java
 // Producer — broker sorts by this value on dispatch
 Message msg = session.createTextMessage("order");
-msg.setJMSPriority(9);   // 0–9, 9 = highest
-producer.send(msg);
+producer.send(msg, DeliveryMode.PERSISTENT, 9, 0); // priority 9, no TTL
 ```
 
-The one client-side requirement is `ExplicitQosEnabled=true` in Spring JMS — without it, `JMSPriority` is silently dropped from the wire frame.
+In Spring JMS, use `ExplicitQosEnabled=true` when priority is configured on the template. For per-message priorities, use a producer callback and call `producer.send(message, deliveryMode, priority, ttl)` directly. Without explicit QoS or a send-time priority, Spring uses provider defaults.
 
 **Priority starvation** — high-priority messages arriving continuously can starve lower-priority ones indefinitely. ActiveMQ provides no built-in aging mechanism. Mitigate with the multi-queue tier pattern: separate physical queues per priority tier, each with its own consumer pool.
 
@@ -284,7 +281,7 @@ rabbitmqadmin declare queue name=orders.priority \
   arguments='{"x-max-priority": 10}'
 ```
 
-**Priority starvation** exists in RabbitMQ too — high-priority messages can block lower ones indefinitely. Mitigation is similar to ActiveMQ: use separate queues per priority tier and dedicate consumers to each.
+**Priority starvation** depends on the RabbitMQ queue type. Classic priority queues cycle through sub-queues, which reduces starvation risk. Quorum queues use stricter priority ordering, so sustained high-priority traffic can delay lower-priority work indefinitely. If lower-priority work needs a guaranteed share of capacity, use separate queues per priority tier and dedicate consumers to each.
 
 #### RabbitMQ Plugins on Amazon MQ
 
@@ -326,7 +323,7 @@ Amazon MQ uses a **configuration** resource — an XML document in ActiveMQ form
 aws mq create-configuration \
   --name "priority-config" \
   --engine-type ACTIVEMQ \
-  --engine-version "5.17.6" \
+  --engine-version "5.19" \
   --region ap-southeast-2
 
 # 2. The response includes a ConfigurationId and an S3-like revision system
@@ -426,7 +423,7 @@ This is the XML you upload as the broker configuration. It only includes element
 </broker>
 ```
 
-**Note on `<persistenceAdapter>`:** You cannot include this in an Amazon MQ configuration. AWS manages KahaDB internally. The important setting `concurrentStoreAndDispatchQueues="false"` — which is critical for correct priority behaviour in self-hosted ActiveMQ — is **set by Amazon MQ by default** for brokers running 5.15.9+ and 5.16.x+. Verify this in the broker logs if you are on an older engine version.
+**Note on `<persistenceAdapter>`:** You cannot include this in an Amazon MQ configuration. AWS manages KahaDB internally. If you are migrating from self-hosted ActiveMQ, remove persistence adapter settings such as `concurrentStoreAndDispatchQueues`; Amazon MQ controls them.
 
 ### CloudFormation
 
@@ -439,7 +436,7 @@ Resources:
     Properties:
       Name: priority-orders-config
       EngineType: ACTIVEMQ
-      EngineVersion: "5.17.6"
+      EngineVersion: "5.19"
       Data: !Base64 |
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <broker xmlns="http://activemq.apache.org/schema/core">
@@ -467,7 +464,7 @@ Resources:
       BrokerName: priority-broker
       DeploymentMode: ACTIVE_STANDBY_MULTI_AZ
       EngineType: ACTIVEMQ
-      EngineVersion: "5.17.6"
+      EngineVersion: "5.19"
       HostInstanceType: mq.m5.xlarge
       PubliclyAccessible: false
       SubnetIds:
@@ -851,7 +848,7 @@ public class AmazonMQConfig {
 
 ### From AWS Lambda
 
-Lambda is not ideal for Amazon MQ consumers because Lambda's stateless execution model does not support long-lived JMS connections. However, you can use Lambda to **produce** priority messages:
+Lambda functions are usually a better fit for producing occasional messages than for managing broker connections directly. For example, a Lambda function can publish priority messages over STOMP:
 
 ```python
 import boto3, json, ssl, stomp, os
@@ -880,15 +877,15 @@ def handler(event, context):
     conn.disconnect()
 ```
 
-For **consuming** from Amazon MQ in a Lambda-driven architecture, use an intermediary: an ECS service consumes from Amazon MQ and produces to SQS or EventBridge. Lambda then processes the SQS messages. This avoids the connection lifecycle problem.
+For **high-throughput consuming** from Amazon MQ in a Lambda-driven architecture, use an intermediary: an ECS service consumes from Amazon MQ and produces to SQS or EventBridge. Lambda then processes the SQS messages. This keeps broker connections long-lived and gives you more control over scaling.
 
 Alternatively, Lambda can consume directly from Amazon MQ via **Event Source Mapping** (supported for both ActiveMQ and RabbitMQ). Lambda manages a long-lived polling process that reads messages from the broker and invokes your function synchronously. This removes the need for an intermediary but has caveats:
 
-- Lambda scales concurrency up to the number of queues and partitions. Each function instance processes one batch of messages.
-- Partial batch failures are reported back to the broker — successfully processed messages are removed, failed ones remain for redelivery.
-- The event source mapping supports both ActiveMQ queues and RabbitMQ queues/exchanges.
+- Default concurrency is limited per event source mapping: 5 concurrent execution environments for ActiveMQ and 1 for RabbitMQ.
+- If your function returns an error for any message in a batch, Lambda retries the whole batch until processing succeeds or the messages expire.
+- The event source mapping supports queue destinations. For topic-style fan-out, use virtual topics or route into queues.
 - Maximum batch size is 10,000 messages per invocation.
-- Function timeout must be sufficient to process the entire batch (max 15 minutes).
+- Function timeout must be sufficient to process the entire batch. Amazon MQ event source mappings support function timeouts up to 14 minutes.
 
 ```yaml
 # CloudFormation — Lambda event source mapping for Amazon MQ
@@ -900,9 +897,11 @@ LambdaMQEventSourceMapping:
     Enabled: true
     BatchSize: 100
     MaximumBatchingWindowInSeconds: 5
+    Queues:
+      - ORDERS
     SourceAccessConfigurations:
       - Type: BASIC_AUTH
-        URI: !Sub "{{resolve:secretsmanager:${MQSecret}:SecretString:username}}"
+        URI: !Ref MQSecret
 ```
 
 **Important:** Lambda event source mapping for Amazon MQ is suitable for moderate-throughput workloads. For high-throughput consumers (> 1,000 msg/sec), use a long-lived consumer (ECS, EKS, EC2) instead — Lambda's polling interval and cold-start latency add overhead.
@@ -973,11 +972,10 @@ def check_starvation(queue_name, threshold_seconds=300):
 Set a message TTL on low-priority producers. Messages that are not consumed within the TTL expire and go to the DLQ rather than blocking forever. The DLQ can be processed separately.
 
 ```java
-jmsTemplate.send("ORDERS", session -> {
+jmsTemplate.execute("ORDERS", (session, producer) -> {
     Message msg = session.createObjectMessage(order);
-    msg.setJMSPriority(1);
-    msg.setJMSExpiration(System.currentTimeMillis() + 86_400_000); // 24h
-    return msg;
+    producer.send(msg, DeliveryMode.PERSISTENT, 1, 86_400_000); // priority 1, 24h TTL
+    return null;
 });
 ```
 
@@ -1130,11 +1128,11 @@ public class OrderProducer {
 
     public void sendOrder(Order order) {
         int priority = resolvePriority(order);
-        priorityJmsTemplate.send("ORDERS", session -> {
+        priorityJmsTemplate.execute("ORDERS", (session, producer) -> {
             ObjectMessage msg = session.createObjectMessage(order);
-            msg.setJMSPriority(priority);
             msg.setStringProperty("orderType", order.getType());
-            return msg;
+            producer.send(msg, DeliveryMode.PERSISTENT, priority, 0);
+            return null;
         });
     }
 
@@ -1207,15 +1205,15 @@ Updating a configuration in Amazon MQ does not automatically restart the broker.
 
 ### Pitfall 3: Hardcoded Credentials
 
-Never hardcode broker credentials in application config. Use Secrets Manager with automatic rotation. Amazon MQ supports broker user password rotation via Secrets Manager without a broker reboot in 5.15.12+ and 5.16.3+.
+Never hardcode broker credentials in application config. Use Secrets Manager or your standard secret-management path, and confirm the rotation behavior for your Amazon MQ engine version before relying on no-reboot password changes.
 
 ### Pitfall 4: `ExplicitQosEnabled` Not Set in Spring
 
-`JmsTemplate.setExplicitQosEnabled(true)` is required for the `JMSPriority` header to be included in the OpenWire wire frame. Without it, all messages are sent at the default priority (4) regardless of what you set.
+`JmsTemplate.setExplicitQosEnabled(true)` is required when you rely on template-level QoS settings such as `setPriority`, `setDeliveryPersistent` or `setTimeToLive`. For per-message priority, use a producer callback and call `producer.send(message, deliveryMode, priority, ttl)`.
 
 ### Pitfall 5: Lambda as a Consumer
 
-Lambda cannot maintain a persistent JMS connection. Do not attempt to use Lambda as an Amazon MQ consumer. Use ECS (Fargate) for long-lived consumer processes.
+Lambda can consume from Amazon MQ through an event source mapping, but it is deliberately constrained: default concurrency is low, only queues are consumed directly and a failed item causes the whole batch to retry. Use ECS, EKS or EC2 for high-throughput consumers or workflows that need precise acknowledgement control.
 
 ### Pitfall 6: Active/Standby Priority State During Failover
 
@@ -1583,7 +1581,6 @@ Amazon MQ does not provide native backup APIs. For message-level backup:
 3. **Configuration backup:** Amazon MQ configurations are versioned and retrievable via `describe-configuration-revision`. Store configuration IDs in CloudFormation or Terraform state for reproducible broker setup.
 
 ---
-
 
 ## Summary
 
