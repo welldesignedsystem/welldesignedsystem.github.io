@@ -3,7 +3,7 @@ date = '2026-06-25T12:00:00+10:00'
 draft = false
 title = 'Amazon MQ System Design — ActiveMQ and RabbitMQ on AWS'
 tags = ['Amazon MQ', 'ActiveMQ', 'RabbitMQ', 'AWS', 'Messaging', 'JMS', 'AMQP', 'Priority', 'Queue', 'System Design']
-summary = 'Comprehensive system design guide for Amazon MQ covering both ActiveMQ and RabbitMQ engines — architecture, availability, cost, resiliency, disaster recovery, and trade-offs against SQS, SNS, EventBridge and Kafka on AWS.'
+summary = 'Amazon MQ design guide for ActiveMQ and RabbitMQ.'
 +++
 
 Amazon MQ is the AWS managed message broker service supporting two engines: Apache ActiveMQ and RabbitMQ. This guide covers system design for both engines — architecture, availability, cost, resiliency patterns, disaster recovery, and how they compare to other AWS messaging services. Priority-based messaging on the ActiveMQ engine is covered in depth as a reference implementation.
@@ -46,7 +46,6 @@ Choose your Amazon MQ engine based on protocol requirements, delivery semantics 
 
 - **You need AMQP 0-9-1.** RabbitMQ's native AMQP 0-9-1 gives you flexible routing with exchanges (direct, topic, fanout, headers, consistent hash). This enables complex routing topologies that are difficult to replicate with ActiveMQ.
 - **Multi-language polyglot environment.** RabbitMQ's client libraries are well-maintained for Python, Go, Ruby, .NET, Node.js, and many others. ActiveMQ's non-JVM clients (STOMP, MQTT) are less polished.
-- **Streaming use cases.** RabbitMQ 3.13+ includes the RabbitMQ Stream Plugin for large message streams with offset tracking, which ActiveMQ Classic does not provide.
 - **Federation use cases.** RabbitMQ federation allows exchanges and queues in different regions to be connected with upstream/downstream relationships, supporting multi-region fan-out.
 - **Graviton (ARM) cost optimisation.** RabbitMQ on `mq.m7g` Graviton instances benefits from Erlang's ARM optimisation, providing better price-performance than ActiveMQ on equivalent instances.
 - **Smaller operational blast radius.** RabbitMQ 3-node cluster tolerates one node failure without manual intervention. ActiveMQ active/standby requires both healthy for HA.
@@ -64,7 +63,7 @@ Choose your Amazon MQ engine based on protocol requirements, delivery semantics 
 ```
 Do you need JMS / XA transactions / wire-level message selectors?
 ├── Yes → ActiveMQ
-└── No  → Do you need AMQP 0-9-1 / exchanges / complex routing / streams?
+└── No  → Do you need AMQP 0-9-1 / exchanges / complex routing?
         ├── Yes → RabbitMQ
         └── No  → Can you use a fully-managed, protocol-agnostic service?
                   ├── Yes → SQS (queues) / SNS (pub-sub) / EventBridge (event bus)
