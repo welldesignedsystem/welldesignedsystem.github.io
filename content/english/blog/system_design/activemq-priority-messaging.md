@@ -10,6 +10,172 @@ Amazon MQ is the AWS managed message broker service supporting two engines: Apac
 
 ---
 
+## ActiveMQ vs RabbitMQ — Design Decision Framework
+
+Choose your Amazon MQ engine based on protocol requirements, delivery semantics and operational model.
+
+### Protocol Support
+
+| Protocol | Wire Format | Key Characteristics | Best For | ActiveMQ | RabbitMQ |
+|---|---|---|---|---|---|---|
+| **JMS** | API (not a wire protocol) | Java EE standard for messaging. Defines connection factories, destinations, message producers/consumers, and XA transactions. Under the wire it uses the broker's native protocol. | Spring / Jakarta EE apps, existing JMS investments | Native | Via AMQP bridge |
+| **AMQP 1.0** | Binary, type system | Vendor-neutral interoperability standard. Each implementation defines its own routing model. | Cross-platform, multi-broker topologies | Native | Native |
+| **AMQP 0-9-1** | Binary, compact | Formal exchange/queue/binding model. Flexible routing (direct, topic, fanout, headers, consistent hash). | Complex routing, polyglot environments | No | Native |
+| **STOMP** | Text, frame-based | Simple, human-readable. Easy to debug (telnet). No routing model — sends to a destination string. | Quick scripts, non-JVM clients, prototyping | Plugin | Plugin |
+| **MQTT** | Binary, ultra-lightweight | Pub-sub only, three QoS levels, persistent sessions, last-will. Minimal per-message overhead. | IoT, mobile, constrained devices | Plugin | Plugin |
+| **OpenWire** | Binary, command set | ActiveMQ's native protocol. Full JMS feature set: XA, selectors, priority headers. Failover transport provides client-side HA. | JVM/Spring apps, HA requirements | Native | No |
+
+### When to Choose ActiveMQ
+
+- **You already use JMS.** ActiveMQ's native JMS support means zero protocol translation overhead. Spring JMS, `javax.jms`, and Jakarta JMS all work directly.
+- **Priority-based messaging is a core requirement.** ActiveMQ's cursor-based priority dispatch with `sortedStore="true"` is more mature and configurable than RabbitMQ's `x-max-priority`.
+- **You need XA transactions.** ActiveMQ supports JMS XA transactions for distributed transaction coordination across multiple resources.
+- **Network of brokers topology.** If you need broker-to-broker message forwarding between regions or VPCs without application changes, ActiveMQ's network of brokers is straightforward to configure.
+- **Wire-level protocol filtering.** ActiveMQ supports message selectors (SQL-based filtering on JMS properties) at the broker level, reducing consumer-side filtering.
+
+### When to Choose RabbitMQ
+
+- **You need AMQP 0-9-1.** RabbitMQ's native AMQP 0-9-1 gives you flexible routing with exchanges (direct, topic, fanout, headers, consistent hash). This enables complex routing topologies that are difficult to replicate with ActiveMQ.
+- **Multi-language polyglot environment.** RabbitMQ's client libraries are well-maintained for Python, Go, Ruby, .NET, Node.js, and many others. ActiveMQ's non-JVM clients (STOMP, MQTT) are less polished.
+- **Streaming use cases.** RabbitMQ 3.13+ includes the RabbitMQ Stream Plugin for large message streams with offset tracking, which ActiveMQ Classic does not provide.
+- **Federation use cases.** RabbitMQ federation allows exchanges and queues in different regions to be connected with upstream/downstream relationships, supporting multi-region fan-out.
+- **Graviton (ARM) cost optimisation.** RabbitMQ on `mq.m7g` Graviton instances benefits from Erlang's ARM optimisation, providing better price-performance than ActiveMQ on equivalent instances.
+- **Smaller operational blast radius.** RabbitMQ 3-node cluster tolerates one node failure without manual intervention. ActiveMQ active/standby requires both healthy for HA.
+
+### When to Use Neither (Pick SQS/SNS Instead)
+
+- **Throughput exceeds 50,000 msg/sec:** Amazon MQ instance limits will require splitting across multiple brokers. SQS Standard scales to virtually unlimited throughput.
+- **Cost is the primary constraint:** SQS Standard is 3-10x cheaper at scale.
+- **Schedule-based or event-driven workloads:** EventBridge Scheduler or EventBridge Pipes integrate natively with SQS/SNS.
+- **Lambda-native architectures:** SQS triggers Lambda directly. Amazon MQ requires Event Source Mapping (Lambda polling the broker) or an intermediary ECS service.
+- **Exactly-once processing:** SQS FIFO provides exactly-once delivery within a message group. Amazon MQ provides at-least-once semantics.
+
+### Decision Flowchart
+
+```
+Do you need JMS / XA transactions / wire-level message selectors?
+├── Yes → ActiveMQ
+└── No  → Do you need AMQP 0-9-1 / exchanges / complex routing / streams?
+        ├── Yes → RabbitMQ
+        └── No  → Can you use a fully-managed, protocol-agnostic service?
+                  ├── Yes → SQS (queues) / SNS (pub-sub) / EventBridge (event bus)
+                  └── No  → Amazon MQ (choose engine per criteria above)
+```
+
+---
+
+## Amazon MQ vs Other AWS Messaging Services
+
+When designing a system on AWS, Amazon MQ is rarely the only option. Here is how it compares to the alternatives.
+
+| Attribute               | Amazon MQ (ActiveMQ)                                  | Amazon MQ (RabbitMQ)                       | Amazon SQS                                            | Amazon SNS                          | Amazon EventBridge                              | Amazon Kinesis / MSK                                |
+| ----------------------- | ----------------------------------------------------- | ------------------------------------------ | ----------------------------------------------------- | ----------------------------------- | ----------------------------------------------- | --------------------------------------------------- |
+| **Model**               | Message broker                                        | Message broker                             | Queue (pull)                                          | Pub-sub (push)                      | Event bus                                       | Stream / log                                        |
+| **Protocol**            | JMS, OpenWire, AMQP, STOMP, MQTT                      | AMQP 0-9-1, AMQP 1.0, STOMP, MQTT          | HTTPS, SDK                                            | HTTPS, SDK, SQS, Lambda, SMS, Email | HTTPS, SDK                                      | SDK, Kafka protocol (MSK)                           |
+| **Delivery**            | At-least-once, exactly-once (XA)                      | At-least-once                              | At-least-once (Standard), Exactly-once (FIFO)         | At-least-once                       | At-least-once                                   | At-least-once                                       |
+| **Ordering**            | Per-queue (priority)                                  | Per-queue (priority)                       | Best-effort (Standard), Strict (FIFO)                 | None (best-effort)                  | None                                            | Per-shard                                           |
+| **Throughput**          | Instance-limited                                      | Instance-limited                           | Virtually unlimited                                   | Virtually unlimited                 | Virtually unlimited                             | Very high                                           |
+| **Latency**             | Sub-ms (same AZ)                                      | Sub-ms (same AZ)                           | 10-100ms                                              | 10-100ms                            | 10-100ms                                        | Sub-ms (same AZ)                                    |
+| **Persistence**         | Configurable                                          | Configurable                               | 14 days (Standard), 14 days (FIFO)                    | Not persistent                      | 24 hours / archive                              | 7-365 days (Kinesis), Configurable (MSK)            |
+| **Multi-region**        | Manual (network of brokers / shovel)                  | Manual (shovel / federation)               | Native (queues are regional, manual replication)      | Native (cross-region subscriptions) | Cross-region event buses                        | MSK MirrorMaker                                     |
+| **Lambda trigger**      | Event Source Mapping                                  | Event Source Mapping                       | Native                                                | Native                              | Native                                          | Event Source Mapping                                |
+| **Management overhead** | Low (AWS managed)                                     | Low (AWS managed)                          | Zero (fully managed)                                  | Zero (fully managed)                | Zero (fully managed)                            | Low (MSK managed)                                   |
+| **Cost (at scale)**     | High (instance-based)                                 | High (instance-based)                      | Low (request-based)                                   | Low (request-based)                 | Low (event-based)                               | Moderate                                            |
+| **Best for**            | Migrating existing brokers, JMS apps, priority queues | AMQP apps, complex routing, multi-language | Decoupling simple workloads, Lambda integration, FIFO | Broadcast notifications, fan-out    | SaaS integration, schema registry, event-driven | Real-time analytics, log aggregation, streaming ETL |
+
+### When to Use Amazon MQ
+
+- **Lift-and-shift migration.** You have existing ActiveMQ or RabbitMQ infrastructure and want to move to AWS without rewriting application code. Amazon MQ supports the same protocols and APIs.
+- **JMS dependency.** Your application uses JMS APIs, XA transactions, or JMS message selectors. SQS does not support JMS.
+- **Complex routing.** RabbitMQ's exchange-based routing (topic, headers, consistent hash) enables patterns that are verbose or impossible with SQS.
+- **Priority queues.** ActiveMQ's priority dispatch is more sophisticated than SQS's per-message delay queue workaround.
+- **Protocol flexibility.** You need STOMP, MQTT, or AMQP alongside JMS in the same broker.
+
+### When NOT to Use Amazon MQ
+
+- **Greenfield serverless architecture.** SQS + SNS + Lambda is simpler, cheaper and more scalable.
+- **Very high throughput (> 50K msg/sec).** SQS scales to hundreds of thousands without instance upgrades.
+- **Cost-sensitive workloads.** At scale, Amazon MQ's per-instance-hour pricing is significantly more expensive than SQS's per-request pricing.
+- **Event-driven integrations.** EventBridge natively integrates with 200+ SaaS partners and AWS services. Amazon MQ requires custom consumers.
+- **Exactly-once delivery.** SQS FIFO provides exactly-once in a message group. Amazon MQ requires XA transactions for the same guarantee.
+
+---
+
+### Key Flags Available on Amazon MQ
+
+| Flag                               | Available on Amazon MQ  | Notes                                    |
+| ---------------------------------- | ----------------------- | ---------------------------------------- |
+| `prioritizedMessages="true"`       | Yes                     | Core priority flag                       |
+| `sortedStore="true"`               | Yes                     | Recommended with persistence             |
+| `optimizedDispatch="true"`         | Yes                     | Recommended for throughput               |
+| `prefetchPerLevel`                 | Yes                     | Via `priorityQueueCursor` config         |
+| `concurrentStoreAndDispatchQueues` | **No** — managed by AWS | Set correctly by AWS on 5.15.9+          |
+| `<persistenceAdapter>` (KahaDB)    | **No**                  | Managed by AWS                           |
+| `<transportConnectors>`            | **No**                  | Managed by AWS                           |
+| `<networkConnectors>`              | **No**                  | Use Amazon MQ network of brokers feature |
+| `<systemUsage>`                    | Partially               | Some memory settings accepted            |
+
+### Recommended activemq.xml for Amazon MQ
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<broker xmlns="http://activemq.apache.org/schema/core"
+        schedulePeriodForDestinationPurge="10000">
+
+  <destinationPolicy>
+    <policyMap>
+      <policyEntries>
+
+        <policyEntry queue="ORDERS.>"
+                     prioritizedMessages="true"
+                     optimizedDispatch="true"
+                     gcInactiveDestinations="true"
+                     inactiveTimoutBeforeGC="600000">
+          <pendingQueuePolicy>
+            <priorityQueueCursor sortedStore="true"/>
+          </pendingQueuePolicy>
+          <dispatchPolicy>
+            <priorityDispatchPolicy/>
+          </dispatchPolicy>
+          <deadLetterStrategy>
+            <individualDeadLetterStrategy
+              queuePrefix="DLQ."
+              useQueueForQueueMessages="true"/>
+          </deadLetterStrategy>
+        </policyEntry>
+
+        <policyEntry queue=">"
+                     gcInactiveDestinations="true"
+                     inactiveTimoutBeforeGC="600000">
+          <deadLetterStrategy>
+            <sharedDeadLetterStrategy/>
+          </deadLetterStrategy>
+        </policyEntry>
+
+      </policyEntries>
+    </policyMap>
+  </destinationPolicy>
+
+  <plugins>
+    <redeliveryPlugin fallbackToDeadLetter="true"
+                      sendToDlqIfMaxRetriesExceeded="true">
+      <redeliveryPolicyMap>
+        <redeliveryPolicyMap>
+          <defaultEntry>
+            <redeliveryPolicy maximumRedeliveries="6"
+                              initialRedeliveryDelay="1000"
+                              useExponentialBackOff="true"
+                              backOffMultiplier="2"/>
+          </defaultEntry>
+        </redeliveryPolicyMap>
+      </redeliveryPolicyMap>
+    </redeliveryPlugin>
+  </plugins>
+
+</broker>
+```
+
+
 ## Amazon MQ Broker Engines and Instance Types
 
 ### Engine Versions
@@ -1371,172 +1537,6 @@ Amazon MQ does not provide native backup APIs. For message-level backup:
 
 ---
 
-## ActiveMQ vs RabbitMQ — Design Decision Framework
-
-Choose your Amazon MQ engine based on protocol requirements, delivery semantics and operational model.
-
-### Protocol Support
-
-| Protocol   | ActiveMQ      | RabbitMQ                             |
-| ---------- | ------------- | ------------------------------------ |
-| JMS        | Native (core) | Via JMS client library (AMQP bridge) |
-| AMQP 1.0   | Yes           | Yes                                  |
-| AMQP 0-9-1 | No            | Native (core)                        |
-| STOMP      | Yes           | Via plugin (included)                |
-| MQTT       | Yes           | Via plugin (included)                |
-| OpenWire   | Native (core) | No                                   |
-
-### When to Choose ActiveMQ
-
-- **You already use JMS.** ActiveMQ's native JMS support means zero protocol translation overhead. Spring JMS, `javax.jms`, and Jakarta JMS all work directly.
-- **Priority-based messaging is a core requirement.** ActiveMQ's cursor-based priority dispatch with `sortedStore="true"` is more mature and configurable than RabbitMQ's `x-max-priority`.
-- **You need XA transactions.** ActiveMQ supports JMS XA transactions for distributed transaction coordination across multiple resources.
-- **Network of brokers topology.** If you need broker-to-broker message forwarding between regions or VPCs without application changes, ActiveMQ's network of brokers is straightforward to configure.
-- **Wire-level protocol filtering.** ActiveMQ supports message selectors (SQL-based filtering on JMS properties) at the broker level, reducing consumer-side filtering.
-
-### When to Choose RabbitMQ
-
-- **You need AMQP 0-9-1.** RabbitMQ's native AMQP 0-9-1 gives you flexible routing with exchanges (direct, topic, fanout, headers, consistent hash). This enables complex routing topologies that are difficult to replicate with ActiveMQ.
-- **Multi-language polyglot environment.** RabbitMQ's client libraries are well-maintained for Python, Go, Ruby, .NET, Node.js, and many others. ActiveMQ's non-JVM clients (STOMP, MQTT) are less polished.
-- **Streaming use cases.** RabbitMQ 3.13+ includes the RabbitMQ Stream Plugin for large message streams with offset tracking, which ActiveMQ Classic does not provide.
-- **Federation use cases.** RabbitMQ federation allows exchanges and queues in different regions to be connected with upstream/downstream relationships, supporting multi-region fan-out.
-- **Graviton (ARM) cost optimisation.** RabbitMQ on `mq.m7g` Graviton instances benefits from Erlang's ARM optimisation, providing better price-performance than ActiveMQ on equivalent instances.
-- **Smaller operational blast radius.** RabbitMQ 3-node cluster tolerates one node failure without manual intervention. ActiveMQ active/standby requires both healthy for HA.
-
-### When to Use Neither (Pick SQS/SNS Instead)
-
-- **Throughput exceeds 50,000 msg/sec:** Amazon MQ instance limits will require splitting across multiple brokers. SQS Standard scales to virtually unlimited throughput.
-- **Cost is the primary constraint:** SQS Standard is 3-10x cheaper at scale.
-- **Schedule-based or event-driven workloads:** EventBridge Scheduler or EventBridge Pipes integrate natively with SQS/SNS.
-- **Lambda-native architectures:** SQS triggers Lambda directly. Amazon MQ requires Event Source Mapping (Lambda polling the broker) or an intermediary ECS service.
-- **Exactly-once processing:** SQS FIFO provides exactly-once delivery within a message group. Amazon MQ provides at-least-once semantics.
-
-### Decision Flowchart
-
-```
-Do you need JMS / XA transactions / wire-level message selectors?
-├── Yes → ActiveMQ
-└── No  → Do you need AMQP 0-9-1 / exchanges / complex routing / streams?
-        ├── Yes → RabbitMQ
-        └── No  → Can you use a fully-managed, protocol-agnostic service?
-                  ├── Yes → SQS (queues) / SNS (pub-sub) / EventBridge (event bus)
-                  └── No  → Amazon MQ (choose engine per criteria above)
-```
-
----
-
-## Amazon MQ vs Other AWS Messaging Services
-
-When designing a system on AWS, Amazon MQ is rarely the only option. Here is how it compares to the alternatives.
-
-| Attribute               | Amazon MQ (ActiveMQ)                                  | Amazon MQ (RabbitMQ)                       | Amazon SQS                                            | Amazon SNS                          | Amazon EventBridge                              | Amazon Kinesis / MSK                                |
-| ----------------------- | ----------------------------------------------------- | ------------------------------------------ | ----------------------------------------------------- | ----------------------------------- | ----------------------------------------------- | --------------------------------------------------- |
-| **Model**               | Message broker                                        | Message broker                             | Queue (pull)                                          | Pub-sub (push)                      | Event bus                                       | Stream / log                                        |
-| **Protocol**            | JMS, OpenWire, AMQP, STOMP, MQTT                      | AMQP 0-9-1, AMQP 1.0, STOMP, MQTT          | HTTPS, SDK                                            | HTTPS, SDK, SQS, Lambda, SMS, Email | HTTPS, SDK                                      | SDK, Kafka protocol (MSK)                           |
-| **Delivery**            | At-least-once, exactly-once (XA)                      | At-least-once                              | At-least-once (Standard), Exactly-once (FIFO)         | At-least-once                       | At-least-once                                   | At-least-once                                       |
-| **Ordering**            | Per-queue (priority)                                  | Per-queue (priority)                       | Best-effort (Standard), Strict (FIFO)                 | None (best-effort)                  | None                                            | Per-shard                                           |
-| **Throughput**          | Instance-limited                                      | Instance-limited                           | Virtually unlimited                                   | Virtually unlimited                 | Virtually unlimited                             | Very high                                           |
-| **Latency**             | Sub-ms (same AZ)                                      | Sub-ms (same AZ)                           | 10-100ms                                              | 10-100ms                            | 10-100ms                                        | Sub-ms (same AZ)                                    |
-| **Persistence**         | Configurable                                          | Configurable                               | 14 days (Standard), 14 days (FIFO)                    | Not persistent                      | 24 hours / archive                              | 7-365 days (Kinesis), Configurable (MSK)            |
-| **Multi-region**        | Manual (network of brokers / shovel)                  | Manual (shovel / federation)               | Native (queues are regional, manual replication)      | Native (cross-region subscriptions) | Cross-region event buses                        | MSK MirrorMaker                                     |
-| **Lambda trigger**      | Event Source Mapping                                  | Event Source Mapping                       | Native                                                | Native                              | Native                                          | Event Source Mapping                                |
-| **Management overhead** | Low (AWS managed)                                     | Low (AWS managed)                          | Zero (fully managed)                                  | Zero (fully managed)                | Zero (fully managed)                            | Low (MSK managed)                                   |
-| **Cost (at scale)**     | High (instance-based)                                 | High (instance-based)                      | Low (request-based)                                   | Low (request-based)                 | Low (event-based)                               | Moderate                                            |
-| **Best for**            | Migrating existing brokers, JMS apps, priority queues | AMQP apps, complex routing, multi-language | Decoupling simple workloads, Lambda integration, FIFO | Broadcast notifications, fan-out    | SaaS integration, schema registry, event-driven | Real-time analytics, log aggregation, streaming ETL |
-
-### When to Use Amazon MQ
-
-- **Lift-and-shift migration.** You have existing ActiveMQ or RabbitMQ infrastructure and want to move to AWS without rewriting application code. Amazon MQ supports the same protocols and APIs.
-- **JMS dependency.** Your application uses JMS APIs, XA transactions, or JMS message selectors. SQS does not support JMS.
-- **Complex routing.** RabbitMQ's exchange-based routing (topic, headers, consistent hash) enables patterns that are verbose or impossible with SQS.
-- **Priority queues.** ActiveMQ's priority dispatch is more sophisticated than SQS's per-message delay queue workaround.
-- **Protocol flexibility.** You need STOMP, MQTT, or AMQP alongside JMS in the same broker.
-
-### When NOT to Use Amazon MQ
-
-- **Greenfield serverless architecture.** SQS + SNS + Lambda is simpler, cheaper and more scalable.
-- **Very high throughput (> 50K msg/sec).** SQS scales to hundreds of thousands without instance upgrades.
-- **Cost-sensitive workloads.** At scale, Amazon MQ's per-instance-hour pricing is significantly more expensive than SQS's per-request pricing.
-- **Event-driven integrations.** EventBridge natively integrates with 200+ SaaS partners and AWS services. Amazon MQ requires custom consumers.
-- **Exactly-once delivery.** SQS FIFO provides exactly-once in a message group. Amazon MQ requires XA transactions for the same guarantee.
-
----
-
-### Key Flags Available on Amazon MQ
-
-| Flag                               | Available on Amazon MQ  | Notes                                    |
-| ---------------------------------- | ----------------------- | ---------------------------------------- |
-| `prioritizedMessages="true"`       | Yes                     | Core priority flag                       |
-| `sortedStore="true"`               | Yes                     | Recommended with persistence             |
-| `optimizedDispatch="true"`         | Yes                     | Recommended for throughput               |
-| `prefetchPerLevel`                 | Yes                     | Via `priorityQueueCursor` config         |
-| `concurrentStoreAndDispatchQueues` | **No** — managed by AWS | Set correctly by AWS on 5.15.9+          |
-| `<persistenceAdapter>` (KahaDB)    | **No**                  | Managed by AWS                           |
-| `<transportConnectors>`            | **No**                  | Managed by AWS                           |
-| `<networkConnectors>`              | **No**                  | Use Amazon MQ network of brokers feature |
-| `<systemUsage>`                    | Partially               | Some memory settings accepted            |
-
-### Recommended activemq.xml for Amazon MQ
-
-```xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<broker xmlns="http://activemq.apache.org/schema/core"
-        schedulePeriodForDestinationPurge="10000">
-
-  <destinationPolicy>
-    <policyMap>
-      <policyEntries>
-
-        <policyEntry queue="ORDERS.>"
-                     prioritizedMessages="true"
-                     optimizedDispatch="true"
-                     gcInactiveDestinations="true"
-                     inactiveTimoutBeforeGC="600000">
-          <pendingQueuePolicy>
-            <priorityQueueCursor sortedStore="true"/>
-          </pendingQueuePolicy>
-          <dispatchPolicy>
-            <priorityDispatchPolicy/>
-          </dispatchPolicy>
-          <deadLetterStrategy>
-            <individualDeadLetterStrategy
-              queuePrefix="DLQ."
-              useQueueForQueueMessages="true"/>
-          </deadLetterStrategy>
-        </policyEntry>
-
-        <policyEntry queue=">"
-                     gcInactiveDestinations="true"
-                     inactiveTimoutBeforeGC="600000">
-          <deadLetterStrategy>
-            <sharedDeadLetterStrategy/>
-          </deadLetterStrategy>
-        </policyEntry>
-
-      </policyEntries>
-    </policyMap>
-  </destinationPolicy>
-
-  <plugins>
-    <redeliveryPlugin fallbackToDeadLetter="true"
-                      sendToDlqIfMaxRetriesExceeded="true">
-      <redeliveryPolicyMap>
-        <redeliveryPolicyMap>
-          <defaultEntry>
-            <redeliveryPolicy maximumRedeliveries="6"
-                              initialRedeliveryDelay="1000"
-                              useExponentialBackOff="true"
-                              backOffMultiplier="2"/>
-          </defaultEntry>
-        </redeliveryPolicyMap>
-      </redeliveryPolicyMap>
-    </redeliveryPlugin>
-  </plugins>
-
-</broker>
-```
-
----
 
 ## Summary
 
