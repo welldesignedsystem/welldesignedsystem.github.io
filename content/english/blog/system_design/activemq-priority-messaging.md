@@ -19,8 +19,8 @@ Choose your Amazon MQ engine based on protocol requirements, delivery semantics 
 | Protocol | Wire Format | Key Characteristics | Best For | ActiveMQ | RabbitMQ |
 |---|---|---|---|---|---|---|
 | **JMS** | API (not a wire protocol) | Java EE standard for messaging. Defines connection factories, destinations, message producers/consumers, and XA transactions. Under the wire it uses the broker's native protocol. | Spring / Jakarta EE apps, existing JMS investments | Native | Via AMQP bridge |
-| **AMQP 1.0** | Binary, type system | Vendor-neutral interoperability standard. Each implementation defines its own routing model. | Cross-platform, multi-broker topologies | Native | Native |
-| **AMQP 0-9-1** | Binary, compact | Formal exchange/queue/binding model. Flexible routing (direct, topic, fanout, headers, consistent hash). | Complex routing, polyglot environments | No | Native |
+| **AMQP 1.0** | Binary, type system | Transport-level interoperability standard — defines how to transfer messages between peers, but leaves the routing model to the implementation. Each broker maps it to its own destinations. | Cross-platform, multi-broker topologies | Native | Native |
+| **AMQP 0-9-1** | Binary, compact | Version 0.9.1 of the AMQP spec. RabbitMQ's native protocol. Defines a complete messaging model with exchanges, queues, and bindings baked into the protocol itself — flexible broker-side routing (direct, topic, fanout, headers, consistent hash). | Complex routing, polyglot environments | No | Native |
 | **STOMP** | Text, frame-based | Simple, human-readable. Easy to debug (telnet). No routing model — sends to a destination string. | Quick scripts, non-JVM clients, prototyping | Plugin | Plugin |
 | **MQTT** | Binary, ultra-lightweight | Pub-sub only, three QoS levels, persistent sessions, last-will. Minimal per-message overhead. | IoT, mobile, constrained devices | Plugin | Plugin |
 | **OpenWire** | Binary, command set | ActiveMQ's native protocol. Full JMS feature set: XA, selectors, priority headers. Failover transport provides client-side HA. | JVM/Spring apps, HA requirements | Native | No |
