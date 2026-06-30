@@ -10,6 +10,15 @@ Amazon MQ is the AWS managed message broker service supporting two engines: Apac
 
 ---
 
+### Terms
+
+- **Wire-level protocol** — defines the exact bytes that go over the TCP connection: framing, encoding, handshakes. You can open a raw socket and speak it byte-for-byte. OpenWire, AMQP 0-9-1, and MQTT are wire-level protocols.
+
+- **Message transfer protocol** — defines how to move a message from one peer to another at the application layer without dictating the routing/queueing model. The broker decides how to route; the protocol only handles delivery. In the AMQP 1.0 sense, 0-9-1 is both a wire protocol *and* a routing protocol in one spec — routing logic is baked into the L7 protocol itself. 1.0 is a transfer protocol — each broker maps it to its own routing model underneath.
+
+**Note** - Both protocols discussed here operate at **OSI Layer 7 (Application Layer)** — they run over TCP (Layer 4) and define their own framing, encoding, and application semantics on top of it. The distinction below is about scope *within* the application layer.
+
+
 ## ActiveMQ vs RabbitMQ — Design Decision Framework
 
 Choose your Amazon MQ engine based on protocol requirements, delivery semantics and operational model.
@@ -19,7 +28,7 @@ Choose your Amazon MQ engine based on protocol requirements, delivery semantics 
 | Protocol | Wire Format | Key Characteristics | Best For | ActiveMQ | RabbitMQ |
 |---|---|---|---|---|---|---|
 | **JMS** | API (not a wire protocol) | Java EE standard for messaging. Defines connection factories, destinations, message producers/consumers, and XA transactions. Under the wire it uses the broker's native protocol. | Spring / Jakarta EE apps, existing JMS investments | Native | Via AMQP bridge |
-| **AMQP 1.0** | Binary, type system | Transport-level interoperability standard — defines how to transfer messages between peers, but leaves the routing model to the implementation. Each broker maps it to its own destinations. | Cross-platform, multi-broker topologies | Native | Native |
+| **AMQP 1.0** | Binary, type system | Message transfer standard — defines how to exchange messages between peers, but leaves the routing model to the implementation. Each broker maps it to its own destinations. | Cross-platform, multi-broker topologies | Native | Native |
 | **AMQP 0-9-1** | Binary, compact | Version 0.9.1 — not a predecessor of 1.0, but a separate fork. While the financial industry group stripped the spec down to a wire-level standard (1.0), RabbitMQ kept the rich routing model in the protocol itself: exchanges, queues, bindings, and flexible routing (direct, topic, fanout, headers, consistent hash). | Complex routing, polyglot environments | No | Native |
 | **STOMP** | Text, frame-based | Simple, human-readable. Easy to debug (telnet). No routing model — sends to a destination string. | Quick scripts, non-JVM clients, prototyping | Plugin | Plugin |
 | **MQTT** | Binary, ultra-lightweight | Pub-sub only, three QoS levels, persistent sessions, last-will. Minimal per-message overhead. | IoT, mobile, constrained devices | Plugin | Plugin |
