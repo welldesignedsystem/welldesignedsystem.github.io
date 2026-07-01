@@ -1,5 +1,5 @@
 +++
-date = '2026-07-02T06:00:00+10:00'
+date = '2026-07-01T06:00:00+10:00'
 draft = false
 title = 'Spec-Driven Development With AI: A 2026 Methodology Guide'
 tags = ['SDD', 'Spec-Driven Development', 'AI', 'Software Engineering', 'Methodology', 'Agentic', 'Spec-First']
