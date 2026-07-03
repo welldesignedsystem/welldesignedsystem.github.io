@@ -63,7 +63,7 @@ The practical question is not which pattern is correct in the abstract — it is
 | **Read-after-write consistency** | A client always sees its own writes immediately, but others may not     | Balances write availability with read freshness                      | User session stores          |
 | **Causal consistency**           | Causally related operations seen in order; unrelated ones can lag       | Preserves logical ordering without global coordination               | DynamoDB Transactions, CRDTs |
 
-**Note &mdash; eventual vs read-after-write:** With eventual consistency even the _writer_ may not see their own write immediately — the read could land on a replica still catching up. With read-after-write consistency the writer always sees their own writes, but other clients may still read stale data for a while.
+**Note: eventual vs read-after-write:** With eventual consistency even the _writer_ may not see their own write immediately — the read could land on a replica still catching up. With read-after-write consistency the writer always sees their own writes, but other clients may still read stale data for a while.
 
 ---
 
