@@ -1,6 +1,6 @@
 # AGENTS.md — welldesignedsystem.github.io
 
-Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to GitHub Pages via `.github/workflows/deploy.yml`.
+Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to GitHub Pages via `.github/workflows/deploy.yml`. **No `opencode.json`** — instructions are served by this file plus `.github/copilot-instructions.md`.
 
 ## Commands
 
@@ -22,7 +22,7 @@ Push to `main` → GitHub Actions (Node 24, Hugo latest) → GitHub Pages. CI bu
 
 - **Frontmatter is TOML** (`+++`), never YAML.
 - Blog posts: `content/english/blog/{category}/{slug}.md`.
-- Categories (9): `ai/`, `business-ideas/`, `containerization/`, `languages/`, `legacy/`, `roadmap/`, `security/`, `soft-skills/`, `system_design/`.
+- 9 categories: `ai/`, `business-ideas/`, `containerization/`, `languages/`, `legacy/`, `roadmap/`, `security/`, `soft-skills/`, `system_design/`.
 - `summaryLength = 10` — excerpts truncate at 10 words.
 - No Oxford comma (see `.github/instructions/blog.instructions.md`).
 - Goldmark renders raw HTML in markdown (`unsafe = true`).
@@ -33,13 +33,15 @@ Push to `main` → GitHub Actions (Node 24, Hugo latest) → GitHub Pages. CI bu
 - **Theme**: `github.com/zeon-studio/hugoplate` — Hugo module (auto-downloaded). Module imports in `config/_default/module.toml`.
 - **Asset pipeline**: TailwindCSS v4 via `@tailwindcss/cli` (no `tailwind.config.js`, no PostCSS). Entrypoint: `assets/css/custom.css`.
 - **Custom plugins**: `tailwind-plugin/` (`tw-bs-grid.js`, `tw-theme.js`).
+- **Mermaid diagrams**: supported via `github.com/hugomods/mermaid` Hugo module (CDN).
+- **Custom layouts**: only `layouts/shortcodes/` (`iframe.html`, `include.html`) — everything else inherited from the theme.
 - **Required**: Hugo extended >= 0.151.0. Go and Node.js needed locally (CI uses Node 24, no `.nvmrc`).
-- **Custom layouts**: only `layouts/shortcodes/` (`iframe`, `include`) — everything else inherited from the module.
 - **Build output**: `public/` — generated, not committed.
-- **Module quirk**: `hugo_stats.json` mounted with `disableWatch = true` — CSS rebuilds won't trigger on stat changes alone.
+- **Quirk**: `hugo_stats.json` mounted with `disableWatch = true` — CSS rebuilds won't trigger on stat changes alone.
 
 ## See also
 
 - `.github/copilot-instructions.md` — writing style, anti-hallucination rules
 - `.github/instructions/blog.instructions.md` — blog editorial rules
 - `.github/commit-instructions.md` — commit message format
+- `.github/agents/` — Codex agent definitions (not OpenCode)

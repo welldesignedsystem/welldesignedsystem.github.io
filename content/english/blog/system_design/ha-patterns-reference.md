@@ -10,6 +10,48 @@ This reference collects pattern tables from the main [High Availability](/blog/s
 
 ## Consistency Models
 
+### Interservice consistency
+
+When service A calls service B synchronously, A's availability is coupled to B's — if B is slow or down, A degrades too. This is the CAP trade-off at the service boundary: synchronous propagation gives immediate consistency at the cost of availability. The patterns below decouple services by accepting eventual consistency.
+
+The same consistency models that govern database replication apply directly to interservice communication — any time state is replicated or propagated across nodes (DB replicas, caches, or microservices), the same trade-offs and vocabulary apply.
+
+**Sources:** _Microservices Patterns_ by Chris Richardson (Ch. 4, 7); _Building Event-Driven Microservices_ by Adam Bellemare (Ch. 3, 6)
+
+| Pattern | How it works | Consistency | Operational necessities |
+|---|---|---|---|
+| **Async messaging** | A publishes an event ("OrderCreated") to a broker (SQS/SNS, Kafka, EventBridge); B consumes asynchronously. A no longer blocks on B's availability | Eventual | Broker HA, DLQ, consumer lag monitoring |
+| **Transactional Outbox** | Event written to an outbox table in the same local transaction as the business data; a separate relay process (or CDC) reads that table and publishes to the broker. Solves the dual-write problem — crash between DB write and publish would otherwise cause divergence | At-least-once, eventual | Idempotent consumer, relay process, outbox table cleanup |
+| **Change Data Capture (CDC)/Transactional log ~~tailing~~** | A tool like Debezium (or DynamoDB Streams / Kinesis) tails the DB commit log and emits change events automatically. Removes the outbox relay; decouples propagation from app code entirely | At-least-once, eventual | CDC infra, schema change handling |
+| **Saga — Choreography** | Services react to each other's events in sequence; compensating transactions undo prior steps on failure. No central coordinator — simpler but harder to trace as the chain grows | Eventual across steps | Per-service compensation logic, event tracing, monitoring |
+| **Saga — Orchestration** | Central saga coordinator tells each service what to do next and manages compensation. Easier to reason about and debug, but adds a new component to keep available | Eventual across steps | Coordinator HA, central state tracking |
+| **CQRS** | A owns writes; B (or several B's) maintain eventually-consistent read models / projections built from A's event stream. Read path independent from write path | Eventual (read model lags) | Projection infrastructure, schema migrations across models |
+
+**How the standard consistency models map to a two-service scenario:**
+
+- **Strong consistency** — every reader sees the same value immediately after a write, regardless of which node or service they query. The synchronous call gave this: A waited for B to confirm before the operation was considered done, so anyone reading from B afterward saw the update. Availability suffered because enforcing this across a slow or unreachable node means blocking or failing.
+- **Eventual consistency** — no guarantee about when B converges, only that it will given no more writes. Async messaging gives this: A returns immediately, B catches up whenever the message is processed. Availability goes up, but there is a window where A and B disagree.
+- **Read-your-writes consistency** — the writer itself sees its own write on subsequent reads, even if other readers might not yet. This matters when the same client that triggered a change in A immediately queries B and expects to see it (e.g. a user updates a profile in service A, then the UI fetches it from service B and the update appears missing). Solved by routing that specific read back to A's primary or a cache A writes through, rather than waiting on B's eventual sync.
+- **Causal consistency** — causally related operations (B's event depends on A's event) are seen by everyone in that order, even if unrelated operations can be reordered. If A emits "OrderCreated" then "OrderCancelled," the consumer must see Created before Cancelled. Achieved via partition keys (Kafka partitioning by order ID guarantees ordering within that key) or version vectors.
+
+**Patterns to consistency mapping:**
+
+| Pattern | Consistency it typically gives |
+|---|---|
+| Synchronous call | Strong |
+| Async messaging / outbox / CDC | Eventual |
+| Saga | Eventual, with compensation for failures |
+| CQRS read model | Eventual (sometimes read-your-writes via a cache layer) |
+
+The practical question is not which pattern is correct in the abstract — it is which guarantee the business requirement actually needs. If nothing bad happens when B lags behind A by a few hundred milliseconds to a few seconds, eventual consistency with async messaging is the right call. If the caller needs to see its own write immediately, that is a read-your-writes requirement on a specific path, not a reason to make the whole system strongly consistent again.
+
+**Operational necessities for any async pattern:**
+- **Idempotency** — consumers deduplicate by event ID because brokers offer at-least-once, not exactly-once
+- **Dead-letter queues** — events B cannot process must not vanish silently; DLQs capture them for inspection and replay
+- **Lag monitoring** — track the staleness window so "eventual" is measurable in practice
+- **Starting point for two-service propagation:** outbox pattern + SQS/SNS (or Kafka) + idempotent consumer. This removes synchronous coupling without needing full saga orchestration — save that for multi-step business transactions, not a two-hop propagation.
+
+
 **Consistency model:** A set of **rules** defining how **quickly a write to one node becomes visible to reads** on other nodes. The choice determines **replication strategy**, **failover behaviour**, and whether **quorum reads/writes** are needed.
 
 **Sources:** _Designing Data-Intensive Applications_ by Martin Kleppmann (Ch. 5, 9)
