@@ -22,7 +22,7 @@ The same consistency models that govern database replication apply directly to i
 |---|---|---|---|
 | **Async messaging** | A publishes an event ("OrderCreated") to a broker (SQS/SNS, Kafka, EventBridge); B consumes asynchronously. A no longer blocks on B's availability | Eventual | Broker HA, DLQ, consumer lag monitoring |
 | **Transactional Outbox** | Event written to an outbox table in the same local transaction as the business data; a separate relay process (or CDC) reads that table and publishes to the broker. Solves the dual-write problem — crash between DB write and publish would otherwise cause divergence | At-least-once, eventual | Idempotent consumer, relay process, outbox table cleanup |
-| **Change Data Capture (CDC)/Transactional log tailing** | A tool like Debezium (or DynamoDB Streams / Kinesis) tails the DB commit log and emits change events automatically. Removes the outbox relay; decouples propagation from app code entirely | At-least-once, eventual | CDC infra, schema change handling |
+| **Change Data Capture (CDC)/Transactional log tailing** | A tool like Debezium (or DynamoDB Streams / Kinesis) tails the DB commit log and emits change events automatically. Removes the outbox relay (reads from one system and writes to another similar to polling publisher); decouples propagation from app code entirely | At-least-once, eventual | CDC infra, schema change handling |
 | **Saga — Choreography** | Services react to each other's events in sequence; compensating transactions undo prior steps on failure. No central coordinator — simpler but harder to trace as the chain grows | Eventual across steps | Per-service compensation logic, event tracing, monitoring |
 | **Saga — Orchestration** | Central saga coordinator tells each service what to do next and manages compensation. Easier to reason about and debug, but adds a new component to keep available | Eventual across steps | Coordinator HA, central state tracking |
 | **CQRS** | A owns writes; B (or several B's) maintain eventually-consistent read models / projections built from A's event stream. Read path independent from write path | Eventual (read model lags) | Projection infrastructure, schema migrations across models |
@@ -49,10 +49,7 @@ The practical question is not which pattern is correct in the abstract — it is
 - **Idempotency** — consumers deduplicate by event ID because brokers offer at-least-once, not exactly-once
 - **Dead-letter queues** — events B cannot process must not vanish silently; DLQs capture them for inspection and replay
 - **Lag monitoring** — track the staleness window so "eventual" is measurable in practice
-- **Starting point for two-service propagation:** outbox pattern + SQS/SNS (or Kafka) + idempotent consumer. This removes synchronous coupling without needing full saga orchestration — save that for multi-step business transactions, not a two-hop propagation.
-
-
-**Consistency model:** A set of **rules** defining how **quickly a write to one node becomes visible to reads** on other nodes. The choice determines **replication strategy**, **failover behaviour**, and whether **quorum reads/writes** are needed.
+- **outbox pattern + SQS/SNS (or Kafka) + idempotent consumer.** - This removes synchronous coupling without needing full saga orchestration — save that for multi-step business transactions, not a two-hop propagation.
 
 **Sources:** _Designing Data-Intensive Applications_ by Martin Kleppmann (Ch. 5, 9)
 
@@ -60,7 +57,7 @@ The practical question is not which pattern is correct in the abstract — it is
 | -------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------- |
 | **Strong consistency**           | All nodes see the same data at the same time                            | Highest correctness, highest latency, potentially lower availability | DynamoDB DAX, Spanner        |
 | **Eventual consistency**         | Writes propagate asynchronously; stale reads possible until convergence | Lower latency, higher availability                                   | DynamoDB default, S3         |
-| **Read-after-write consistency** | A client always sees its own writes immediately, but others may not     | Balances write availability with read freshness                      | User session stores          |
+| **Read-after-write consistency** | A client always sees its own writes immediately, but others may not     | Balances write availability with read freshness                      | User session stores (S3)         |
 | **Causal consistency**           | Causally related operations seen in order; unrelated ones can lag       | Preserves logical ordering without global coordination               | DynamoDB Transactions, CRDTs |
 
 **Note: eventual vs read-after-write:** With eventual consistency even the _writer_ may not see their own write immediately — the read could land on a replica still catching up. With read-after-write consistency the writer always sees their own writes, but other clients may still read stale data for a while.
