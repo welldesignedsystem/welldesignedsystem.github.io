@@ -323,51 +323,37 @@ The eval pyramid tells you whether quality *regressed*. It does not tell you whe
 
 ### What session logs contain
 
-Claude Code writes structured JSON logs to `~/.claude/logs/` for every session. Each log entry captures:
+Claude Code writes session transcripts as JSONL files (one JSON object per line) to `~/.claude/projects/<url-encoded-project-path>/<session-id>.jsonl`. Each line represents a message in the conversation with role, content blocks, and metadata:
 
-- **Session start/end timestamps** — wall-clock duration per task
-- **Tool calls** — tool name, arguments, result, duration per call
-- **Skill invocations** — which skill fired, its trigger text, and whether it completed
-- **Errors** — tool failures, permission denials, retries
-- **Model metadata** — tokens used, model version, temperature
+- **Role** — `"user"`, `"assistant"`, or `"system"`
+- **Content blocks** — text, `tool_use` (name + input), `tool_result` (content + optional `is_error`)
+- **Model metadata** — model version, usage (tokens), stop reason
 
-```json
-{
-  "session_id": "abc123",
-  "started_at": "2026-07-05T10:00:00Z",
-  "ended_at": "2026-07-05T10:03:42Z",
-  "events": [
-    {
-      "type": "skill_invocation",
-      "skill": "generate-report",
-      "trigger": "generate a compliance report",
-      "status": "completed"
-    },
-    {
-      "type": "tool_call",
-      "tool": "write",
-      "duration_ms": 120,
-      "success": true
-    }
-  ],
-  "total_tokens": 4521,
-  "error_count": 0
-}
+```jsonl
+{"role": "user", "content": [{"type": "text", "text": "generate a compliance report"}]}
+{"role": "assistant", "content": [{"type": "text", "text": "I'll help with that."}, {"type": "tool_use", "name": "read_file", "input": {"path": "template.md"}}]}
+{"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_abc", "content": "---\ntitle: Report\n---", "is_error": false}]}
 ```
 
 ### Before-and-after comparison
 
-Take a baseline window (e.g. 2 weeks before introducing a skill) and a measurement window (2 weeks after). Extract the same metrics from both:
+Take a baseline window (e.g. 2 weeks before introducing a skill) and a measurement window (2 weeks after). Extract the same metrics from both across all session files in `~/.claude/projects/*/`:
 
 ```bash
-# Count skill invocations per day — measures adoption
-jq '[.events[] | select(.type == "skill_invocation")] | length' ~/.claude/logs/*.json
+# Total tool calls across all sessions — measures automation depth
+find ~/.claude/projects -name '*.jsonl' -exec sh -c '
+  jq -s "[.[] | .content // [] | map(select(.type == \"tool_use\")) | length] | add" "$1"
+' _ {} \; | awk '{sum+=$1; count++} END {print "Avg tool calls/session:", sum/count}'
 
-# Average duration per task — measures efficiency
-jq '.ended_at - .started_at' ~/.claude/logs/*.json | awk '{sum+=$1; count++} END {print sum/count}'
+# Sessions with errors — measures reliability
+find ~/.claude/projects -name '*.jsonl' -exec sh -c '
+  jq -s "[.[] | .content // [] | map(select(.type == \"tool_result\" and .is_error)) | length > 0] | any" "$1"
+' _ {} \; | awk '/true/ {errors++} END {print "Error rate:", errors/NR}'
 
-# Error rate — measures reliability
-jq 'select(.error_count > 0) | .session_id' ~/.claude/logs/*.json | wc -l
+# Total tokens used (from last assistant message per session)
+find ~/.claude/projects -name '*.jsonl' -exec sh -c '
+  jq -s "[.[] | select(.role == \"assistant\") | .usage // {} | .output_tokens // 0] | add" "$1"
+' _ {} \; | awk '{sum+=$1} END {print "Total tokens:", sum}'
 ```
 
 The report structure for each measurement:
@@ -384,7 +370,11 @@ The last row (first-attempt pass rate) is the direct link back to the eval pyram
 
 ### Automated via a session-analysis script
 
-The companion repo includes `scripts/analyze_sessions.py` that parses the log directory and produces this report. Run it against your logs, check the output into a dashboard or PR comment.
+The companion repo includes [`scripts/analyze_sessions.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/analyze_sessions.py) that walks `~/.claude/projects/` for JSONL transcripts and produces the metrics above. Run it against your logs:
+
+```bash
+uv run python scripts/analyze_sessions.py ~/.claude/projects/ --report
+```
 
 ## Part 6: Roundtrip Consistency — Code ↔ Docs
 
@@ -437,7 +427,7 @@ The open-source evaluation ecosystem has matured quickly, and a fairly clear div
 
 | Tool | Type | Best for | Notes |
 |---|---|---|---|
-| **Promptfoo** | OSS CLI, YAML-driven | Model/prompt comparison, red-teaming | Strongest open-source red-teaming suite (500+ adversarial vectors); acquired into OpenAI's Frontier infrastructure in March 2026, OSS package stays Apache 2.0 |
+| **Promptfoo** | OSS CLI, YAML-driven | Model/prompt comparison, red-teaming | Strongest open-source red-teaming suite (500+ adversarial vectors); acquired into OpenAI's Frontier infrastructure in March 2026, OSS package stays MIT |
 | **DeepEval** | OSS, Python/pytest-native | CI-gated evals with typed metrics | 50+ built-in metrics (G-Eval, hallucination, faithfulness, contextual recall); agent-specific metrics for tool correctness and task completion; synthetic dataset generation from your own docs |
 | **RAGAS** | OSS, Python | RAG pipeline scoring specifically | Research-backed retrieval + generation metrics; narrower scope than DeepEval/Promptfoo by design |
 | **Braintrust** | Platform (OSS scorer lib + hosted) | Full lifecycle: tracing → eval → CI gates → dashboards | Dataset-first, model-agnostic; sandboxed custom Python scorers; strongest option when you need eval scores wired into actual release gating, not just local test runs |
