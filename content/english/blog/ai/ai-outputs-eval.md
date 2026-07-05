@@ -1,5 +1,5 @@
 +++
-date = '2026-07-02T10:25:00+10:00'
+date = '2025-07-02T10:25:00+10:00'
 draft = false
 title = 'Testing LLM Outputs: Evals for Models, Agents, and Skills'
 tags = ['Claude', 'LLM', 'Testing', 'Evals', 'Agents']
