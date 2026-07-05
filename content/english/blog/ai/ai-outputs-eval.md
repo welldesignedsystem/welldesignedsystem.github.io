@@ -77,7 +77,7 @@ Tools that implement this layer:
 - **[`pytest`](../pytest.md) / `unittest`** — housing all deterministic checks in a standard CI runner alongside your regular test suite; zero infra overhead.
 - **`jsonschema` / `pydantic`** — validate that parsed JSON has the expected fields and types; catches missing keys, wrong types, extra fields the model invented.
 - **`mypy` / `pyright` / `ruff`** — run on any code the model generates (scripts, SQL, config files); catches syntax errors and type mismatches before the code executes.
-- **`toolcallcheck`** — mocks an MCP server and asserts that the agent called the expected tools with the expected arguments in the expected order; runs fully offline, no model call.
+- **[`toolcallcheck`](../toolcallcheck.md)** — mocks an MCP server and asserts that the agent called the expected tools with the expected arguments in the expected order; runs fully offline, no model call.
 - **[`hypothesis`](../hypothesis.md)** — generates edge-case inputs to feed the model and asserts structural properties hold across all of them; catches inputs that trigger malformed output.
 - **[`deepeval`](../deepeval.md) (`TaskCompletionMetric`)** — agent-specific metric that scores whether each tool call in a trajectory was structurally correct (right tool, right args) without needing a judge model.
 - **Plain `assert` + regex** — cheapest of all: check no secrets/PII in output, output length in bounds, known-good patterns present, known-bad patterns absent.
@@ -167,7 +167,7 @@ def test_invariants_hold(topic: str, style: str):
 Tools that implement this:
 
 - **`hypothesis`** — property-based testing framework; you declare invariants ("output never contains X") and it generates inputs to try to violate them, including edge cases you wouldn't think to write manually.
-- **`toolcallcheck`** — assert structural constraints on tool calls (e.g. "never call the delete tool" or "always pass a confirmation flag"); fails the test if the agent's trajectory violates the constraint, regardless of output content.
+- **[`toolcallcheck`](../toolcallcheck.md)** — assert structural constraints on tool calls (e.g. "never call the delete tool" or "always pass a confirmation flag"); fails the test if the agent's trajectory violates the constraint, regardless of output content.
 - **Custom `PreToolUse` / `PermissionDenied` hooks** — in `claude-code` or `opencode`, these hooks fire before every tool call and can block it deterministically — you enforce invariants at the agent runtime level, not just in tests.
 - **`pytest` with invariant fixtures** — write a fixture that runs post-test (e.g. `yield` + assert pattern); every test in the suite automatically checks the invariant without duplicating the assertion.
 - **`deepeval` (`BiasMetric`, `ToxicityMetric`)** — model-graded safety metrics that score output against fairness and toxicity rubrics; useful when the invariant is semantic rather than structural.
@@ -361,7 +361,7 @@ Tools that implement this:
 
 If you need to cover all 6 layers in an enterprise setting with the smallest surface area, this is the practical minimum:
 
-Five tools cover the full pyramid. Runnable examples for each in the companion repo:
+Six tools cover the full pyramid. Runnable examples for each in the companion repo:
 
 | Tool | Role | Example |
 |---|---|---|
@@ -370,8 +370,9 @@ Five tools cover the full pyramid. Runnable examples for each in the companion r
 | **[Promptfoo](../promptfoo.md)** | Prompt/model comparison, adversarial red-teaming (500+ attack vectors) | [`scripts/example_promptfoo.yaml`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_promptfoo.yaml) |
 | **[Braintrust](../braintrust.md)** | Platform: persisted eval history linked to git commits, regression dashboards, CI gates, human annotation queues | [`scripts/example_braintrust.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_braintrust.py) |
 | **[hypothesis](../hypothesis.md)** | Property-based testing — generates edge-case inputs to probe guardrails and invariants | [`scripts/example_hypothesis.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_hypothesis.py) |
+| **[toolcallcheck](../toolcallcheck.md)** | Mock MCP server — assert tool calls, args, order and invariants offline | [`scripts/example_toolcallcheck.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_toolcallcheck.py) |
 
-All five are open-source except Braintrust — and you can defer that by checking baseline JSON into git (as the companion repo does), adding it when you need historical dashboards and team-wide visibility.
+All six are open-source except Braintrust — and you can defer that by checking baseline JSON into git (as the companion repo does), adding it when you need historical dashboards and team-wide visibility.
 
 ## Part 3: Evaluating Agents Specifically — Trajectory, Not Just Output
 

@@ -14,3 +14,4 @@ A collection of posts covering the LLM eval ecosystem — from golden datasets a
 - [Promptfoo: Model Comparison and Red-Teaming](../promptfoo.md)
 - [Braintrust: Eval History, Dashboards and CI Gates](../braintrust.md)
 - [hypothesis: Property-Based Testing for LLM Outputs](../hypothesis.md)
+- [ToolCallCheck: Mock Your Tool Server and Assert on Trajectories](../toolcallcheck.md)
