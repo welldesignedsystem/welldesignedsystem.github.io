@@ -125,10 +125,3 @@ This reference collects Japanese/English karate terminology as taught in rading 
 | 8 | Hachi |
 | 9 | Ku |
 | 10 | Ju |
-
-## Sources
-
-- Karate official site — Introduction to Stances, Strikes, Blocks, Kicks, Advanced Stances, First and Second Kata, Introduction to Kata (gkrkarate.com)
-- Standard Shotokan/Kyokushin-lineage terminology glossaries (Yale Shotokan Karate Club; The Martial Way Kyokushin glossary)
-
-**What's missing:** own downloadable "Strikes, Blocks, Kicks and Stances" PDF is hosted behind a robots.txt restriction that blocks automated retrieval, so any dojo-specific phrasing, romanisation choices, or additional items unique to that sheet aren't reflected above. The full 15-kata syllabus name list, self-defence technique names, and kumite-specific terminology also live only in members'/instructor materials and aren't published publicly. If you can screenshot or paste the PDF content, I can merge it into this table and fill those gaps precisely.
