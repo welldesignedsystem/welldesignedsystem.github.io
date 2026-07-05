@@ -178,7 +178,7 @@ A single run tells you almost nothing at temperature > 0. Run each test case N t
 
 Tools that implement this:
 
-- **`pytest` + `statistics`** — wrap any test in a parametrized loop over N seeds and aggregate scores with the built-in `statistics` module (mean, stdev, pass-rate); no extra dependency, works in any CI as shown in Part 6.
+- **`pytest` + `statistics`** — wrap any test in a parametrized loop over N seeds and aggregate scores with the built-in `statistics` module (mean, stdev, pass-rate); no extra dependency, works in any CI as shown in Part 8.
 - **`deepeval`** — confidence intervals and statistical significance reporting built into its metrics; when you run N times it reports the distribution, not just the average, and can gate on the lower bound of the confidence interval.
 - **`hypothesis`** — controls sample counts and random seeds as part of its property-based testing engine; useful when you want to combine invariant testing with sampling (e.g. "run this invariant 20 times across different random seeds").
 - **`pytest-repeat`** — minimal plugin that re-runs a test N times; good for quick iteration before moving to a more structured sampling approach.
@@ -265,20 +265,151 @@ Hooks (`PreToolUse`, `PostToolUse`, `PermissionDenied`) are deterministic Python
 | 1 — Deterministic | Mock the tool-call context, call the hook, assert the return value (allow / block / transform). No model call needed. Example: a `PreToolUse` hook that blocks `rm -rf` — unit test passes it a `rm -rf /` command and asserts `PermissionDenied`. |
 | 2–6 | Not applicable. Hooks are pure logic. If they call an external API or LLM (they shouldn't — that defeats the purpose of a synchronous guard), those calls become integration tests under Layer 1 with a mocked network. |
 
-**Copilot instructions (`.github/copilot-instructions.md`)**
+**System-prompt overlays (`AGENTS.md`, `copilot-instructions.md`, `.github/instructions/`)**
 
-Copilot instructions are a system-prompt overlay applied in-editor. There is no headless sandbox to run them against, so the tactic is different: treat the instructions file as a prompt prefix and score your golden dataset with and without it.
+Files like `AGENTS.md` and `copilot-instructions.md` are system-prompt overlays applied on every task — they change the model's default behaviour globally. If one is wrong, it degrades everything, which makes regression gating more important here than anywhere else.
 
 | Layer | How to test it |
 |---|---|
-| 1 — Deterministic | Add a golden case that checks the instructions file itself — does it parse? are required sections present? |
-| 2–4 — Model-graded + golden dataset | Run your existing golden dataset twice: once with the instructions prepended to each prompt, once without. Compare the scores. If adding the instructions degrades accuracy on cases that shouldn't be affected, gate the change. |
-| 5 — Sampling | Same as any golden dataset run — 3–5 samples per case with `--gate` against the no-instructions baseline. |
-| 6 — Human review | Review the diff to the instructions file in PRs. If it's hard to tell whether a change improves or harms output, that's a signal the golden dataset needs a new case covering that scenario. |
+| 1 — Deterministic | Add a golden case that checks the overlay file itself — does it parse? are required sections present? does it reference tools or skills that actually exist? |
+| 2–4 — Model-graded + golden dataset | Run your existing golden dataset twice: once with the overlay prepended to each prompt, once without (the baseline). Compare the scores. If adding the overlay degrades accuracy on cases that shouldn't be affected, gate the change. This catches things like an `AGENTS.md` that accidentally suppresses tool-calling for cases that need it. |
+| 5 — Sampling | Same as any golden dataset run — 3–5 samples per case with `--gate` against the no-overlay baseline. |
+| 6 — Human review | Review the diff to the overlay file in PRs. If it's hard to tell whether a change improves or harms output, that's a signal the golden dataset needs a new case covering that scenario. |
 
-The unifying thread across all three: the same `eval.py` + `eval-baseline.json` + `--gate` pattern works for every platform described in this post. The golden dataset covers the model-facing surface; deterministic `assert` calls in unit tests cover the logic surface; the baseline file and CI gate tie them together into a regression-proof workflow.
+The tactic is identical for `AGENTS.md`, `copilot-instructions.md`, and any file that injects instructions at the model level: golden dataset with/without the overlay, `--gate` on any regression.
 
-## Part 5: The 2026 Tool Landscape
+**Custom agents (`~/.claude/agents/`, `.github/agents/`, OpenCode agents, etc.)**
+
+An agent has three testable surfaces: the *instructions* (system prompt), the *tool definitions* (what tools it can call), and the *trajectory* (how it chains them together). Testing only the final output misses most agent-specific failure modes — a model can say the right thing but call the wrong tool, or call the right tool with hallucinated arguments.
+
+| Layer | How to test it |
+|---|---|
+| 1 — Deterministic | Mock the tool server (MCP or custom). Assert the agent called the right tools with the right arguments in the right order — regardless of what the LLM output actually *said*. `toolcallcheck` does this fully offline, no model call. Also check invariants: "never calls the delete tool" enforced via `PreToolUse` hook. Assert step efficiency — did it take 3 tool calls or 11 to do the same job? |
+| 2 — Model-graded | For open-ended agent output (summaries, decisions, generated code), use an LLM judge with a rubric. Score the *final output* but also score intermediate tool-call results — did each sub-step produce something valid before the next one started? |
+| 3 — Property-based | Feed the agent edge-case inputs (empty input, malformed data, adversarial prompts). Assert invariants hold across all of them: no destructive tool calls, no PII leaked, no writes outside the working directory. Run these with `hypothesis` to generate the edge cases automatically. |
+| 4 — Golden dataset | Same `eval.py` pattern. Each golden case is a full task — e.g. "generate a report from this template with these data files". The score is a composite of tool-call correctness + final output quality + step efficiency. Run N times, record baseline, `--gate` on regression. |
+| 5 — Sampling | Agent trajectories are where non-determinism compounds hardest — a 95%-reliable single tool call becomes 60% reliable across 10 steps (0.95¹⁰ ≈ 0.60). Run each golden case 5–10 times and gate on the lower bound of the confidence interval, not the mean. |
+| 6 — Human review | Agent failures are harder to diagnose than single-call failures. Log every trajectory (tool calls + reasoning + timestamps) to a file per run. A human reviews regressions by replaying the trajectory, not guessing what went wrong. |
+
+The critical insight for agents: Layer 1 (tool-call correctness) is where most agent bugs live, not Layer 2 (output quality). A mock tool server that records and validates every tool call catches the majority of agent failures without ever calling a model as judge.
+
+The unifying thread across all platforms: the same `eval.py` + `eval-baseline.json` + `--gate` pattern works for everything described in this post. The golden dataset covers the model-facing surface; deterministic `assert` calls in unit tests cover the logic surface; mock tool servers cover trajectory correctness; the baseline file and CI gate tie them together into a regression-proof workflow.
+
+## Part 5: Measuring Effectiveness from Session History
+
+The eval pyramid tells you whether quality *regressed*. It does not tell you whether productivity *improved*. For that you need a before-and-after measurement on real usage data, not synthetic golden cases.
+
+### What session logs contain
+
+Claude Code writes structured JSON logs to `~/.claude/logs/` for every session. Each log entry captures:
+
+- **Session start/end timestamps** — wall-clock duration per task
+- **Tool calls** — tool name, arguments, result, duration per call
+- **Skill invocations** — which skill fired, its trigger text, and whether it completed
+- **Errors** — tool failures, permission denials, retries
+- **Model metadata** — tokens used, model version, temperature
+
+```json
+{
+  "session_id": "abc123",
+  "started_at": "2026-07-05T10:00:00Z",
+  "ended_at": "2026-07-05T10:03:42Z",
+  "events": [
+    {
+      "type": "skill_invocation",
+      "skill": "generate-report",
+      "trigger": "generate a compliance report",
+      "status": "completed"
+    },
+    {
+      "type": "tool_call",
+      "tool": "write",
+      "duration_ms": 120,
+      "success": true
+    }
+  ],
+  "total_tokens": 4521,
+  "error_count": 0
+}
+```
+
+### Before-and-after comparison
+
+Take a baseline window (e.g. 2 weeks before introducing a skill) and a measurement window (2 weeks after). Extract the same metrics from both:
+
+```bash
+# Count skill invocations per day — measures adoption
+jq '[.events[] | select(.type == "skill_invocation")] | length' ~/.claude/logs/*.json
+
+# Average duration per task — measures efficiency
+jq '.ended_at - .started_at' ~/.claude/logs/*.json | awk '{sum+=$1; count++} END {print sum/count}'
+
+# Error rate — measures reliability
+jq 'select(.error_count > 0) | .session_id' ~/.claude/logs/*.json | wc -l
+```
+
+The report structure for each measurement:
+
+| Metric | Before (no skill) | After (with skill) | Delta |
+|---|---|---|---|
+| Avg task duration | 4m 12s | 2m 08s | −49% |
+| Avg tool calls per task | 8.3 | 4.1 | −51% |
+| Error rate | 12% | 4% | −67% |
+| First-attempt pass rate | 0.60 | 0.88 | +47% |
+| Tokens per task | 8 200 | 4 500 | −45% |
+
+The last row (first-attempt pass rate) is the direct link back to the eval pyramid — it is the same score your golden dataset measures, now computed on production traffic instead of synthetic cases.
+
+### Automated via a session-analysis script
+
+The `baba-yaga` companion repo includes `scripts/analyze_sessions.py` that parses the log directory and produces this report. Run it against your logs, check the output into a dashboard or PR comment.
+
+## Part 6: Roundtrip Consistency — Code ↔ Docs
+
+If you have engineering docs that describe what code should do, and code that implements it, the two should be consistent. The eval pattern applies in both directions — and in a loop that checks they stay in sync.
+
+### The roundtrip pipeline
+
+```
+engineering.md  ──→  generate code  ──→  score generated code against actual codebase
+     ↑                                              ↓
+     └── score against original doc  ←─  generate doc  ←─┘
+```
+
+Each arrow is a deterministic check:
+
+- **Doc → Code**: does the generated code compile? do function signatures match the doc's API spec? are all documented interfaces present?
+- **Code → Doc**: does the generated doc mention every public function? are parameter types and return types correct? do examples match the actual code behaviour?
+- **Roundtrip**: doc → code → doc produces a document that scores above the consistency threshold against the original. If the roundtrip degrades, either the model lost information or the original doc was ambiguous.
+
+### Golden dataset
+
+Each engineering doc becomes a golden case with three sub-scores:
+
+```python
+ROUNDTRIP_DATASET = [
+    {
+        "id": "api-authentication",
+        "doc_path": "docs/design/auth.md",
+        "code_path": "src/auth/",
+        "check_compile": True,
+        "check_signatures": ["login()", "verify_token()", "refresh()"],
+        "check_exports": ["authenticate", "AuthError"],
+    },
+]
+```
+
+The scorers are deterministic — no LLM judge needed for the structural layer:
+
+- `code_compile_score(path)` — 1.0 if the generated code passes `mypy` or `ruff`, 0.0 otherwise
+- `signature_match_score(generated, expected)` — 1.0 if all required function names appear with the right parameter count
+- `doc_roundtrip_score(original, generated)` — 1.0 if the regenerated doc covers all sections of the original (checked with substring matching on section headers)
+
+### CI gate
+
+Same `eval-baseline.json` pattern. Record the roundtrip scores on your current codebase. After any change (refactor, new feature, model swap), re-run and `--gate`. If the roundtrip drops below baseline, either the code and docs have drifted apart or the model can no longer maintain consistency at the expected level.
+
+This completes the loop: the eval pyramid guards against quality regression, session history measures productivity gains, and roundtrip consistency ensures code and docs stay in sync across both directions.
 
 The open-source evaluation ecosystem has matured quickly, and a fairly clear division of labor has emerged. The pattern most engineering-led teams converge on: **one lightweight framework for CI/CD gating, paired with one platform for production tracing, human annotation, and regression dashboards.** Running just one or the other tends to leave a gap.
 
@@ -295,7 +426,7 @@ The open-source evaluation ecosystem has matured quickly, and a fairly clear div
 
 Practical pairing that shows up repeatedly across current guidance: **DeepEval for CI-gated, pytest-style evals** + **Braintrust or LangSmith for production traceability, human annotation, and regression dashboards**. For a Python/`uv`-first, terminal-centric workflow, DeepEval is the lower-friction starting point since it drops straight into an existing pytest suite and CI pipeline without standing up a separate service.
 
-## Part 6: A Working CI Harness
+## Part 8: A Working CI Harness
 
 ### Deterministic layer with pytest + DeepEval
 
@@ -363,7 +494,7 @@ gates:
     block_on: below_baseline
 ```
 
-## Part 7: Common Pitfalls
+## Part 9: Common Pitfalls
 
 - **Trusting a single run.** Non-determinism means one green test tells you almost nothing about reliability. Sample.
 - **Using LLM-as-judge as your only signal.** It's a second stochastic system layered on the first. Anchor with deterministic checks wherever the check *can* be deterministic.
@@ -373,7 +504,7 @@ gates:
 - **Skipping human review entirely.** Automated evals catch what the rubric anticipated. They don't catch what it didn't.
 - **Ignoring cost compounding in agents.** Per-step reliability multiplies across a trajectory — a system that looks fine on single-tool-call benchmarks can degrade sharply once chained into a 5–10 step agent.
 
-## Part 8: Putting It Together
+## Part 10: Putting It Together
 
 A reasonable target mix, consistent with what's converged across current practice: **roughly 60% deterministic checks, 30% model-graded (LLM-as-judge), 10% human-in-the-loop**, running on every PR that touches prompts, skills, or agent logic, gated against a measured baseline rather than an invented threshold.
 
