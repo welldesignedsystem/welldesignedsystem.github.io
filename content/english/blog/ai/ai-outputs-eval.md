@@ -43,6 +43,16 @@ Anything that *can* be checked without another model call, should be. These are 
 
 If you can express the check as code, express it as code. This layer should be the majority of your suite — most current guidance from teams running this in production puts deterministic checks at roughly 60% of the total eval set, with model-graded checks and human review filling the rest.
 
+Tools that implement this:
+
+- **`pytest` / `unittest`** — housing all deterministic checks in a standard CI runner alongside your regular test suite; zero infra overhead.
+- **`jsonschema` / `pydantic`** — validate that parsed JSON has the expected fields and types; catches missing keys, wrong types, extra fields the model invented.
+- **`mypy` / `pyright` / `ruff`** — run on any code the model generates (scripts, SQL, config files); catches syntax errors and type mismatches before the code executes.
+- **`toolcallcheck`** — mocks an MCP server and asserts that the agent called the expected tools with the expected arguments in the expected order; runs fully offline, no model call.
+- **`hypothesis`** — generates edge-case inputs to feed the model and asserts structural properties hold across all of them; catches inputs that trigger malformed output.
+- **`deepeval` (`TaskCompletionMetric`)** — agent-specific metric that scores whether each tool call in a trajectory was structurally correct (right tool, right args) without needing a judge model.
+- **Plain `assert` + regex** — cheapest of all: check no secrets/PII in output, output length in bounds, known-good patterns present, known-bad patterns absent.
+
 ### Layer 2 — Model-Graded Evaluation (LLM-as-judge)
 
 For anything semantic — correctness against a rubric, tone, faithfulness to source material, whether a response actually answers the question — you use another LLM call to score the output. The pattern:
@@ -71,6 +81,15 @@ Things that make this reliable instead of vibes-based:
 - **Watch for judge biases**: position bias (favoring the first option in a comparison), length bias (favoring longer answers), self-preference bias (a model judge favoring outputs from its own family). Randomize order, control for length, and occasionally cross-check with a different model as judge.
 - **Never let this be your only signal.** Model-graded evals add noise on top of the agent's own noise. Deterministic checks are your ground truth; LLM-as-judge fills the gap deterministic checks can't reach.
 
+Tools that implement this:
+
+- **`deepeval` (`GEval`, `FaithfulnessMetric`, `HallucinationMetric`, `AnswerRelevancyMetric`)** — pre-built model-graded scorers that call an LLM judge internally and return a numeric score you can assert against; no need to write your own judge prompt for common patterns.
+- **`promptfoo`** — runs model outputs through comparison-based scoring or adversarial test cases; strongest for catching regressions when swapping prompts or models, with built-in red-teaming vectors.
+- **`braintrust`** — custom sandboxed Python scorers where you define the judge logic (call any model, run any calculation); scores are wired into CI gates and regression dashboards automatically.
+- **`langsmith`** — annotation queues let humans review model-graded scores and correct them; closed-loop feedback refines the judge prompt over time.
+- **`langfuse`** — model-as-judge evaluation built into the tracing platform; useful when you already use Langfuse for production monitoring and want eval without a second service.
+- **`ragas`** — faithfulness, answer relevancy, and context precision metrics specifically for RAG pipelines; uses LLM calls internally but scoped to the retrieval-grounded evaluation domain.
+
 G-Eval (chain-of-thought-based scoring with a scoring function) is the most common pattern for structuring judge prompts well — it asks the judge to reason step by step against explicit criteria before emitting a score, which measurably improves judge-human agreement over a bare "rate 1-5" prompt.
 
 ### Layer 3 — Property-Based / Invariant Testing
@@ -85,11 +104,29 @@ Instead of checking a specific output, check properties that must hold across *a
 
 This is where a lot of practical agent *safety* testing actually lives — you're not testing quality, you're testing that the guardrails hold no matter what path the agent takes to get there.
 
+Tools that implement this:
+
+- **`hypothesis`** — property-based testing framework; you declare invariants ("output never contains X") and it generates inputs to try to violate them, including edge cases you wouldn't think to write manually.
+- **`toolcallcheck`** — assert structural constraints on tool calls (e.g. "never call the delete tool" or "always pass a confirmation flag"); fails the test if the agent's trajectory violates the constraint, regardless of output content.
+- **Custom `PreToolUse` / `PermissionDenied` hooks** — in `claude-code` or `opencode`, these hooks fire before every tool call and can block it deterministically — you enforce invariants at the agent runtime level, not just in tests.
+- **`pytest` with invariant fixtures** — write a fixture that runs post-test (e.g. `yield` + assert pattern); every test in the suite automatically checks the invariant without duplicating the assertion.
+- **`deepeval` (`BiasMetric`, `ToxicityMetric`)** — model-graded safety metrics that score output against fairness and toxicity rubrics; useful when the invariant is semantic rather than structural.
+- **`promptfoo` red-teaming suite** — 500+ adversarial input vectors that probe whether your invariant holds under malicious or unusual inputs; automated probing, not manual test writing.
+
 ### Layer 4 — Golden Datasets and Regression Tracking
 
 Curate a representative set of real inputs — ideally pulled from actual usage rather than invented — and snapshot how your system scores against them over time. You're not asserting exact output equality; you're asserting the **eval score on that set doesn't regress** when you change a prompt, swap a model version, or edit a skill definition.
 
 The discipline that matters here: **score your current production system before setting an acceptance bar.** Don't invent a target in a vacuum — measure the baseline, then gate merges on "no regression below baseline" rather than an arbitrary absolute number. E.g. *"tool-selection success: current baseline 88%, acceptance bar 95%, anything below baseline blocks deploy."*
+
+Tools that implement this:
+
+- **`deepeval` (`Dataset`)** — curate input-output pairs as a typed dataset and run evals against the whole set as a batch; includes synthetic data generation from your existing docs to expand coverage without manual curation.
+- **`promptfoo`** — YAML-defined test case datasets with expected outputs or rubric criteria; built-in regression comparison across runs shows you score deltas for every prompt or model change.
+- **`braintrust`** — dataset-first eval platform; every eval run is recorded, and automatic regression dashboards flag any score drop compared to the previous commit or baseline without manual diff checking.
+- **`langsmith`** — dataset management with versioning and comparison views; side-by-side score breakdowns across model versions, prompt variants, or dataset revisions.
+- **`pytest-snapshot`** — golden file plugin for pytest; capture exact outputs as snapshot files and assert they haven't changed — useful for structural outputs (configs, schemas) where you want to track drift over time.
+- **Custom YAML gates** — as shown in Part 6; define your baseline and acceptance threshold in version-controlled YAML, checked in CI before every merge. No platform dependency, works with any eval tool.
 
 ### Layer 5 — Statistical Sampling
 
@@ -99,9 +136,13 @@ A single run tells you almost nothing at temperature > 0. Run each test case N t
 - Track variance, not just mean — a task with 90% mean but huge variance is riskier than 85% with low variance
 - This matters disproportionately for agents, since errors compound across turns — a 95%-reliable single tool call becomes a 60%-reliable five-step trajectory (0.95⁵ ≈ 0.77, and it gets worse fast as steps increase and per-step reliability drops)
 
+Tools that implement this: `pytest` with parametrize + the `statistics` module (as shown in the sampling helper in Part 6); `deepeval` with confidence intervals and statistical significance reporting; `hypothesis` for controlling sample counts across random seeds; `pytest-repeat` for quick N-run loops; `promptfoo` with `repeat` config and aggregate statistics across runs; custom CI gates that compare pass-rate distributions across branches.
+
 ### Layer 6 — Human-in-the-Loop
 
 No rubric anticipates every edge case. Sample production traffic (5–10% is a common starting point) for manual review, and feed disagreements between human and judge scores back into refining the rubric. This is also where you catch the failure modes that are only obvious to a domain expert — a technically well-formed answer that's subtly wrong in a way no automated check would flag.
+
+Tools that implement this: `langsmith` (annotation queues, thread-level human feedback); `braintrust` (human annotation UI, reviewer assignments); `langfuse` (manual scoring, human review workflows); `label-studio` (general-purpose annotation platform for custom review pipelines); `arize-phoenix` (production trace sampling with human-in-the-loop scoring).
 
 ## Part 3: Evaluating Agents Specifically — Trajectory, Not Just Output
 
