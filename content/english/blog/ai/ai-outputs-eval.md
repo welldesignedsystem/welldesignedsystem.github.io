@@ -121,12 +121,52 @@ The discipline that matters here: **score your current production system before 
 
 Tools that implement this:
 
-- **`deepeval` (`Dataset`)** — curate input-output pairs as a typed dataset and run evals against the whole set as a batch; includes synthetic data generation from your existing docs to expand coverage without manual curation.
-- **`promptfoo`** — YAML-defined test case datasets with expected outputs or rubric criteria; built-in regression comparison across runs shows you score deltas for every prompt or model change.
-- **`braintrust`** — dataset-first eval platform; every eval run is recorded, and automatic regression dashboards flag any score drop compared to the previous commit or baseline without manual diff checking.
-- **`langsmith`** — dataset management with versioning and comparison views; side-by-side score breakdowns across model versions, prompt variants, or dataset revisions.
-- **`pytest-snapshot`** — golden file plugin for pytest; capture exact outputs as snapshot files and assert they haven't changed — useful for structural outputs (configs, schemas) where you want to track drift over time.
-- **Custom YAML gates** — as shown in Part 6; define your baseline and acceptance threshold in version-controlled YAML, checked in CI before every merge. No platform dependency, works with any eval tool.
+**`deepeval` (`Dataset`)**
+- **What it does:** curate input-output pairs as a typed `LLMTestCase` dataset and run evals against the whole set as a batch. Includes synthetic data generation from your existing docs to expand coverage without manual curation. Built-in scorers cover G-Eval, hallucination, faithfulness, answer relevancy, and 50+ others.
+- **Best for:** staying in pytest, CI gating without external infra, teams that want synthetic coverage without writing every test case by hand.
+- **Downside:** built-in scorers are opinionated — non-standard checks are harder to wire in. No dashboard or historical tracking beyond CI logs.
+
+**`promptfoo`**
+- **What it does:** YAML-defined test case datasets with expected outputs or rubric criteria. Built-in regression comparison across runs shows you score deltas for every prompt or model change — run from the terminal, see "model A: 0.91, model B: 0.85" before you commit. Strongest open-source red-teaming suite (500+ adversarial input vectors).
+- **Best for:** prompt iteration, model comparison, adversarial testing.
+- **Downside:** no database, no web UI, no cross-run history tracked by default. Results live in local JSON — regression tracking across weeks is manual unless you build a wrapper.
+
+**`braintrust`**
+- **What it does:** dataset-first eval platform. Every eval run is recorded and automatically linked to the git commit that triggered it. Web dashboards flag any score drop compared to the previous commit or baseline — you don't diff JSON files by hand. Custom sandboxed Python scorers let you call any model or run any calculation as the judge.
+- **Best for:** teams that need persistent eval history, commit-linked dashboards, and CI gating at scale.
+- **Downside:** requires a platform account and setup. Heavier than a local pytest script. Overkill for a solo developer running evals once a week.
+
+**`langsmith`**
+- **What it does:** dataset management with versioning and comparison views. If you're already tracing production traffic through LangSmith, those traces auto-become eval datasets — you're not writing test cases from scratch. Side-by-side score breakdowns across model versions, prompt variants, or dataset revisions in the web UI.
+- **Best for:** teams already on LangChain/LangGraph who don't want a second platform.
+- **Downside:** locked into the LangChain ecosystem. Platform pricing can get expensive at scale. Not worth adopting LangChain just for the eval layer.
+
+**`pytest-snapshot`**
+- **What it does:** golden-file plugin for pytest. Captures exact outputs as snapshot files and asserts they haven't changed — on failure it shows a diff so you can review and accept the change.
+- **Best for:** structural outputs (configs, schemas, generated code) where byte-for-byte equality is meaningful.
+- **Downside:** only works for deterministic structural output. Useless for semantic evaluation — asserting exact output equality on LLM responses defeats the whole purpose of non-deterministic scoring.
+
+**Custom YAML gates**
+- **What it does:** define your baseline and acceptance threshold in a version-controlled YAML file checked into the repo. A one-page CI script checks "does the current score stay above the saved baseline?" before every merge. No platform dependency, works with any eval scorer.
+- **Best for:** minimal setups where the discipline of "nothing below our measured baseline merges" is the goal — the baba-yaga companion repo does exactly this with `eval-baseline.json` in git and `--gate` in CI.
+- **Downside:** no web UI, no dashboards, no cross-team visibility. You build the runner yourself — but the total surface fits in a single file.
+
+### Concrete Example: The `baba-yaga` Golden Dataset
+
+refer: [`scripts/golden_eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/golden_eval.py). It defines a golden dataset of 4 cases (capital lookup, list comprehension with invariants, JSON output validation), scores each with deterministic checks (substring match, word-count bound, JSON parse), runs 3 samples per case, and gates against a checked-in `eval-baseline.json`:
+
+```bash
+$ uv run python scripts/golden_eval.py --baseline
+
+  capital-france                mean=1.000  stdev=0.000
+  capital-japan                 mean=1.000  stdev=0.000
+  python-list-comprehension     mean=0.833  stdev=0.289
+  json-output                   mean=1.000  stdev=0.000
+
+Saved baseline to eval-baseline.json
+```
+
+After a change, `--gate` compares against the baseline and fails CI if any score regressed. The full source is in the repo — this pattern runs with zero dependencies beyond `uv` and an API key, no separate eval platform required.
 
 ### Layer 5 — Statistical Sampling
 
@@ -156,6 +196,20 @@ Tools that implement this:
 - **`langfuse`** — manual scoring workflows where a human can annotate traces after the fact; integrated with the same UI used for production monitoring, so reviewers see the full context of the agent run.
 - **`label-studio`** — general-purpose annotation platform; configure any custom review pipeline (e.g. "review 10% of outputs flagged as low-confidence by the automated judge") with your own scoring rubric UI.
 - **`arize-phoenix`** — production trace sampling (e.g. 5% of all agent runs) surfaced for human-in-the-loop scoring; uses OpenTelemetry so sampling config works across any instrumented stack without platform-specific wiring.
+
+### Enterprise Minimal Tool Set
+
+If you need to cover all 6 layers in an enterprise setting with the smallest surface area, this is the practical minimum:
+
+| Tool | Role |
+|---|---|
+| **pytest** | Test runner, deterministic checks, invariant fixtures, sampling loops |
+| **DeepEval** | Built-in metrics (hallucination, faithfulness, G-Eval, answer relevancy), golden dataset management, synthetic data generation from your docs |
+| **Promptfoo** | Prompt/model comparison, adversarial red-teaming (500+ attack vectors) — run before any model version change in production |
+| **Braintrust** | Platform: persisted eval history linked to git commits, regression dashboards, CI gates, human annotation queues |
+| **hypothesis** | Property-based testing — generates edge-case inputs to probe guardrails and invariants |
+
+Five tools cover the full pyramid. pytest + hypothesis + DeepEval + Promptfoo are all open-source. Braintrust is the only paid platform — and you can defer it early on by checking baseline JSON into git (as `baba-yaga` does), adding it when you need historical dashboards and team-wide visibility.
 
 ## Part 3: Evaluating Agents Specifically — Trajectory, Not Just Output
 
