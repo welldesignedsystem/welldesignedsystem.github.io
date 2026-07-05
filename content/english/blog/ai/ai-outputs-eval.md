@@ -136,13 +136,26 @@ A single run tells you almost nothing at temperature > 0. Run each test case N t
 - Track variance, not just mean — a task with 90% mean but huge variance is riskier than 85% with low variance
 - This matters disproportionately for agents, since errors compound across turns — a 95%-reliable single tool call becomes a 60%-reliable five-step trajectory (0.95⁵ ≈ 0.77, and it gets worse fast as steps increase and per-step reliability drops)
 
-Tools that implement this: `pytest` with parametrize + the `statistics` module (as shown in the sampling helper in Part 6); `deepeval` with confidence intervals and statistical significance reporting; `hypothesis` for controlling sample counts across random seeds; `pytest-repeat` for quick N-run loops; `promptfoo` with `repeat` config and aggregate statistics across runs; custom CI gates that compare pass-rate distributions across branches.
+Tools that implement this:
+
+- **`pytest` + `statistics`** — wrap any test in a parametrized loop over N seeds and aggregate scores with the built-in `statistics` module (mean, stdev, pass-rate); no extra dependency, works in any CI as shown in Part 6.
+- **`deepeval`** — confidence intervals and statistical significance reporting built into its metrics; when you run N times it reports the distribution, not just the average, and can gate on the lower bound of the confidence interval.
+- **`hypothesis`** — controls sample counts and random seeds as part of its property-based testing engine; useful when you want to combine invariant testing with sampling (e.g. "run this invariant 20 times across different random seeds").
+- **`pytest-repeat`** — minimal plugin that re-runs a test N times; good for quick iteration before moving to a more structured sampling approach.
+- **`promptfoo`** — `repeat: N` in the test config runs each case N times and aggregates pass-rates, latencies, and scores across runs in the output report.
+- **Custom CI gates** — scripts that compare pass-rate distributions between the feature branch and main; block if the lower bound of the confidence interval drops below the baseline, regardless of the mean.
 
 ### Layer 6 — Human-in-the-Loop
 
 No rubric anticipates every edge case. Sample production traffic (5–10% is a common starting point) for manual review, and feed disagreements between human and judge scores back into refining the rubric. This is also where you catch the failure modes that are only obvious to a domain expert — a technically well-formed answer that's subtly wrong in a way no automated check would flag.
 
-Tools that implement this: `langsmith` (annotation queues, thread-level human feedback); `braintrust` (human annotation UI, reviewer assignments); `langfuse` (manual scoring, human review workflows); `label-studio` (general-purpose annotation platform for custom review pipelines); `arize-phoenix` (production trace sampling with human-in-the-loop scoring).
+Tools that implement this:
+
+- **`langsmith`** — annotation queues for collecting human feedback at the trace or thread level; reviewers score individual LLM calls or entire agent runs, and disagreement with the automated judge feeds back into rubric refinement.
+- **`braintrust`** — human annotation UI with reviewer assignment and audit trails; scores from reviewers are automatically compared against model-graded scores, and dashboards surface the disagreement rate so you know which rubrics need fixing.
+- **`langfuse`** — manual scoring workflows where a human can annotate traces after the fact; integrated with the same UI used for production monitoring, so reviewers see the full context of the agent run.
+- **`label-studio`** — general-purpose annotation platform; configure any custom review pipeline (e.g. "review 10% of outputs flagged as low-confidence by the automated judge") with your own scoring rubric UI.
+- **`arize-phoenix`** — production trace sampling (e.g. 5% of all agent runs) surfaced for human-in-the-loop scoring; uses OpenTelemetry so sampling config works across any instrumented stack without platform-specific wiring.
 
 ## Part 3: Evaluating Agents Specifically — Trajectory, Not Just Output
 
