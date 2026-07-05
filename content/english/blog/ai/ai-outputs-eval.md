@@ -43,13 +43,11 @@ Anything that *can* be checked without another model call, should be. These are 
 
 If you can express the check as code, do it. This layer should be the majority of your suite — most current guidance from teams running this in production puts deterministic checks at roughly 60% of the total eval set, with model-graded checks and human review filling the rest.
 
-A complete runnable example — `scripts/layer1_deterministic.py` — defines the same four scorers (`score_contains`, `score_excludes`, `score_max_words`, `score_valid_json`), applies them to a 5-case golden dataset, and prints results. Run it with zero dependencies:
-
-[`scripts/layer1_deterministic.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer1_deterministic.py)
+A complete runnable [example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer1_deterministic.py) — defines the same four scorers (`score_contains`, `score_excludes`, `score_max_words`, `score_valid_json`), applies them to a 5-case golden dataset, and prints results.
 
 Each scorer is a plain Python function — no LLM, no API call, no judge model. They are composable: a single golden case can combine `score_contains` + `score_max_words` + `score_excludes` and the overall score is simply the mean of the individual checks.
 
-Tools that implement this:
+Tools that implement this layer:
 
 - **`pytest` / `unittest`** — housing all deterministic checks in a standard CI runner alongside your regular test suite; zero infra overhead.
 - **`jsonschema` / `pydantic`** — validate that parsed JSON has the expected fields and types; catches missing keys, wrong types, extra fields the model invented.
