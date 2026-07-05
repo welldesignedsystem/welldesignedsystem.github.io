@@ -8,9 +8,10 @@ summary = "LLM outputs are non-deterministic, which breaks the assumptions most 
 
 ## Part 1: Why This Is a Different Testing Problem
 
-Traditional software testing rests on one assumption: same input, same output. `assertEqual(f(x), y)` works because `f` is deterministic. The moment you put an LLM in the loop, that assumption breaks. Ask Claude the same question twice, at the same temperature, and you can get two answers that are both "correct" but not identical — different wording, different tool-call order, different length. Ask an agent to complete a multi-step task and you get a **trajectory**, not a single output: a chain of reasoning, tool calls, and intermediate states that can diverge wildly between runs while still arriving at a valid result.
-
-This is the core reason `unittest`/`pytest` in their classic form don't map cleanly onto LLM outputs. You're not testing for equality anymore — you're testing for **membership in an acceptable set**, scored probabilistically. That reframing is what "evals" are.
+* Traditional software testing rests on one assumption: same input, same output. `assertEqual(f(x), y)` works because `f` is deterministic. The moment you put an LLM in the loop, that assumption breaks. 
+* Ask Claude the same question twice, at the same temperature, and you can get two answers that are both "correct" but not identical — different wording, different tool-call order, different length. 
+* Ask an agent to complete a multi-step task and you get a **trajectory**, not a single output: a chain of reasoning, tool calls and intermediate states that can diverge wildly between runs while still arriving at a valid result.
+* You're not testing for equality anymore (`unittest`/`pytest` in their classic form) — you're testing for **membership in an acceptable set**, scored probabilistically. That reframing is what "evals" are.
 
 Three things compound the problem:
 
