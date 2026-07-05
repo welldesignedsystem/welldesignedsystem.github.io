@@ -15,9 +15,14 @@ summary = "LLM outputs are non-deterministic, which breaks the assumptions most 
 
 Three things compound the problem:
 
-1. **Stochasticity is layered.** The model call is non-deterministic, and if you use another LLM to *grade* the output (LLM-as-judge), the grader is non-deterministic too. Stack enough randomness and your test suite becomes noise unless you control for it.
-2. **Agents multiply the surface area.** A single-turn LLM call has one input and one output to score. An agent has N tool calls, each of which can fail, retry, hallucinate a tool name, or call the right tool with the wrong arguments — and two completely different trajectories can both be "correct."
-3. **"Correct" is often a spectrum, not a boolean.** A summary can be accurate but too long. A generated skill can succeed but use twice the tokens it needed to. You need scored metrics, not pass/fail, for most of what matters.
+1. **Stochasticity is layered.** 
+   - Stochasticity is the quality of lacking a predictable pattern, where outcomes are governed by probability rather than deterministic rules.
+   - The model call is non-deterministic, and if you use another LLM to *grade* the output (LLM-as-judge), the grader is non-deterministic too. Stack enough randomness and your test suite becomes noise unless you control for it.
+2. **Agents multiply the surface area.** 
+   - A single-turn LLM call has one input and one output to score. 
+   - An agent has N tool calls, each of which can fail, retry, hallucinate a tool name or call the right tool with the wrong arguments — and two completely different trajectories can both be "correct."
+3. **"Correct" is often a spectrum, not a boolean.** 
+   - A summary can be accurate but too long. A generated skill can succeed but use twice the tokens it needed to. You need scored metrics, not pass/fail, for most of what matters.
 
 ## Part 2: The Layers of LLM Output Testing
 
