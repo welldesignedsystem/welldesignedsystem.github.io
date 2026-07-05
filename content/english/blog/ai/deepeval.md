@@ -174,7 +174,7 @@ metric = ContainsMetric("Paris", "capital", threshold=0.66)
 metric.measure(test_case)
 ```
 
-The companion repo includes [`scripts/example_deepeval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_deepeval.py) with a custom `ContainsMetric`, a `GEval` rubric, and a `FaithfulnessMetric` for a complete eval loop.
+The companion repo includes [`scripts/example_deepeval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_deepeval.py) with a custom `ContainsMetric`, a `GEval` rubric, and a `FaithfulnessMetric` for a complete eval loop.
 
 ## DeepEval vs. Promptfoo vs. Braintrust
 
@@ -191,7 +191,7 @@ All three are usable together. The pattern: pytest is the runner, DeepEval provi
 
 ## Companion Repo
 
-The companion repo includes [`scripts/example_deepeval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_deepeval.py) with a complete DeepEval eval loop using custom and built-in metrics.
+The companion repo includes [`scripts/example_deepeval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_deepeval.py) with a complete DeepEval eval loop using custom and built-in metrics.
 
 ## Further Reading
 

@@ -45,9 +45,32 @@ If you can express the check as code, do it. This layer should be the majority o
 
 > **Where does the 60-80% figure come from?** [FutureAGI (Feb 2026)](https://futureagi.com/blog/deterministic-llm-evaluation-metrics-2026/) reports deterministic checks catch *30 to 60 percent of failures before any LLM judge fires*. The [G-Eval production guide (Mar 2026)](https://futureagi.com/blog/g-eval-definitive-guide-2026/) recommends routing every response through a deterministic floor (schema, regex, length, banned phrases) before any LLM judge call, dropping the judge bill 80–90% without losing detection rate. Production teams consistently report 60–80% of eval axes are expressible as code asserts rather than judge calls. The consensus: deterministic checks are the cheapest, fastest, and most reliable layer — they should be the base of every eval pyramid.
 
-A complete runnable [example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer1_deterministic.py) — defines the same four scorers (`score_contains`, `score_excludes`, `score_max_words`, `score_valid_json`), applies them to a 5-case golden dataset, and prints results.
+A complete runnable [example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/01-deterministic.py) — defines the same four scorers (`score_contains`, `score_excludes`, `score_max_words`, `score_valid_json`), applies them to a 5-case golden dataset, and prints results.
 
 Each scorer is a plain Python function — no LLM, no API call, no judge model. They are composable: a single golden case can combine `score_contains` + `score_max_words` + `score_excludes` and the overall score is simply the mean of the individual checks.
+
+```python
+def score_contains(output, words):
+    return all(w in output.lower() for w in words)
+
+def score_excludes(output, words):
+    return not any(w in output.lower() for w in words)
+
+def score_max_words(output, limit):
+    return len(output.split()) <= limit
+
+def score_valid_json(output):
+    try:
+        json.loads(output)
+        return True
+    except json.JSONDecodeError:
+        return False
+
+GOLDEN_CASE = {
+    "prompt": "Return JSON with name and age.",
+    "checks": {"must_contain": ["name", "age"], "expects_valid_json": True},
+}
+```
 
 Tools that implement this layer:
 
@@ -61,7 +84,7 @@ Tools that implement this layer:
 
 ### Layer 2 — Model-Graded Evaluation (LLM-as-judge)
 
-For anything semantic — correctness against a rubric, tone, faithfulness to source material, whether a response actually answers the question — you use another LLM call to score the output. The pattern — a complete runnable example at [`scripts/layer2_model_graded.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer2_model_graded.py):
+For anything semantic — correctness against a rubric, tone, faithfulness to source material, whether a response actually answers the question — you use another LLM call to score the output. The pattern — a complete runnable example at [`scripts/layers/02-model-graded.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/02-model-graded.py):
 
 ```python
 JUDGE_PROMPT = """You are grading an AI assistant's response.
@@ -104,7 +127,7 @@ G-Eval (chain-of-thought-based scoring with a scoring function) is the most comm
 
 ### Layer 3 — Property-Based / Invariant Testing
 
-A complete runnable example at [`scripts/layer3_property_based.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer3_property_based.py).
+A complete runnable example at [`scripts/layers/03-property-based.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/03-property-based.py).
 
 Instead of checking a specific output, check properties that must hold across *all* outputs regardless of variance:
 
@@ -115,6 +138,31 @@ Instead of checking a specific output, check properties that must hold across *a
 - A generated skill never writes outside its declared working directory
 
 This is where a lot of practical agent *safety* testing actually lives — you're not testing quality, you're testing that the guardrails hold no matter what path the agent takes to get there.
+
+```python
+# ── Hypothesis generates random inputs, test checks invariants ──
+from hypothesis import given, strategies as st
+
+def property_no_secrets(output: str) -> bool:
+    """Invariant: output never contains an API key pattern."""
+    import re
+    return not bool(re.search(r"sk-[A-Za-z0-9]{20,}", output))
+
+def property_no_refund_twice(trajectory: list[dict]) -> bool:
+    """Invariant: process_refund called at most once per order."""
+    refund_calls = [t for t in trajectory
+                    if t.get("tool") == "process_refund"]
+    return len(refund_calls) <= 1
+
+@given(
+    topic=st.text(min_size=1, max_size=50).filter(lambda t: t.strip()),
+    style=st.sampled_from(["code", "config", "docs"]),
+)
+def test_invariants_hold(topic: str, style: str):
+    output = simulate_agent(topic, style)  # calls the real model
+    assert property_no_secrets(output)
+    assert property_no_refund_twice(extract_trajectory(output))
+```
 
 Tools that implement this:
 
@@ -127,11 +175,45 @@ Tools that implement this:
 
 ### Layer 4 — Golden Datasets and Regression Tracking
 
-A complete runnable example at [`scripts/layer4_golden_dataset.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer4_golden_dataset.py) with a full implementation at [`src/eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/src/eval.py).
+A complete runnable example at [`scripts/layers/04-golden-dataset.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/04-golden-dataset.py) with a full implementation at [`src/eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/src/eval.py).
 
 Curate a representative set of real inputs — ideally pulled from actual usage rather than invented — and snapshot how your system scores against them over time. You're not asserting exact output equality; you're asserting the **eval score on that set doesn't regress** when you change a prompt, swap a model version, or edit a skill definition.
 
 The discipline that matters here: **score your current production system before setting an acceptance bar.** Don't invent a target in a vacuum — measure the baseline, then gate merges on "no regression below baseline" rather than an arbitrary absolute number. E.g. *"tool-selection success: current baseline 88%, acceptance bar 95%, anything below baseline blocks deploy."*
+
+```python
+GOLDEN_DATASET = [
+    {"id": "capital-france", "prompt": "Capital of France?",
+     "checks": {"must_contain": ["Paris"], "max_words": 5}},
+    {"id": "json-output",   "prompt": "Return JSON: {\"x\": 1}",
+     "checks": {"expects_valid_json": True}},
+]
+
+def run_suite() -> dict:
+    """Score every golden case, return {case_id: mean_score}."""
+    results = {}
+    for case in GOLDEN_DATASET:
+        output = model.invoke(case["prompt"]).content.strip()
+        # composable deterministic checks
+        scores = []
+        for w in case["checks"].get("must_contain", []):
+            scores.append(1.0 if w.lower() in output.lower() else 0.0)
+        if case["checks"].get("expects_valid_json"):
+            scores.append(score_valid_json(output))
+        if case["checks"].get("max_words"):
+            scores.append(score_max_words(output, case["checks"]["max_words"]))
+        results[case["id"]] = statistics.mean(scores) if scores else 0.0
+    return results
+
+def gate(results: dict, baseline: dict):
+    """Fail if any score dropped below its recorded baseline."""
+    for case_id, score in results.items():
+        prev = baseline.get(case_id, 0.0)
+        assert score >= prev, f"{case_id}: {score:.3f} < baseline {prev:.3f}"
+
+# Record baseline: run_suite() → save to eval-baseline.json
+# Gate in CI: load baseline, gate(run_suite(), baseline)
+```
 
 Tools that implement this:
 
@@ -167,7 +249,7 @@ Tools that implement this:
 
 #### Concrete Example: The Golden Dataset
 
-refer: [`scripts/layer4_golden_dataset.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer4_golden_dataset.py) in the companion repo. It defines a golden dataset of 4 cases (capital lookup, list comprehension with invariants, JSON output validation), scores each with deterministic checks (substring match, word-count bound, JSON parse), runs 3 samples per case, and gates against a checked-in `eval-baseline.json`:
+refer: [`scripts/layers/04-golden-dataset.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/04-golden-dataset.py) in the companion repo. It defines a golden dataset of 4 cases (capital lookup, list comprehension with invariants, JSON output validation), scores each with deterministic checks (substring match, word-count bound, JSON parse), runs 3 samples per case, and gates against a checked-in `eval-baseline.json`:
 
 ```bash
 $ uv run python scripts/layer4_golden_dataset.py --baseline
@@ -184,13 +266,40 @@ After a change, `--gate` compares against the baseline and fails CI if any score
 
 ### Layer 5 — Statistical Sampling
 
-A complete runnable example at [`scripts/layer5_statistical_sampling.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer5_statistical_sampling.py).
+A complete runnable example at [`scripts/layers/05-statistical-sampling.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/05-statistical-sampling.py).
 
 A single run tells you almost nothing at temperature > 0. Run each test case N times (5–20 is typical) and look at the **distribution** of scores, not one output:
 
 - Report pass-rate ("87% of runs satisfied the rubric") instead of pass/fail
 - Track variance, not just mean — a task with 90% mean but huge variance is riskier than 85% with low variance
 - This matters disproportionately for agents, since errors compound across turns — a 95%-reliable single tool call becomes a 60%-reliable five-step trajectory (0.95⁵ ≈ 0.77, and it gets worse fast as steps increase and per-step reliability drops)
+
+```python
+import statistics
+
+N = 10  # runs per case
+
+def evaluate_with_sampling(prompt: str, checks: dict, n: int = N) -> dict:
+    outputs = [model.invoke(prompt).content.strip() for _ in range(n)]
+
+    scores = []
+    for output in outputs:
+        s = score_contains(output, checks.get("must_contain", []))
+        s &= score_valid_json(output) if checks.get("expects_valid_json") else True
+        scores.append(1.0 if s else 0.0)
+
+    pass_rate = sum(scores) / n
+    return {
+        "mean": statistics.mean(scores),
+        "stdev": statistics.stdev(scores) if n > 1 else 0.0,
+        "pass_rate": pass_rate,
+        "gate": pass_rate >= 0.6,  # acceptance threshold
+    }
+
+# Usage: gate on pass-rate, not a single run
+# print(evaluate_with_sampling("Capital of France?", {"must_contain": ["Paris"]}))
+# → {"mean": 0.9, "stdev": 0.316, "pass_rate": 0.9, "gate": True}
+```
 
 Tools that implement this:
 
@@ -203,9 +312,42 @@ Tools that implement this:
 
 ### Layer 6 — Human-in-the-Loop
 
-A workflow script at [`scripts/layer6_human_review.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer6_human_review.py) — exports eval results to CSV for annotation, then reports disagreements between human and automated scores.
+A workflow script at [`scripts/layers/06-human-review.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/06-human-review.py) — exports eval results to CSV for annotation, then reports disagreements between human and automated scores.
 
 No rubric anticipates every edge case. Sample production traffic (5–10% is a common starting point) for manual review, and feed disagreements between human and judge scores back into refining the rubric. This is also where you catch the failure modes that are only obvious to a domain expert — a technically well-formed answer that's subtly wrong in a way no automated check would flag.
+
+```python
+import csv
+from pathlib import Path
+
+def export_for_review(results: list[dict], path: str = "review.csv"):
+    """Export eval results to CSV with a column for human score."""
+    with open(path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "case_id", "prompt", "output", "auto_score", "human_score"])
+        writer.writeheader()
+        for r in results:
+            writer.writerow({
+                "case_id": r["id"],
+                "prompt": r["prompt"],
+                "output": r["output"][:500],  # truncate for readability
+                "auto_score": r["score"],
+                "human_score": "",  # filled in by the reviewer
+            })
+
+def import_annotations(path: str = "review_annotated.csv") -> dict:
+    """Load human scores and compute agreement."""
+    with open(path, newline="") as f:
+        rows = list(csv.DictReader(f))
+    disagreements = [r for r in rows
+                     if r["human_score"] and abs(float(r["auto_score"])
+                     - float(r["human_score"])) > 0.3]
+    return {"total": len(rows), "disagreements": disagreements}
+
+# Reviewer opens review.csv, adds human scores,
+# saves as review_annotated.csv; analysis reports which
+# rubrics need refinement.
+```
 
 Tools that implement this:
 
@@ -223,17 +365,17 @@ Five tools cover the full pyramid. Runnable examples for each in the companion r
 
 | Tool | Role | Example |
 |---|---|---|
-| **[pytest](../pytest.md)** | Test runner, deterministic checks, invariant fixtures, sampling loops | [`scripts/example_pytest.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_pytest.py) |
-| **[DeepEval](../deepeval.md)** | Built-in metrics (hallucination, faithfulness, G-Eval, answer relevancy), golden dataset management, synthetic data generation from your docs | [`scripts/example_deepeval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_deepeval.py) |
-| **[Promptfoo](../promptfoo.md)** | Prompt/model comparison, adversarial red-teaming (500+ attack vectors) | [`scripts/example_promptfoo.yaml`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_promptfoo.yaml) |
-| **[Braintrust](../braintrust.md)** | Platform: persisted eval history linked to git commits, regression dashboards, CI gates, human annotation queues | [`scripts/example_braintrust.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_braintrust.py) |
-| **[hypothesis](../hypothesis.md)** | Property-based testing — generates edge-case inputs to probe guardrails and invariants | [`scripts/example_hypothesis.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_hypothesis.py) |
+| **[pytest](../pytest.md)** | Test runner, deterministic checks, invariant fixtures, sampling loops | [`scripts/example_pytest.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_pytest.py) |
+| **[DeepEval](../deepeval.md)** | Built-in metrics (hallucination, faithfulness, G-Eval, answer relevancy), golden dataset management, synthetic data generation from your docs | [`scripts/example_deepeval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_deepeval.py) |
+| **[Promptfoo](../promptfoo.md)** | Prompt/model comparison, adversarial red-teaming (500+ attack vectors) | [`scripts/example_promptfoo.yaml`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_promptfoo.yaml) |
+| **[Braintrust](../braintrust.md)** | Platform: persisted eval history linked to git commits, regression dashboards, CI gates, human annotation queues | [`scripts/example_braintrust.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_braintrust.py) |
+| **[hypothesis](../hypothesis.md)** | Property-based testing — generates edge-case inputs to probe guardrails and invariants | [`scripts/example_hypothesis.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_hypothesis.py) |
 
 All five are open-source except Braintrust — and you can defer that by checking baseline JSON into git (as the companion repo does), adding it when you need historical dashboards and team-wide visibility.
 
 ## Part 3: Evaluating Agents Specifically — Trajectory, Not Just Output
 
-A complete runnable example at [`scripts/trajectory_eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/trajectory_eval.py).
+A complete runnable example at [`scripts/trajectory/trajectory_eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/trajectory/trajectory_eval.py).
 
 Agent evaluation is a strictly harder problem than single-call LLM evaluation, because the thing you're scoring isn't a string — it's a **trajectory**: the full sequence of reasoning steps, tool calls, and intermediate states. LangChain's framing is a useful mental model here: scoring only the final answer is like grading an exam by the final grade alone; trajectory evaluation is grading by the working shown at every step.
 
@@ -370,7 +512,7 @@ The last row (first-attempt pass rate) is the direct link back to the eval pyram
 
 ### Automated via a session-analysis script
 
-The companion repo includes [`scripts/analyze_sessions.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/analyze_sessions.py) that walks `~/.claude/projects/` for JSONL transcripts and produces the metrics above. Run it against your logs:
+The companion repo includes [`scripts/sessions/analyze_sessions.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/sessions/analyze_sessions.py) that walks `~/.claude/projects/` for JSONL transcripts and produces the metrics above. Run it against your logs:
 
 ```bash
 uv run python scripts/analyze_sessions.py ~/.claude/projects/ --report
