@@ -8,7 +8,7 @@ summary = "LLM outputs are non-deterministic, which breaks the assumptions most 
 
 ## Part 1: Why This Is a Different Testing Problem
 
-* Traditional software testing rests on one assumption: same input, same output. `assertEqual(f(x), y)` works because `f` is deterministic. The moment you put an LLM in the loop, that assumption breaks. 
+* Traditional software testing rests on determinism: same input, same output. `assertEqual(f(x), y)` works because `f` is deterministic. The moment you put an LLM in the equation, that assumption breaks. 
 * Ask Claude the same question twice, at the same temperature, and you can get two answers that are both "correct" but not identical — different wording, different tool-call order, different length. 
 * Ask an agent to complete a multi-step task and you get a **trajectory**, not a single output: a chain of reasoning, tool calls and intermediate states that can diverge wildly between runs while still arriving at a valid result.
 * You're not testing for equality anymore (`unittest`/`pytest` in their classic form) — you're testing for **membership in an acceptable set**, scored probabilistically. That reframing is what "evals" are.
@@ -17,7 +17,7 @@ Three things compound the problem:
 
 1. **Stochasticity is layered.** 
    - Stochasticity is the quality of lacking a predictable pattern, where outcomes are governed by probability rather than deterministic rules.
-   - The model call is non-deterministic, and if you use another LLM to *grade* the output (LLM-as-judge), the grader is non-deterministic too. Stack enough randomness and your test suite becomes noise unless you control for it.
+   - The model call is non-deterministic, and if you use another LLM to *grade* the output (LLM-as-judge), the grader is non-deterministic too.Stack enough randomness and your test suite becomes noise unless you control for it.
 2. **Agents multiply the surface area.** 
    - A single-turn LLM call has one input and one output to score. 
    - An agent has N tool calls, each of which can fail, retry, hallucinate a tool name or call the right tool with the wrong arguments — and two completely different trajectories can both be "correct."
@@ -41,42 +41,11 @@ Anything that *can* be checked without another model call, should be. These are 
 - Regex / substring matches for known-good or known-bad patterns
 - Latency and token-cost thresholds
 
-If you can express the check as code, express it as code. This layer should be the majority of your suite — most current guidance from teams running this in production puts deterministic checks at roughly 60% of the total eval set, with model-graded checks and human review filling the rest.
+If you can express the check as code, do it. This layer should be the majority of your suite — most current guidance from teams running this in production puts deterministic checks at roughly 60% of the total eval set, with model-graded checks and human review filling the rest.
 
-A concrete example — the same checks from the golden dataset:
+A complete runnable example — `scripts/layer1_deterministic.py` — defines the same four scorers (`score_contains`, `score_excludes`, `score_max_words`, `score_valid_json`), applies them to a 5-case golden dataset, and prints results. Run it with zero dependencies:
 
-```python
-import json
-
-def score_contains(output, must_contain):
-    """1.0 if all required words are present, 0.0 otherwise."""
-    return 1.0 if all(w in output.lower() for w in must_contain) else 0.0
-
-def score_excludes(output, must_not_contain):
-    """1.0 if none of the banned words appear, 0.0 otherwise."""
-    return 0.0 if any(w in output.lower() for w in must_not_contain) else 1.0
-
-def score_max_words(output, max_words):
-    """1.0 if output is within the word limit, 0.0 otherwise."""
-    return 1.0 if len(output.split()) <= max_words else 0.0
-
-def score_valid_json(output):
-    """1.0 if output parses as JSON, 0.0 otherwise."""
-    try:
-        json.loads(output)
-        return 1.0
-    except json.JSONDecodeError:
-        return 0.0
-
-# Applied to a golden case:
-case = {
-    "id": "json-output",
-    "prompt": 'Return {"name": "Alice", "age": 31} as valid JSON.',
-}
-output = model.invoke(case["prompt"]).content.strip()
-score = score_valid_json(output)          # Layer 1 — no second model call
-assert score == 1.0, f"Expected valid JSON, got: {output[:80]}"
-```
+[`scripts/layer1_deterministic.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer1_deterministic.py)
 
 Each scorer is a plain Python function — no LLM, no API call, no judge model. They are composable: a single golden case can combine `score_contains` + `score_max_words` + `score_excludes` and the overall score is simply the mean of the individual checks.
 
@@ -92,24 +61,28 @@ Tools that implement this:
 
 ### Layer 2 — Model-Graded Evaluation (LLM-as-judge)
 
-For anything semantic — correctness against a rubric, tone, faithfulness to source material, whether a response actually answers the question — you use another LLM call to score the output. The pattern:
+For anything semantic — correctness against a rubric, tone, faithfulness to source material, whether a response actually answers the question — you use another LLM call to score the output. The pattern — a complete runnable example at [`scripts/layer2_model_graded.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer2_model_graded.py):
 
+```python
+JUDGE_PROMPT = """You are grading an AI assistant's response.
+Score it 0.0–1.0 on each criterion below.
+
+Output ONLY valid JSON:
+{{"correctness": 0.0, "helpfulness": 0.0, "conciseness": 0.0}}
+
+User prompt:
+{prompt}
+
+Assistant response:
+{response}"""
+
+def judge_score(prompt: str, response: str) -> dict:
+    model = openrouter_chat_model(temperature=0.0)
+    resp = model.invoke(JUDGE_PROMPT.format(prompt=prompt, response=response))
+    return json.loads(resp.content.strip().removeprefix("```json").removesuffix("```"))
 ```
-grader_prompt = f"""
-You are grading an AI-generated answer against a rubric.
 
-Question: {question}
-Reference answer: {reference}
-Model output: {output}
-
-Score 1-5 on each of:
-- Factual accuracy
-- Completeness
-- Adherence to the requested format
-
-Return only JSON: {{"accuracy": int, "completeness": int, "format": int, "reasoning": str}}
-"""
-```
+The same output is then scored on three axes: is it *correct* (factually accurate), *helpful* (directly addresses the question), and *concise* (avoids unnecessary verbosity). The judge prompt, the scoring rubric, and the output format are all explicit — no room for vibes.
 
 Things that make this reliable instead of vibes-based:
 
@@ -131,6 +104,8 @@ G-Eval (chain-of-thought-based scoring with a scoring function) is the most comm
 
 ### Layer 3 — Property-Based / Invariant Testing
 
+A complete runnable example at [`scripts/layer3_property_based.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer3_property_based.py).
+
 Instead of checking a specific output, check properties that must hold across *all* outputs regardless of variance:
 
 - The agent never calls a destructive action (delete, deploy, send) without an explicit confirmation step
@@ -151,6 +126,8 @@ Tools that implement this:
 - **`promptfoo` red-teaming suite** — 500+ adversarial input vectors that probe whether your invariant holds under malicious or unusual inputs; automated probing, not manual test writing.
 
 ### Layer 4 — Golden Datasets and Regression Tracking
+
+A complete runnable example at [`scripts/layer4_golden_dataset.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer4_golden_dataset.py) with a full implementation at [`src/eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/src/eval.py).
 
 Curate a representative set of real inputs — ideally pulled from actual usage rather than invented — and snapshot how your system scores against them over time. You're not asserting exact output equality; you're asserting the **eval score on that set doesn't regress** when you change a prompt, swap a model version, or edit a skill definition.
 
@@ -190,10 +167,10 @@ Tools that implement this:
 
 #### Concrete Example: The Golden Dataset
 
-refer: [`scripts/golden_eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/golden_eval.py) in the companion repo. It defines a golden dataset of 4 cases (capital lookup, list comprehension with invariants, JSON output validation), scores each with deterministic checks (substring match, word-count bound, JSON parse), runs 3 samples per case, and gates against a checked-in `eval-baseline.json`:
+refer: [`scripts/layer4_golden_dataset.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer4_golden_dataset.py) in the companion repo. It defines a golden dataset of 4 cases (capital lookup, list comprehension with invariants, JSON output validation), scores each with deterministic checks (substring match, word-count bound, JSON parse), runs 3 samples per case, and gates against a checked-in `eval-baseline.json`:
 
 ```bash
-$ uv run python scripts/golden_eval.py --baseline
+$ uv run python scripts/layer4_golden_dataset.py --baseline
 
   capital-france                mean=1.000  stdev=0.000
   capital-japan                 mean=1.000  stdev=0.000
@@ -206,6 +183,8 @@ Saved baseline to eval-baseline.json
 After a change, `--gate` compares against the baseline and fails CI if any score regressed. The full source is in the repo — this pattern runs with zero dependencies beyond `uv` and an API key, no separate eval platform required.
 
 ### Layer 5 — Statistical Sampling
+
+A complete runnable example at [`scripts/layer5_statistical_sampling.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer5_statistical_sampling.py).
 
 A single run tells you almost nothing at temperature > 0. Run each test case N times (5–20 is typical) and look at the **distribution** of scores, not one output:
 
@@ -224,6 +203,8 @@ Tools that implement this:
 
 ### Layer 6 — Human-in-the-Loop
 
+A workflow script at [`scripts/layer6_human_review.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layer6_human_review.py) — exports eval results to CSV for annotation, then reports disagreements between human and automated scores.
+
 No rubric anticipates every edge case. Sample production traffic (5–10% is a common starting point) for manual review, and feed disagreements between human and judge scores back into refining the rubric. This is also where you catch the failure modes that are only obvious to a domain expert — a technically well-formed answer that's subtly wrong in a way no automated check would flag.
 
 Tools that implement this:
@@ -238,17 +219,21 @@ Tools that implement this:
 
 If you need to cover all 6 layers in an enterprise setting with the smallest surface area, this is the practical minimum:
 
-| Tool | Role |
-|---|---|
-| **pytest** | Test runner, deterministic checks, invariant fixtures, sampling loops |
-| **DeepEval** | Built-in metrics (hallucination, faithfulness, G-Eval, answer relevancy), golden dataset management, synthetic data generation from your docs |
-| **Promptfoo** | Prompt/model comparison, adversarial red-teaming (500+ attack vectors) — run before any model version change in production |
-| **Braintrust** | Platform: persisted eval history linked to git commits, regression dashboards, CI gates, human annotation queues |
-| **hypothesis** | Property-based testing — generates edge-case inputs to probe guardrails and invariants |
+Five tools cover the full pyramid. Runnable examples for each in the companion repo:
 
-Five tools cover the full pyramid. pytest + hypothesis + DeepEval + Promptfoo are all open-source. Braintrust is the only paid platform — and you can defer it early on by checking baseline JSON into git (as the companion repo does), adding it when you need historical dashboards and team-wide visibility.
+| Tool | Role | Example |
+|---|---|---|
+| **pytest** | Test runner, deterministic checks, invariant fixtures, sampling loops | [`scripts/example_pytest.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_pytest.py) |
+| **DeepEval** | Built-in metrics (hallucination, faithfulness, G-Eval, answer relevancy), golden dataset management, synthetic data generation from your docs | [`scripts/example_deepeval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_deepeval.py) |
+| **Promptfoo** | Prompt/model comparison, adversarial red-teaming (500+ attack vectors) | [`scripts/example_promptfoo.yaml`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_promptfoo.yaml) |
+| **Braintrust** | Platform: persisted eval history linked to git commits, regression dashboards, CI gates, human annotation queues | [`scripts/example_braintrust.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_braintrust.py) |
+| **hypothesis** | Property-based testing — generates edge-case inputs to probe guardrails and invariants | [`scripts/example_hypothesis.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/example_hypothesis.py) |
+
+All five are open-source except Braintrust — and you can defer that by checking baseline JSON into git (as the companion repo does), adding it when you need historical dashboards and team-wide visibility.
 
 ## Part 3: Evaluating Agents Specifically — Trajectory, Not Just Output
+
+A complete runnable example at [`scripts/trajectory_eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/trajectory_eval.py).
 
 Agent evaluation is a strictly harder problem than single-call LLM evaluation, because the thing you're scoring isn't a string — it's a **trajectory**: the full sequence of reasoning steps, tool calls, and intermediate states. LangChain's framing is a useful mental model here: scoring only the final answer is like grading an exam by the final grade alone; trajectory evaluation is grading by the working shown at every step.
 
