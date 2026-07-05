@@ -151,7 +151,7 @@ Tools that implement this:
 - **Best for:** minimal setups where the discipline of "nothing below our measured baseline merges" is the goal — the baba-yaga companion repo does exactly this with `eval-baseline.json` in git and `--gate` in CI.
 - **Downside:** no web UI, no dashboards, no cross-team visibility. You build the runner yourself — but the total surface fits in a single file.
 
-### Concrete Example: The `baba-yaga` Golden Dataset
+### Concrete Example: The Golden Dataset
 
 refer: [`scripts/golden_eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/golden_eval.py). It defines a golden dataset of 4 cases (capital lookup, list comprehension with invariants, JSON output validation), scores each with deterministic checks (substring match, word-count bound, JSON parse), runs 3 samples per case, and gates against a checked-in `eval-baseline.json`:
 
@@ -238,6 +238,45 @@ A practical skill-testing checklist:
 5. **Token efficiency** — skills that reference other files or run multi-step procedures should be checked for whether they're pulling in more context than the task needs
 
 For skills, deterministic checks carry even more of the weight than in general agent testing, because the contract is narrower and more mechanically verifiable — "did it produce a valid .docx with a table of contents" is a much cheaper and more reliable check than asking a judge model "is this a good Word document."
+
+### Practical Testing by Platform
+
+The six-layer pyramid applies regardless of what you're building — but the *tool* you use to implement each layer changes depending on whether you're testing a Claude Code skill, a hook function, or a Copilot instructions file. Here is the mapping per platform.
+
+**Claude Code skills (`~/.claude/skills/<name>/SKILL.md`)**
+
+A skill has a narrow contract: trigger condition, documented procedure, output promise. That contract is your eval spec, and deterministic checks cover most of it.
+
+| Layer | How to test it |
+|---|---|
+| 1 — Deterministic | Create a test repo, run the skill via `claude` in headless mode, assert the output file exists at the right path with the right format. Check tool-call order against the skill's documented steps with `toolcallcheck` or a custom mock. |
+| 2 — Model-graded | Only needed if the skill produces open-ended output (e.g. "write a summary"). Use the same LLM-as-judge pattern as `eval.py` — call the model with a rubric, score the output. |
+| 3 — Invariants | A `PreToolUse` hook that blocks writes outside the skill's scope *is* the test — add a test that the hook fires when it should and doesn't when it shouldn't. |
+| 4 — Golden dataset | Add each skill's output contract checks to `eval.py` as new golden cases. If a skill change breaks the contract, `--gate` catches it before merge. |
+| 5 — Sampling | Run the skill N times. If the output is deterministic (file path, format), one run is enough. If the skill calls an LLM internally, sample 3–5 runs. |
+| 6 — Human review | Review baseline changes in PRs — if a skill change drops a score, a human decides whether the new behaviour is acceptable before updating the baseline. |
+
+**Claude Code hooks (`~/.claude/hooks/<name>`)**
+
+Hooks (`PreToolUse`, `PostToolUse`, `PermissionDenied`) are deterministic Python or TypeScript functions. They take a context object and return a decision. No LLM is involved — test them like regular unit tests.
+
+| Layer | How to test it |
+|---|---|
+| 1 — Deterministic | Mock the tool-call context, call the hook, assert the return value (allow / block / transform). No model call needed. Example: a `PreToolUse` hook that blocks `rm -rf` — unit test passes it a `rm -rf /` command and asserts `PermissionDenied`. |
+| 2–6 | Not applicable. Hooks are pure logic. If they call an external API or LLM (they shouldn't — that defeats the purpose of a synchronous guard), those calls become integration tests under Layer 1 with a mocked network. |
+
+**Copilot instructions (`.github/copilot-instructions.md`)**
+
+Copilot instructions are a system-prompt overlay applied in-editor. There is no headless sandbox to run them against, so the tactic is different: treat the instructions file as a prompt prefix and score your golden dataset with and without it.
+
+| Layer | How to test it |
+|---|---|
+| 1 — Deterministic | Add a golden case that checks the instructions file itself — does it parse? are required sections present? |
+| 2–4 — Model-graded + golden dataset | Run your existing golden dataset twice: once with the instructions prepended to each prompt, once without. Compare the scores. If adding the instructions degrades accuracy on cases that shouldn't be affected, gate the change. |
+| 5 — Sampling | Same as any golden dataset run — 3–5 samples per case with `--gate` against the no-instructions baseline. |
+| 6 — Human review | Review the diff to the instructions file in PRs. If it's hard to tell whether a change improves or harms output, that's a signal the golden dataset needs a new case covering that scenario. |
+
+The unifying thread across all three: the same `eval.py` + `eval-baseline.json` + `--gate` pattern works for every platform described in this post. The golden dataset covers the model-facing surface; deterministic `assert` calls in unit tests cover the logic surface; the baseline file and CI gate tie them together into a regression-proof workflow.
 
 ## Part 5: The 2026 Tool Landscape
 
