@@ -43,6 +43,43 @@ Anything that *can* be checked without another model call, should be. These are 
 
 If you can express the check as code, express it as code. This layer should be the majority of your suite — most current guidance from teams running this in production puts deterministic checks at roughly 60% of the total eval set, with model-graded checks and human review filling the rest.
 
+A concrete example — the same checks from the golden dataset:
+
+```python
+import json
+
+def score_contains(output, must_contain):
+    """1.0 if all required words are present, 0.0 otherwise."""
+    return 1.0 if all(w in output.lower() for w in must_contain) else 0.0
+
+def score_excludes(output, must_not_contain):
+    """1.0 if none of the banned words appear, 0.0 otherwise."""
+    return 0.0 if any(w in output.lower() for w in must_not_contain) else 1.0
+
+def score_max_words(output, max_words):
+    """1.0 if output is within the word limit, 0.0 otherwise."""
+    return 1.0 if len(output.split()) <= max_words else 0.0
+
+def score_valid_json(output):
+    """1.0 if output parses as JSON, 0.0 otherwise."""
+    try:
+        json.loads(output)
+        return 1.0
+    except json.JSONDecodeError:
+        return 0.0
+
+# Applied to a golden case:
+case = {
+    "id": "json-output",
+    "prompt": 'Return {"name": "Alice", "age": 31} as valid JSON.',
+}
+output = model.invoke(case["prompt"]).content.strip()
+score = score_valid_json(output)          # Layer 1 — no second model call
+assert score == 1.0, f"Expected valid JSON, got: {output[:80]}"
+```
+
+Each scorer is a plain Python function — no LLM, no API call, no judge model. They are composable: a single golden case can combine `score_contains` + `score_max_words` + `score_excludes` and the overall score is simply the mean of the individual checks.
+
 Tools that implement this:
 
 - **`pytest` / `unittest`** — housing all deterministic checks in a standard CI runner alongside your regular test suite; zero infra overhead.
@@ -148,12 +185,12 @@ Tools that implement this:
 
 **Custom YAML gates**
 - **What it does:** define your baseline and acceptance threshold in a version-controlled YAML file checked into the repo. A one-page CI script checks "does the current score stay above the saved baseline?" before every merge. No platform dependency, works with any eval scorer.
-- **Best for:** minimal setups where the discipline of "nothing below our measured baseline merges" is the goal — the baba-yaga companion repo does exactly this with `eval-baseline.json` in git and `--gate` in CI.
+- **Best for:** minimal setups where the discipline of "nothing below our measured baseline merges" is the goal — the companion repo does exactly this with `eval-baseline.json` in git and `--gate` in CI.
 - **Downside:** no web UI, no dashboards, no cross-team visibility. You build the runner yourself — but the total surface fits in a single file.
 
-### Concrete Example: The Golden Dataset
+#### Concrete Example: The Golden Dataset
 
-refer: [`scripts/golden_eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/golden_eval.py). It defines a golden dataset of 4 cases (capital lookup, list comprehension with invariants, JSON output validation), scores each with deterministic checks (substring match, word-count bound, JSON parse), runs 3 samples per case, and gates against a checked-in `eval-baseline.json`:
+refer: [`scripts/golden_eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/golden_eval.py) in the companion repo. It defines a golden dataset of 4 cases (capital lookup, list comprehension with invariants, JSON output validation), scores each with deterministic checks (substring match, word-count bound, JSON parse), runs 3 samples per case, and gates against a checked-in `eval-baseline.json`:
 
 ```bash
 $ uv run python scripts/golden_eval.py --baseline
@@ -209,7 +246,7 @@ If you need to cover all 6 layers in an enterprise setting with the smallest sur
 | **Braintrust** | Platform: persisted eval history linked to git commits, regression dashboards, CI gates, human annotation queues |
 | **hypothesis** | Property-based testing — generates edge-case inputs to probe guardrails and invariants |
 
-Five tools cover the full pyramid. pytest + hypothesis + DeepEval + Promptfoo are all open-source. Braintrust is the only paid platform — and you can defer it early on by checking baseline JSON into git (as `baba-yaga` does), adding it when you need historical dashboards and team-wide visibility.
+Five tools cover the full pyramid. pytest + hypothesis + DeepEval + Promptfoo are all open-source. Braintrust is the only paid platform — and you can defer it early on by checking baseline JSON into git (as the companion repo does), adding it when you need historical dashboards and team-wide visibility.
 
 ## Part 3: Evaluating Agents Specifically — Trajectory, Not Just Output
 
@@ -362,7 +399,7 @@ The last row (first-attempt pass rate) is the direct link back to the eval pyram
 
 ### Automated via a session-analysis script
 
-The `baba-yaga` companion repo includes `scripts/analyze_sessions.py` that parses the log directory and produces this report. Run it against your logs, check the output into a dashboard or PR comment.
+The companion repo includes `scripts/analyze_sessions.py` that parses the log directory and produces this report. Run it against your logs, check the output into a dashboard or PR comment.
 
 ## Part 6: Roundtrip Consistency — Code ↔ Docs
 
