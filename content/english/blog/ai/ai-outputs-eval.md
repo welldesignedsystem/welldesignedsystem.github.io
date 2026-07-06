@@ -376,8 +376,8 @@ All six are open-source except Braintrust — and you can defer that by checking
 
 ### Full Tool Coverage by Layer
 
-| Tool | L1 | L2 | L3 | L4 | L5 | L6 | Notes |
-|---|---|---|---|---|---|---|---|
+| Tool | Deterministic (L1) | Model-Graded (L2) | Property-Based (L3) | Golden Dataset (L4) | Sampling (L5) | Human-in-Loop (L6) | Notes |
+|---|---|---|---|---|---|---|---|---|
 | **[pytest](../pytest/)** | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ | Test runner for deterministic checks, invariant fixtures, and sampling loops; `pytest-repeat` plugin for N-runs |
 | **[DeepEval](../deepeval/)** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | 50+ metrics: TaskCompletionMetric (L1), G-Eval/Faithfulness/Hallucination (L2), Bias/Toxicity (L3), Dataset management (L4), confidence intervals (L5); synthetic data generation |
 | **[Promptfoo](../promptfoo/)** | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | Comparison-based scoring (L2), 500+ red-teaming vectors (L3), golden datasets (L4), repeat:N sampling (L5); strongest OSS red-teaming suite |
@@ -393,6 +393,26 @@ All six are open-source except Braintrust — and you can defer that by checking
 | **arize-phoenix** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | OpenTelemetry-native production trace sampling for human-in-the-loop scoring (L6) |
 | **pytest-snapshot** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | Golden-file snapshot testing; byte-for-byte output equality for structural outputs (L4) |
 | **pytest-repeat** | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | Minimal plugin re-running pytest tests N times for statistical sampling (L5) |
+
+### Full Tool Features Matrix
+
+| Tool | Deterministic | LLM judge | Property-based | Golden dataset | Sampling | Human review | Red-teaming | Mock offline | Synthetic data |
+|---|---|---|---|---|---|---|---|---|---|
+| **[pytest](../pytest/)** | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **[DeepEval](../deepeval/)** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| **[Promptfoo](../promptfoo/)** | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ |
+| **[Braintrust](../braintrust/)** | ❌ | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **[hypothesis](../hypothesis/)** | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **[toolcallcheck](../toolcallcheck/)** | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **langsmith** | ❌ | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **langfuse** | ❌ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **ragas** | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **jsonschema / pydantic** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **mypy / pyright / ruff** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **label-studio** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **arize-phoenix** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **pytest-snapshot** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **pytest-repeat** | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
 
 ## Part 3: Evaluating Agents Specifically — Trajectory, Not Just Output
 

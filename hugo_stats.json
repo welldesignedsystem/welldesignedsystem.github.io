@@ -1500,6 +1500,7 @@
       "full-report-structure",
       "full-terminology-table",
       "full-tool-coverage-by-layer",
+      "full-tool-features-matrix",
       "function-decorators",
       "functional-and-resiliency-testing-in-the-deployment-pipeline",
       "functional-programming",
