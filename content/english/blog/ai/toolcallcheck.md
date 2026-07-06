@@ -1,5 +1,5 @@
 +++
-date = '2026-07-06T10:00:00+10:00'
+date = '2026-07-05T10:00:25+10:00'
 draft = false
 title = 'ToolCallCheck: Mock Your Tool Server and Assert on Trajectories'
 tags = ['ToolCallCheck', 'Evals', 'LLM', 'Testing', 'Python', 'Agents', 'MCP']

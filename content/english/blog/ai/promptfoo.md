@@ -1,5 +1,5 @@
 +++
-date = '2026-07-06T10:00:00+10:00'
+date = '2026-07-05T10:00:10+10:00'
 draft = false
 title = 'Promptfoo: Model Comparison and Red-Teaming for LLM Outputs'
 tags = ['Promptfoo', 'Evals', 'LLM', 'Testing', 'Red-Teaming', 'Prompt Engineering']

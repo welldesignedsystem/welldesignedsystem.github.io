@@ -1,5 +1,5 @@
 +++
-date = '2026-07-06T10:00:00+10:00'
+date = '2026-07-05T10:00:20+10:00'
 draft = false
 title = 'DeepEval: CI-Gated Typed Metrics for LLM Outputs'
 tags = ['DeepEval', 'Evals', 'LLM', 'Testing', 'CI', 'Python', 'Metrics']

@@ -1,5 +1,5 @@
 +++
-date = '2026-07-06T10:00:00+10:00'
+date = '2026-07-05T10:00:05+10:00'
 draft = false
 title = 'pytest for LLM Evaluation: Parametrized Tests, Fixtures, and CI Gates'
 tags = ['pytest', 'Evals', 'LLM', 'Testing', 'Python', 'CI']
