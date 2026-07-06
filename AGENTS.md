@@ -27,6 +27,7 @@ Push to `main` → GitHub Actions (Node 24, Hugo latest) → GitHub Pages. CI bu
 - No Oxford comma (see `.github/instructions/blog.instructions.md`).
 - Goldmark renders raw HTML in markdown (`unsafe = true`).
 - Code highlighting: `guessSyntax = true`, `solarized-light` style.
+- **Blog post dates must always be yesterday's date** (not today's). All dates in a batch must be unique and at least 5 seconds apart — duplicate dates cause Hugo build breakages (two pages with the same timestamp collide). Use the same `+10:00` timezone offset as existing posts.
 
 ## Architecture
 
