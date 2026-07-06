@@ -20,7 +20,7 @@ Property-based testing inverts the approach. You do not assert a specific output
 
 Then you feed the system a wide range of inputs — including edge cases you would not think to write by hand — and verify that every output satisfies those properties. The framework ([hypothesis](https://hypothesis.readthedocs.io/)) generates the inputs automatically. It finds the edge cases that violate your invariants, shrinks them to minimal failing examples, and reports them back.
 
-This is Layer 3 of the [eval pyramid](../ai-outputs-eval.md) — property-based / invariant testing.
+This is Layer 3 of the [eval pyramid](../ai-outputs-eval/) — property-based / invariant testing.
 
 ## Core Concepts
 
@@ -267,5 +267,5 @@ The companion repo includes [`scripts/layers/03-property-based.py`](https://gith
 ## Further Reading
 
 - [hypothesis documentation](https://hypothesis.readthedocs.io/)
-- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval.md)
-- [DeepEval: CI-Gated Typed Metrics for LLM Outputs](../deepeval.md)
+- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval/)
+- [DeepEval: CI-Gated Typed Metrics for LLM Outputs](../deepeval/)

@@ -8,7 +8,7 @@ summary = "Promptfoo is the go-to tool for comparing prompts and models side by 
 
 ## What Promptfoo Does
 
-Promptfoo is a CLI tool that runs a set of test prompts against one or more model configurations and scores the outputs. It fills a specific slot in the [eval pyramid](../ai-outputs-eval.md):
+Promptfoo is a CLI tool that runs a set of test prompts against one or more model configurations and scores the outputs. It fills a specific slot in the [eval pyramid](../ai-outputs-eval/):
 
 - **Model comparison** — run the same test cases across GPT-4o, Claude Sonnet, Gemini Pro, and any OpenAI-compatible endpoint, see the score table before you commit to a swap
 - **Prompt iteration** — test prompt variants side by side against your golden dataset, pick the winner by score not vibes
@@ -223,7 +223,7 @@ All three are open-source. Promptfoo was acquired by OpenAI in March 2026 and re
 ## Further Reading
 
 - [Promptfoo documentation](https://www.promptfoo.dev/docs/)
-- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval.md)
-- [DeepEval: CI-Gated Typed Metrics for LLM Outputs](../deepeval.md)
-- [Braintrust: Eval History, Dashboards and CI Gates](../braintrust.md)
-- [pytest for LLM Evaluation](../pytest.md)
+- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval/)
+- [DeepEval: CI-Gated Typed Metrics for LLM Outputs](../deepeval/)
+- [Braintrust: Eval History, Dashboards and CI Gates](../braintrust/)
+- [pytest for LLM Evaluation](../pytest/)

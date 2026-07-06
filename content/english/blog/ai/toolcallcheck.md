@@ -12,7 +12,7 @@ Most agent failures are not in the final output — they are in the tool calls. 
 
 ToolCallCheck is a mock MCP server that sits in place of your real tool server during tests. It records every tool call the agent makes, and after the run you assert on the recorded trajectory — which tools, what arguments, in what order, and whether structural invariants held. No model call, no network, fully deterministic.
 
-It fills Layers 1 and 3 of the [eval pyramid](../ai-outputs-eval.md):
+It fills Layers 1 and 3 of the [eval pyramid](../ai-outputs-eval/):
 
 - **Layer 1 (Deterministic)** — "was `read_file` called with the right path?" and "did the agent call tools in the expected order?"
 - **Layer 3 (Invariant)** — "was `process_refund` called more than once?" and "did the agent ever call a destructive tool like `delete`?"
@@ -144,7 +144,7 @@ Use ToolCallCheck for unit tests of individual tool-call behaviours. Use Traject
 
 ## Further Reading
 
-- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval.md)
+- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval/)
 - [Trajectory Evaluation in the Companion Repo](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/trajectory/trajectory_eval.py)
-- [pytest for LLM Evaluation](../pytest.md)
-- [hypothesis: Property-Based Testing for LLM Outputs](../hypothesis.md)
+- [pytest for LLM Evaluation](../pytest/)
+- [hypothesis: Property-Based Testing for LLM Outputs](../hypothesis/)

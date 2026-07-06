@@ -10,7 +10,7 @@ summary = "DeepEval provides typed, built-in metrics for LLM outputs — faithfu
 
 DeepEval is a Python library that provides typed evaluation metrics for LLM outputs. You wrap your LLM call, select which metrics to measure, and run the eval. It handles the scoring logic under the hood — including calling an LLM judge for metrics like faithfulness and GEval — and outputs a pass/fail that you can assert on in CI.
 
-It fills Layers 1–3 of the [eval pyramid](../ai-outputs-eval.md) with ready-made metrics so you do not have to write word-count, JSON-validity, or containment checks by hand (or worse, by regex). But its real value is in the higher-layer semantic metrics: faithfulness, hallucination, summarisation quality, and the configurable GEval rubric.
+It fills Layers 1–3 of the [eval pyramid](../ai-outputs-eval/) with ready-made metrics so you do not have to write word-count, JSON-validity, or containment checks by hand (or worse, by regex). But its real value is in the higher-layer semantic metrics: faithfulness, hallucination, summarisation quality, and the configurable GEval rubric.
 
 ## When to Use DeepEval
 
@@ -196,7 +196,7 @@ The companion repo includes [`scripts/example_deepeval.py`](https://github.com/w
 ## Further Reading
 
 - [DeepEval documentation](https://docs.confident-ai.com/)
-- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval.md)
-- [Braintrust: Eval History, Dashboards and CI Gates](../braintrust.md)
-- [Promptfoo: Model Comparison and Red-Teaming](../promptfoo.md)
-- [pytest for LLM Evaluation](../pytest.md)
+- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval/)
+- [Braintrust: Eval History, Dashboards and CI Gates](../braintrust/)
+- [Promptfoo: Model Comparison and Red-Teaming](../promptfoo/)
+- [pytest for LLM Evaluation](../pytest/)

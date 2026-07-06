@@ -8,7 +8,7 @@ summary = "Braintrust bridges the gap between local eval scripts and production 
 
 ## What Braintrust Provides
 
-The [eval pyramid](../ai-outputs-eval.md) has a gap between "I run evals locally" and "I catch regressions before they ship." Local scripts give you a terminal table and a JSON baseline file. They do not give you historical dashboards, commit-linked comparisons, or team-wide visibility.
+The [eval pyramid](../ai-outputs-eval/) has a gap between "I run evals locally" and "I catch regressions before they ship." Local scripts give you a terminal table and a JSON baseline file. They do not give you historical dashboards, commit-linked comparisons, or team-wide visibility.
 
 Braintrust fills that gap. It is a platform (with an open-source scoring library) that records every eval run, links it to the git commit that triggered it, and surfaces regressions in a web UI before they merge. It also provides human annotation queues so reviewers can score outputs that the automated judge is unsure about.
 
@@ -191,7 +191,7 @@ The companion repo includes [`scripts/example_braintrust.py`](https://github.com
 ## Further Reading
 
 - [Braintrust documentation](https://www.braintrust.dev/docs)
-- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval.md)
-- [DeepEval: CI-Gated Typed Metrics for LLM Outputs](../deepeval.md)
-- [Promptfoo: Model Comparison and Red-Teaming](../promptfoo.md)
-- [pytest for LLM Evaluation](../pytest.md)
+- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval/)
+- [DeepEval: CI-Gated Typed Metrics for LLM Outputs](../deepeval/)
+- [Promptfoo: Model Comparison and Red-Teaming](../promptfoo/)
+- [pytest for LLM Evaluation](../pytest/)

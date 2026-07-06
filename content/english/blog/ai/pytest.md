@@ -19,7 +19,7 @@ pytest gives you three patterns that map directly to LLM eval needs:
 | `yield`-based fixtures | Post-test invariant checks (no secrets, valid JSON) |
 | `pytest-repeat` or manual loops | Statistical sampling across N runs |
 
-You do not need a separate eval runner. If you already use pytest for unit tests, adding LLM evals is adding new test files, not a new toolchain. This fits Layer 1 (deterministic), Layer 3 (invariant), and Layer 5 (sampling) of the [eval pyramid](../ai-outputs-eval.md).
+You do not need a separate eval runner. If you already use pytest for unit tests, adding LLM evals is adding new test files, not a new toolchain. This fits Layer 1 (deterministic), Layer 3 (invariant), and Layer 5 (sampling) of the [eval pyramid](../ai-outputs-eval/).
 
 ## Parametrized Golden Datasets
 
@@ -229,6 +229,6 @@ The companion repo includes [`scripts/example_pytest.py`](https://github.com/wel
 ## Further Reading
 
 - [pytest documentation](https://docs.pytest.org/)
-- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval.md)
-- [hypothesis: Property-Based Testing for LLM Outputs](../hypothesis.md)
-- [DeepEval: CI-Gated Typed Metrics for LLM Outputs](../deepeval.md)
+- [Testing LLM Outputs: The Eval Pyramid](../ai-outputs-eval/)
+- [hypothesis: Property-Based Testing for LLM Outputs](../hypothesis/)
+- [DeepEval: CI-Gated Typed Metrics for LLM Outputs](../deepeval/)

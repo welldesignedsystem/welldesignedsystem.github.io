@@ -74,12 +74,12 @@ GOLDEN_CASE = {
 
 Tools that implement this layer:
 
-- **[`pytest`](../pytest.md) / `unittest`** — housing all deterministic checks in a standard CI runner alongside your regular test suite; zero infra overhead.
+- **[`pytest`](../pytest/) / `unittest`** — housing all deterministic checks in a standard CI runner alongside your regular test suite; zero infra overhead.
 - **`jsonschema` / `pydantic`** — validate that parsed JSON has the expected fields and types; catches missing keys, wrong types, extra fields the model invented.
 - **`mypy` / `pyright` / `ruff`** — run on any code the model generates (scripts, SQL, config files); catches syntax errors and type mismatches before the code executes.
-- **[`toolcallcheck`](../toolcallcheck.md)** — mocks an MCP server and asserts that the agent called the expected tools with the expected arguments in the expected order; runs fully offline, no model call.
-- **[`hypothesis`](../hypothesis.md)** — generates edge-case inputs to feed the model and asserts structural properties hold across all of them; catches inputs that trigger malformed output.
-- **[`deepeval`](../deepeval.md) (`TaskCompletionMetric`)** — agent-specific metric that scores whether each tool call in a trajectory was structurally correct (right tool, right args) without needing a judge model.
+- **[`toolcallcheck`](../toolcallcheck/)** — mocks an MCP server and asserts that the agent called the expected tools with the expected arguments in the expected order; runs fully offline, no model call.
+- **[`hypothesis`](../hypothesis/)** — generates edge-case inputs to feed the model and asserts structural properties hold across all of them; catches inputs that trigger malformed output.
+- **[`deepeval`](../deepeval/) (`TaskCompletionMetric`)** — agent-specific metric that scores whether each tool call in a trajectory was structurally correct (right tool, right args) without needing a judge model.
 - **Plain `assert` + regex** — cheapest of all: check no secrets/PII in output, output length in bounds, known-good patterns present, known-bad patterns absent.
 
 ### Layer 2 — Model-Graded Evaluation (LLM-as-judge)
@@ -116,9 +116,9 @@ Things that make this reliable instead of vibes-based:
 
 Tools that implement this:
 
-- **[`deepeval`](../deepeval.md) (`GEval`, `FaithfulnessMetric`, `HallucinationMetric`, `AnswerRelevancyMetric`)** — pre-built model-graded scorers that call an LLM judge internally and return a numeric score you can assert against; no need to write your own judge prompt for common patterns.
-- **[`promptfoo`](../promptfoo.md)** — runs model outputs through comparison-based scoring or adversarial test cases; strongest for catching regressions when swapping prompts or models, with built-in red-teaming vectors.
-- **[`braintrust`](../braintrust.md)** — custom sandboxed Python scorers where you define the judge logic (call any model, run any calculation); scores are wired into CI gates and regression dashboards automatically.
+- **[`deepeval`](../deepeval/) (`GEval`, `FaithfulnessMetric`, `HallucinationMetric`, `AnswerRelevancyMetric`)** — pre-built model-graded scorers that call an LLM judge internally and return a numeric score you can assert against; no need to write your own judge prompt for common patterns.
+- **[`promptfoo`](../promptfoo/)** — runs model outputs through comparison-based scoring or adversarial test cases; strongest for catching regressions when swapping prompts or models, with built-in red-teaming vectors.
+- **[`braintrust`](../braintrust/)** — custom sandboxed Python scorers where you define the judge logic (call any model, run any calculation); scores are wired into CI gates and regression dashboards automatically.
 - **`langsmith`** — annotation queues let humans review model-graded scores and correct them; closed-loop feedback refines the judge prompt over time.
 - **`langfuse`** — model-as-judge evaluation built into the tracing platform; useful when you already use Langfuse for production monitoring and want eval without a second service.
 - **`ragas`** — faithfulness, answer relevancy, and context precision metrics specifically for RAG pipelines; uses LLM calls internally but scoped to the retrieval-grounded evaluation domain.
@@ -167,7 +167,7 @@ def test_invariants_hold(topic: str, style: str):
 Tools that implement this:
 
 - **`hypothesis`** — property-based testing framework; you declare invariants ("output never contains X") and it generates inputs to try to violate them, including edge cases you wouldn't think to write manually.
-- **[`toolcallcheck`](../toolcallcheck.md)** — assert structural constraints on tool calls (e.g. "never call the delete tool" or "always pass a confirmation flag"); fails the test if the agent's trajectory violates the constraint, regardless of output content.
+- **[`toolcallcheck`](../toolcallcheck/)** — assert structural constraints on tool calls (e.g. "never call the delete tool" or "always pass a confirmation flag"); fails the test if the agent's trajectory violates the constraint, regardless of output content.
 - **Custom `PreToolUse` / `PermissionDenied` hooks** — in `claude-code` or `opencode`, these hooks fire before every tool call and can block it deterministically — you enforce invariants at the agent runtime level, not just in tests.
 - **`pytest` with invariant fixtures** — write a fixture that runs post-test (e.g. `yield` + assert pattern); every test in the suite automatically checks the invariant without duplicating the assertion.
 - **`deepeval` (`BiasMetric`, `ToxicityMetric`)** — model-graded safety metrics that score output against fairness and toxicity rubrics; useful when the invariant is semantic rather than structural.
@@ -365,12 +365,12 @@ Six tools cover the full pyramid. Runnable examples for each in the companion re
 
 | Tool | Role | Example |
 |---|---|---|
-| **[pytest](../pytest.md)** | Test runner, deterministic checks, invariant fixtures, sampling loops | [`scripts/example_pytest.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_pytest.py) |
-| **[DeepEval](../deepeval.md)** | Built-in metrics (hallucination, faithfulness, G-Eval, answer relevancy), golden dataset management, synthetic data generation from your docs | [`scripts/example_deepeval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_deepeval.py) |
-| **[Promptfoo](../promptfoo.md)** | Prompt/model comparison, adversarial red-teaming (500+ attack vectors) | [`scripts/example_promptfoo.yaml`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_promptfoo.yaml) |
-| **[Braintrust](../braintrust.md)** | Platform: persisted eval history linked to git commits, regression dashboards, CI gates, human annotation queues | [`scripts/example_braintrust.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_braintrust.py) |
-| **[hypothesis](../hypothesis.md)** | Property-based testing — generates edge-case inputs to probe guardrails and invariants | [`scripts/example_hypothesis.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_hypothesis.py) |
-| **[toolcallcheck](../toolcallcheck.md)** | Mock MCP server — assert tool calls, args, order and invariants offline | [`scripts/example_toolcallcheck.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_toolcallcheck.py) |
+| **[pytest](../pytest/)** | Test runner, deterministic checks, invariant fixtures, sampling loops | [`scripts/example_pytest.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_pytest.py) |
+| **[DeepEval](../deepeval/)** | Built-in metrics (hallucination, faithfulness, G-Eval, answer relevancy), golden dataset management, synthetic data generation from your docs | [`scripts/example_deepeval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_deepeval.py) |
+| **[Promptfoo](../promptfoo/)** | Prompt/model comparison, adversarial red-teaming (500+ attack vectors) | [`scripts/example_promptfoo.yaml`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_promptfoo.yaml) |
+| **[Braintrust](../braintrust/)** | Platform: persisted eval history linked to git commits, regression dashboards, CI gates, human annotation queues | [`scripts/example_braintrust.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_braintrust.py) |
+| **[hypothesis](../hypothesis/)** | Property-based testing — generates edge-case inputs to probe guardrails and invariants | [`scripts/example_hypothesis.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_hypothesis.py) |
+| **[toolcallcheck](../toolcallcheck/)** | Mock MCP server — assert tool calls, args, order and invariants offline | [`scripts/example_toolcallcheck.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_toolcallcheck.py) |
 
 All six are open-source except Braintrust — and you can defer that by checking baseline JSON into git (as the companion repo does), adding it when you need historical dashboards and team-wide visibility.
 
@@ -570,10 +570,10 @@ The open-source evaluation ecosystem has matured quickly, and a fairly clear div
 
 | Tool | Type | Best for | Notes |
 |---|---|---|---|
-| **[Promptfoo](../promptfoo.md)** | OSS CLI, YAML-driven | Model/prompt comparison, red-teaming | Strongest open-source red-teaming suite (500+ adversarial vectors); acquired into OpenAI's Frontier infrastructure in March 2026, OSS package stays MIT |
-| **[DeepEval](../deepeval.md)** | OSS, Python/pytest-native | CI-gated evals with typed metrics | 50+ built-in metrics (G-Eval, hallucination, faithfulness, contextual recall); agent-specific metrics for tool correctness and task completion; synthetic dataset generation from your own docs |
+| **[Promptfoo](../promptfoo/)** | OSS CLI, YAML-driven | Model/prompt comparison, red-teaming | Strongest open-source red-teaming suite (500+ adversarial vectors); acquired into OpenAI's Frontier infrastructure in March 2026, OSS package stays MIT |
+| **[DeepEval](../deepeval/)** | OSS, Python/pytest-native | CI-gated evals with typed metrics | 50+ built-in metrics (G-Eval, hallucination, faithfulness, contextual recall); agent-specific metrics for tool correctness and task completion; synthetic dataset generation from your own docs |
 | **RAGAS** | OSS, Python | RAG pipeline scoring specifically | Research-backed retrieval + generation metrics; narrower scope than DeepEval/Promptfoo by design |
-| **[Braintrust](../braintrust.md)** | Platform (OSS scorer lib + hosted) | Full lifecycle: tracing → eval → CI gates → dashboards | Dataset-first, model-agnostic; sandboxed custom Python scorers; strongest option when you need eval scores wired into actual release gating, not just local test runs |
+| **[Braintrust](../braintrust/)** | Platform (OSS scorer lib + hosted) | Full lifecycle: tracing → eval → CI gates → dashboards | Dataset-first, model-agnostic; sandboxed custom Python scorers; strongest option when you need eval scores wired into actual release gating, not just local test runs |
 | **LangSmith** | Platform | Annotation workflows, production monitoring for LangChain-based agents | Tightest fit if you're already on LangChain/LangGraph |
 | **Arize Phoenix** | OSS, OpenTelemetry-native | Teams already instrumented with OTel who want tracing + eval in one open-core stack | Best portability story since it rides on standard OTel traces |
 | **OpenAI Evals** | OSS, registry-based | Reproducible, benchmark-style evals | Closest analog to running a published academic benchmark against your own system |
