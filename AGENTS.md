@@ -28,6 +28,7 @@ Push to `main` → GitHub Actions (Node 24, Hugo latest) → GitHub Pages. CI bu
 - Goldmark renders raw HTML in markdown (`unsafe = true`).
 - Code highlighting: `guessSyntax = true`, `solarized-light` style.
 - **Blog post dates must always be yesterday's date** (not today's). All dates in a batch must be unique and at least 5 seconds apart — duplicate dates cause Hugo build breakages (two pages with the same timestamp collide). Use the same `+10:00` timezone offset as existing posts.
+- **Do not create `_index.md` in sub-section directories** (e.g. `blog/ai/_index.md`) — it causes Hugo to treat the sub-section as separate from the parent `blog/`, excluding those posts from the main `/blog/` listing. Only the top-level `blog/_index.md` should exist.
 
 ## Architecture
 
