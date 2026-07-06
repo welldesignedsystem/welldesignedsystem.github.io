@@ -8,6 +8,35 @@ summary = 'A single-table reference of Japanese terminology across stances, stri
 
 This reference collects Japanese/English karate terminology as taught in rading syllabus (10th Kyu White Belt through to Black Belt), plus the standard universal Japanese vocabulary that underpins own terms.
 
+Most karate terms are compound words built from a common set of root words. Knowing these roots makes it easier to decode unfamiliar terms on the fly.
+
+| Japanese | Meaning | Example |
+|---|---|---|
+| Dachi (立ち) | Stance | Zenkutsu Dachi — Long Forward Stance |
+| Tsuki / Zuki (突き) | Punch / Thrust | Chudan Tsuki — Stomach Level Punch |
+| Geri (蹴り) | Kick | Mae Geri — Front Kick |
+| Uke (受け) | Block | Jodan Age Uke — Rising Head-Level Block |
+| Uchi (打ち) | Strike (noun) | Shuto Uchi — Knife-Hand Strike |
+| Uchi (内) | Inside (prefix) | Uchi Uke — Inside Hooking Block |
+| Soto (外) | Outside | Soto Uke — Outside Block |
+| Age (上げ) | Rising | Age Uke — Rising Block |
+| Barai (払い) | Sweep / Clear | Gedan Barai — Downward Sweeping Block |
+| Empi (肘) | Elbow | Mawashi Empi — Round Elbow Strike |
+| Shuto (手刀) | Knife-Hand | Shuto Uchi — Knife-Hand Strike |
+| Haito (背刀) | Ridge-Hand | Haito — Ridge-Hand Strike |
+| Uraken (裏拳) | Back-Fist | Uraken Uchi — Back-Fist Strike |
+| Nukite (貫手) | Spear-Hand | Nukite — Spear-Hand Strike |
+| Kentsui / Tettsui (拳槌) | Hammer-Fist | Kentsui Uchi — Hammer-Fist Strike |
+| Hiza (膝) | Knee | Hiza Geri — Knee Strike |
+| Ashi (足) | Foot / Leg | Ashi Barai — Foot Sweep |
+| Hiki-te (引き手) | Pulling Hand | Hiki-te — Retracting Hand |
+| Mawashi (回し) | Round / Circular | Mawashi Geri — Round Kick |
+| Mae (前) | Front | Mae Geri — Front Kick |
+| Yoko (横) | Side | Yoko Geri — Side Kick |
+| Ushiro (後ろ) | Back | Ushiro Geri — Back Kick |
+| Keage (蹴上げ) | Snap (kick) | Mae Geri Keage — Front Snap Kick |
+| Kekomi (蹴込み) | Thrust (kick) | Mae Geri Kekomi — Front Thrust Kick |
+
 ## Full Terminology Table
 
 | Category | Belt / Level | Japanese | English | Source |
