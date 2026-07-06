@@ -374,6 +374,26 @@ Six tools cover the full pyramid. Runnable examples for each in the companion re
 
 All six are open-source except Braintrust — and you can defer that by checking baseline JSON into git (as the companion repo does), adding it when you need historical dashboards and team-wide visibility.
 
+### Full Tool Coverage by Layer
+
+| Tool | L1 | L2 | L3 | L4 | L5 | L6 | Notes |
+|---|---|---|---|---|---|---|---|
+| **[pytest](../pytest/)** | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ | Test runner for deterministic checks, invariant fixtures, and sampling loops; `pytest-repeat` plugin for N-runs |
+| **[DeepEval](../deepeval/)** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | 50+ metrics: TaskCompletionMetric (L1), G-Eval/Faithfulness/Hallucination (L2), Bias/Toxicity (L3), Dataset management (L4), confidence intervals (L5); synthetic data generation |
+| **[Promptfoo](../promptfoo/)** | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | Comparison-based scoring (L2), 500+ red-teaming vectors (L3), golden datasets (L4), repeat:N sampling (L5); strongest OSS red-teaming suite |
+| **[Braintrust](../braintrust/)** | ❌ | ✅ | ❌ | ✅ | ❌ | ✅ | Custom Python LLM-judge scorers (L2), dataset-first eval with commit-linked dashboards (L4), human annotation UI (L6) |
+| **[hypothesis](../hypothesis/)** | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ | Generates edge-case inputs (L1), property-based invariant testing (L3), controls sample counts and seeds for statistical sampling (L5) |
+| **[toolcallcheck](../toolcallcheck/)** | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | Mocks MCP server and asserts tool calls, arguments, and order (L1); enforces structural invariants on trajectories (L3); fully offline, no model call |
+| **langsmith** | ❌ | ✅ | ❌ | ✅ | ❌ | ✅ | Annotation queues for judge score refinement (L2 + L6), dataset versioning and comparison (L4); tied to LangChain ecosystem |
+| **langfuse** | ❌ | ✅ | ❌ | ❌ | ❌ | ✅ | Model-as-judge evaluation (L2), manual scoring workflows (L6); self-hostable, integrated with production tracing |
+| **ragas** | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | Faithfulness, answer relevancy, and context precision metrics for RAG pipelines (L2) |
+| **jsonschema / pydantic** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Validate model output parses as valid JSON with expected fields and types (L1) |
+| **mypy / pyright / ruff** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Syntax, type-check, and lint generated code before execution (L1) |
+| **label-studio** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | General-purpose annotation platform; build custom review pipelines for model outputs (L6) |
+| **arize-phoenix** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | OpenTelemetry-native production trace sampling for human-in-the-loop scoring (L6) |
+| **pytest-snapshot** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | Golden-file snapshot testing; byte-for-byte output equality for structural outputs (L4) |
+| **pytest-repeat** | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | Minimal plugin re-running pytest tests N times for statistical sampling (L5) |
+
 ## Part 3: Evaluating Agents Specifically — Trajectory, Not Just Output
 
 A complete runnable example at [`scripts/trajectory/trajectory_eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/trajectory/trajectory_eval.py).
