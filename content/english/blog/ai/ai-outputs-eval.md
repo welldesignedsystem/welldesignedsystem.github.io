@@ -42,9 +42,9 @@ Examples:
 - Regex / substring matches for known-good or known-bad patterns e.g. *secret detection:* re.search(r"sk-[A-Za-z0-9]{20,}", output)
 - Latency and token-cost thresholds
 
-If you can express the check as code, do it. This layer should be the majority of your suite — few teams running this in production puts deterministic checks at roughly 60-80% of the total eval set, with model-graded checks and human review filling the rest.
+If you can express the check as code, do it. This layer should be the majority of your suite — production teams report roughly 60-80% of all evaluation criteria (the axes you score a response on) are expressible as code asserts rather than LLM judge calls, with model-graded checks and human review filling the rest.
 
-> **Where does the 60-80% figure come from?** [FutureAGI (Feb 2026)](https://futureagi.com/blog/deterministic-llm-evaluation-metrics-2026/) reports deterministic checks catch *30 to 60 percent of failures before any LLM judge fires*. The [G-Eval production guide (Mar 2026)](https://futureagi.com/blog/g-eval-definitive-guide-2026/) recommends routing every response through a deterministic floor (schema, regex, length, banned phrases) before any LLM judge call, dropping the judge bill 80–90% without losing detection rate. Production teams consistently report 60–80% of eval axes are expressible as code asserts rather than judge calls. The consensus: deterministic checks are the cheapest, fastest, and most reliable layer — they should be the base of every eval pyramid.
+> **Where does the 60-80% figure come from?** [FutureAGI (Feb 2026)](https://futureagi.com/blog/deterministic-llm-evaluation-metrics-2026/) reports deterministic checks catch *30 to 60 percent of failures before any LLM judge fires*. The [G-Eval production guide (Mar 2026)](https://futureagi.com/blog/g-eval-definitive-guide-2026/) recommends routing every response through a deterministic floor (schema, regex, length, banned phrases) before any LLM judge call, dropping the judge bill 80–90% without losing detection rate. Both sources converge on the same finding: 60–80% of the scoring criteria in a typical eval suite can be implemented as plain code rather than requiring an LLM judge. The consensus: deterministic checks are the cheapest, fastest, and most reliable layer — they should be the base of every eval pyramid.
 
 A complete runnable [example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/01-deterministic.py) — defines the same four scorers (`score_contains`, `score_excludes`, `score_max_words`, `score_valid_json`), applies them to a 5-case golden dataset, and prints results.
 
@@ -705,3 +705,7 @@ gates:
 A reasonable target mix, consistent with what's converged across current practice: **roughly 60% deterministic checks, 30% model-graded (LLM-as-judge), 10% human-in-the-loop**, running on every PR that touches prompts, skills, or agent logic, gated against a measured baseline rather than an invented threshold.
 
 The uncomfortable truth is that you can't fully eliminate the non-determinism — you're not trying to. You're building enough layered signal that when something does drift, you catch it before it ships, and when you can't automate the judgment call, you know exactly which 10% needs a human to actually look at it.
+
+## Open Questions
+
+- **Coverage for skills and agents.** Code coverage answers "which lines of code did my tests exercise?" There is no equivalent for skills — no automated way to say "my golden dataset covers 80% of my agents' trigger conditions and procedure steps." How would you define skill coverage, and can it be computed without manual auditing?
