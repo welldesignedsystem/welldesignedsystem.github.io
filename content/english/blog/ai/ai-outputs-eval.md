@@ -39,7 +39,7 @@ Examples:
 - The agent called the tool it was supposed to call, with the arguments it was supposed to pass
 - Output length within bounds e.g. for a summarization task
 - No banned strings (secrets, PII patterns, forbidden phrases)
-- Regex / substring matches for known-good or known-bad patterns e.g. **secret detection:** re.search(r"sk-[A-Za-z0-9]{20,}", output)
+- Regex / substring matches for known-good or known-bad patterns e.g. *secret detection:* re.search(r"sk-[A-Za-z0-9]{20,}", output)
 - Latency and token-cost thresholds
 
 If you can express the check as code, do it. This layer should be the majority of your suite — few teams running this in production puts deterministic checks at roughly 60-80% of the total eval set, with model-graded checks and human review filling the rest.
