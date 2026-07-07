@@ -30,8 +30,14 @@ No single technique covers everything. In practice you build a pyramid, and the 
 
 ### Layer 1 — Deterministic / Structural Checks (cheapest, do these first)
 
-Anything that *can* be checked without another model call, should be. These are fast, free, and have zero grader-side noise:
+Anything that *can* be checked without another model call, should be. These are fast, free, and have zero grader-side noise. The key distinction: the model call to *generate* the output has already happened (that's the non-deterministic, paid part). The *check* is what comes after — and if you can express it as code (regex, JSON parse, length assert, schema validation), it costs microseconds and always returns the same answer for the same input. The non-determinism of the model doesn't affect the check; you're testing structural properties of whatever output the model happened to produce.
+The generation of the output costs a model call (non-deterministic, not free). But once you have the output string, checking properties of it can be done with plain code:
+- json.loads(output) — validates JSON syntax
+- "Paris" in output — substring check
+- len(output.split()) <= 100 — word count
+- re.search(r"sk-[A-Za-z0-9]{20,}", output) — secret detection
 
+**Other examples:**
 - Output parses as valid JSON / matches a schema
 - Required fields are present and correctly typed
 - Code compiles / lints / passes type checks
