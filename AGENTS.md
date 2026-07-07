@@ -4,13 +4,13 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 
 ## Commands
 
-| Command                  | Purpose                                                                                                          |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`            | Hugo dev server (localhost:1313, live reload; **no drafts** — use `hugo server -D` for drafts)                   |
-| `npm run build`          | Production build (gc, minify, template metrics, `--forceSyncStatic`)                                             |
-| `npm run preview`        | Dev server, production env, template metrics                                                                     |
+| Command                  | Purpose                                                                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`            | Hugo dev server (localhost:1313, live reload; **no drafts** — use `hugo server -D` for drafts)                                  |
+| `npm run build`          | Production build (gc, minify, template metrics, `--forceSyncStatic`)                                                            |
+| `npm run preview`        | Dev server, production env, template metrics                                                                                    |
 | `npm run format`         | Prettier only (with `prettier-plugin-go-template` + `prettier-plugin-tailwindcss`) — **no linter, no typecheck, no test suite** |
-| `npm run update-modules` | Update all Hugo module deps                                                                                      |
+| `npm run update-modules` | Update all Hugo module deps                                                                                                     |
 
 ## CI / deploy
 

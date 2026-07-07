@@ -19,15 +19,15 @@ It is YAML-driven. You define your prompts, providers, and test cases in a confi
 
 ## When to Reach for Promptfoo
 
-| Scenario | Use Promptfoo | Use something else |
-|---|---|---|
-| Choosing between GPT-4o and Claude Sonnet | ✅ Run the same 50 cases against both | — |
-| Iterating on a system prompt | ✅ A/B test 3 variants in one command | — |
-| Checking if a model update regressed quality | ✅ Compare against last week's run | — |
-| Adversarial testing before launch | ✅ 500+ attack vectors built in | — |
-| CI gate on every PR | — | ✅ pytest + DeepEval / baseline JSON |
-| Deep semantic evaluation (faithfulness, hallucination) | ✅ Has `llm-rubric` judge | ✅ DeepEval has dedicated metrics |
-| Real-time production monitoring | — | ✅ Braintrust / LangSmith |
+| Scenario                                               | Use Promptfoo                         | Use something else                   |
+| ------------------------------------------------------ | ------------------------------------- | ------------------------------------ |
+| Choosing between GPT-4o and Claude Sonnet              | ✅ Run the same 50 cases against both | —                                    |
+| Iterating on a system prompt                           | ✅ A/B test 3 variants in one command | —                                    |
+| Checking if a model update regressed quality           | ✅ Compare against last week's run    | —                                    |
+| Adversarial testing before launch                      | ✅ 500+ attack vectors built in       | —                                    |
+| CI gate on every PR                                    | —                                     | ✅ pytest + DeepEval / baseline JSON |
+| Deep semantic evaluation (faithfulness, hallucination) | ✅ Has `llm-rubric` judge             | ✅ DeepEval has dedicated metrics    |
+| Real-time production monitoring                        | —                                     | ✅ Braintrust / LangSmith            |
 
 The sweet spot: pre-deployment qualification (did this new model version break anything?) and adversarial probing (can a prompt injection bypass my safety system prompt?). For per-PR regression gating, pair it with a deterministic baseline check in CI.
 
@@ -111,17 +111,17 @@ The output shows each provider-variant combination, the score per test case, and
 
 Promptfoo supports a wide range of assertion types that map directly to eval layers:
 
-| Assertion | Layer | What it checks |
-|---|---|---|
-| `contains` / `contains-all` / `contains-any` | Layer 1 | Substring presence |
-| `is-json` | Layer 1 | Output parses as JSON |
-| `latency` | Layer 1 | Response time below threshold |
-| `cost` | Layer 1 | Token cost below threshold |
-| `javascript` | Layer 1 | Arbitrary JS expression (e.g. `JSON.parse(output).length > 0`) |
-| `python` | Layer 1 | Arbitrary Python expression |
-| `llm-rubric` | Layer 2 | LLM judge scores against a rubric |
-| `model-graded-closedqa` | Layer 2 | Model answers whether output is correct given expected answer |
-| `redteam` | Layer 5 | Built-in adversarial test (jailbreak, injection, etc.) |
+| Assertion                                    | Layer   | What it checks                                                 |
+| -------------------------------------------- | ------- | -------------------------------------------------------------- |
+| `contains` / `contains-all` / `contains-any` | Layer 1 | Substring presence                                             |
+| `is-json`                                    | Layer 1 | Output parses as JSON                                          |
+| `latency`                                    | Layer 1 | Response time below threshold                                  |
+| `cost`                                       | Layer 1 | Token cost below threshold                                     |
+| `javascript`                                 | Layer 1 | Arbitrary JS expression (e.g. `JSON.parse(output).length > 0`) |
+| `python`                                     | Layer 1 | Arbitrary Python expression                                    |
+| `llm-rubric`                                 | Layer 2 | LLM judge scores against a rubric                              |
+| `model-graded-closedqa`                      | Layer 2 | Model answers whether output is correct given expected answer  |
+| `redteam`                                    | Layer 5 | Built-in adversarial test (jailbreak, injection, etc.)         |
 
 ## Model Comparison
 
@@ -159,18 +159,18 @@ Promptfoo ships 500+ adversarial test vectors organised by category:
 ```yaml
 redteam:
   categories:
-    - jailbreak             # "Ignore previous instructions..."
-    - prompt-injection      # Embed commands in user text
-    - harmful-requests      # Directly harmful queries
-    - role-playing          # "Pretend you are DAN..."
-    - encoded-payloads      # Base64, hex, etc.
-    - multi-turn            # Gradual manipulation over several turns
-    - forbidden-topics      # Violence, self-harm, illegal content
+    - jailbreak # "Ignore previous instructions..."
+    - prompt-injection # Embed commands in user text
+    - harmful-requests # Directly harmful queries
+    - role-playing # "Pretend you are DAN..."
+    - encoded-payloads # Base64, hex, etc.
+    - multi-turn # Gradual manipulation over several turns
+    - forbidden-topics # Violence, self-harm, illegal content
 
-  numTests: 50  # Generate 50 adversarial variations
+  numTests: 50 # Generate 50 adversarial variations
 ```
 
-This probes whether your system prompt holds up under pressure *before* a real user finds the gap. The output shows which categories your model is vulnerable to and the exact prompts that triggered failures.
+This probes whether your system prompt holds up under pressure _before_ a real user finds the gap. The output shows which categories your model is vulnerable to and the exact prompts that triggered failures.
 
 ## Regression Gating
 
@@ -209,14 +209,14 @@ The companion repo includes [`scripts/example_promptfoo.yaml`](https://github.co
 
 ## Promptfoo vs. DeepEval vs. Braintrust
 
-| Dimension | Promptfoo | DeepEval | Braintrust |
-|---|---|---|---|
-| Config format | YAML (no code needed) | Python (pytest-native) | Python + web UI |
-| Best for | Prompt/model comparison, red-teaming | CI-gated typed metrics | Historical dashboards, team-wide visibility |
-| Adversarial testing | 500+ built-in vectors | Manual only | Manual only |
-| CI gate | `promptfoo check` | pytest assert | Platform Webhooks |
-| Dashboard | CLI table + local web UI | None (CI logs only) | Full web dashboards |
-| Custom logic | JavaScript / Python snippets | Python `BaseMetric` | Python scorers |
+| Dimension           | Promptfoo                            | DeepEval               | Braintrust                                  |
+| ------------------- | ------------------------------------ | ---------------------- | ------------------------------------------- |
+| Config format       | YAML (no code needed)                | Python (pytest-native) | Python + web UI                             |
+| Best for            | Prompt/model comparison, red-teaming | CI-gated typed metrics | Historical dashboards, team-wide visibility |
+| Adversarial testing | 500+ built-in vectors                | Manual only            | Manual only                                 |
+| CI gate             | `promptfoo check`                    | pytest assert          | Platform Webhooks                           |
+| Dashboard           | CLI table + local web UI             | None (CI logs only)    | Full web dashboards                         |
+| Custom logic        | JavaScript / Python snippets         | Python `BaseMetric`    | Python scorers                              |
 
 All three are open-source. Promptfoo was acquired by OpenAI in March 2026 and remains MIT-licensed.
 

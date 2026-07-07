@@ -8,9 +8,9 @@ summary = "Property-based testing with hypothesis is a natural fit for non-deter
 
 ## Why Property-Based Testing Exists
 
-Traditional unit testing says: "given input X, the function must return output Y." That is *example-based* testing. It works when the function is deterministic — same input always produces same output. LLMs break that assumption. Ask the same model the same question twice and you get two differently-worded but equally correct answers. Example-based tests either over-match (failing on valid paraphrases) or under-match (asserting only a substring and missing the semantic regression).
+Traditional unit testing says: "given input X, the function must return output Y." That is _example-based_ testing. It works when the function is deterministic — same input always produces same output. LLMs break that assumption. Ask the same model the same question twice and you get two differently-worded but equally correct answers. Example-based tests either over-match (failing on valid paraphrases) or under-match (asserting only a substring and missing the semantic regression).
 
-Property-based testing inverts the approach. You do not assert a specific output. You assert **properties** that must hold for *any* valid output:
+Property-based testing inverts the approach. You do not assert a specific output. You assert **properties** that must hold for _any_ valid output:
 
 - The output never contains secrets
 - The output is valid JSON when JSON was requested
@@ -28,7 +28,7 @@ hypothesis has three pieces you need to understand:
 
 ### 1. `@given` — the decorator that generates inputs
 
-Instead of writing a test with a fixed input, you declare the *shape* of valid inputs and let hypothesis generate concrete values:
+Instead of writing a test with a fixed input, you declare the _shape_ of valid inputs and let hypothesis generate concrete values:
 
 ```python
 from hypothesis import given, strategies as st
@@ -222,7 +222,7 @@ hypothesis will run 20 iterations with different generated inputs. If any iterat
 
 ## Combining With the Golden Dataset
 
-Property-based tests and golden datasets complement each other. The golden dataset (Layer 4) checks specific known cases — "does the model still answer capital-of-France correctly?" Property-based tests (Layer 3) check properties that must hold across *any* input — "does the model ever leak a secret?"
+Property-based tests and golden datasets complement each other. The golden dataset (Layer 4) checks specific known cases — "does the model still answer capital-of-France correctly?" Property-based tests (Layer 3) check properties that must hold across _any_ input — "does the model ever leak a secret?"
 
 Both should run in CI. The golden dataset gates on score regression. The property-based tests gate on invariant violations (which are always failures, not scores).
 
@@ -256,7 +256,7 @@ jobs:
 
 **Flaky invariants.** If your invariant depends on exact wording (e.g. "output must contain 'approved'") and the model sometimes uses synonyms, the invariant is too tight. Prefer semantic invariants (regex patterns, JSON validation, length bounds) over exact substring matches.
 
-**Ignoring shrink output.** When hypothesis finds a failure, it *shrinks* the input to the smallest example that still fails. Read the shrink output carefully — it tells you exactly which edge case triggers the invariant violation. That is more valuable than the failure itself.
+**Ignoring shrink output.** When hypothesis finds a failure, it _shrinks_ the input to the smallest example that still fails. Read the shrink output carefully — it tells you exactly which edge case triggers the invariant violation. That is more valuable than the failure itself.
 
 **Temperature zero is not deterministic.** Even at temperature zero, most hosted models are not bit-reproducible. Batch inference, routing, and sampler implementation details change across requests. Run property-based tests at temperature > 0 to stress-test invariants under realistic variance.
 

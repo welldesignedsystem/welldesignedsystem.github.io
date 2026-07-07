@@ -14,15 +14,15 @@ It fills Layers 1–3 of the [eval pyramid](../ai-outputs-eval/) with ready-made
 
 ## When to Use DeepEval
 
-| Scenario | Use DeepEval | Use something else |
-|---|---|---|
-| You need a faithfulness/hallucination metric | ✅ Built-in `FaithfulnessMetric` | — |
-| You want a custom rubric scored by an LLM | ✅ `GEval` with your own criteria | — |
-| You need toxicity, bias, or bias detection | ✅ Built-in metrics for all 3 | — |
-| You want CI-gated evals with minimal effort | ✅ `deepeval.assert_test()` | — |
-| You are comparing models or prompts | — | ✅ Promptfoo |
-| You need historical dashboards and trend analysis | — | ✅ Braintrust |
-| You want property-based invariant testing | — | ✅ hypothesis |
+| Scenario                                          | Use DeepEval                      | Use something else |
+| ------------------------------------------------- | --------------------------------- | ------------------ |
+| You need a faithfulness/hallucination metric      | ✅ Built-in `FaithfulnessMetric`  | —                  |
+| You want a custom rubric scored by an LLM         | ✅ `GEval` with your own criteria | —                  |
+| You need toxicity, bias, or bias detection        | ✅ Built-in metrics for all 3     | —                  |
+| You want CI-gated evals with minimal effort       | ✅ `deepeval.assert_test()`       | —                  |
+| You are comparing models or prompts               | —                                 | ✅ Promptfoo       |
+| You need historical dashboards and trend analysis | —                                 | ✅ Braintrust      |
+| You want property-based invariant testing         | —                                 | ✅ hypothesis      |
 
 DeepEval is not a runner — it is a metric library you call from pytest (or any Python runner). That is its strength and its limitation. It gives you the scoring function; you provide the test structure.
 
@@ -178,14 +178,14 @@ The companion repo includes [`scripts/example_deepeval.py`](https://github.com/w
 
 ## DeepEval vs. Promptfoo vs. Braintrust
 
-| Dimension | DeepEval | Promptfoo | Braintrust |
-|---|---|---|---|
-| Primary function | Typed metrics library | Model/prompt comparison + red-teaming | Eval history + dashboards |
-| Faithfulness metric | Built-in | Manual via `llm-rubric` | Manual scorer |
-| CI gate | `deepeval.assert_test()` | `promptfoo check` | Platform webhook |
-| Dashboard | None | Local web UI | Full web dashboards |
-| Custom logic | Python `BaseMetric` | JS/Python snippets | Python scorers |
-| Configuration | Python only | YAML (no code) | Python + web UI |
+| Dimension           | DeepEval                 | Promptfoo                             | Braintrust                |
+| ------------------- | ------------------------ | ------------------------------------- | ------------------------- |
+| Primary function    | Typed metrics library    | Model/prompt comparison + red-teaming | Eval history + dashboards |
+| Faithfulness metric | Built-in                 | Manual via `llm-rubric`               | Manual scorer             |
+| CI gate             | `deepeval.assert_test()` | `promptfoo check`                     | Platform webhook          |
+| Dashboard           | None                     | Local web UI                          | Full web dashboards       |
+| Custom logic        | Python `BaseMetric`      | JS/Python snippets                    | Python scorers            |
+| Configuration       | Python only              | YAML (no code)                        | Python + web UI           |
 
 All three are usable together. The pattern: pytest is the runner, DeepEval provides metrics, Promptfoo handles model comparison, and Braintrust stores the history. Each tool fills a layer of the pyramid.
 

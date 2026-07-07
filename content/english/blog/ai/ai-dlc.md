@@ -29,11 +29,11 @@ Traditional software development methods were built for human-driven, long-runni
 
 It's important to separate three distinct sources, since they carry different levels of authority and aren't simply one continuous "official" lineage:
 
-| Source                                        | Author / Owner                                  | Status                                | What It Contributes                                                                                                          |
-| ---------------------------------------------- | ------------------------------------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| AWS blog post, July 2025                       | Raja SP (AWS)                                     | Foundational, official                | Three phases, Mob Elaboration, Mob Construction, persistent context, terminology such as Intent, Unit and Bolt              |
-| `awslabs/aidlc-workflows`, open-sourced Nov 2025 | AWS Labs (official)                               | Official reference implementation      | Concrete rules/steering files implementing the original AI-DLC for Amazon Q Developer, Kiro, Cursor, Cline and other agents; adaptive workflow depth |
-| "AI-DLC 2026" paper, ai-dlc.dev, Jan 2026      | **The Bushido Collective** (independent third party, not AWS) | Community synthesis, not an AWS document | HITL/OHOTL/AHOTL modes, Passes, harness-enforced quality gates, completion criteria, knowledge layer and operational details |
+| Source                                           | Author / Owner                                                | Status                                   | What It Contributes                                                                                                                                  |
+| ------------------------------------------------ | ------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AWS blog post, July 2025                         | Raja SP (AWS)                                                 | Foundational, official                   | Three phases, Mob Elaboration, Mob Construction, persistent context, terminology such as Intent, Unit and Bolt                                       |
+| `awslabs/aidlc-workflows`, open-sourced Nov 2025 | AWS Labs (official)                                           | Official reference implementation        | Concrete rules/steering files implementing the original AI-DLC for Amazon Q Developer, Kiro, Cursor, Cline and other agents; adaptive workflow depth |
+| "AI-DLC 2026" paper, ai-dlc.dev, Jan 2026        | **The Bushido Collective** (independent third party, not AWS) | Community synthesis, not an AWS document | HITL/OHOTL/AHOTL modes, Passes, harness-enforced quality gates, completion criteria, knowledge layer and operational details                         |
 
 The important correction here: the "AI-DLC 2026" paper is **not** an AWS or Raja SP publication. It's maintained by The Bushido Collective, an independent open-source group, and by its own acknowledgments draws on several sources beyond the original AWS post — including Geoffrey Huntley's "Ralph Wiggum" autonomous-agent-loop technique, Anthropic's engineering writing on agent harness design, OWASP's human-oversight framing, and material from paddo.dev and HumanLayer. The paper itself describes it as "the software development profile" of a broader framework called H·AI·K·U (Human AI Knowledge Unification), and that project has already begun migrating some AI-DLC 2026 concepts — Passes, for instance — into a newer "stages" model under H·AI·K·U. Treat the 2026 paper as one community group's extension and remix of AI-DLC, not as AWS's next release.
 
@@ -41,15 +41,15 @@ The important correction here: the "AI-DLC 2026" paper is **not** an AWS or Raja
 
 AI-DLC introduces terminology to reflect an AI-centric workflow:
 
-| Term                         | Traditional Equivalent | Definition                                                                                    |
-| ----------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------ |
-| Intent                        | Epic / Initiative         | A high-level statement of purpose that describes what should be achieved                       |
-| Unit                          | Feature / Work package    | A cohesive, self-contained work element derived from an Intent                                 |
-| Bolt                          | Sprint                    | A focused work cycle measured in hours or days rather than weeks                               |
-| Pass                          | Discipline iteration      | A concept from the third-party 2026 paper for iterating through the lifecycle with a design, product or development lens |
-| Mob Elaboration                | Requirements gathering    | The team validates AI's questions, assumptions and proposed units                              |
-| Mob Construction / Execution   | Development                | AI proposes architecture, code and tests while the team clarifies decisions                    |
-| Completion Criteria            | Definition of done        | Verifiable conditions that determine whether a unit is complete                                |
+| Term                         | Traditional Equivalent | Definition                                                                                                               |
+| ---------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Intent                       | Epic / Initiative      | A high-level statement of purpose that describes what should be achieved                                                 |
+| Unit                         | Feature / Work package | A cohesive, self-contained work element derived from an Intent                                                           |
+| Bolt                         | Sprint                 | A focused work cycle measured in hours or days rather than weeks                                                         |
+| Pass                         | Discipline iteration   | A concept from the third-party 2026 paper for iterating through the lifecycle with a design, product or development lens |
+| Mob Elaboration              | Requirements gathering | The team validates AI's questions, assumptions and proposed units                                                        |
+| Mob Construction / Execution | Development            | AI proposes architecture, code and tests while the team clarifies decisions                                              |
+| Completion Criteria          | Definition of done     | Verifiable conditions that determine whether a unit is complete                                                          |
 
 ## AI-DLC Flow
 
@@ -197,14 +197,14 @@ The AWS post lists these benefits:
 ## AI-DLC vs Ad-Hoc AI Assistance
 
 | Aspect       | Ad-Hoc AI         | AI-DLC                             |
-| ------------- | ------------------ | ------------------------------------- |
-| Workflow      | Chat-and-paste     | Structured iteration loops           |
-| Verification  | Hope it works      | Backpressure through quality gates   |
-| Criteria      | Vague prompts      | Explicit completion criteria         |
-| Mode          | One mode fits all  | HITL, OHOTL or AHOTL selection       |
-| Context       | Session-bound      | File-based persistent memory         |
-| Measurement   | Usually absent     | Metrics and completion tracking      |
-| AI role       | Tool                | Collaborator with governance         |
+| ------------ | ----------------- | ---------------------------------- |
+| Workflow     | Chat-and-paste    | Structured iteration loops         |
+| Verification | Hope it works     | Backpressure through quality gates |
+| Criteria     | Vague prompts     | Explicit completion criteria       |
+| Mode         | One mode fits all | HITL, OHOTL or AHOTL selection     |
+| Context      | Session-bound     | File-based persistent memory       |
+| Measurement  | Usually absent    | Metrics and completion tracking    |
+| AI role      | Tool              | Collaborator with governance       |
 
 ## Is AI-DLC Complete?
 

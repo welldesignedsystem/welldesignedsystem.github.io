@@ -33,20 +33,20 @@ server.assert_at_most_once("process_refund")   # invariant
 server.assert_called_in_order(["lookup_order", "process_refund"])
 ```
 
-No model call. No network. The test either passes or fails based on what the agent actually *did*, not what the output *said*.
+No model call. No network. The test either passes or fails based on what the agent actually _did_, not what the output _said_.
 
 ## Assertion Reference
 
-| Assertion | Layer | What it checks |
-|---|---|---|
-| `assert_called(name)` | 1 | Tool was called at least once |
-| `assert_called(name, times=N)` | 1 | Tool was called exactly N times |
-| `assert_not_called(name)` | 1 | Tool was never called |
-| `assert_called_once_with(name, **args)` | 1 | Tool called once with matching args |
-| `assert_called_in_order([...])` | 1 | Tools called in expected sequence |
-| `assert_step_count(lo, hi)` | 1 | Total tool calls within range |
-| `assert_no_destructive_calls()` | 3 | No destructive tools (delete, destroy, deploy, drop, shutdown) |
-| `assert_at_most_once(name)` | 3 | Tool called 0 or 1 times (idempotency invariant) |
+| Assertion                               | Layer | What it checks                                                 |
+| --------------------------------------- | ----- | -------------------------------------------------------------- |
+| `assert_called(name)`                   | 1     | Tool was called at least once                                  |
+| `assert_called(name, times=N)`          | 1     | Tool was called exactly N times                                |
+| `assert_not_called(name)`               | 1     | Tool was never called                                          |
+| `assert_called_once_with(name, **args)` | 1     | Tool called once with matching args                            |
+| `assert_called_in_order([...])`         | 1     | Tools called in expected sequence                              |
+| `assert_step_count(lo, hi)`             | 1     | Total tool calls within range                                  |
+| `assert_no_destructive_calls()`         | 3     | No destructive tools (delete, destroy, deploy, drop, shutdown) |
+| `assert_at_most_once(name)`             | 3     | Tool called 0 or 1 times (idempotency invariant)               |
 
 ## Invariants Catch the Expensive Failures
 
@@ -94,7 +94,7 @@ def test_no_destructive_actions():
     server.assert_no_destructive_calls()  # FAILS — delete was called
 ```
 
-A `PreToolUse` hook would block the call at runtime. ToolCallCheck catches it at test time — you know the agent *tried* to call delete even if the guard hook blocked the actual side effect.
+A `PreToolUse` hook would block the call at runtime. ToolCallCheck catches it at test time — you know the agent _tried_ to call delete even if the guard hook blocked the actual side effect.
 
 ## Integrating With pytest
 
@@ -131,14 +131,14 @@ The companion repo includes [`scripts/tools/example_toolcallcheck.py`](https://g
 
 Both check tool-call trajectories, but at different levels:
 
-| Dimension | ToolCallCheck | Trajectory Eval |
-|---|---|---|
-| Runs offline | ✅ Yes — mocks the tool server | ✅ Yes — scores pre-recorded trajectories |
-| Checks specific args | ✅ `assert_called_once_with(name, **args)` | ✅ `score_argument_correctness(traj, expected_args)` |
-| Checks call order | ✅ `assert_called_in_order([...])` | ✅ `score_tool_order(traj, expected_order)` |
-| Enforces invariants | ✅ `assert_at_most_once`, `assert_no_destructive_calls` | ❌ Manual only |
-| Mocks the server | ✅ Intercepts live agent runs | ❌ Requires pre-recorded data |
-| Scoring granularity | Binary pass/fail per assertion | Numeric 0.0–1.0 per criterion |
+| Dimension            | ToolCallCheck                                           | Trajectory Eval                                      |
+| -------------------- | ------------------------------------------------------- | ---------------------------------------------------- |
+| Runs offline         | ✅ Yes — mocks the tool server                          | ✅ Yes — scores pre-recorded trajectories            |
+| Checks specific args | ✅ `assert_called_once_with(name, **args)`              | ✅ `score_argument_correctness(traj, expected_args)` |
+| Checks call order    | ✅ `assert_called_in_order([...])`                      | ✅ `score_tool_order(traj, expected_order)`          |
+| Enforces invariants  | ✅ `assert_at_most_once`, `assert_no_destructive_calls` | ❌ Manual only                                       |
+| Mocks the server     | ✅ Intercepts live agent runs                           | ❌ Requires pre-recorded data                        |
+| Scoring granularity  | Binary pass/fail per assertion                          | Numeric 0.0–1.0 per criterion                        |
 
 Use ToolCallCheck for unit tests of individual tool-call behaviours. Use Trajectory Eval for full regression scoring of agent trajectories.
 

@@ -14,11 +14,11 @@ Braintrust fills that gap. It is a platform (with an open-source scoring library
 
 ## When to Add Braintrust
 
-| Stage | Setup | When to upgrade |
-|---|---|---|
-| Solo developer | `eval-baseline.json` + `--gate` in CI | You have >1 person looking at eval results |
-| Small team | Braintrust free tier | You want dashboards without maintaining infra |
-| Large team | Braintrust paid tier | You need audit trails, SLAs, and human review queues |
+| Stage          | Setup                                 | When to upgrade                                      |
+| -------------- | ------------------------------------- | ---------------------------------------------------- |
+| Solo developer | `eval-baseline.json` + `--gate` in CI | You have >1 person looking at eval results           |
+| Small team     | Braintrust free tier                  | You want dashboards without maintaining infra        |
+| Large team     | Braintrust paid tier                  | You need audit trails, SLAs, and human review queues |
 
 The companion repo starts with the minimal pattern — `eval-baseline.json` checked into git, `--gate` in CI. Braintrust is what you add when you outgrow that: when you need to see whether this week's scores are higher than last month's, or when a team member asks "did the model swap regress anything I should know about?"
 
@@ -174,15 +174,15 @@ Because scorers are Python, you can reuse your existing `src/eval.py` metrics di
 
 ## Braintrust vs. Local Baseline
 
-| Aspect | `eval-baseline.json` + `--gate` | Braintrust |
-|---|---|---|
-| Setup | A JSON file and 10 lines of Python | Platform account + API key |
-| History | One point (the recorded baseline) | Full timeline across all runs |
-| Comparisons | Before vs. baseline only | Any two runs, any date range |
-| Team visibility | PR comments only | Web dashboards + Slack notifications |
-| Human review | Manual process | Built-in annotation queues |
-| Cost | Free | Free tier available; paid for history retention + team features |
-| When to use | Solo dev or early stage | Team with >1 reviewer, or when you need trend analysis |
+| Aspect          | `eval-baseline.json` + `--gate`    | Braintrust                                                      |
+| --------------- | ---------------------------------- | --------------------------------------------------------------- |
+| Setup           | A JSON file and 10 lines of Python | Platform account + API key                                      |
+| History         | One point (the recorded baseline)  | Full timeline across all runs                                   |
+| Comparisons     | Before vs. baseline only           | Any two runs, any date range                                    |
+| Team visibility | PR comments only                   | Web dashboards + Slack notifications                            |
+| Human review    | Manual process                     | Built-in annotation queues                                      |
+| Cost            | Free                               | Free tier available; paid for history retention + team features |
+| When to use     | Solo dev or early stage            | Team with >1 reviewer, or when you need trend analysis          |
 
 ## Companion Repo
 

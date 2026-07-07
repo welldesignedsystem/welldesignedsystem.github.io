@@ -12,12 +12,12 @@ Most teams adopt a purpose-built eval framework (DeepEval, Promptfoo, Braintrust
 
 pytest gives you three patterns that map directly to LLM eval needs:
 
-| Traditional pytest concept | LLM eval equivalent |
-|---|---|
-| `@pytest.mark.parametrize` | A golden dataset of input-output cases |
-| Fixtures (`@pytest.fixture`) | Model connections, API clients, seed outputs |
-| `yield`-based fixtures | Post-test invariant checks (no secrets, valid JSON) |
-| `pytest-repeat` or manual loops | Statistical sampling across N runs |
+| Traditional pytest concept      | LLM eval equivalent                                 |
+| ------------------------------- | --------------------------------------------------- |
+| `@pytest.mark.parametrize`      | A golden dataset of input-output cases              |
+| Fixtures (`@pytest.fixture`)    | Model connections, API clients, seed outputs        |
+| `yield`-based fixtures          | Post-test invariant checks (no secrets, valid JSON) |
+| `pytest-repeat` or manual loops | Statistical sampling across N runs                  |
 
 You do not need a separate eval runner. If you already use pytest for unit tests, adding LLM evals is adding new test files, not a new toolchain. This fits Layer 1 (deterministic), Layer 3 (invariant), and Layer 5 (sampling) of the [eval pyramid](../ai-outputs-eval/).
 
@@ -140,7 +140,7 @@ def test_capital_france(model, invariant_checks):
     assert "Paris" in output
 ```
 
-The invariant fixture runs *after* the test body. If the test passes but an invariant fails, the test fails — and you know the invariant, not the specific assertion, caught the regression.
+The invariant fixture runs _after_ the test body. If the test passes but an invariant fails, the test fails — and you know the invariant, not the specific assertion, caught the regression.
 
 ## Statistical Sampling
 
@@ -213,12 +213,12 @@ def test_baseline_gate(request):
 
 ## Combining With Other Tools
 
-| Tool | How pytest integrates |
-|---|---|
-| **DeepEval** | `deepeval` metrics are pytest-compatible; `deepeval.assert_test()` works inside pytest tests |
-| **hypothesis** | `@given` decorator works inside pytest tests alongside `@parametrize` |
-| **Braintrust** | Wrap `braintrust.Eval` in a pytest fixture; results post to the platform |
-| **Promptfoo** | pytest triggers `promptfoo eval` via subprocess; results parsed and asserted in Python |
+| Tool           | How pytest integrates                                                                        |
+| -------------- | -------------------------------------------------------------------------------------------- |
+| **DeepEval**   | `deepeval` metrics are pytest-compatible; `deepeval.assert_test()` works inside pytest tests |
+| **hypothesis** | `@given` decorator works inside pytest tests alongside `@parametrize`                        |
+| **Braintrust** | Wrap `braintrust.Eval` in a pytest fixture; results post to the platform                     |
+| **Promptfoo**  | pytest triggers `promptfoo eval` via subprocess; results parsed and asserted in Python       |
 
 The unifying pattern: pytest is the runner, each tool is a scorer you call inside a test.
 
