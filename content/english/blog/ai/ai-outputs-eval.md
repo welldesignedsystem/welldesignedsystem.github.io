@@ -8,12 +8,12 @@ summary = "LLM outputs are non-deterministic, which breaks the assumptions most 
 
 ## Part 1: Why This Is a Different Testing Problem
 
-- Traditional software testing rests on determinism: same input, same output. `assertEqual(f(x), y)` works because `f` is deterministic. The moment you put an LLM in the equation, that assumption breaks.
-- Ask Claude the same question twice, at the same temperature, and you can get two answers that are both "correct" but not identical — different wording, different tool-call order, different length.
-- Ask an agent to complete a multi-step task and you get a **trajectory**, not a single output: a chain of reasoning, tool calls and intermediate states that can diverge wildly between runs while still arriving at a valid result.
+- **Traditional software testing** is based on **determinism** of systems - `assertEqual(f(x), y)` works because `f` is deterministic. 
+- The moment you put an **LLM in the equation, this assumption breaks**. Ask Claude the same question twice, at the same temperature and you can get two answers that are both "correct" but not identical — different wording, different tool-call order, different length.
+- Ask an **agent to complete a multi-step task** and you get a **trajectory**, not a single output: a chain of reasoning, tool calls and intermediate states that can diverge wildly between runs while still arriving at a valid result.
 - You're not testing for equality anymore (`unittest`/`pytest` in their classic form) — you're testing for **membership in an acceptable set**, scored probabilistically. That reframing is what "evals" are.
 
-Three things compound the problem:
+In Summary: Three things compound the problem:
 
 1. **Stochasticity is layered.**
    - Stochasticity is the quality of lacking a predictable pattern, where outcomes are governed by probability rather than deterministic rules.
@@ -21,7 +21,7 @@ Three things compound the problem:
 2. **Agents multiply the surface area.**
    - A single-turn LLM call has one input and one output to score.
    - An agent has N tool calls, each of which can fail, retry, hallucinate a tool name or call the right tool with the wrong arguments — and two completely different trajectories can both be "correct."
-3. **"Correct" is often a spectrum, not a boolean.**
+3. **Correctness is often a spectrum, not a boolean.**
    - A summary can be accurate but too long. A generated skill can succeed but use twice the tokens it needed to. You need scored metrics, not pass/fail, for most of what matters.
 
 ## Part 2: The Layers of LLM Output Testing
