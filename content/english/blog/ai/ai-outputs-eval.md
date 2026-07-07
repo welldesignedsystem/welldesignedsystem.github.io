@@ -730,13 +730,13 @@ The uncomfortable truth is that you can't fully eliminate the non-determinism �
 
 ## Part 11 — Worked Example: Evaluating a Skill End-to-End
 
-This section walks through all six layers applied to a single concrete skill: given an OpenAPI 3 spec, scaffold a full Next.js API — App Router route handlers, TypeScript types, Zod validation schemas, and a typed fetch client.
+This section walks through a single concrete skill across all eval layers: given an OpenAPI 3 spec, scaffold a full Next.js API — App Router route handlers, TypeScript types, Zod validation schemas, and a typed fetch client.
 
-The skill definition is at [`.github/skills/nextjs-api-from-spec/SKILL.md`](https://github.com/welldesignedsystem/baba-yaga/blob/main/.github/skills/nextjs-api-from-spec/SKILL.md) in the companion repo. Read it first — every claim in that file maps to an eval check below.
+The skill definition is at [`.github/skills/nextjs-api-from-spec/SKILL.md`](https://github.com/welldesignedsystem/baba-yaga/blob/main/.github/skills/nextjs-api-from-spec/SKILL.md) in the companion repo, with the eval code at [`tests/eval_skill.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/.github/skills/nextjs-api-from-spec/tests/eval_skill.py). Read the SKILL.md first — every claim in it maps to an eval check below.
 
 ### The skill contract (extracted from SKILL.md)
 
-The skill promises to produce a file tree with:
+The skill promises to produce code with these properties:
 
 | Claim | Where it's stated in SKILL.md |
 |---|---|
@@ -752,35 +752,61 @@ The skill promises to produce a file tree with:
 | Barrel exports (`*/index.ts`) | Procedure step 6 |
 | Reads `baseUrl` from env var or `/api` | Procedure step 5 |
 | Error class with status + body | Example output |
+| No `process.env` in handlers | (invariant — implied by "config module" pattern) |
+| All responses use `NextResponse.json()` | (invariant — App Router convention) |
+| Files within allowed directories only | (invariant — structural constraint) |
 
-### Layer 1 — Deterministic checks (which can I verify as code?)
+### The pyramid
 
-Every claim above that can be expressed as a code check:
+Not all checks are equal. The pyramid shows the *shape* of the eval suite — wide, cheap base tapering to narrow, expensive tip:
 
-| Check | What it verifies | Code |
-|---|---|---|
-| `tsc --noEmit` passes | Generated directory is valid TypeScript | `subprocess.run(["npx", "tsc", "--noEmit", ...])` |
-| Each path has a route file | All OpenAPI paths → `app/api/.../route.ts` | Parse spec paths, glob for matching files |
-| Named export matches method | `GET` path → `export async function GET` | Regex or AST parse the route file |
-| JSDoc present on handlers | Every exported function has `/** ... */` | Regex `\/\*\*` before each `export async function` |
-| Zod schema exists per type | For each TS interface, a `{Name}Schema` exists | Grep for `export const \w+Schema` |
-| No `any` in output | Generated code uses `unknown`, not `any` | `grep -r " any "` — fail if found |
-| No eval/require/secrets | Banned patterns absent | String search for `eval(`, `require(`, `process.env.*KEY` |
-| Barrel exports exist | `types/index.ts`, `schemas/index.ts` | `os.path.exists` for each expected barrel |
-| Client function per operation | `operationId` → `export async function operationId` | Extract all `operationId`s, grep client file |
-| Client throws ApiError on non-2xx | `if (!res.ok) throw new ApiError` present | Substring check in client file |
-| Base URL from env | `NEXT_PUBLIC_API_URL` referenced in client | Substring check |
-| Handler validates with Zod | Route handler calls `.parse()` or `.safeParse()` | Regex for `.parse(` in route files |
+```
+L6          X        Human review (spot-check samples)
+L5         XXX       Statistical sampling (N runs at temp > 0)
+L4        XXXXX      Golden dataset (curated specs, regression gate)
+L2       XXXXXXX     Model-graded (semantic judgment, per-PR only)
+L1+L3   XXXXXXXXX    Deterministic + invariants (15 checks, every commit)
+```
 
-That's **12 checks**, all deterministic, all zero-cost, all noise-free. This is the 60-80% base of the pyramid — code asserts, no model calls.
+Volume ↑ · Cost ↑ · Frequency ↓
 
-### Layer 2 — Model-graded (what needs a judge?)
+Each layer up has fewer X's (fewer checks), costs more per check, and runs less frequently. The pile-up at the base catches the 80% that can be expressed as code assertions. The tip catches what slips through — but you need that tip to be narrow, because expensive checks at scale become noise.
 
-Three things the code checks can't verify:
+The golden dataset (L4) isn't a separate check type — it's *the same L1–L2 checks* run against curated inputs with a regression gate. Sampling (L5) repeats the same suite N times. Human review (L6) compares automated scores against a domain expert. L3 (property-based invariants) doesn't appear as a separate layer because invariants are just more deterministic checks — they belong in L1. The six layers in Part 2 remain valid as a taxonomy, but in practice you organize them by *shape*: three check types (L1, L2, and everything above is process around them).
 
-1. **Are the Zod schemas semantically correct?** A `z.string()` on a field that should be `z.number()` passes L1 (schema exists), but it's wrong. Only an LLM judge (or a human) can spot this.
-2. **Is the route handler logic sensible for the operation?** A `GET /pets/{petId}` handler that ignores `petId` and returns all pets is structurally correct but semantically wrong.
-3. **Is the client ergonomic?** A generated client that requires manual URL construction instead of typed params passes L1 checks but defeats the purpose.
+### Layer 1 — Deterministic + invariants (15 checks, $0)
+
+Every claim that can be expressed as a code assertion, including invariants that must hold regardless of input:
+
+| # | Check | What it verifies | Implementation in eval_skill.py |
+|---|---|---|---|
+| 1 | `tsc --noEmit` | Generated directory is valid TypeScript | `check_tsc_no_emit()` — writes files to temp dir, runs `npx tsc --noEmit` |
+| 2 | ESM imports | No `require()` anywhere | `check_esm_imports()` — string search |
+| 3 | Route file per path | Each OpenAPI path → `app/api/.../route.ts` | `check_route_file_per_path()` — parse spec, glob generated files |
+| 4 | Export matches method | `GET` endpoint → `export async function GET` | `check_named_export_matches_method()` — regex per route file |
+| 5 | JSDoc on handlers | Every exported function has `/** ... */` | `check_jsdoc_on_handlers()` — regex for JSDoc preceding each export |
+| 6 | Zod schema per type | For each schema in spec, a `{Name}Schema` exists | `check_zod_schema_per_type()` — extract schema names from spec, grep generated code |
+| 7 | No `any` | Uses `unknown` instead of `any` | `check_no_any()` — regex with false-positive guards |
+| 8 | No banned patterns | No `eval(`, `require(`, hardcoded secrets | `check_no_eval_require_secrets()` — regex for secret-like strings |
+| 9 | Input validation | Route handlers call `.parse()` or `.safeParse()` | `check_all_input_validated()` — check every route file uses Zod parsing |
+| 10 | Barrel exports | `types/index.ts`, `schemas/index.ts` | `check_barrel_exports()` — file existence check |
+| 11 | Client per operation | For every `operationId`, a typed client function | `check_client_function_per_operation()` — extract operationIds, find matching exports |
+| 12 | Client error handling | Throws `ApiError` on non-2xx | `check_client_throws_api_error()` — search for `throw new ApiError` |
+| 13 | Base URL from env | Client reads `NEXT_PUBLIC_API_URL` | `check_base_url_from_env()` — string search |
+| 14 | No `process.env` in handlers | Config not scattered across route files | `check_no_process_env_in_handlers()` — grep route files for env access |
+| 15 | `NextResponse.json()` | No bare `new Response()` in handlers | `check_wraps_in_next_response()` — grep for disallowed patterns |
+
+**15 checks**, all deterministic, all zero-cost, all noise-free. This is the wide base — code asserts that run on every commit.
+
+Invariants (#14, #15) used to be a separate "Layer 3" in earlier drafts. They aren't a different thing — they're just as deterministic as the other 13. Calling them a separate layer overcomplicates the picture without adding insight. Put them in L1.
+
+### Layer 2 — Model-graded (3 criteria, per-PR)
+
+Three things code checks can't verify:
+
+1. **Schema correctness.** A `z.string()` on a field that should be `z.number()` passes check #6 (schema exists), but it's semantically wrong. Only an LLM judge can spot this.
+2. **Handler logic.** A `GET /pets/{petId}` handler that ignores `petId` passes #3 (file exists), #4 (export matches), #14 (no env), but returns the wrong data.
+3. **Client ergonomics.** A generated client that requires manual URL construction passes #11 (function exists) but defeats the purpose of typed clients.
 
 ```python
 JUDGE_PROMPT = """Score the generated Next.js API code 0.0–1.0 on:
@@ -789,66 +815,86 @@ JUDGE_PROMPT = """Score the generated Next.js API code 0.0–1.0 on:
 - client_ergonomics: is the fetch client pleasant to use with typed params?
 
 OpenAPI spec title: {spec_title}
-Generated tree: {file_listing}"""
+Generated files: {file_listing}"""
 ```
 
-Run this only on PRs that change the skill prompt itself — not on every commit.
+Run this only on PRs that change the skill prompt — not on every commit. At ~$0.01 per judge call, the cost doesn't matter on its own, but the *noise* does — you don't want a stochastic judge gate-keeping every diff. Reserve it for intentional prompt changes.
 
-### Layer 3 — Property-based invariants (always true, all inputs)
+### Layer 4 — Golden dataset (regression gate)
 
-Three invariants that must hold regardless of which OpenAPI spec was used:
+The golden dataset is the same L1 + L2 checks, but run against curated inputs with a baseline and gate.
 
-1. **No handler calls `process.env` directly.** Config should come from a config module, not scattered across route files. Check: `grep -r "process\.env" app/api/` = empty.
-2. **Every response is wrapped in `NextResponse.json()`.** No bare `Response` constructor or `res.send()` patterns. Check: `grep -r "new Response\|\.send("` = empty.
-3. **No file writes outside `app/api/`, `types/`, `schemas/`, `lib/`.** Check: list all generated files, reject any outside these directories.
+Four specs in `tests/`:
 
-### Layer 4 — Golden dataset
-
-Curate 3-5 OpenAPI specs:
-
-| Case | Why it's in the dataset |
+| Case | Why it's there |
 |---|---|
-| `pet-store` | Flat CRUD — covers the basic happy path |
-| `ecommerce` | Nested schemas, query params, auth headers — covers composition |
-| `minimal` | Single endpoint, no schemas — covers edge case |
-| `malformed` | Invalid YAML — skill should reject gracefully |
+| `pet-store.yaml` | Flat CRUD, 6 operations, nested schemas, multipart upload, enums, nullables — covers the happy path |
+| `ecommerce.yaml` | 9 operations, pagination, allOf composition, deeply nested schemas, 20+ query params — stresses handling |
+| `minimal.yaml` | Single endpoint, no named schemas, no params — edge case the skill should handle gracefully |
+| `malformed.yaml` | Invalid YAML — skill should reject with an error rather than hallucinate code |
 
-Each case runs all L1 + L3 checks. Score = mean of individual checks. Record baseline, gate on regression:
+Run with:
 
 ```bash
-uv run python scripts/layers/04-golden-dataset.py --baseline
-uv run python scripts/layers/04-golden-dataset.py --gate
+# Record baseline (run against all specs, save scores)
+uv run python .github/skills/nextjs-api-from-spec/tests/eval_skill.py --baseline
+
+# After a skill prompt change, gate against baseline
+uv run python .github/skills/nextjs-api-from-spec/tests/eval_skill.py --gate
 ```
 
-If a prompt change drops the pet-store score from 1.000 to 0.833, the gate blocks the merge.
+A regression detection:
+
+```
+  PASS    pet-store.yaml          0.987  (was 1.000, Δ -0.013)
+  REGRESS ecommerce.yaml          0.857  (was 0.943, Δ -0.086)
+```
+
+The gate blocks the merge. The baseline (`eval-baseline.json`) is checked into the repo so every developer uses the same reference.
 
 ### Layer 5 — Statistical sampling
 
-Run the suite 10 times. At temperature 0, scores are stable. At temperature > 0, variance reveals fragile parts of the prompt:
+A single run tells you nothing. Run the suite multiple times and look at the distribution:
+
+```bash
+uv run python .github/skills/nextjs-api-from-spec/tests/eval_skill.py \
+  --runs 10 --temperature 0.2
+```
+
+Output:
 
 ```
-  Case: ecommerce    mean=0.857  stdev=0.184  pass_rate=0.800
+  Spec                        Overall   Stdev  Pass-rate    N
+  pet-store.yaml                0.987   0.012      1.000   10
+  ecommerce.yaml                0.871   0.184      0.800   10
+  minimal.yaml                  1.000   0.000      1.000   10
+  malformed.yaml                1.000   0.000      1.000   10
 ```
 
-Gate on pass rate, not a single score.
+Gate on pass rate, not mean score. A single bad run pulling the mean down is noise; a pass rate below 80% across 10 runs is a real problem. The `ecommerce` case with stdev=0.184 is fragile — that's where you investigate.
 
 ### Layer 6 — Human review
 
-Sample generated outputs and compare against the SKILL.md contract. The human catches what no automated check caught — "this generated handler is correct but uses the old `pages/api` pattern instead of App Router," or "the Zod schema uses `z.string().email()` but the OpenAPI spec says `format: uri`."
+The automated suite catches what the rubric anticipated. It does not catch what it didn't. Sample generated outputs periodically and export for human review:
 
-Export to CSV with an empty `human_score` column, spot disagreements, refine the rubric.
+```bash
+uv run python .github/skills/nextjs-api-from-spec/tests/eval_skill.py --export-human
+```
+
+This produces `human-review.csv` with columns: `spec, l1_overall, l2_overall, overall, human_score, human_note`. Fill in `human_score` manually, then compare with the automated score. Disagreements above 0.3 reveal rubric gaps — "this passes all code checks but uses the old `pages/api` pattern," or "Zod schema is correct but uses `z.string().email()` while the spec says `format: uri`."
+
+Refine the L1 checks or L2 judge prompt to close the gap, then re-run. The goal isn't to eliminate disagreements — some judgments genuinely need a human — but to shrink the gap over time as you encode the patterns your reviewers keep finding.
 
 ### What this demonstrates
 
-Read the SKILL.md. Every claim in it maps to at least one layer. If a claim has no check, your eval suite has a coverage gap — regardless of which layer that gap lives in.
+The pyramid isn't about which layer number a check belongs to. It's about the *shape* of signal: a wide, cheap, deterministic base that catches 80% of failures on every commit, a narrow semantic judge for the PRs that matter, and process layers (dataset, sampling, humans) that don't add new check types but make the existing ones regression-trackable and statistically sound.
 
 For this skill:
-- **12 of ~15 claims map to L1** (deterministic, free) — the 60-80%
-- **3 claims need L2** (semantic judgment)
-- **3 invariants span all inputs** (L3)
-- **L4-L6 are process** — regression tracking, sampling, human review
+- **15 checks in L1** — deterministic, $0, every commit
+- **3 criteria in L2** — semantic, ~$0.01, per-PR only
+- **L4-L6 are process**, not check types — they apply L1+L2 across curated inputs, multiple runs, and human review
 
-The same decomposition works for any skill: extract every claim from the SKILL.md, classify each as "code-checkable" (L1), "needs a judge" (L2), or "universal invariant" (L3), then wrap them in a golden dataset with baselines and sampling.
+The same decomposition works for any skill: read the SKILL.md, extract every claim, classify each as "can I write a code assertion for this?" (L1) or "do I need a judgment call?" (L2), then wrap them in a golden dataset with baselines, sampling, and human spot-checks. The source code at `tests/eval_skill.py` implements all four layers in a single file you can adapt to your own skill.
 
 ## Open Questions
 
