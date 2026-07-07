@@ -28,6 +28,19 @@ In Summary: Three things compound the problem:
 
 No single technique covers everything. In practice you build a pyramid, and the shape of that pyramid matters more than any individual tool you pick.
 
+### Pyramid
+
+```
+L6          X        Human review (spot-check samples)
+L5         XXX       Statistical sampling (N runs at temp > 0)
+L4        XXXXX      Golden dataset (curated specs, regression gate)
+L2       XXXXXXX     Model-graded (semantic judgment, per-PR only)
+L1+L3   XXXXXXXXX    Deterministic + invariants 
+```
+
+Each layer up has fewer X's (fewer checks), costs more per check, and runs less frequently. e.g. The pile-up at the base catches the 80% that can be expressed as code assertions. The tip catches what slips through — but you need that tip to be narrow, because expensive checks at scale become noise.
+
+### Relationship.
 ```mermaid
 flowchart BT
     L6["Layer 6 — Human-in-the-Loop"]
@@ -45,49 +58,28 @@ flowchart BT
 
 ### Layer 1 — Deterministic / Structural Checks (cheapest, do these first)
 
-Anything that _can_ be checked without another model call, should be. These are fast, free, and have zero grader-side noise. The generation and the check are separate steps — the model call produces the output (non-deterministic), and then the check inspects it with plain code (deterministic). A regex or JSON parse doesn't care how the string was produced; it just tests structural properties of whatever output the model happened to return.
+- Anything that _can_ be checked without another model call. These are fast, free and have zero grader-side noise. 
+- The generation and the check are separate steps — the model call produces the output (non-deterministic), and then the check inspects it with plain code (deterministic). 
 
 Examples:
 
-- Output parses as valid JSON / matches a schema
-- Required fields are present and correctly typed - e.g. word Paris
-- Code compiles / lints / passes type checks - e.g. for generated python code
+- Output parses as valid JSON / matches a schema - e.g. for a prompt that produces json output
+- Required fields are present and correctly typed - e.g. word 'Paris' is capital of France.
+- Code compiles / lints / passes type checks - e.g. generated python code for fibonacci.
 - The agent called the tool it was supposed to call, with the arguments it was supposed to pass
 - Output length within bounds e.g. for a summarization task
-- No banned strings (secrets, PII patterns, forbidden phrases)
+- No banned strings e.g. PII patterns (Email + Phone number, SSN, TFN), forbidden phrases
 - Regex / substring matches for known-good or known-bad patterns e.g. _secret detection:_ re.search(r"sk-[A-Za-z0-9]{20,}", output)
 - Latency and token-cost thresholds
 
-If you can express the check as code, do it. This layer should be the majority of your suite — production teams report roughly 60-80% of all evaluation criteria (the axes you score a response on) are expressible as code asserts rather than LLM judge calls, with model-graded checks and human review filling the rest.
+If you can express the check as code, do it. This layer should be the majority of your suite 
 
-> **Where does the 60-80% figure come from?** [FutureAGI (Feb 2026)](https://futureagi.com/blog/deterministic-llm-evaluation-metrics-2026/) reports deterministic checks catch _30 to 60 percent of failures before any LLM judge fires_. The [G-Eval production guide (Mar 2026)](https://futureagi.com/blog/g-eval-definitive-guide-2026/) recommends routing every response through a deterministic floor (schema, regex, length, banned phrases) before any LLM judge call, dropping the judge bill 80–90% without losing detection rate. Both sources converge on the same finding: 60–80% of the scoring criteria in a typical eval suite can be implemented as plain code rather than requiring an LLM judge. The consensus: deterministic checks are the cheapest, fastest, and most reliable layer — they should be the base of every eval pyramid.
+> **Few references:** [FutureAGI (Feb 2026)](https://futureagi.com/blog/deterministic-llm-evaluation-metrics-2026/) reports deterministic checks catch _30 to 60 percent of failures before any LLM judge fires_. The [G-Eval production guide (Mar 2026)](https://futureagi.com/blog/g-eval-definitive-guide-2026/) recommends routing every response through a deterministic floor (schema, regex, length, banned phrases) before any LLM judge call, dropping the judge bill 80–90% without losing detection rate. Both sources converge on the same finding: 60–80% of the scoring criteria in a typical eval suite can be implemented as plain code rather than requiring an LLM judge. The consensus: deterministic checks are the cheapest, fastest, and most reliable layer — they should be the base of every eval pyramid.
 
-A complete runnable [example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/01-deterministic.py) — defines the same four scorers (`score_contains`, `score_excludes`, `score_max_words`, `score_valid_json`), applies them to a 5-case golden dataset, and prints results.
+[runnable example defines the same four scorers (`score_contains`, `score_excludes`, `score_max_words`, `score_valid_json`), applies them to a 5-case golden dataset, and prints results.](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/01-deterministic.py#L22-L39)
 
 Each scorer is a plain Python function — no LLM, no API call, no judge model. They are composable: a single golden case can combine `score_contains` + `score_max_words` + `score_excludes` and the overall score is simply the mean of the individual checks.
 
-```python
-def score_contains(output, words):
-    return all(w in output.lower() for w in words)
-
-def score_excludes(output, words):
-    return not any(w in output.lower() for w in words)
-
-def score_max_words(output, limit):
-    return len(output.split()) <= limit
-
-def score_valid_json(output):
-    try:
-        json.loads(output)
-        return True
-    except json.JSONDecodeError:
-        return False
-
-GOLDEN_CASE = {
-    "prompt": "Return JSON with name and age.",
-    "checks": {"must_contain": ["name", "age"], "expects_valid_json": True},
-}
-```
 
 Tools that implement this layer:
 
@@ -101,34 +93,22 @@ Tools that implement this layer:
 
 ### Layer 2 — Model-Graded Evaluation (LLM-as-judge)
 
-For anything semantic — correctness against a rubric, tone, faithfulness to source material, whether a response actually answers the question — you use another LLM call to score the output. The pattern — a complete runnable example at [`scripts/layers/02-model-graded.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/02-model-graded.py):
-
-````python
-JUDGE_PROMPT = """You are grading an AI assistant's response.
-Score it 0.0–1.0 on each criterion below.
-
-Output ONLY valid JSON:
-{{"correctness": 0.0, "helpfulness": 0.0, "conciseness": 0.0}}
-
-User prompt:
-{prompt}
-
-Assistant response:
-{response}"""
-
-def judge_score(prompt: str, response: str) -> dict:
-    model = openrouter_chat_model(temperature=0.0)
-    resp = model.invoke(JUDGE_PROMPT.format(prompt=prompt, response=response))
-    return json.loads(resp.content.strip().removeprefix("```json").removesuffix("```"))
-````
+For anything semantic (involves understanding the meaning) e.g. correctness against a rubric, tone, faithfulness to source material, whether a response actually answers the question — you use another LLM call to score the output. [Code example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/02-model-graded.py#L17-L30):
 
 The same output is then scored on three axes: is it _correct_ (factually accurate), _helpful_ (directly addresses the question), and _concise_ (avoids unnecessary verbosity). The judge prompt, the scoring rubric, and the output format are all explicit — no room for vibes.
 
 Things that make this reliable instead of vibes-based:
 
-- **Use a rubric, not a vague instruction.** "Is this good?" is a bad judge prompt. "Score against these five specific criteria" is a good one.
-- **Calibrate the judge against human labels.** Periodically have a human score a sample and check the judge agrees. If it doesn't, fix the rubric before trusting the automated score.
-- **Watch for judge biases**: position bias (favoring the first option in a comparison), length bias (favoring longer answers), self-preference bias (a model judge favoring outputs from its own family). Randomize order, control for length, and occasionally cross-check with a different model as judge.
+- **Use a rubric, not a vague instruction.** instead of asking "Is this good?" - "Score against these five specific criteria" is a good one.
+- **Calibrate the judge against human labels.** Periodically have a human score a sample and check the judge agrees e.g. 
+  - sample random 20 cases weekly and compare; 
+  - after editing the judge prompt or rubric (the judge is an LLM call — changing its prompt changes its scoring behavior, so re-validate against human labels);
+  - when golden dataset scores drift unexpectedly without a corresponding change to the generator. 
+  - If the judge disagrees with the human on more than ~10% of samples, fix the rubric before trusting the automated score.
+- **Watch for judge biases**: Randomize order, control for length, and occasionally cross-check with a different model as judge. e.g. of Biases:
+  - position bias (favoring the first option in a comparison)
+  - length bias (favoring longer answers)
+  - self-preference bias (a model judge favoring outputs from its own family). 
 - **Never let this be your only signal.** Model-graded evals add noise on top of the agent's own noise. Deterministic checks are your ground truth; LLM-as-judge fills the gap deterministic checks can't reach.
 
 Tools that implement this:
@@ -140,11 +120,11 @@ Tools that implement this:
 - **`langfuse`** — model-as-judge evaluation built into the tracing platform; useful when you already use Langfuse for production monitoring and want eval without a second service.
 - **`ragas`** — faithfulness, answer relevancy, and context precision metrics specifically for RAG pipelines; uses LLM calls internally but scoped to the retrieval-grounded evaluation domain.
 
-G-Eval (chain-of-thought-based scoring with a scoring function) is the most common pattern for structuring judge prompts well — it asks the judge to reason step by step against explicit criteria before emitting a score, which measurably improves judge-human agreement over a bare "rate 1-5" prompt.
+G-Eval (or GPT Based Evaluation or chain-of-thought-based scoring with a scoring function) is the most common pattern for structuring judge prompts well — it asks the judge to reason step by step against explicit criteria before emitting a score, which measurably improves judge-human agreement over a bare "rate 1-5" prompt.
 
 ### Layer 3 — Property-Based / Invariant Testing
 
-A complete runnable example at [`scripts/layers/03-property-based.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/03-property-based.py).
+[Code example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/03-property-based.py#L27-L62).
 
 Instead of checking a specific output, check properties that must hold across _all_ outputs regardless of variance:
 
@@ -156,30 +136,7 @@ Instead of checking a specific output, check properties that must hold across _a
 
 This is where a lot of practical agent _safety_ testing actually lives — you're not testing quality, you're testing that the guardrails hold no matter what path the agent takes to get there.
 
-```python
-# ── Hypothesis generates random inputs, test checks invariants ──
-from hypothesis import given, strategies as st
-
-def property_no_secrets(output: str) -> bool:
-    """Invariant: output never contains an API key pattern."""
-    import re
-    return not bool(re.search(r"sk-[A-Za-z0-9]{20,}", output))
-
-def property_no_refund_twice(trajectory: list[dict]) -> bool:
-    """Invariant: process_refund called at most once per order."""
-    refund_calls = [t for t in trajectory
-                    if t.get("tool") == "process_refund"]
-    return len(refund_calls) <= 1
-
-@given(
-    topic=st.text(min_size=1, max_size=50).filter(lambda t: t.strip()),
-    style=st.sampled_from(["code", "config", "docs"]),
-)
-def test_invariants_hold(topic: str, style: str):
-    output = simulate_agent(topic, style)  # calls the real model
-    assert property_no_secrets(output)
-    assert property_no_refund_twice(extract_trajectory(output))
-```
+>The implementation looks the same as Layer 1 (regex, file checks, no LLM), but the *target* differs. A deterministic check answers "given *this specific input*, does the output pass?" — it runs against golden dataset cases and tests for expected behavior. A property-based invariant answers "does this property hold for *every possible input*?" — it uses random/edge-case input generation (e.g. Hypothesis) to stress-test the boundary. Example: a deterministic check says "for this pet-store spec, every path has a route file." A property-based invariant says "for *any* spec, the skill never writes files outside allowed directories." One verifies correctness for a known case; the other verifies safety across unknowns.
 
 Tools that implement this:
 
@@ -192,45 +149,12 @@ Tools that implement this:
 
 ### Layer 4 — Golden Datasets and Regression Tracking
 
-A complete runnable example at [`scripts/layers/04-golden-dataset.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/04-golden-dataset.py) with a full implementation at [`src/eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/src/eval.py).
+- [Code examples]](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/04-golden-dataset.py) 
+- [full implementation](https://github.com/welldesignedsystem/baba-yaga/blob/main/src/eval.py).
 
-Curate a representative set of real inputs — ideally pulled from actual usage rather than invented — and snapshot how your system scores against them over time. You're not asserting exact output equality; you're asserting the **eval score on that set doesn't regress** when you change a prompt, swap a model version, or edit a skill definition.
+Curate a representative set of real inputs — ideally pulled from actual usage rather than invented — and snapshot how your system scores against them over time. You're not asserting exact output equality; you're asserting the **eval score on that set doesn't regress** when you change a prompt, swap a model version or edit a skill definition.
 
 The discipline that matters here: **score your current production system before setting an acceptance bar.** Don't invent a target in a vacuum — measure the baseline, then gate merges on "no regression below baseline" rather than an arbitrary absolute number. E.g. _"tool-selection success: current baseline 88%, acceptance bar 95%, anything below baseline blocks deploy."_
-
-```python
-GOLDEN_DATASET = [
-    {"id": "capital-france", "prompt": "Capital of France?",
-     "checks": {"must_contain": ["Paris"], "max_words": 5}},
-    {"id": "json-output",   "prompt": "Return JSON: {\"x\": 1}",
-     "checks": {"expects_valid_json": True}},
-]
-
-def run_suite() -> dict:
-    """Score every golden case, return {case_id: mean_score}."""
-    results = {}
-    for case in GOLDEN_DATASET:
-        output = model.invoke(case["prompt"]).content.strip()
-        # composable deterministic checks
-        scores = []
-        for w in case["checks"].get("must_contain", []):
-            scores.append(1.0 if w.lower() in output.lower() else 0.0)
-        if case["checks"].get("expects_valid_json"):
-            scores.append(score_valid_json(output))
-        if case["checks"].get("max_words"):
-            scores.append(score_max_words(output, case["checks"]["max_words"]))
-        results[case["id"]] = statistics.mean(scores) if scores else 0.0
-    return results
-
-def gate(results: dict, baseline: dict):
-    """Fail if any score dropped below its recorded baseline."""
-    for case_id, score in results.items():
-        prev = baseline.get(case_id, 0.0)
-        assert score >= prev, f"{case_id}: {score:.3f} < baseline {prev:.3f}"
-
-# Record baseline: run_suite() → save to eval-baseline.json
-# Gate in CI: load baseline, gate(run_suite(), baseline)
-```
 
 Tools that implement this:
 
@@ -270,26 +194,9 @@ Tools that implement this:
 - **Best for:** minimal setups where the discipline of "nothing below our measured baseline merges" is the goal — the companion repo does exactly this with `eval-baseline.json` in git and `--gate` in CI.
 - **Downside:** no web UI, no dashboards, no cross-team visibility. You build the runner yourself — but the total surface fits in a single file.
 
-#### Concrete Example: The Golden Dataset
-
-refer: [`scripts/layers/04-golden-dataset.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/04-golden-dataset.py) in the companion repo. It defines a golden dataset of 4 cases (capital lookup, list comprehension with invariants, JSON output validation), scores each with deterministic checks (substring match, word-count bound, JSON parse), runs 3 samples per case, and gates against a checked-in `eval-baseline.json`:
-
-```bash
-$ uv run python scripts/layer4_golden_dataset.py --baseline
-
-  capital-france                mean=1.000  stdev=0.000
-  capital-japan                 mean=1.000  stdev=0.000
-  python-list-comprehension     mean=0.833  stdev=0.289
-  json-output                   mean=1.000  stdev=0.000
-
-Saved baseline to eval-baseline.json
-```
-
-After a change, `--gate` compares against the baseline and fails CI if any score regressed. The full source is in the repo — this pattern runs with zero dependencies beyond `uv` and an API key, no separate eval platform required.
-
 ### Layer 5 — Statistical Sampling
 
-A complete runnable example at [`scripts/layers/05-statistical-sampling.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/05-statistical-sampling.py).
+- [code example]](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/05-statistical-sampling.py).
 
 A single run tells you almost nothing at temperature > 0. Run each test case N times (5–20 is typical) and look at the **distribution** of scores, not one output:
 
