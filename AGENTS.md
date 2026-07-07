@@ -9,7 +9,7 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 | `npm run dev`            | Hugo dev server (localhost:1313, live reload; **no drafts** — use `hugo server -D` for drafts)                   |
 | `npm run build`          | Production build (gc, minify, template metrics, `--forceSyncStatic`)                                             |
 | `npm run preview`        | Dev server, production env, template metrics                                                                     |
-| `npm run format`         | Prettier only (with `prettier-plugin-go-template` + `prettier-plugin-tailwindcss`) — **no linter, no typecheck** |
+| `npm run format`         | Prettier only (with `prettier-plugin-go-template` + `prettier-plugin-tailwindcss`) — **no linter, no typecheck, no test suite** |
 | `npm run update-modules` | Update all Hugo module deps                                                                                      |
 
 ## CI / deploy
@@ -22,7 +22,7 @@ Push to `main` → GitHub Actions (Node 24, Hugo latest) → GitHub Pages. CI bu
 
 - **Frontmatter is TOML** (`+++`), never YAML.
 - Blog posts: `content/english/blog/{category}/{slug}.md`.
-- 9 categories: `ai/`, `business-ideas/`, `containerization/`, `languages/`, `legacy/`, `roadmap/`, `security/`, `soft-skills/`, `system_design/`.
+- 10 categories: `ai/`, `business-ideas/`, `containerization/`, `languages/`, `legacy/`, `misc/`, `roadmap/`, `security/`, `soft-skills/`, `system_design/`.
 - `summaryLength = 10` — excerpts truncate at 10 words.
 - No Oxford comma (see `.github/instructions/blog.instructions.md`).
 - Goldmark renders raw HTML in markdown (`unsafe = true`).

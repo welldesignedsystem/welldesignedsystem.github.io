@@ -30,21 +30,16 @@ No single technique covers everything. In practice you build a pyramid, and the 
 
 ### Layer 1 — Deterministic / Structural Checks (cheapest, do these first)
 
-Anything that *can* be checked without another model call, should be. These are fast, free, and have zero grader-side noise. The key distinction: the model call to *generate* the output has already happened (that's the non-deterministic, paid part). The *check* is what comes after — and if you can express it as code (regex, JSON parse, length assert, schema validation), it costs microseconds and always returns the same answer for the same input. The non-determinism of the model doesn't affect the check; you're testing structural properties of whatever output the model happened to produce.
-The generation of the output costs a model call (non-deterministic, not free). But once you have the output string, checking properties of it can be done with plain code:
-- json.loads(output) — validates JSON syntax
-- "Paris" in output — substring check
-- len(output.split()) <= 100 — word count
-- re.search(r"sk-[A-Za-z0-9]{20,}", output) — secret detection
+Anything that *can* be checked without another model call, should be. These are fast, free, and have zero grader-side noise. The generation and the check are separate steps — the model call produces the output (non-deterministic), and then the check inspects it with plain code (deterministic). A regex or JSON parse doesn't care how the string was produced; it just tests structural properties of whatever output the model happened to return.
 
-**Other examples:**
-- Output parses as valid JSON / matches a schema
-- Required fields are present and correctly typed
-- Code compiles / lints / passes type checks
+Examples:
+- Output parses as valid JSON / matches a schema 
+- Required fields are present and correctly typed - e.g. word Paris
+- Code compiles / lints / passes type checks - e.g. for generated python code
 - The agent called the tool it was supposed to call, with the arguments it was supposed to pass
-- Output length within bounds
+- Output length within bounds e.g. for a summarization task
 - No banned strings (secrets, PII patterns, forbidden phrases)
-- Regex / substring matches for known-good or known-bad patterns
+- Regex / substring matches for known-good or known-bad patterns e.g. **secret detection:** re.search(r"sk-[A-Za-z0-9]{20,}", output)
 - Latency and token-cost thresholds
 
 If you can express the check as code, do it. This layer should be the majority of your suite — few teams running this in production puts deterministic checks at roughly 60-80% of the total eval set, with model-graded checks and human review filling the rest.
