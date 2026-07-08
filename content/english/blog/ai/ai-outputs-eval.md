@@ -199,40 +199,11 @@ Regression testing / score regression (eval) — a change causing performance to
 
 ### Layer 5 — Statistical Sampling
 
-- [code example]](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/05-statistical-sampling.py).
-
-A single run tells you almost nothing at temperature > 0. Run each test case N times (5–20 is typical) and look at the **distribution** of scores, not one output:
-
+- [code example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/05-statistical-sampling.py#L66-L78)
+- A single run tells you almost nothing at temperature > 0. Run each test case N times (5–20 is typical) and look at the **distribution** of scores, not one output:
 - Report pass-rate ("87% of runs satisfied the rubric") instead of pass/fail
 - Track variance, not just mean — a task with 90% mean but huge variance is riskier than 85% with low variance
 - This matters disproportionately for agents, since errors compound across turns — a 95%-reliable single tool call becomes a 60%-reliable five-step trajectory (0.95⁵ ≈ 0.77, and it gets worse fast as steps increase and per-step reliability drops)
-
-```python
-import statistics
-
-N = 10  # runs per case
-
-def evaluate_with_sampling(prompt: str, checks: dict, n: int = N) -> dict:
-    outputs = [model.invoke(prompt).content.strip() for _ in range(n)]
-
-    scores = []
-    for output in outputs:
-        s = score_contains(output, checks.get("must_contain", []))
-        s &= score_valid_json(output) if checks.get("expects_valid_json") else True
-        scores.append(1.0 if s else 0.0)
-
-    pass_rate = sum(scores) / n
-    return {
-        "mean": statistics.mean(scores),
-        "stdev": statistics.stdev(scores) if n > 1 else 0.0,
-        "pass_rate": pass_rate,
-        "gate": pass_rate >= 0.6,  # acceptance threshold
-    }
-
-# Usage: gate on pass-rate, not a single run
-# print(evaluate_with_sampling("Capital of France?", {"must_contain": ["Paris"]}))
-# → {"mean": 0.9, "stdev": 0.316, "pass_rate": 0.9, "gate": True}
-```
 
 Tools that implement this:
 
@@ -245,42 +216,9 @@ Tools that implement this:
 
 ### Layer 6 — Human-in-the-Loop
 
-A workflow script at [`scripts/layers/06-human-review.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/06-human-review.py) — exports eval results to CSV for annotation, then reports disagreements between human and automated scores.
-
-No rubric anticipates every edge case. Sample production traffic (5–10% is a common starting point) for manual review, and feed disagreements between human and judge scores back into refining the rubric. This is also where you catch the failure modes that are only obvious to a domain expert — a technically well-formed answer that's subtly wrong in a way no automated check would flag.
-
-```python
-import csv
-from pathlib import Path
-
-def export_for_review(results: list[dict], path: str = "review.csv"):
-    """Export eval results to CSV with a column for human score."""
-    with open(path, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=[
-            "case_id", "prompt", "output", "auto_score", "human_score"])
-        writer.writeheader()
-        for r in results:
-            writer.writerow({
-                "case_id": r["id"],
-                "prompt": r["prompt"],
-                "output": r["output"][:500],  # truncate for readability
-                "auto_score": r["score"],
-                "human_score": "",  # filled in by the reviewer
-            })
-
-def import_annotations(path: str = "review_annotated.csv") -> dict:
-    """Load human scores and compute agreement."""
-    with open(path, newline="") as f:
-        rows = list(csv.DictReader(f))
-    disagreements = [r for r in rows
-                     if r["human_score"] and abs(float(r["auto_score"])
-                     - float(r["human_score"])) > 0.3]
-    return {"total": len(rows), "disagreements": disagreements}
-
-# Reviewer opens review.csv, adds human scores,
-# saves as review_annotated.csv; analysis reports which
-# rubrics need refinement.
-```
+- [Code Example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/06-human-review.py#L64-L83) 
+- [exports eval results to CSV for annotation, then reports disagreements between human and automated scores](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/06-human-review.py#L23-L32).
+- No rubric anticipates every edge case. Sample production traffic (5–10% is a common starting point) for manual review and feed disagreements between human and judge scores back into refining the rubric. This is also where you catch the failure modes that are only obvious to a domain expert — a technically well-formed answer that's subtly wrong in a way no automated check would flag.
 
 Tools that implement this:
 
@@ -290,7 +228,7 @@ Tools that implement this:
 - **`label-studio`** — general-purpose annotation platform; configure any custom review pipeline (e.g. "review 10% of outputs flagged as low-confidence by the automated judge") with your own scoring rubric UI.
 - **`arize-phoenix`** — production trace sampling (e.g. 5% of all agent runs) surfaced for human-in-the-loop scoring; uses OpenTelemetry so sampling config works across any instrumented stack without platform-specific wiring.
 
-### Enterprise Minimal Tool Set
+## Enterprise Minimal Tool Set
 
 If you need to cover all 6 layers in an enterprise setting with the smallest surface area, this is the practical minimum:
 
