@@ -150,11 +150,10 @@ Tools that implement this:
 ### Layer 4 — Golden Datasets and Regression Tracking
 
 - [Code examples](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/04-golden-dataset.py) 
-- [full implementation](https://github.com/welldesignedsystem/baba-yaga/blob/main/src/eval.py).
-
-Curate a representative set of real inputs — ideally pulled from actual usage rather than invented — and snapshot how your system scores against them over time. You're not asserting exact output equality; you're asserting the **eval score on that set doesn't regress** when you change a prompt, swap a model version or edit a skill definition.
-
-The discipline that matters here: **score your current production system before setting an acceptance bar.** Don't invent a target in a vacuum — measure the baseline, then gate merges on "no regression below baseline" rather than an arbitrary absolute number. E.g. _"tool-selection success: current baseline 88%, acceptance bar 95%, anything below baseline blocks deploy."_
+- [Full implementation](https://github.com/welldesignedsystem/baba-yaga/blob/main/src/eval.py).
+- Curate a set of real inputs — pulled from actual usage rather than invented — and snapshot how your system scores against them over time. 
+- here you are asserting the **eval score on that set doesn't regress (go down)** when you change a prompt, swap a model version or edit a skill definition.
+- The discipline that matters here: **score your current production system before setting an acceptance bar.** Don't invent a target in a vacuum — measure the baseline, then gate merges on "no regression below baseline" rather than an arbitrary absolute number. E.g. _"tool-selection success: current baseline 88%, acceptance bar 95%, anything below baseline blocks deploy."_
 
 Tools that implement this:
 
@@ -193,6 +192,10 @@ Tools that implement this:
 - **What it does:** define your baseline and acceptance threshold in a version-controlled YAML file checked into the repo. A one-page CI script checks "does the current score stay above the saved baseline?" before every merge. No platform dependency, works with any eval scorer.
 - **Best for:** minimal setups where the discipline of "nothing below our measured baseline merges" is the goal — the companion repo does exactly this with `eval-baseline.json` in git and `--gate` in CI.
 - **Downside:** no web UI, no dashboards, no cross-team visibility. You build the runner yourself — but the total surface fits in a single file.
+
+>  regression is an overloaded term:
+Statistical regression (ML) — modeling relationships between variables to predict a continuous value (e.g. house prices from sq footage, bedrooms). "Regression" in this sense is about fitting a function.
+Regression testing / score regression (eval) — a change causing performance to degrade relative to a known baseline. The "regress" here is literal: things went backward.
 
 ### Layer 5 — Statistical Sampling
 
