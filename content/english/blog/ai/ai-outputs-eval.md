@@ -232,18 +232,7 @@ Tools that implement this:
 
 If you need to cover all 6 layers in an enterprise setting with the smallest surface area, this is the practical minimum:
 
-Six tools cover the full pyramid. Runnable examples for each in the companion repo:
-
-| Tool                                   | Role                                                                                                                                          | Example                                                                                                                                |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **[pytest](../pytest/)**               | Test runner, deterministic checks, invariant fixtures, sampling loops                                                                         | [`scripts/example_pytest.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_pytest.py)               |
-| **[DeepEval](../deepeval/)**           | Built-in metrics (hallucination, faithfulness, G-Eval, answer relevancy), golden dataset management, synthetic data generation from your docs | [`scripts/example_deepeval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_deepeval.py)           |
-| **[Promptfoo](../promptfoo/)**         | Prompt/model comparison, adversarial red-teaming (500+ attack vectors)                                                                        | [`scripts/example_promptfoo.yaml`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_promptfoo.yaml)     |
-| **[Braintrust](../braintrust/)**       | Platform: persisted eval history linked to git commits, regression dashboards, CI gates, human annotation queues                              | [`scripts/example_braintrust.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_braintrust.py)       |
-| **[hypothesis](../hypothesis/)**       | Property-based testing — generates edge-case inputs to probe guardrails and invariants                                                        | [`scripts/example_hypothesis.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_hypothesis.py)       |
-| **[toolcallcheck](../toolcallcheck/)** | Mock MCP server — assert tool calls, args, order and invariants offline                                                                       | [`scripts/example_toolcallcheck.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/tools/example_toolcallcheck.py) |
-
-All six are open-source except Braintrust — and you can defer that by checking baseline JSON into git (as the companion repo does), adding it when you need historical dashboards and team-wide visibility.
+Runnable examples for each tool are in the companion repo at `scripts/tools/` (linked in the tables below). All are open-source except Braintrust — you can defer it by checking baseline JSON into git, adding it later when you need dashboards and team-wide visibility.
 
 ### Full Tool Coverage by Layer
 
