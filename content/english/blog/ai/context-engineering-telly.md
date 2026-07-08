@@ -6,29 +6,42 @@ tags = ['Context Engineering', 'LLM', 'AI Agents', 'Failure Modes']
 summary = "80% of AI projects fail. Here's why context mismanagement is the root cause, and how we approached context engineering in practice."
 +++
 
-We knew stakeholders across Telly would start using AI tools — coding agents, LLM chat, automated code review — and producing at scale. The opportunity in Fintech was real: faster delivery, smarter automation, leaner teams. But three questions kept coming up:
+- Last year everybody was talking about - AI, how teams must accelerate the use of AI, finally - tools and models were released for use across Telly, there was a lot of push to start using AI. 
+- The opportunity in Fintech was real: faster delivery. 
+- In Fintech in AI Working we asked a different set question: 
+  - What would the **quality** look like when hundreds of engineers were generating code they barely understood?
+  - How do we **control** it without becoming a bottleneck?
+  - How do we get everyone **speaking the same language** about what the AI should and shouldn't do?
 
-- What would the **quality** look like when hundreds of engineers were generating code they barely understood?
-- How do we **control** it without becoming a bottleneck?
-- How do we get everyone **speaking the same language** about what the AI should and shouldn't do?
+  - AI enables devs to produce code that they barely understand.
+  - produce PRs at scale which reviewers cannot match up. 
+  - When everyone has their own ways of doing things how will you baseline, gate etc?
+  - When they function at scale they eventually produce more of what ever I just said.
 
+It is almost like handing over the keys to a car to someone who has only the most basic idea of how to operate a car — that too in a town where the traffic rules have not been established yet.
+
+Additional: 
+    - How do you measure the new velocity of doing things
+    - how do you measure the quality of code produced
+    - Skill and agents used to produce code? 
+    - How do you make sure knowledge bases are complete? give agents incomplete context and it will make reasonable assumptions based on what it was trained on.
+    - How do you use AI to abstract things such that we can encapsulate the complexity into skills. e.g. give the full context and ask agent if my NFRs are met.
+    - Telstra release a prompt library as a repo but how are you going to control duplicate skills
+    - With people able to write and contribute skills in minutes - How are you going to decide which of the skills are relevant to your usecase? extrapolate this to tools, agents, plugins, hooks, prompt files etc..
+
+What will happen if you haven't thought through this?
 A study by Gartner, MIT, RAND, BCG, and McKinsey answered the first question better than we could: **70-85% of enterprise AI initiatives fail** to deliver their expected value. MIT found **95% of generative AI pilots produce no measurable P&L impact**. S&P Global documented that **42% of companies abandoned AI initiatives in 2025** ([Beri, 2026](https://www.beri.net/article/ai-project-failure-complete-guide-2026); [MIT, 2025](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/); [S&P Global](https://beam.ai/agentic-insights/why-42-percent-of-ai-projects-show-zero-roi-and-how-to-be-in-the-58-percent)).
 
-It is almost like handing over the keys to a car to someone who has only the most basic idea of how to operate it — before the traffic rules of the town have even been established.
-
-This post covers how we approached that problem: what context engineering is, why the default approach fails, and the system we built to make AI tools safe and effective at Telly.
-
-### Why Call It Engineering?
-
-The term invites scrutiny. Much of context work is still empirical — there is no formula for "optimal context," and the primitives are platform-specific (Claude Code skills, opencode agents, Copilot instructions don't map 1:1). Skepticism is reasonable.
-
-The case for the label rests on three things:
-
-- **Systems design** — context engineering composes primitives (CLAUDE.md, rules, skills, agents, MCP, hooks) through defined interfaces, not by writing longer prompts. Each has a loading strategy, token cost, and lifecycle distinct from the others.
+### What do you need to achieve?
+- 
+- **Context completeness** — when a prompt lacks full context, the model fills the gaps with assumptions drawn from its training data, not from your codebase, domain, or requirements. Those assumptions are reasonable in isolation but wrong in practice. Context engineering treats completeness as a first-class property: every piece of information the model needs to produce a correct answer must be explicitly in the window, not implied.
+- **Systems design** — producing code at scale demands the same rigor as any software system: strong fundamentals, unambiguous specifications, well-chosen design patterns, and a clear architecture. At Fintech the design discussions are now being held to an extreme standard. I'm presenting a design on DeboLM next week and please extend the invite to any CTLs to bring their best people. Designs and Solution are source of truth and require strict levels of rigor, the context feeding an AI agent that generates code at scale demands the same. Context must be complete, disambiguated and structured with the same discipline as the code it generates. 
 - **Testable outcomes** — you can measure token consumption, eval scores, regression gates. You can A/B test context configurations and gate merges when scores drop ([see eval layer](../ai-outputs-eval/)).
-- **Industry adoption** — Anthropic, IBM, Gartner, and Cognition all use the term, explicitly distinguishing it from prompt craft ([Anthropic 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents); [IBM 2025](https://www.ibm.com/think/topics/context-engineering)).
-
-The distinction that matters: writing a prompt is craft. Building a system that decides what context enters the window, when, and for how long — that is engineering.
+- **Compounding stochasticity** — every agent layer introduces non-determinism: sampling variance, context boundaries, tool selection entropy. Stack three layers and the output distribution widens dramatically. A single 95%-reliable tool call becomes 60% reliable across ten steps. Prompt craft handles one stochastic call; engineering constrains the system across many.
+- **Scope boundaries** — prompt engineering should be restricted to cases where the session already has enough context to accommodate the prompt. If the prompt needs to retrieve, compose, or disambiguate context before it can be answered, that is context engineering's responsibility. The boundary is simple: can the model answer this correctly with nothing but the prompt, or does it need additional context loaded first?
+- **Context sizing** — every token depletes the model's attention budget. Context engineering decides how much context to load, when, and in what order — not by guesswork, but by measuring token consumption and eval scores per configuration. Too little context and the model lacks information; too much and relevant signals drown in noise.
+- **Context isolation** — when multiple agents, skills, or tools share a session, their context must be kept separate. A fraud detection agent should not inherit context from a collections agent. Context engineering provides isolation boundaries — subagents with clean windows, scoped tool availability, and structured handoffs that prevent cross-contamination ([Anthropic, Sep 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
+- **Progressive disclosure** — not all context belongs in the window at once. The right pattern is to load coarse context first (role, goals, constraints), then reveal finer-grained context on demand as the agent navigates toward a specific task. Skills, MCP tools, and retrieval-augmented prompts are the mechanism; deciding the order and granularity is the engineering ([Karpathy, 2025](https://x.com/karpathy/status/1937902205765607626)).
 
 ## Part 1: What Is Context Engineering
 
