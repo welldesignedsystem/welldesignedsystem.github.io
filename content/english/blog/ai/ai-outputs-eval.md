@@ -276,9 +276,8 @@ Runnable examples for each tool are in the companion repo at `scripts/tools/` (l
 
 ## Part 3: Evaluating Agents Specifically — Trajectory, Not Just Output
 
-A complete runnable example at [`scripts/trajectory/trajectory_eval.py`](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/trajectory/trajectory_eval.py).
-
-Agent evaluation is a strictly harder problem than single-call LLM evaluation, because the thing you're scoring isn't a string — it's a **trajectory**: the full sequence of reasoning steps, tool calls, and intermediate states. LangChain's framing is a useful mental model here: scoring only the final answer is like grading an exam by the final grade alone; trajectory evaluation is grading by the working shown at every step.
+- [Code Example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/trajectory/trajectory_eval.py).
+- Agent evaluation is a strictly harder problem than single-call LLM evaluation, because the thing you're scoring isn't a string — it's a **trajectory**: the full sequence of reasoning steps, tool calls, and intermediate states. LangChain's framing is a useful mental model here: scoring only the final answer is like grading an exam by the final grade alone; trajectory evaluation is grading by the working shown at every step.
 
 What trajectory evaluation actually checks:
 
@@ -288,7 +287,7 @@ What trajectory evaluation actually checks:
 - **Recovery behavior** — when a tool call fails, does the agent retry sensibly, fall back, or ask the user, versus looping or hallucinating a workaround
 - **Path validity** — two different trajectories can both be correct (there's rarely one "right" path), so scoring needs to allow for legitimate divergence rather than exact-path matching
 
-Frameworks like `agentevals` (LangChain's ecosystem) and Strands Evals read traces natively if you're already building on those frameworks — check what your agent framework ships before adding a separate dependency, since many now include a first-party eval subpackage.
+Frameworks like [`agentevals`](https://docs.langchain.com/oss/python/langchain/test/evals) (LangChain's ecosystem) and Strands Evals read traces natively if you're already building on those frameworks — check what your agent framework ships before adding a separate dependency, since many now include a first-party eval subpackage.
 
 ## Part 4: Testing Claude Code Skills Specifically
 
@@ -296,13 +295,13 @@ Skills are a narrower, more testable case than open-ended agents, because a skil
 
 A practical skill-testing checklist:
 
-1. **Trigger accuracy** — does the skill activate on the inputs it should, and _not_ activate on inputs it shouldn't (false positives are as costly as false negatives — an overtriggered skill burns context and can derail an otherwise fine response)
+1. **Trigger accuracy** — does the skill activate on the inputs it should and _not_ activate on inputs it shouldn't (false positives are as costly as false negatives (front matter - `disable-model-invocation: false` based on invocation by intend) — an overtriggered skill burns context and can derail an otherwise fine response)
 2. **Procedure adherence** — did the model actually follow the steps documented in the skill, or ignore them and improvise
 3. **Output contract** — if the skill promises a specific file type, directory location, or format, verify that mechanically (file exists, correct extension, correct location, opens without error)
 4. **Boundary respect** — a skill that touches the filesystem should never write outside its declared scope; test this as a hard invariant, not a soft check
 5. **Token efficiency** — skills that reference other files or run multi-step procedures should be checked for whether they're pulling in more context than the task needs
 
-For skills, deterministic checks carry even more of the weight than in general agent testing, because the contract is narrower and more mechanically verifiable — "did it produce a valid .docx with a table of contents" is a much cheaper and more reliable check than asking a judge model "is this a good Word document."
+> For skills, deterministic checks carry even more of the weight than in general agent testing, because the contract is narrower and more mechanically verifiable — "did it produce a valid .docx with a table of contents" is a much cheaper and more reliable check than asking a judge model "is this a good Word document."
 
 ### Practical Testing by Platform
 
