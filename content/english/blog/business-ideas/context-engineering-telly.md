@@ -6,12 +6,19 @@ tags = ['Context Engineering', 'LLM', 'AI Agents', 'Failure Modes']
 summary = "80% of AI projects fail. Here's why context mismanagement is the root cause, and how we approached context engineering in practice."
 +++
 
-- Last year a lot of AI tools and LLM models were released for use across Telly, there was a lot of push to start adopting it.
-- In Fintech we saw it differently. We asked questions — not about the models, but about the systems around them:
+- Last year a lot of AI tools and LLM models were released for use across Telly, there was a lot of push to start adopting it. The Planning Fallacy at play: teams underestimated time, cost, and risk while overestimating the benefits.
+- AI was being pushed as the solution to everything. There were workshops to find usecases and retrofit AI. Then I was running AI WG in Fintech, the way I saw it: 
+  - **Hype Cycle awareness** — we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning ROI — models are expensive (same thing that happened with AWS). What about all the baggage AI is going to produce at scale? How do you plan to clean that up?
+     - **EJB** — J2EE mandated it, XML hell, complexity killed productivity. Spring emerged.
+     - **SOAP / XML web services** — enterprise WS-* stack. REST won.
+     - **Microservices** — decompose everything. Hit distributed system costs, consistency issues, latency, availability issues.
+     - **NoSQL** — "SQL is dead". ACID got replaced with Bascially Available Soft State Eventualy Consistent. Hit missing transactions. Settled on polyglot persistence.
+     - **Big Data / Hadoop** — data lake solves everything. High ops cost. Settled on simpler tools.
+     - Same pattern every time: everyone rushed in before understanding the operational cost. The survivors solved real problems instead of following the hype.
   - **Quality control** — how do you control quality when every output is non-deterministic and every team uses different tools?
   - **Reviewer scaling** — you can produce PRs at scale with AI. But who reviews them? How do review workflows keep up with generation velocity?
   - **Baselines for non-deterministic output** — when everyone has their own way of doing things, how do you baseline, gate, and measure success of content that differs every time?
-  - **Productivity as a number** — how do you represent productivity numerically? How much has a skill helped or dragged a developer? Without a number, it's a story, not a metric.
+  - **Measuring the new velocity** — how do you measure the new velocity AI enables? How much has a skill helped or dragged a developer? Without measuring it, Parkinson's Law takes over: work expands to fill the time available. AI compresses the doing, but if you don't recalibrate expectations, the same work still takes the same time.
   - **Compounding stochasticity** — each agent layer adds variance. A 95%-reliable single step becomes 60% reliable across ten steps. How do you constrain the system, not just the prompt?
   - **Skill discoverability** — Telly's prompt library has 200+ skills. Which 5 are relevant to your project? Without discoverability, the library is noise.
   - **Ambiguity** — models make reasonable assumptions based on training data, not your codebase. Inaccurate content is almost always an ambiguity problem. How do you make context explicit?
@@ -23,12 +30,14 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
   - **Testing the non-deterministic** — evals measure aggregate quality, but how do you write deterministic tests for stochastic outputs? Property-based testing? Snapshot diffing with thresholds?
   - **Onboarding the practice** — context engineering is a new discipline. How do you onboard engineers without bottlenecking on the platform team?
 
-If you start without this - It is almost like handing over the keys to someone who has only the most basic idea of how to operate a car — that too in a town where the traffic rules have not been established yet. At the same time we don't want to be bottle neck.
+If you start without this — it is almost like handing over the keys to someone who has only the most basic idea of how to operate a car, in a town where the traffic rules have not been established yet. At the same time we don't want to be the bottleneck.
 
-### What do you need to achieve?
-- 
+### What we needed to achieve
+
+Before we could build context engineering as a discipline, we had to agree on what it actually means in practice. These are the design goals that emerged from those early Fintech conversations:
+
 - **Context completeness** — when a prompt lacks full context, the model fills the gaps with assumptions drawn from its training data, not from your codebase, domain, or requirements. Those assumptions are reasonable in isolation but wrong in practice. Context engineering treats completeness as a first-class property: every piece of information the model needs to produce a correct answer must be explicitly in the window, not implied.
-- **Systems design** — producing code at scale demands the same rigor as any software system: strong fundamentals, unambiguous specifications, well-chosen design patterns, and a clear architecture. At Fintech the design discussions are now being held to an extreme standard. I'm presenting a design on DeboLM next week and please extend the invite to any CTLs to bring their best people. Designs and Solution are source of truth and require strict levels of rigor, the context feeding an AI agent that generates code at scale demands the same. Context must be complete, disambiguated and structured with the same discipline as the code it generates. 
+- **Systems design** — producing code at scale demands the same rigor as any software system: strong fundamentals, unambiguous specifications, well-chosen design patterns, and a clear architecture. Context must be complete, disambiguated and structured with the same discipline as the code it generates.
 - **Testable outcomes** — you can measure token consumption, eval scores, regression gates. You can A/B test context configurations and gate merges when scores drop ([see eval layer](../ai-outputs-eval/)).
 - **Compounding stochasticity** — every agent layer introduces non-determinism: sampling variance, context boundaries, tool selection entropy. Stack three layers and the output distribution widens dramatically. A single 95%-reliable tool call becomes 60% reliable across ten steps. Prompt craft handles one stochastic call; engineering constrains the system across many.
 - **Scope boundaries** — prompt engineering should be restricted to cases where the session already has enough context to accommodate the prompt. If the prompt needs to retrieve, compose, or disambiguate context before it can be answered, that is context engineering's responsibility. The boundary is simple: can the model answer this correctly with nothing but the prompt, or does it need additional context loaded first?
@@ -91,9 +100,10 @@ All sources below focus on AI *engineering* (coding agents, PRs, production inci
 
 **Pattern across all sources**: review-time quality perception is decoupled from production outcomes — code looks good, passes review, then breaks in production. The root cause is consistent: agents lack architectural and domain context, and human review cannot scale to catch what the agent did not know. Context engineering is the only intervention that addresses the root cause rather than the symptom.
 
-### What These Studies Tell Us
+### Learnings
 
-- **The Magic Demo Problem** — a POC proves the technology works in a sandbox. It does not prove the system works at scale with real data, real volume, real adversaries, and real edge cases. The `detect-fraud` fraud example above is every prompt library story: a clean demo → production collapse → rule explosion → context bloat → cost spike → abandonment. Amazon's "bias for action" works when failure is cheap and reversible. AI-generated code at scale is neither — a bad context change can cost millions or cause an outage that hits every customer. Bias for action without context engineering is just bias for accidents.
+- **The Magic Demo Problem** — a POC proves the technology works in a sandbox. It does not prove the system works at scale with real data, real volume, real adversaries, and real edge cases. The `detect-fraud` example above is every prompt library story: a clean demo → production collapse → rule explosion → context bloat → cost spike → abandonment.
+- **Bias for action does not prove AI will not fail at scale** — Amazon's "bias for action"/"two way door" is useful for disproving something: it tells you what can fail early. But success in a POC does not prove the result will hold at scale. In AI, a clean demo tells you nothing about production.
 - **Generation speed ≠ production quality** — code that passes human review fails 1.7x more often in production than human-authored code. The bottleneck shifts from writing to verifying, but verification infrastructure hasn't caught up.
 - **Reliability costs are hidden** — productivity gains are real (epics +66%, PRs +16%), but incidents/PR (+242%), bugs/dev (+54%), and code churn (+861%) rise faster. High DevOps maturity does not protect you.
 - **The review bottleneck inverts** — AI-generated PRs are larger (+51%), take 5x longer to review, and many bypass review entirely (+31%). Reviewers cannot scale by working harder — the pipeline must absorb the load with automated gates.
@@ -113,7 +123,7 @@ All sources below focus on AI *engineering* (coding agents, PRs, production inci
 
 ## Part 3: How We Approached It
 I divided the problem statement into 3 streams that can scale independently.
-1. **Tools** ~~The car itself~~
+1. **Tools** — the car itself
    - **Prompt libraries** — versioned, reviewed, maintained. But a documentation exercise without context engineering (see Part 1).
    - **Skills** — bundled instructions loaded on demand. Lazy-loading is a context-level decision, not a prompt-level one.
    - **Agents / subagents** — clean context windows with scoped tool availability. Requires context boundaries and handoff compression.
@@ -126,13 +136,13 @@ I divided the problem statement into 3 streams that can scale independently.
    - **Forge (internal tool)** — our platform for building and deploying agentic workflows.
    - **Context discovery / retrieval** — how agents find the right context from the KB at runtime: ranking, caching, freshness checks. The retrieval layer is what wires Tools to Knowledge Base; without it, the KB is just a document store.
    - **GitHub Spaces / Knowledge Bases** — integrated stores for project-level context (docs, ADRs, architecture decisions). Useful when they stay fresh, but risk stale retrieval if not synced with the canonical KB.
-2. **Knowledge Base** — ~~Think of like map + driver handbook + mechanic manual ~~
+2. **Knowledge Base** — the map, driver handbook, and mechanic manual rolled into one
    - A lot of teams use prompts to generate code. The problem? Prompts are not reused, and prompts often lack full context of the system they target.
    - Without full context, the model fills gaps with assumptions based on its training data — reasonable in isolation, wrong in practice.
    - We make the knowledge base the source of truth: a structured, versioned store of solution designs, API specs, data models, business rules, and NFRs.
    - All stakeholders contribute — BAs (requirements), SMEs (domain rules), SAs (architecture constraints), Developers (implementation patterns). No single group owns the full picture alone.
    - A pipeline 2-way syncs with Confluence. Confluence is the human-facing canonical source; the KB is the agent-facing compiled view. Teams update Confluence and the KB stays current without extra toil.
-3. **Process** (accuracy, AI-DLC) — ~~Traffic Rules, Road sign, licensing system~~
+3. **Process** (accuracy, AI-DLC) — traffic rules, road signs, and the licensing system
    - **AI-DLC gating** — stage gates: explore → validate → productionise → monitor. Evidence required at each stage to pass.
    - **Eval standards** — metrics (accuracy, recall, hallucination rate, token efficiency), thresholds, regression suite. No evals = no merge.
    - **Review workflows** — who reviews AI-generated output and at what depth. PRs, context diffs, prompt diffs. Addresses the reviewer scaling problem raised up top.
@@ -305,3 +315,15 @@ graph TB
 The tree structure is identical between templates and forks — the hierarchy (Fintech → Domain → App) is preserved in both. The fork arrows show which template each team forked from; the solid arrows between forks show how the knowledge base mirrors the tiered architecture.
 
 The key difference from the Tiered Context Architecture: the knowledge base is **not inherited**. Teams contribute patterns back up to the template they forked from, so the template evolves as teams discover better approaches. A Charging team that finds a novel way to structure solution designs proposes an update to the Domain template, which then benefits all other teams that fork it in the future.
+
+## Appendix: Gartner Hype Cycle
+
+![Gartner Hype Cycle](../img/Hype-Cycle-General.png)
+
+The Gartner Hype Cycle is a framework for tracking how a technology progresses from initial excitement to mainstream adoption. It has five phases:
+
+- **Innovation Trigger** — a breakthrough, product launch, or proof of concept generates significant media and industry interest. There are no usable products yet, but the potential is visible.
+- **Peak of Inflated Expectations** — early success stories (and failures) generate a wave of hype. Expectations far outstrip actual capability. This is where AI was in 2023-2024.
+- **Trough of Disillusionment** — interest wanes as experiments fail to deliver on the hype. Providers consolidate or fail. Investment continues only if the technology can survive the disappointment and improve. This is where many AI projects are heading now.
+- **Slope of Enlightenment** — second-generation products emerge. Organisations understand the technology's real strengths and limitations. Practical applications are built on solid engineering.
+- **Plateau of Productivity** — the technology's place in the market is clear. Adoption accelerates as it becomes low-risk and well-understood. This is where cloud computing is today.
