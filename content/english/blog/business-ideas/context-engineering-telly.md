@@ -25,41 +25,6 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 
 If you start without this - It is almost like handing over the keys to someone who has only the most basic idea of how to operate a car — that too in a town where the traffic rules have not been established yet. At the same time we don't want to be bottle neck.
 
-I divided the problem statement into 3 streams.
-1. **Tools** ~~The car itself~~
-   - **Prompt libraries** — versioned, reviewed, maintained. But a documentation exercise without context engineering (see Part 1).
-   - **Skills** — bundled instructions loaded on demand. Lazy-loading is a context-level decision, not a prompt-level one.
-   - **Agents / subagents** — clean context windows with scoped tool availability. Requires context boundaries and handoff compression.
-   - **MCP servers / tool definitions** — compete for token budget with instructions and history. Scoping per task is structural, not rhetorical.
-   - **Hooks / plugins** (PreToolUse, PostToolUse) — machine-enforce invariants at the tool-call layer, regardless of what the prompt says. No prompt engineering equivalent.
-   - **Eval frameworks / regression gates** — automated pipelines that gate merges on eval scores. Without them, scaling is blind.
-   - **Observability / tracing** — token budgets, failure rates, context quality metrics. You can't improve what you don't measure.
-   - **Guardrails / content filters** — inline enforcement at the output layer. Catches hallucinated tool calls and policy violations before they reach production.
-    - **Latest models** — each model generation shifts the context window size, attention mechanics, and instruction-following behaviour. Tools must adapt.
-    - **Forge (internal tool)** — our platform for building and deploying agentic workflows.
-    - **Context discovery / retrieval** — how agents find the right context from the KB at runtime: ranking, caching, freshness checks. The retrieval layer is what wires Tools to Knowledge Base; without it, the KB is just a document store.
-    - **GitHub Spaces / Knowledge Bases** — integrated stores for project-level context (docs, ADRs, architecture decisions). Useful when they stay fresh, but risk stale retrieval if not synced with the canonical KB.
-2. **Knowledge Base** — ~~Think of like map + driver handbook + mechanic manual ~~
-   - A lot of teams use prompts to generate code. The problem? Prompts are not reused, and prompts often lack full context of the system they target.
-   - Without full context, the model fills gaps with assumptions based on its training data — reasonable in isolation, wrong in practice.
-   - We make the knowledge base the source of truth: a structured, versioned store of solution designs, API specs, data models, business rules, and NFRs.
-   - All stakeholders contribute — BAs (requirements), SMEs (domain rules), SAs (architecture constraints), Developers (implementation patterns). No single group owns the full picture alone.
-   - A pipeline 2-way syncs with Confluence. Confluence is the human-facing canonical source; the KB is the agent-facing compiled view. Teams update Confluence and the KB stays current without extra toil.
-3. **Process** (accuracy, AI-DLC) — ~~Traffic Rules, Road sign, licensing system~~
-   - **AI-DLC gating** — stage gates: explore → validate → productionise → monitor. Evidence required at each stage to pass.
-   - **Eval standards** — metrics (accuracy, recall, hallucination rate, token efficiency), thresholds, regression suite. No evals = no merge.
-   - **Review workflows** — who reviews AI-generated output and at what depth. PRs, context diffs, prompt diffs. Addresses the reviewer scaling problem raised up top.
-   - **Quality baselines** — how you measure productivity, non-deterministic output quality, skill effectiveness as numeric values. Compounding stochasticity tracking.
-   - **Version & release strategy** — prompt versioning, KB snapshots, model pinning vs. canary. Roll out changes without breaking production.
-   - **Feedback loops** — how production failures (false positives, hallucinations) flow back into evals, KB corrections, and prompt improvements. Without this, errors repeat.
-   - **Audit & compliance** — for regulated environments. Traceability from requirement → context → generated output.
-
-Additional: 
-    - With people able to write and contribute skills in minutes - How are you going to decide which of the skills are relevant to your usecase? extrapolate this to tools, agents, plugins, hooks, prompt files etc..
-
-What will happen if you haven't thought through this?
-A study by Gartner, MIT, RAND, BCG, and McKinsey answered the first question better than we could: **70-85% of enterprise AI initiatives fail** to deliver their expected value. MIT found **95% of generative AI pilots produce no measurable P&L impact**. S&P Global documented that **42% of companies abandoned AI initiatives in 2025** ([Beri, 2026](https://www.beri.net/article/ai-project-failure-complete-guide-2026); [MIT, 2025](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/); [S&P Global](https://beam.ai/agentic-insights/why-42-percent-of-ai-projects-show-zero-roi-and-how-to-be-in-the-58-percent)).
-
 ### What do you need to achieve?
 - 
 - **Context completeness** — when a prompt lacks full context, the model fills the gaps with assumptions drawn from its training data, not from your codebase, domain, or requirements. Those assumptions are reasonable in isolation but wrong in practice. Context engineering treats completeness as a first-class property: every piece of information the model needs to produce a correct answer must be explicitly in the window, not implied.
@@ -91,76 +56,92 @@ Five independent research organizations — Gartner, MIT, RAND Corporation, BCG,
 
 These are not measurement errors. When five separate analyses using different methodologies converge on an 80% failure rate, the problem is systemic.
 
-### The Magic Demo Problem
+But those studies cover AI broadly — data science, ML, generative AI pilots. The evidence for AI *engineering* failures (coding agents, autonomous PRs, AI-generated code in production) is even more stark, and it comes from a different set of sources.
 
-"Just run a POC and see if it fails" — Amazon's bias for action, right? The problem is that a POC proves the technology works. It does not prove the system works at scale.
+### The AI Engineering Failure Evidence
 
-A realistic example from Fintech at a telecom company. Your prompt library has a `detect-fraud` entry: *"Flag any transaction over $10,000 for manual review."*
+All sources below focus on AI *engineering* (coding agents, PRs, production incidents) — not data science or ML pilots.
 
-**POC:** An engineer tests it on a clean dataset of 100 historical transactions. The agent generates a SQL rule: `WHERE amount > 10000`. Demo passes. Bias for action wins — ship it.
+| Source | Key Findings | What Is the Learning |
+|---|---|---|
+| [New Relic, Jun 2026](https://newrelic.com/sites/default/files/2026-06/New-Relic-2026-AI-Code-Report-06-09-2026.pdf) — Survey, 200 US tech leaders | 82% had AI-code production failures. 78% more incidents. 86% more senior rework. 74% say 25%+ of AI code needs rework. 1.7x more critical runtime issues vs human code. 62% ship without line-by-line review. | Generation speed decouples from production quality. Without automated gates, review bandwidth becomes the bottleneck. |
+| [Faros AI, Apr 2026](https://web.archive.org/web/20260612124334/https://www.faros.ai/blog/ai-acceleration-whiplash-takeaways) — Telemetry, 22k devs / 4k+ teams | Code churn +861%. Incidents/PR +242.7%. Bugs/dev +54%. Review time +441.5%. PRs merged without review +31.3%. High-performers hit same deterioration. | Productivity gains are real; reliability costs are hidden. High DevOps maturity does not protect you — only context engineering and process do. |
+| [Qodo / Censuswide, Apr 2026](https://www.qodo.ai/blog/ai-coding-paradox-report/) — Survey, 500 US enterprise engineers | 89% had AI-related production incident. 1 in 4 suffered complete outage from AI code. 41% spend *more* time on review than before AI. | AI shifts work from writing to verifying. If verification infra doesn't scale, downtime follows. |
+| [CloudBees / TrendCandy, May 2026](https://www.cloudbees.com/newsroom/enterprise-technology-leaders-report-production-failures-from-ai-generated-code) — Survey, 213 enterprise leaders | 81% more production issues from AI code. 54% CI/CD cost increases. 46% say CTO accountable — only 12% have dedicated AI governance. 27% have token limits. | Governance is not keeping pace with adoption. Without dedicated ownership and cost controls, risk compounds. |
+| [Gartner, Jun 2025](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027) — Forecast | >40% of agentic AI projects will be cancelled by end of 2027 (costs, unclear value, inadequate risk controls). Only ~130 of thousands of vendors are genuine. | Most "agents" are rebranded chatbots. Real agentic systems require context engineering — most vendors skip it. |
+| [Multiple studies: Gartner, MIT, RAND, BCG, McKinsey, S&P Global, 2025-2026](https://www.beri.net/article/ai-project-failure-complete-guide-2026) — Meta-analysis | **70-85% of enterprise AI initiatives fail** to deliver value. MIT: **95% of generative AI pilots** produced no P&L impact. S&P Global: **42% of companies abandoned AI initiatives in 2025** (up from 17%). Average cost of a single failed project: **$7.2M**. | The 80% failure rate is systemic across all AI types — data science, ML, and engineering. Context engineering is the common missing piece. The cost of failure is measurable and large. |
+| [Datadog, 2026](https://www.datadoghq.com/state-of-ai-engineering/) — Telemetry, 1k+ customers | 60% of LLM call failures = rate limits. 69% of input tokens = system prompts (not reasoning). Only 28% use prompt caching. | The dominant production failure is capacity, not model quality. Most tokens are scaffolding, not signal — context engineering reduces both. |
+| [Mehtiyev & Assunção, Apr 2026](https://doi.org/10.48550/arxiv.2604.02547) — 9,374 trajectories, 19 agents, 500 tasks | Top agents fail on >20% of tasks. 12 "easy" tasks never solved — agents lack architectural reasoning and domain knowledge. Context-gathering before editing predicts success. | Agent failure is not about task difficulty — it is about missing context. The behavioural differentiator is whether the agent gathers context before acting. |
+| [Hasan & Biswas, May 2026](https://arxiv.org/html/2605.30777) — 16,586 GitHub issues, 547 confirmed failures | 326/547 incidents high/critical. Top risks: constraint violations, destructive ops, auth bypasses, deception. >65% arise in bug fixing and setup/config. | Safety failures are structural, not adversarial. Guardrails must enforce environmental constraints, not just filter malicious prompts. |
+| [Shah et al., Mar 2026](https://doi.org/10.48550/arxiv.2603.06847) — 13,602 issues/PRs, 40 repos, 385 faults | 5 fault dimensions, 12 root cause categories. Top: dependency/integration (19.5%), data/type handling (17.6%). Validated with 145 practitioners — 83.8% coverage. | Agent faults are a hybrid of traditional SE bugs and LLM-specific behaviour. Both must be addressed in the engineering process. |
+| [Alam et al., Jan 2026](https://arxiv.org/html/2602.00164) — 8,106 fix-related PRs, 5 agents | Top rejection reasons: test failures, duplicate work. Build/deploy failures rare. | Agents submit code that is functionally plausible but fails tests or duplicates existing work. Discoverability and validation are the gaps. |
+| [MSR 2026](https://2026.msrconf.org/details/msr-2026-mining-challenge/27/When-AI-Code-Doesn-t-Stick-An-Empirical-Study-on-Reverted-Changes-Introduced-by-AI-C) — 33,580 agentic PRs, 86,315 commits | 2.66% of agentic PRs reverted. Causes: overengineering (22%), functional incorrectness (22%), code quality (18%), dependency issues (12%). | Agent code is reverted for scope and context problems, not just bugs. Over-engineering is a signal that the agent lacks boundaries. |
+| [Debt Behind the AI Boom, Mar 2026](https://arxiv.org/abs/2603.28592v1) — Multi-tool, HEAD analysis | 24.2% of AI-introduced issues survive at HEAD. >110,000 surviving issues by Feb 2026. Pattern consistent across all 5 studied tools. | AI technical debt is systemic, not tool-specific. It accumulates faster than teams can remediate without deliberate process. |
+| [AIRA, Apr 2026](https://arxiv.org/abs/2604.17587) — 955 AI-attributed vs 955 human files, matched control | AI files: 1.80x more high-severity findings. Consistent across JS, Python, TS. AI code "fails soft" — appears functional but degrades guarantees. | AI code does not fail obviously. It fails quietly, which means review must be structurally different from human-code review. |
+| [Forbes, Dec 2025](https://www.forbes.com/councils/forbestechcouncil/2025/12/30/the-context-crisis-why-ai-projects-are-failing-and-how-to-fix-it/) — Industry analysis | "The problem isn't the AI models — without tailored context, hallucinations hit up to 27%, factual errors creep into 46% of outputs." | Context mismanagement is the root cause, not model capability. Fix is structural, not a better model. |
+| [McKinsey, 2025](https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/2025/the-state-of-ai-how-organizations-are-rewiring-to-capture-value_final.pdf) — Cost analysis | AI hallucinations cost businesses **$67.4 billion in 2024**. | Cost of not engineering context is tangible. Context engineering is a direct ROI play. |
+| [Forbes, Jun 2025](https://www.forbes.com/sites/corneliawalther/2025/06/06/ai-safety-beyond-ai-hype-to-hybrid-intelligence/) — Survey | **47% of enterprise AI users** made a major business decision based on hallucinated content. | Trust in AI output is mis-calibrated. Without context engineering, model confidence replaces human judgment — and it's often wrong. |
+| [Weaviate, Dec 2025](https://weaviate.io/blog/context-engineering) — Engineering guide | 4 context failure patterns: Poisoning (errors compound), Distraction (history overrides reasoning), Confusion (irrelevant tools crowd window), Clash (contradictory info). | Context failures have distinct signatures. Each needs different mitigation: compaction, isolation, scoping, dedup. |
+| [Anthropic, Sep 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — Engineering blog | Context Rot degrades recall as window grows. Ambiguity forces model to guess. Tool bloat slows reasoning. "If a human cannot choose the right tool, the agent cannot either." | Design for progressive disclosure. Scope tool availability per task. Context window is finite. |
+| [Inkeep, Oct 2025](https://inkeep.com/blog/fighting-context-rot) — Engineering blog | At 100k tokens, middle-of-window info is buried under 10B pairwise attention relationships. Exponentially harder to recall. | Compact and prioritise context. Do not append indefinitely. Middle of window is a dead zone. |
+| [Latitude, May 2026](https://latitude.so/blog/llm-failure-modes-fixes) — Analysis | Error cascades: 95%-reliable single call → 60% across ten steps (0.95¹⁰ ≈ 0.60). | Compounding stochasticity is arithmetic. Constrain at system level, not prompt level. |
+| [Sourcegraph, 2026](https://sourcegraph.com/blog/context-engineering) — Engineering guide | Stale retrieval poisons reasoning. Live queries (grep, read, MCP) outperform cached embeddings when freshness matters. | Design retrieval for staleness. Cache is a liability, not a feature, when context changes. |
+| [arXiv, 2025](https://arxiv.org/pdf/2511.19933) — Academic taxonomy | 15 failure modes: multi-step reasoning drift, version drift, cost-driven collapse. Hidden in benchmarks, emerge in production. | Benchmarks ≠ production. Only telemetry and process catch the failure modes that matter. |
+| [LangChain, Apr 2026](https://www.langchain.com/blog/context-engineering-for-agents) — Industry interview | Cognition calls context engineering *"the #1 job of engineers building AI agents."* Gartner: 40% of new apps will embed agents by 2026. | Context engineering is not optional. The gap between those who do it and those who don't is a competitive moat. |
 
-**Production:** Processing millions of transactions daily. The rule immediately breaks:
+**Pattern across all sources**: review-time quality perception is decoupled from production outcomes — code looks good, passes review, then breaks in production. The root cause is consistent: agents lack architectural and domain context, and human review cannot scale to catch what the agent did not know. Context engineering is the only intervention that addresses the root cause rather than the symptom.
 
-- Legitimate high-value transactions (B2B settlements, payroll disbursements, interbank transfers) flood the manual review queue — 40,000 false positives in the first hour
-- There is no merchant whitelist, no velocity check, no regional threshold variation
-- A bad actor splits $50,000 into five $9,900 transfers — the $10k threshold is bypassed instantly
-- The fraud team is overwhelmed and starts ignoring alerts within a week
-- No two markets have the same fraud patterns, but the prompt assumes a single global rule
+### What These Studies Tell Us
 
-The team's response is rational: add more rules. Add a whitelist prompt, add a velocity check prompt, add regional threshold prompts, add merchant category prompts. Suddenly the prompt library explodes — 50 rules where there was one. Each rule carries its own context: which services it applies to, which data sources it needs, which other rules it conflicts with.
-
-Now the agent is drowning:
-
-- **Context bloat** — every invocation loads the full fraud rule library plus whitelists, velocity profiles, regional configs, merchant hierarchies, and historical baselines. The context window fills before the model can reason.
-- **Context rot** — buried in that wall of tokens, the agent misses critical contradictions. Rule 12 says "threshold is $10,000 for market X" but rule 37 says "market X uses dynamic thresholds based on merchant tier." Both are in context. The model cannot resolve the clash.
-- **Cost explosion** — every turn now processes 15,000+ tokens of context to answer a simple question. The AI bill balloons. Latency creeps up. The fraud team is waiting 30 seconds for a decision that a simple SQL query could deliver in 5 milliseconds.
-- **Non-determinism** — the same transaction gets flagged on Monday, approved on Tuesday, because the stochastic model settles on different context tokens each time.
-
-The irony is complete: you have built a system that is more expensive, slower, less reliable, and harder to maintain than the static rules it replaced. You would have been better off not using AI at all.
-
-The prompt was not wrong — it was **context-blind**. It encoded an assumption that held in the demo sandbox (clean data, no volume, no adversary) but collapsed under real conditions. And the naive fix — adding more prompts — only made everything worse.
-
-This pattern repeats across every prompt library initiative. A static prompt cannot encode the context it needs — whitelists, velocity rules, regional configs, merchant categories, historical baselines — because those vary per invocation, per market, per time window. That is not a prompt problem. It is a context engineering problem.
-
-### The Root Cause: Context Mismanagement
-
-The common thread across nearly all AI project failures is not model capability — it is **poor context management**. As [Forbes (Dec 2025)](https://www.forbes.com/councils/forbestechcouncil/2025/12/30/the-context-crisis-why-ai-projects-are-failing-and-how-to-fix-it/) reported: *"The problem isn't the AI models themselves... Without that tailored context, hallucinations hit up to 27%, factual errors creep into 46% of outputs."* AI hallucinations alone cost businesses **$67.4 billion in 2024** ([McKinsey](https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/2025/the-state-of-ai-how-organizations-are-rewiring-to-capture-value_final.pdf)), and **47% of enterprise AI users admitted to making a major business decision based on hallucinated content** ([Forbes, 2025](https://www.forbes.com/sites/corneliawalther/2025/06/06/ai-safety-beyond-ai-hype-to-hybrid-intelligence/)).
-
-### Context-Specific Failure Modes
-
-When context is poorly engineered, specific failure patterns emerge. These are documented across Anthropic's engineering blog, Weaviate's context engineering guide, and the Sourcegraph practical guide:
-
-1. **Context Poisoning** — Incorrect or hallucinated information enters the context. Because agents reuse and build upon that context, errors compound across turns ([Weaviate, Dec 2025](https://weaviate.io/blog/context-engineering)).
-
-2. **Context Distraction** — The agent becomes burdened by too much past information — history, tool outputs, summaries — and over-relies on repeating past behavior rather than reasoning fresh ([Weaviate, Dec 2025](https://weaviate.io/blog/context-engineering)).
-
-3. **Context Confusion** — Irrelevant tools or documents crowd the context, distracting the model and causing it to use the wrong tool or follow the wrong instructions ([Weaviate, Dec 2025](https://weaviate.io/blog/context-engineering); [Anthropic, Sep 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
-
-4. **Context Clash** — Contradictory information within the context misleads the agent, leaving it stuck between conflicting assumptions ([Weaviate, Dec 2025](https://weaviate.io/blog/context-engineering)).
-
-5. **Context Rot** — As context grows, model recall accuracy degrades — especially for information in the middle of the window. The transformer architecture creates n² pairwise relationships between tokens; at 100,000 tokens that is 10 billion relationships to track ([Anthropic, Sep 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents); [Inkeep, Oct 2025](https://inkeep.com/blog/fighting-context-rot)).
-
-6. **Ambiguity** — Vague system prompts or underspecified user intent force the model to guess. Anthropic describes this as a calibration problem: prompts that are *too vague* assume shared context that does not exist, while prompts that are *too brittle* hardcode if-else logic that breaks on edge cases ([Anthropic, Sep 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
-
-### Additional LLM-Specific Failure Modes
-
-- **Tool bloat**: too many available tools overwhelm the model, causing slower responses and more hallucinated tool calls. *"If a human cannot definitively choose the right tool, the agent cannot either"* ([Anthropic, Sep 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
-
-- **Error cascades**: small mistakes snowball in multi-step agent trajectories. A 95%-reliable single tool call becomes 60% reliable across ten steps (0.95¹⁰ ≈ 0.60) ([Latitude, May 2026](https://latitude.so/blog/llm-failure-modes-fixes)).
-
-- **Stale retrieval**: vector indexes and cached context go stale. Outdated information retrieved from cache poisons the agent's reasoning. Live queries (reads, grep, MCP) outperform cached embeddings when freshness matters ([Sourcegraph, 2026](https://sourcegraph.com/blog/context-engineering)).
-
-- **System-level failures**: a taxonomy of 15 failure modes in LLM systems identifies multi-step reasoning drift, version drift, and cost-driven performance collapse as hidden failure modes that emerge in production but are invisible in evaluation benchmarks ([arXiv, 2025](https://arxiv.org/pdf/2511.19933)).
-
-### Why This Matters
-
-Cognition (makers of Devin) called context engineering *"effectively the #1 job of engineers building AI agents"* ([LangChain blog, Apr 2026](https://www.langchain.com/blog/context-engineering-for-agents)). Gartner predicts that **40% of new enterprise applications will contain embedded AI agents by 2026** ([Gartner, 2025](https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025)). The companies that master context engineering will have an insurmountable advantage — not because they are using better models, but because they are feeding their models better context.
+- **The Magic Demo Problem** — a POC proves the technology works in a sandbox. It does not prove the system works at scale with real data, real volume, real adversaries, and real edge cases. The `detect-fraud` fraud example above is every prompt library story: a clean demo → production collapse → rule explosion → context bloat → cost spike → abandonment. Amazon's "bias for action" works when failure is cheap and reversible. AI-generated code at scale is neither — a bad context change can cost millions or cause an outage that hits every customer. Bias for action without context engineering is just bias for accidents.
+- **Generation speed ≠ production quality** — code that passes human review fails 1.7x more often in production than human-authored code. The bottleneck shifts from writing to verifying, but verification infrastructure hasn't caught up.
+- **Reliability costs are hidden** — productivity gains are real (epics +66%, PRs +16%), but incidents/PR (+242%), bugs/dev (+54%), and code churn (+861%) rise faster. High DevOps maturity does not protect you.
+- **The review bottleneck inverts** — AI-generated PRs are larger (+51%), take 5x longer to review, and many bypass review entirely (+31%). Reviewers cannot scale by working harder — the pipeline must absorb the load with automated gates.
+- **Context mismanagement is the root cause** — without tailored context, hallucinations hit 27% and factual errors hit 46%. The fix is structural (progressive disclosure, isolation, compaction), not a better model.
+- **Failure mode: compounding stochasticity** — a 95%-reliable single call becomes 60% reliable across ten steps (0.95¹⁰). This is arithmetic, not a prompt fix. Constrain at the system level.
+- **Failure mode: context rot** — middle-of-window information is buried under 10B attention relationships at 100k tokens. Append indefinitely and that information becomes unrecoverable.
+- **Failure mode: stale retrieval** — cached vector embeddings go stale. Live queries (grep, read, MCP) outperform embeddings when freshness matters. Cache is a liability, not a feature.
+- **Failure mode: tool bloat** — too many available tools slows the model and increases hallucinated calls. Scope tool availability per task. "If a human cannot choose the right tool, the agent cannot either."
+- **Safety failures are structural, not adversarial** — constraint violations, destructive operations, auth bypasses, and deception dominate. Guardrails must enforce environmental constraints, not just filter malicious prompts.
+- **Agent code fails quietly, not obviously** — AI code shows 1.8x more high-severity findings but looks plausible at review. The review process must be structurally different from human-code review.
+- **Technical debt accumulates faster than remediation** — 24.2% of AI-introduced issues survive at HEAD. >110,000 surviving issues by Feb 2026 across all studied tools. This is systemic, not tool-specific.
+- **Agents lack context-gathering behaviour** — agents that gather context before editing succeed more often. This is a learned strategy, not a model capability gap.
+- **Governance is not keeping pace** — 46% hold CTO accountable for AI failures; only 12% have dedicated governance. Only 27% have token limits. Most orgs are flying blind.
+- **Cost governance matters** — 60% of LLM call failures are rate limits (capacity), not model quality. 69% of input tokens are system scaffolding, not reasoning. Context engineering reduces both.
+- **Benchmarks ≠ production** — the 15 failure modes that matter most (reasoning drift, version drift, cost collapse) are invisible in evals. Only telemetry and process catch them.
+- **Context engineering is THE job** — Cognition calls it "effectively the #1 job of engineers building AI agents." By 2026, 40% of new enterprise apps will embed agents. The gap between those who engineer context and those who don't is a competitive moat.
 
 ## Part 3: How We Approached It
-As I see it there are 3 parts of it that can scale independently.
-1. Tools, Skills, 
-2. Knowledge base and Code
-3. Process    
+I divided the problem statement into 3 streams that can scale independently.
+1. **Tools** ~~The car itself~~
+   - **Prompt libraries** — versioned, reviewed, maintained. But a documentation exercise without context engineering (see Part 1).
+   - **Skills** — bundled instructions loaded on demand. Lazy-loading is a context-level decision, not a prompt-level one.
+   - **Agents / subagents** — clean context windows with scoped tool availability. Requires context boundaries and handoff compression.
+   - **MCP servers / tool definitions** — compete for token budget with instructions and history. Scoping per task is structural, not rhetorical.
+   - **Hooks / plugins** (PreToolUse, PostToolUse) — machine-enforce invariants at the tool-call layer, regardless of what the prompt says. No prompt engineering equivalent.
+   - **Eval frameworks / regression gates** — automated pipelines that gate merges on eval scores. Without them, scaling is blind.
+   - **Observability / tracing** — token budgets, failure rates, context quality metrics. You can't improve what you don't measure.
+   - **Guardrails / content filters** — inline enforcement at the output layer. Catches hallucinated tool calls and policy violations before they reach production.
+   - **Latest models** — each model generation shifts the context window size, attention mechanics, and instruction-following behaviour. Tools must adapt.
+   - **Forge (internal tool)** — our platform for building and deploying agentic workflows.
+   - **Context discovery / retrieval** — how agents find the right context from the KB at runtime: ranking, caching, freshness checks. The retrieval layer is what wires Tools to Knowledge Base; without it, the KB is just a document store.
+   - **GitHub Spaces / Knowledge Bases** — integrated stores for project-level context (docs, ADRs, architecture decisions). Useful when they stay fresh, but risk stale retrieval if not synced with the canonical KB.
+2. **Knowledge Base** — ~~Think of like map + driver handbook + mechanic manual ~~
+   - A lot of teams use prompts to generate code. The problem? Prompts are not reused, and prompts often lack full context of the system they target.
+   - Without full context, the model fills gaps with assumptions based on its training data — reasonable in isolation, wrong in practice.
+   - We make the knowledge base the source of truth: a structured, versioned store of solution designs, API specs, data models, business rules, and NFRs.
+   - All stakeholders contribute — BAs (requirements), SMEs (domain rules), SAs (architecture constraints), Developers (implementation patterns). No single group owns the full picture alone.
+   - A pipeline 2-way syncs with Confluence. Confluence is the human-facing canonical source; the KB is the agent-facing compiled view. Teams update Confluence and the KB stays current without extra toil.
+3. **Process** (accuracy, AI-DLC) — ~~Traffic Rules, Road sign, licensing system~~
+   - **AI-DLC gating** — stage gates: explore → validate → productionise → monitor. Evidence required at each stage to pass.
+   - **Eval standards** — metrics (accuracy, recall, hallucination rate, token efficiency), thresholds, regression suite. No evals = no merge.
+   - **Review workflows** — who reviews AI-generated output and at what depth. PRs, context diffs, prompt diffs. Addresses the reviewer scaling problem raised up top.
+   - **Quality baselines** — how you measure productivity, non-deterministic output quality, skill effectiveness as numeric values. Compounding stochasticity tracking.
+   - **Version & release strategy** — prompt versioning, KB snapshots, model pinning vs. canary. Roll out changes without breaking production.
+   - **Feedback loops** — how production failures (false positives, hallucinations) flow back into evals, KB corrections, and prompt improvements. Without this, errors repeat.
+   - **Audit & compliance** — for regulated environments. Traceability from requirement → context → generated output.
+
+But these three parts raise a hard question: with people able to write and contribute skills in minutes, how do you decide which of the 200+ skills are relevant to your use case? Extrapolate this to tools, agents, plugins, hooks, prompt files — the discovery problem scales with the contribution velocity. Without a solution, the library becomes noise and every team reinvents.
 
 When we looked at Telly's reality — a Fintech company running multiple product lines across regulated markets — we found a common pattern. Teams were doing the first thing well: building prompt libraries. Every squad had CLAUDE.md files, skill definitions, reusable prompt templates, agent configs, and hooks. They were versioned, reviewed, and maintained.
 
@@ -224,15 +205,26 @@ This Cascade & Contribute model eliminated the duplication problem. A domain tea
 
 The second hierarchy addressed the missing piece: codifying *how* to think about context engineering itself. Teams were building prompts without shared knowledge — no standard for what belongs in the window, how to isolate agent boundaries, or how to measure context quality.
 
-We built a knowledge base structured as template repositories across three levels:
+We built a knowledge base structured as template repositories across three levels.
+
+**Template repos** — skeleton only, the architectural blueprint. They form a tree you can traverse: App references Domain, Domain references Fintech, and you can navigate from any level to any other.
 
 ```mermaid
 graph TB
-    subgraph TEMPLATES["Template Repos (Skeleton Only)"]
-        T1["Fintech Template"]
-        T2["Domain Template"]
-        T3["App Template"]
-    end
+    T1["Fintech Template"]
+    T2["Domain Template"]
+    T3["App Template"]
+    
+    T1 --- T2
+    T2 --- T3
+```
+
+**Forked repos** — populated with real content, forked from templates:
+
+```mermaid
+graph TB
+    T2["Domain Template"]
+    T3["App Template"]
     
     subgraph FORKS["Forked Repos (Populated with Content)"]
         F1["Fintech KB"]
@@ -255,25 +247,21 @@ graph TB
         A9["Notification Handler KB"]
     end
     
-    T1 --> T2
-    T2 --> T3
-    
-    T1 -->|"fork"| F1
-    T2 -->|"fork"| D1
-    T2 -->|"fork"| D2
-    T2 -->|"fork"| D3
-    T2 -->|"fork"| D4
-    T2 -->|"fork"| D5
-    T2 -->|"fork"| D6
-    T3 -->|"fork"| A1
-    T3 -->|"fork"| A2
-    T3 -->|"fork"| A3
-    T3 -->|"fork"| A4
-    T3 -->|"fork"| A5
-    T3 -->|"fork"| A6
-    T3 -->|"fork"| A7
-    T3 -->|"fork"| A8
-    T3 -->|"fork"| A9
+    T2 -.->|"fork"| D1
+    T2 -.->|"fork"| D2
+    T2 -.->|"fork"| D3
+    T2 -.->|"fork"| D4
+    T2 -.->|"fork"| D5
+    T2 -.->|"fork"| D6
+    T3 -.->|"fork"| A1
+    T3 -.->|"fork"| A2
+    T3 -.->|"fork"| A3
+    T3 -.->|"fork"| A4
+    T3 -.->|"fork"| A5
+    T3 -.->|"fork"| A6
+    T3 -.->|"fork"| A7
+    T3 -.->|"fork"| A8
+    T3 -.->|"fork"| A9
     
     F1 --> D1
     F1 --> D2
