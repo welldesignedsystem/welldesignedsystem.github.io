@@ -149,7 +149,7 @@ Tools that implement this:
 
 ### Layer 4 — Golden Datasets and Regression Tracking
 
-- [Code examples]](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/04-golden-dataset.py) 
+- [Code examples](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/04-golden-dataset.py) 
 - [full implementation](https://github.com/welldesignedsystem/baba-yaga/blob/main/src/eval.py).
 
 Curate a representative set of real inputs — ideally pulled from actual usage rather than invented — and snapshot how your system scores against them over time. You're not asserting exact output equality; you're asserting the **eval score on that set doesn't regress** when you change a prompt, swap a model version or edit a skill definition.
