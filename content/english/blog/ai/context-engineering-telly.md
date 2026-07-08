@@ -1,6 +1,6 @@
 +++
 date = '2024-07-08T12:00:00+10:00'
-draft = true
+draft = false
 title = 'Context Engineering: Why AI Projects Fail and How We Approached It'
 tags = ['Context Engineering', 'LLM', 'AI Agents', 'Failure Modes']
 summary = "80% of AI projects fail. Here's why context mismanagement is the root cause, and how we approached context engineering in practice."
