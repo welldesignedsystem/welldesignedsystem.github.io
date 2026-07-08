@@ -6,24 +6,48 @@ tags = ['Context Engineering', 'LLM', 'AI Agents', 'Failure Modes']
 summary = "80% of AI projects fail. Here's why context mismanagement is the root cause, and how we approached context engineering in practice."
 +++
 
-- Last year everybody was talking about - AI, how teams must accelerate the use of AI, finally - tools and models were released for use across Telly, there was a lot of push to start using AI. 
+- Last year a lot of AI tools and LLM models were released for use across Telly, there was a lot of push to start adopting it. 
 - In Fintech we saw it differently: 
-  - You are going to enable hundreds of engineers to generate code they barely understood - at scale. 
   - How do we **control** - quality 
-  - Yes you can produce PRs at scale - how will the reviewers match up?
+  - Yes you can produce PRs at scale - how will the reviewers match up? [include]
   - When everyone has their own ways of doing things how will you baseline, gate, measure success of **non deterministic contents**?
-  - How do you measure the new velocity of doing things, how do you represent productivity as a numerical value, how much a skill has helped or dragged a developer?
-  - You are going to have componding Stochasticity.
-  - Telly has a repo for prompt library as a repo, how are you going to know e.g. 5 skills among the 200 skills relevant to your project?
+  - How do you measure the new velocity of doing things, how do you represent productivity as a numerical value, how much a skill has helped or dragged a developer? [include]
+  - How are you going to solve the problem of componding Stochasticity? 
+  - Telly has a repo for prompt library as a repo, how are you going to know e.g. 5 skills among the 200 skills relevant to your project? [include]
   - A lot of the issues of generating inaccurate content is attributed to ambiguity. Model makes reasonable assumptions based on the data it was trained on - how do you handle that? 
-  - Let's say you manage to solve all that - How do you **standardize things**, get them to **speak the same language**, skills **resuable**, make success reproducable.
+  - Let's say you manage to solve all that - How do you **control** quality and **standardize things**, get them to **speak the same language**, skills **resuable**, make success reproducable. [include]
+  - You are going to enable hundreds of engineers to generate code they barely understood - at scale. [include]
 
-If you start without this - It is almost like handing over the keys to a car to someone who has only the most basic idea of how to operate a car — that too in a town where the traffic rules have not been established yet. At the same time we don't want to be bottle neck.
+If you start without this - It is almost like handing over the keys to someone who has only the most basic idea of how to operate a car — that too in a town where the traffic rules have not been established yet. At the same time we don't want to be bottle neck.
 
-- I divided the problem statement into 3 streams.
-1. Tools (skills, agents, copilot, tools like knowledgebases/spaces, Forge)
-2. Knowledge Base
-3. Process (accuracy, AI-DLC)
+I divided the problem statement into 3 streams.
+1. **Tools** ~~The car itself~~
+   - **Prompt libraries** — versioned, reviewed, maintained. But a documentation exercise without context engineering (see Part 1).
+   - **Skills** — bundled instructions loaded on demand. Lazy-loading is a context-level decision, not a prompt-level one.
+   - **Agents / subagents** — clean context windows with scoped tool availability. Requires context boundaries and handoff compression.
+   - **MCP servers / tool definitions** — compete for token budget with instructions and history. Scoping per task is structural, not rhetorical.
+   - **Hooks / plugins** (PreToolUse, PostToolUse) — machine-enforce invariants at the tool-call layer, regardless of what the prompt says. No prompt engineering equivalent.
+   - **Eval frameworks / regression gates** — automated pipelines that gate merges on eval scores. Without them, scaling is blind.
+   - **Observability / tracing** — token budgets, failure rates, context quality metrics. You can't improve what you don't measure.
+   - **Guardrails / content filters** — inline enforcement at the output layer. Catches hallucinated tool calls and policy violations before they reach production.
+    - **Latest models** — each model generation shifts the context window size, attention mechanics, and instruction-following behaviour. Tools must adapt.
+    - **Forge (internal tool)** — our platform for building and deploying agentic workflows.
+    - **Context discovery / retrieval** — how agents find the right context from the KB at runtime: ranking, caching, freshness checks. The retrieval layer is what wires Tools to Knowledge Base; without it, the KB is just a document store.
+    - **GitHub Spaces / Knowledge Bases** — integrated stores for project-level context (docs, ADRs, architecture decisions). Useful when they stay fresh, but risk stale retrieval if not synced with the canonical KB.
+2. **Knowledge Base** — ~~Think of like map + driver handbook + mechanic manual ~~
+   - A lot of teams use prompts to generate code. The problem? Prompts are not reused, and prompts often lack full context of the system they target.
+   - Without full context, the model fills gaps with assumptions based on its training data — reasonable in isolation, wrong in practice.
+   - We make the knowledge base the source of truth: a structured, versioned store of solution designs, API specs, data models, business rules, and NFRs.
+   - All stakeholders contribute — BAs (requirements), SMEs (domain rules), SAs (architecture constraints), Developers (implementation patterns). No single group owns the full picture alone.
+   - A pipeline 2-way syncs with Confluence. Confluence is the human-facing canonical source; the KB is the agent-facing compiled view. Teams update Confluence and the KB stays current without extra toil.
+3. **Process** (accuracy, AI-DLC) — ~~Traffic Rules, Road sign, licensing system~~
+   - **AI-DLC gating** — stage gates: explore → validate → productionise → monitor. Evidence required at each stage to pass.
+   - **Eval standards** — metrics (accuracy, recall, hallucination rate, token efficiency), thresholds, regression suite. No evals = no merge.
+   - **Review workflows** — who reviews AI-generated output and at what depth. PRs, context diffs, prompt diffs. Addresses the reviewer scaling problem raised up top.
+   - **Quality baselines** — how you measure productivity, non-deterministic output quality, skill effectiveness as numeric values. Compounding stochasticity tracking.
+   - **Version & release strategy** — prompt versioning, KB snapshots, model pinning vs. canary. Roll out changes without breaking production.
+   - **Feedback loops** — how production failures (false positives, hallucinations) flow back into evals, KB corrections, and prompt improvements. Without this, errors repeat.
+   - **Audit & compliance** — for regulated environments. Traceability from requirement → context → generated output.
 
 Additional: 
     - With people able to write and contribute skills in minutes - How are you going to decide which of the skills are relevant to your usecase? extrapolate this to tools, agents, plugins, hooks, prompt files etc..
