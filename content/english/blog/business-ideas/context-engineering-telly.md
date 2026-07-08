@@ -6,17 +6,22 @@ tags = ['Context Engineering', 'LLM', 'AI Agents', 'Failure Modes']
 summary = "80% of AI projects fail. Here's why context mismanagement is the root cause, and how we approached context engineering in practice."
 +++
 
-- Last year a lot of AI tools and LLM models were released for use across Telly, there was a lot of push to start adopting it. 
-- In Fintech we saw it differently: 
-  - How do we **control** - quality 
-  - Yes you can produce PRs at scale - how will the reviewers match up? [include]
-  - When everyone has their own ways of doing things how will you baseline, gate, measure success of **non deterministic contents**?
-  - How do you measure the new velocity of doing things, how do you represent productivity as a numerical value, how much a skill has helped or dragged a developer? [include]
-  - How are you going to solve the problem of componding Stochasticity? 
-  - Telly has a repo for prompt library as a repo, how are you going to know e.g. 5 skills among the 200 skills relevant to your project? [include]
-  - A lot of the issues of generating inaccurate content is attributed to ambiguity. Model makes reasonable assumptions based on the data it was trained on - how do you handle that? 
-  - Let's say you manage to solve all that - How do you **control** quality and **standardize things**, get them to **speak the same language**, skills **resuable**, make success reproducable. [include]
-  - You are going to enable hundreds of engineers to generate code they barely understood - at scale. [include]
+- Last year a lot of AI tools and LLM models were released for use across Telly, there was a lot of push to start adopting it.
+- In Fintech we saw it differently. We asked questions — not about the models, but about the systems around them:
+  - **Quality control** — how do you control quality when every output is non-deterministic and every team uses different tools?
+  - **Reviewer scaling** — you can produce PRs at scale with AI. But who reviews them? How do review workflows keep up with generation velocity?
+  - **Baselines for non-deterministic output** — when everyone has their own way of doing things, how do you baseline, gate, and measure success of content that differs every time?
+  - **Productivity as a number** — how do you represent productivity numerically? How much has a skill helped or dragged a developer? Without a number, it's a story, not a metric.
+  - **Compounding stochasticity** — each agent layer adds variance. A 95%-reliable single step becomes 60% reliable across ten steps. How do you constrain the system, not just the prompt?
+  - **Skill discoverability** — Telly's prompt library has 200+ skills. Which 5 are relevant to your project? Without discoverability, the library is noise.
+  - **Ambiguity** — models make reasonable assumptions based on training data, not your codebase. Inaccurate content is almost always an ambiguity problem. How do you make context explicit?
+  - **Standardisation at scale** — even if you solve quality, how do you get teams to speak the same language? Make skills reusable? Make success reproducible? That's not a prompt problem — it's a system design problem.
+  - **Engineer competence gap** — you are going to enable hundreds of engineers to generate code they barely understand, at scale. How do you prevent the gap between generation speed and comprehension from becoming a liability?
+  - **Cost governance** — who pays when every engineer burns premium tokens on every turn? How do you measure ROI per skill, per agent, per team?
+  - **Security / supply chain** — AI-generated code introduces vulnerable dependencies, secret leakage, and supply chain risk. Where is the security gate in the pipeline?
+  - **Rollback / incident response** — a bad context change or skill update breaks production. What's the rollback plan? How do you run incident response for AI-generated failures?
+  - **Testing the non-deterministic** — evals measure aggregate quality, but how do you write deterministic tests for stochastic outputs? Property-based testing? Snapshot diffing with thresholds?
+  - **Onboarding the practice** — context engineering is a new discipline. How do you onboard engineers without bottlenecking on the platform team?
 
 If you start without this - It is almost like handing over the keys to someone who has only the most basic idea of how to operate a car — that too in a town where the traffic rules have not been established yet. At the same time we don't want to be bottle neck.
 
