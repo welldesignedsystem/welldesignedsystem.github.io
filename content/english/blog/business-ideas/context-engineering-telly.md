@@ -7,26 +7,25 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 +++
 
 - Last year everybody was talking about - AI, how teams must accelerate the use of AI, finally - tools and models were released for use across Telly, there was a lot of push to start using AI. 
-- The opportunity in Fintech was real: faster delivery. 
-- In Fintech in AI Working we asked a different set question: 
-  - What would the **quality** look like when hundreds of engineers were generating code they barely understood?
-  - How do we **control** it without becoming a bottleneck?
-  - How do we get everyone **speaking the same language** about what the AI should and shouldn't do?
+- In Fintech we saw it differently: 
+  - You are going to enable hundreds of engineers to generate code they barely understood - at scale. 
+  - How do we **control** - quality 
+  - Yes you can produce PRs at scale - how will the reviewers match up?
+  - When everyone has their own ways of doing things how will you baseline, gate, measure success of **non deterministic contents**?
+  - How do you measure the new velocity of doing things, how do you represent productivity as a numerical value, how much a skill has helped or dragged a developer?
+  - You are going to have componding Stochasticity.
+  - Telly has a repo for prompt library as a repo, how are you going to know e.g. 5 skills among the 200 skills relevant to your project?
+  - A lot of the issues of generating inaccurate content is attributed to ambiguity. Model makes reasonable assumptions based on the data it was trained on - how do you handle that? 
+  - Let's say you manage to solve all that - How do you **standardize things**, get them to **speak the same language**, skills **resuable**, make success reproducable.
 
-  - AI enables devs to produce code that they barely understand.
-  - produce PRs at scale which reviewers cannot match up. 
-  - When everyone has their own ways of doing things how will you baseline, gate etc?
-  - When they function at scale they eventually produce more of what ever I just said.
+If you start without this - It is almost like handing over the keys to a car to someone who has only the most basic idea of how to operate a car — that too in a town where the traffic rules have not been established yet. At the same time we don't want to be bottle neck.
 
-It is almost like handing over the keys to a car to someone who has only the most basic idea of how to operate a car — that too in a town where the traffic rules have not been established yet.
+- I divided the problem statement into 3 streams.
+1. Tools (skills, agents, copilot, tools like knowledgebases/spaces, Forge)
+2. Knowledge Base
+3. Process (accuracy, AI-DLC)
 
 Additional: 
-    - How do you measure the new velocity of doing things
-    - how do you measure the quality of code produced
-    - Skill and agents used to produce code? 
-    - How do you make sure knowledge bases are complete? give agents incomplete context and it will make reasonable assumptions based on what it was trained on.
-    - How do you use AI to abstract things such that we can encapsulate the complexity into skills. e.g. give the full context and ask agent if my NFRs are met.
-    - Telstra release a prompt library as a repo but how are you going to control duplicate skills
     - With people able to write and contribute skills in minutes - How are you going to decide which of the skills are relevant to your usecase? extrapolate this to tools, agents, plugins, hooks, prompt files etc..
 
 What will happen if you haven't thought through this?
@@ -129,6 +128,10 @@ When context is poorly engineered, specific failure patterns emerge. These are d
 Cognition (makers of Devin) called context engineering *"effectively the #1 job of engineers building AI agents"* ([LangChain blog, Apr 2026](https://www.langchain.com/blog/context-engineering-for-agents)). Gartner predicts that **40% of new enterprise applications will contain embedded AI agents by 2026** ([Gartner, 2025](https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025)). The companies that master context engineering will have an insurmountable advantage — not because they are using better models, but because they are feeding their models better context.
 
 ## Part 3: How We Approached It
+As I see it there are 3 parts of it that can scale independently.
+1. Tools, Skills, 
+2. Knowledge base and Code
+3. Process    
 
 When we looked at Telly's reality — a Fintech company running multiple product lines across regulated markets — we found a common pattern. Teams were doing the first thing well: building prompt libraries. Every squad had CLAUDE.md files, skill definitions, reusable prompt templates, agent configs, and hooks. They were versioned, reviewed, and maintained.
 
