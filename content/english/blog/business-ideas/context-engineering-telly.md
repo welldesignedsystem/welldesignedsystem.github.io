@@ -2,12 +2,32 @@
 date = '2024-07-08T12:00:00+10:00'
 draft = false
 title = 'Context Engineering: Why AI Projects Fail and How We Approached It'
-tags = ['Context Engineering', 'LLM', 'AI Agents', 'Failure Modes']
+tags = ['Context Engineering', 'LLM', 'AI Agents', 'Telly']
 summary = "80% of AI projects fail. Here's why context mismanagement is the root cause, and how we approached context engineering in practice."
 +++
 
-- Last year a lot of AI tools and LLM models were released for use across Telly, there was a lot of push to start adopting it. The Planning Fallacy at play: teams underestimated time, cost, and risk while overestimating the benefits.
-- AI was being pushed as the solution to everything. There were workshops to find usecases and retrofit AI. Then I was running AI WG in Fintech, the way I saw it: 
+
+## Part 1: What Is Context Engineering
+
+- Context Engineering is the difference between AI that guesses and AI that knows how to do something.
+- Prompt engineering => crafting the instruction text itself — wording, examples, formatting, tone.
+- Context engineering => involves assembling a lot of more things in the context window — instructions, retrieved docs, memory, tool outputs, conversation history, schemas — dynamically, in the right order, at the right size, with irrelevant stuff filtered out.
+  - Reusable prompts
+  - instructions
+  - Skills
+  - Agents / subagents
+  - MCP servers and tools-
+  - Hooks to enforce behavior
+  - Plugins
+  - memory/conversational history
+  - schemas
+  - loading from different data 
+- A prompt library holds the **what** (instructions), Context engineering is the **why**, **when** and **how** (what context to load, when to load it, what to keep out).
+- Context engineering addresses all of these by managing the entire state. Remember the state is like your attention span - you dont want to put too little (it will make assumptions) or too much (context rot in other words the answer is burried somewhere in the hay stack) it will not fetch the relevant information.
+
+## Introduction
+- Last year a lot of AI tools and LLM models were released for use across Telly, there was a lot of push to start adopting it. 
+- AI was being pushed as the solution to everything. There were workshops to find usecases and retrofit AI. I have been running the AI WG for over a year now, the way I saw some of it: 
   - **Hype Cycle awareness** — we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning ROI — models are expensive (same thing that happened with AWS). What about all the baggage AI is going to produce at scale? How do you plan to clean that up?
      - **EJB** — J2EE mandated it, XML hell, complexity killed productivity. Spring emerged.
      - **SOAP / XML web services** — enterprise WS-* stack. REST won.
@@ -29,33 +49,9 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
   - **Rollback / incident response** — a bad context change or skill update breaks production. What's the rollback plan? How do you run incident response for AI-generated failures?
   - **Testing the non-deterministic** — evals measure aggregate quality, but how do you write deterministic tests for stochastic outputs? Property-based testing? Snapshot diffing with thresholds?
   - **Onboarding the practice** — context engineering is a new discipline. How do you onboard engineers without bottlenecking on the platform team?
+  - **The Planning Fallacy**: teams underestimated time, cost, and risk while overestimating the benefits.
 
-If you start without this — it is almost like handing over the keys to someone who has only the most basic idea of how to operate a car, in a town where the traffic rules have not been established yet. At the same time we don't want to be the bottleneck.
-
-### What we needed to achieve
-
-Before we could build context engineering as a discipline, we had to agree on what it actually means in practice. These are the design goals that emerged from those early Fintech conversations:
-
-- **Context completeness** — when a prompt lacks full context, the model fills the gaps with assumptions drawn from its training data, not from your codebase, domain, or requirements. Those assumptions are reasonable in isolation but wrong in practice. Context engineering treats completeness as a first-class property: every piece of information the model needs to produce a correct answer must be explicitly in the window, not implied.
-- **Systems design** — producing code at scale demands the same rigor as any software system: strong fundamentals, unambiguous specifications, well-chosen design patterns, and a clear architecture. Context must be complete, disambiguated and structured with the same discipline as the code it generates.
-- **Testable outcomes** — you can measure token consumption, eval scores, regression gates. You can A/B test context configurations and gate merges when scores drop ([see eval layer](../ai-outputs-eval/)).
-- **Compounding stochasticity** — every agent layer introduces non-determinism: sampling variance, context boundaries, tool selection entropy. Stack three layers and the output distribution widens dramatically. A single 95%-reliable tool call becomes 60% reliable across ten steps. Prompt craft handles one stochastic call; engineering constrains the system across many.
-- **Scope boundaries** — prompt engineering should be restricted to cases where the session already has enough context to accommodate the prompt. If the prompt needs to retrieve, compose, or disambiguate context before it can be answered, that is context engineering's responsibility. The boundary is simple: can the model answer this correctly with nothing but the prompt, or does it need additional context loaded first?
-- **Context sizing** — every token depletes the model's attention budget. Context engineering decides how much context to load, when, and in what order — not by guesswork, but by measuring token consumption and eval scores per configuration. Too little context and the model lacks information; too much and relevant signals drown in noise.
-- **Context isolation** — when multiple agents, skills, or tools share a session, their context must be kept separate. A fraud detection agent should not inherit context from a collections agent. Context engineering provides isolation boundaries — subagents with clean windows, scoped tool availability, and structured handoffs that prevent cross-contamination ([Anthropic, Sep 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
-- **Progressive disclosure** — not all context belongs in the window at once. The right pattern is to load coarse context first (role, goals, constraints), then reveal finer-grained context on demand as the agent navigates toward a specific task. Skills, MCP tools, and retrieval-augmented prompts are the mechanism; deciding the order and granularity is the engineering ([Karpathy, 2025](https://x.com/karpathy/status/1937902205765607626)).
-
-## Part 1: What Is Context Engineering
-
-- Context engineering is the practice of deliberately designing, structuring and optimizing the context provided to an LLM to produce more accurate, reliable outputs.
-- Prompt engineering — writing and organizing instructions for a single LLM call — works for one-shot tasks where the only variable is phrasing. But it collapses under the weight of real agentic systems for several reasons ([Anthropic, Sep 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)):
-  - **Reusable prompt libraries** — collecting and versioning prompts is a documentation exercise, not an engineering practice. Without context engineering, each prompt is a static blob with no awareness of session state, tool availability, or what other prompts have already loaded into the window.
-  - **Skills** — a skill is a bundled set of instructions that loads on demand. Prompt engineering has no concept of lazy-loading; it assumes all instructions are present at call time. Registering skill names and descriptions at startup and deferring full content until needed is a context-level decision, not a prompt-level one ([Claude Code docs](https://code.claude.com/docs/en/skills)).
-  - **Agents / subagents** — delegating to a subagent with a clean context window and returning only a summary requires managing context boundaries. Prompt engineering has no mechanism for isolation, compaction, or handoff compression ([Anthropic](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
-  - **MCP servers and tools** — tool definitions compete for token budget with instructions and history. The question "which tools are available" is structural, not rhetorical. Too many tools force the model to waste turns deciding; too few leave it incapable. Prompt engineering can't scope tool availability per task ([Anthropic](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents); [MCP docs](https://code.claude.com/docs/en/mcp)).
-  - **Hooks to enforce behavior** — hooks (PreToolUse, PostToolUse) fire on lifecycle events and enforce invariants regardless of what the prompt says. They operate at the tool-call layer, not the instruction layer. Prompt engineering has no equivalent — it relies on the model choosing to follow instructions, while hooks machine-enforce constraints ([Claude Code docs](https://code.claude.com/docs/en/plugins-reference)).
-- Context engineering addresses all of these by managing the entire state: system prompts, tools, MCP servers, data sources, conversation history, skills, agents, hooks, and how they interact — deciding what enters the window, what stays out, what gets retrieved on demand, and what gets compacted when space runs out ([IBM, 2025](https://www.ibm.com/think/topics/context-engineering)).
-- The guiding principle, as Andrej Karpathy distilled it: *"context engineering is the delicate art and science of filling the context window with just the right information for the next step"* ([Karpathy, 2025](https://x.com/karpathy/status/1937902205765607626)). Every token depletes the model's attention budget — the goal is the smallest possible set of high-signal tokens that maximize the likelihood of a desired outcome.
+You can start without this — it is almost like handing over the keys to someone who has only the most basic idea of how to operate a car, in a town where the traffic rules have not been established yet. Yes, the person can get the car rolling. At the same time we don't want to be the bottleneck.
 
 ## Part 2: Why LLM-Based AI Projects Fail
 
@@ -120,6 +116,20 @@ All sources below focus on AI *engineering* (coding agents, PRs, production inci
 - **Cost governance matters** — 60% of LLM call failures are rate limits (capacity), not model quality. 69% of input tokens are system scaffolding, not reasoning. Context engineering reduces both.
 - **Benchmarks ≠ production** — the 15 failure modes that matter most (reasoning drift, version drift, cost collapse) are invisible in evals. Only telemetry and process catch them.
 - **Context engineering is THE job** — Cognition calls it "effectively the #1 job of engineers building AI agents." By 2026, 40% of new enterprise apps will embed agents. The gap between those who engineer context and those who don't is a competitive moat.
+
+
+### Governing Principles:
+
+Before we could build context engineering as a discipline, we had to agree on what it actually means in practice. These are the design goals that emerged from those early Fintech conversations:
+
+- **Context completeness** — when a prompt lacks full context, the model fills the gaps with assumptions drawn from its training data, not from your codebase, domain, or requirements. Those assumptions are reasonable in isolation but wrong in practice. Context engineering treats completeness as a first-class property: every piece of information the model needs to produce a correct answer must be explicitly in the window, not implied.
+- **Systems design** — producing code at scale demands the same rigor as any software system: strong fundamentals, unambiguous specifications, well-chosen design patterns, and a clear architecture. Context must be complete, disambiguated and structured with the same discipline as the code it generates.
+- **Testable outcomes** — you can measure token consumption, eval scores, regression gates. You can A/B test context configurations and gate merges when scores drop ([see eval layer](../ai-outputs-eval/)).
+- **Compounding stochasticity** — every agent layer introduces non-determinism: sampling variance, context boundaries, tool selection entropy. Stack three layers and the output distribution widens dramatically. A single 95%-reliable tool call becomes 60% reliable across ten steps. Prompt craft handles one stochastic call; engineering constrains the system across many.
+- **Scope boundaries** — prompt engineering should be restricted to cases where the session already has enough context to accommodate the prompt. If the prompt needs to retrieve, compose, or disambiguate context before it can be answered, that is context engineering's responsibility. The boundary is simple: can the model answer this correctly with nothing but the prompt, or does it need additional context loaded first?
+- **Context sizing** — every token depletes the model's attention budget. Context engineering decides how much context to load, when, and in what order — not by guesswork, but by measuring token consumption and eval scores per configuration. Too little context and the model lacks information; too much and relevant signals drown in noise.
+- **Context isolation** — when multiple agents, skills, or tools share a session, their context must be kept separate. A fraud detection agent should not inherit context from a collections agent. Context engineering provides isolation boundaries — subagents with clean windows, scoped tool availability, and structured handoffs that prevent cross-contamination ([Anthropic, Sep 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
+- **Progressive disclosure** — not all context belongs in the window at once. The right pattern is to load coarse context first (role, goals, constraints), then reveal finer-grained context on demand as the agent navigates toward a specific task. Skills, MCP tools, and retrieval-augmented prompts are the mechanism; deciding the order and granularity is the engineering ([Karpathy, 2025](https://x.com/karpathy/status/1937902205765607626)).
 
 ## Part 3: How We Approached It
 I divided the problem statement into 3 streams that can scale independently.
