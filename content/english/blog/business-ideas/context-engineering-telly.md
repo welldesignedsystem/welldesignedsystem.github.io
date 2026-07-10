@@ -8,10 +8,9 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 
 
 ## Part 1: What Is Context Engineering
-
 - Context Engineering is the difference between AI that guesses and AI that knows how to do something.
 - Prompt engineering => crafting the instruction text itself — wording, examples, formatting, tone.
-- Context engineering => involves assembling a lot of more things in the context window — instructions, retrieved docs, memory, tool outputs, conversation history, schemas — dynamically, in the right order, at the right size, with irrelevant stuff filtered out.
+- Context engineering => You must be thinking why is it called Engineering is it not writing a document? involves assembling a lot of more things in the context window — instructions, retrieved docs, memory, tool outputs, conversation history, schemas — dynamically, in the right order, at the right size, with irrelevant stuff filtered out.
   - Reusable prompts
   - instructions
   - Skills
@@ -22,16 +21,17 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
   - memory/conversational history
   - schemas
   - loading from different data 
-- A prompt library holds the **what** (instructions), Context engineering is the **why**, **when** and **how** (what context to load, when to load it, what to keep out).
 - Context engineering addresses all of these by managing the entire state. Remember the state is like your attention span - you dont want to put too little (it will make assumptions) or too much (context rot in other words the answer is burried somewhere in the hay stack) it will not fetch the relevant information.
 
 ## Introduction
+- Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production.
+- You give access to AI and the same developer can push the entire domain full of code into production without understanding a single line of it.
 - Last year a lot of AI tools and LLM models were released for use across Telly, there was a lot of push to start adopting it. 
 - AI was being pushed as the solution to everything. There were workshops to find usecases and retrofit AI. I have been running the AI WG for over a year now, the way I saw some of it: 
   - **Hype Cycle awareness** — we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning ROI — models are expensive (same thing that happened with AWS). What about all the baggage AI is going to produce at scale? How do you plan to clean that up?
      - **EJB** — J2EE mandated it, XML hell, complexity killed productivity. Spring emerged.
      - **SOAP / XML web services** — enterprise WS-* stack. REST won.
-     - **Microservices** — decompose everything. Hit distributed system costs, consistency issues, latency, availability issues.
+     - **Microservices** — decompose everything. Hit distributed system costs, consistency issues, latency, availability issues. Spring Framework Reality is **Thinker vs Doer** - the nice term to this is framework being **opinionated**.
      - **NoSQL** — "SQL is dead". ACID got replaced with Bascially Available Soft State Eventualy Consistent. Hit missing transactions. Settled on polyglot persistence.
      - **Big Data / Hadoop** — data lake solves everything. High ops cost. Settled on simpler tools.
      - Same pattern every time: everyone rushed in before understanding the operational cost. The survivors solved real problems instead of following the hype.
@@ -125,7 +125,7 @@ Before we could build context engineering as a discipline, we had to agree on wh
 - **Context completeness** — when a prompt lacks full context, the model fills the gaps with assumptions drawn from its training data, not from your codebase, domain, or requirements. Those assumptions are reasonable in isolation but wrong in practice. Context engineering treats completeness as a first-class property: every piece of information the model needs to produce a correct answer must be explicitly in the window, not implied.
 - **Systems design** — producing code at scale demands the same rigor as any software system: strong fundamentals, unambiguous specifications, well-chosen design patterns, and a clear architecture. Context must be complete, disambiguated and structured with the same discipline as the code it generates.
 - **Testable outcomes** — you can measure token consumption, eval scores, regression gates. You can A/B test context configurations and gate merges when scores drop ([see eval layer](../ai-outputs-eval/)).
-- **Compounding stochasticity** — every agent layer introduces non-determinism: sampling variance, context boundaries, tool selection entropy. Stack three layers and the output distribution widens dramatically. A single 95%-reliable tool call becomes 60% reliable across ten steps. Prompt craft handles one stochastic call; engineering constrains the system across many.
+- **Compounding stochasticity** — every agent layer introduces non-determinism: sampling variance, context boundaries, tool selection entropy. Stack three layers and the output distribution widens dramatically. A layered Pyramid approach - the mix explicitly acknowledges you can't fully eliminate non-determinism, but the pyramid's shape (wide/cheap base, narrow/expensive tip) compresses it into a manageable band. ~60% deterministic, 30% model-graded, 10% human-in-the-loop 
 - **Scope boundaries** — prompt engineering should be restricted to cases where the session already has enough context to accommodate the prompt. If the prompt needs to retrieve, compose, or disambiguate context before it can be answered, that is context engineering's responsibility. The boundary is simple: can the model answer this correctly with nothing but the prompt, or does it need additional context loaded first?
 - **Context sizing** — every token depletes the model's attention budget. Context engineering decides how much context to load, when, and in what order — not by guesswork, but by measuring token consumption and eval scores per configuration. Too little context and the model lacks information; too much and relevant signals drown in noise.
 - **Context isolation** — when multiple agents, skills, or tools share a session, their context must be kept separate. A fraud detection agent should not inherit context from a collections agent. Context engineering provides isolation boundaries — subagents with clean windows, scoped tool availability, and structured handoffs that prevent cross-contamination ([Anthropic, Sep 2025](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
