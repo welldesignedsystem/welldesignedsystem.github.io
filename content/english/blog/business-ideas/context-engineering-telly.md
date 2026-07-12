@@ -8,20 +8,70 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 
 
 ## Part 1: What Is Context Engineering
-- Context Engineering is the difference between AI that guesses and AI that knows how to do something.
-- Prompt engineering => crafting the instruction text itself — wording, examples, formatting, tone.
-- Context engineering => You must be thinking why is it called Engineering is it not writing a document? involves assembling a lot of more things in the context window — instructions, retrieved docs, memory, tool outputs, conversation history, schemas — dynamically, in the right order, at the right size, with irrelevant stuff filtered out.
-  - Reusable prompts
-  - instructions
-  - Skills
-  - Agents / subagents
-  - MCP servers and tools-
-  - Hooks to enforce behavior
-  - Plugins
-  - memory/conversational history
-  - schemas
-  - loading from different data 
-- Context engineering addresses all of these by managing the entire state. Remember the state is like your attention span - you dont want to put too little (it will make assumptions) or too much (context rot in other words the answer is burried somewhere in the hay stack) it will not fetch the relevant information.
+- Context Engineering is the difference between **AI that is having to make guesses** and **AI that knows fully** how to do something.
+- **Prompt engineering** — **how you talk to AI** — wording, examples, formatting, tone.
+- **Context engineering** — involves assembling a lot of things in the **context window** or the **working memory**. You must be thinking why is it called Engineering is it not writing a document? It's bit more complicated than that. 
+
+The context memory layers follow a taxonomy derived from cognitive science and adapted for AI agent architecture. The 4 memory types describe *what* is stored; the implementation layers describe *how* context is managed.
+
+### The 4 Memory Types (WESP)
+
+| Memory Type | What it is | Example |
+|-------------|-----------|---------|
+| Working Memory | Context window — the model's active attention | Current conversation, loaded instructions, tool outputs |
+| Episodic Memory | Conversation history — what happened in this session | User requests, tool calls, past turns |
+| Semantic Memory | Knowledge base — facts and knowledge | Solution designs, API specs, ADRs, domain rules |
+| Procedural Memory | Skills and workflows — how to do things | Prompt templates, agent configs, decision trees |
+
+
+### Implementation Layers
+
+| Layer | What it is | Changes when... | Memory Type |
+|-------|-----------|-----------------|-------------|
+| Static | Templates, standards, configs | Manually updated | Working Memory |
+| Dynamic | Retrieved docs, user input | Query or task changes | Working Memory |
+| Runtime | Tool outputs, API calls | Execution happens | Working Memory |
+| Turn Buffer | Raw conversation turns and tool calls held verbatim (word for word) | Every new message or tool call | Episodic Memory |
+| Compacted History | Summarized/condensed prior turns | Buffer exceeds token budget, triggers compaction | Episodic Memory |
+| Live Retrieval | Content fetched fresh via grep, read, or MCP calls at query time | Query changes; freshness matters | Semantic Memory |
+| Indexed KB | Vector-embedded or indexed knowledge base entries | New knowledge added or re-indexed | Semantic Memory |
+| Canonical Store | Versioned source-of-truth docs (ADRs, specs, data models) | Domain rules or specs are updated | Semantic Memory |
+| Static Skill | Bundled instructions loaded on demand, fixed until edited | Skill definition manually revised | Procedural Memory |
+| Learned Workflow | Decision trees/configs that evolve from production feedback | Process improves from a feedback loop | Procedural Memory |
+
+*Cross-cutting: **Scoped** (agent isolation boundaries) is not a memory content type — it's an access-control mechanism that determines which agent or task sees which of the layers above. It applies across all four memory types rather than belonging to one.*
+
+### Context Components
+
+| Component | Layer | Description |
+|-----------|-------|--------------|
+| Reusable prompts | Static | Versioned, reviewed prompt templates reused across tasks |
+| Prompt files (.prompt.md) | Static | Versioned prompt templates stored in repo, loaded on demand |
+| Instructions | Static | System prompts, rules, and guidelines that define behavior |
+| Schemas | Static | Structured formats for data exchange and validation |
+| Plugins | Static | Extensions adding functionality to the system, configured ahead of time |
+| Retrieved documents (RAG) | Dynamic | Documents fetched based on the current query or task |
+| User input | Dynamic | Task description, follow-ups, and clarifications supplied mid-session |
+| Skills | Procedural | Bundled instructions, lazy-loaded on demand when a task matches |
+| Agents / subagents | Scoped | Isolated context windows with specific tool access for particular tasks |
+| MCP tool definitions | Scoped | Available tools/servers, scoped per task to control token budget |
+| Tool outputs | Runtime | Results returned from tool calls in the current session |
+| Hooks | Runtime | Pre/post tool call enforcers that machine-enforce invariants |
+| Conversational history | Episodic | Session-specific conversation state (what happened in this session) |
+| Knowledge Base | Semantic | Long-term knowledge: designs, specs, ADRs, domain rules |
+| Workflows / procedures | Procedural | How-to knowledge: step-by-step processes, decision trees |
+
+Context engineering involves loading from different data dynamically, in the right order, at the right size, with irrelevant stuff filtered out. Context engineering addresses all of these by managing the entire state. Remember the state is like your attention span - you don't want to put too little (it will make assumptions) or too much (context rot in other words the answer is buried somewhere in the haystack) it will not fetch the relevant information.
+
+**References — Memory Architecture:**
+- Tulving, E. (1972). "Episodic and semantic memory." In E. Tulving & W. Donaldson, *Organization of memory.* Academic Press. pp. 381-403. [Semantic Scholar](https://www.semanticscholar.org/paper/Episodic-and-semantic-memory-Tulving/d792562462dbb687015954805d31620240db57a1)
+- [paperclipped.de](https://www.paperclipped.de/en/blog/ai-agent-memory-persistent-context-architecture/) — "The Four-Layer Memory Stack: Working Memory, Episodic Memory, Semantic Memory, Procedural Memory" (Mar 2026)
+- [data-gate.ch](https://data-gate.ch/ai-agent-memory-architecture-2026/) — "AI Agent Memory Architecture: Episodic, Semantic, Procedural & Working Memory for Autonomous Systems"
+- [arXiv:2605.17625](https://arxiv.org/abs/2605.17625) — "Episodic-Semantic Memory Architecture for Long-Horizon Scientific Agents" (May 2026)
+- [arXiv:2512.13564](https://arxiv.org/abs/2512.13564) — "Memory in the Age of AI Agents" (Dec 2025)
+- [Atlan](https://atlan.com/know/types-of-ai-agent-memory/) — "Types of AI Agent Memory: Episodic, Semantic, Procedural and More" (Jun 2026)
+- [SurePrompts](https://sureprompts.com/blog/episodic-vs-semantic-memory-for-agents) — "Episodic vs Semantic Memory for AI Agents (2026)"
+- [The New Stack](https://thenewstack.io/memory-for-ai-agents-a-new-paradigm-of-context-engineering) — "Memory for AI Agents: A New Paradigm of Context Engineering" (Jan 2026)
 
 ## Introduction
 - Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production.
@@ -98,7 +148,7 @@ All sources below focus on AI *engineering* (coding agents, PRs, production inci
 
 ### Learnings
 
-- **The Magic Demo Problem** — a POC proves the technology works in a sandbox. It does not prove the system works at scale with real data, real volume, real adversaries, and real edge cases. The `detect-fraud` example above is every prompt library story: a clean demo → production collapse → rule explosion → context bloat → cost spike → abandonment.
+- **The Magic Demo Problem** — a POC proves the technology works in a sandbox. It does not prove the system works at scale with real data, real volume, real adversaries, and real edge cases. Every prompt library story follows the same arc: a clean demo → production collapse → rule explosion → context bloat → cost spike → abandonment.
 - **Bias for action does not prove AI will not fail at scale** — Amazon's "bias for action"/"two way door" is useful for disproving something: it tells you what can fail early. But success in a POC does not prove the result will hold at scale. In AI, a clean demo tells you nothing about production.
 - **Generation speed ≠ production quality** — code that passes human review fails 1.7x more often in production than human-authored code. The bottleneck shifts from writing to verifying, but verification infrastructure hasn't caught up.
 - **Reliability costs are hidden** — productivity gains are real (epics +66%, PRs +16%), but incidents/PR (+242%), bugs/dev (+54%), and code churn (+861%) rise faster. High DevOps maturity does not protect you.
