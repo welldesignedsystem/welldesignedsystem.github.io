@@ -266,7 +266,7 @@ Prompt libraries already existed across Telly, but they were flat and duplicated
 ```mermaid
 graph TB
     subgraph TELLY["Telly Level"]
-        A["Company-Wide Standards<br/>Skills, Agents, Hooks, MCP Servers<br/>Code Style, Security Rules, Brand Voice"]
+        A["Company-Wide Standards<br/>Skills, Agents, Hooks, MCP Servers<br/>Code Style, Security Rules"]
     end
     
     subgraph FINTECH["Fintech Level"]
@@ -274,11 +274,11 @@ graph TB
     end
     
     subgraph DOMAIN["Domain Level"]
-        C1["Charging<br/><small>Billing Order, Balance Manager, WTC</small>"]
-        C2["Collections<br/><small>Treatment Managers, Router, FICO, OCA</small>"]
+        C1["Charging"]
+        C2["Collections"]
         C3["Invoicing"]
         C4["Payments"]
-        C5["Credit & Fraud<br/>Assessment (CAFA)<br/><small>Rule Engine, Notification Handler</small>"]
+        C5["Credit & Fraud<br/>Assessment"]
         C6["Journals"]
     end
     
@@ -299,11 +299,11 @@ graph TB
     C6 -.->|"Contribute"| B
 ```
 
-**Telly Level** — company-wide standards that every agent inherits: security rules, brand voice, code style, MCP server definitions, and core skills (code review, commit message generation, documentation formatting). These are maintained by a central platform team and change infrequently.
+**Telly Level** — company-wide standards that every agent inherits: security rules, code style, MCP server definitions, and core skills (code review, commit message generation, documentation formatting). These are maintained by a central platform team and change infrequently.
 
 **Fintech Level** — patterns shared across all Fintech domains: compliance rules, regulatory templates, shared eval gates, and cross-domain skills. These are contributed by domains. When a Charging team discovers a pattern that applies to Collections too, they contribute it up to Fintech level.
 
-**Domain Level** — the sharp end, organized by product domain: Charging (Billing Order, Balance Manager, WTC), Collections (Treatment Managers, Router, FICO Collections, OCA), Invoicing, Payments, Credit & Fraud Assessment (CAFA — Rule Engine, Notification Handler), and Journals. Each domain owns skills, prompts, and agent configs specific to its area. This is where context is most specific and changes most frequently.
+**Domain Level** — the sharp end, organized by product domain: Charging, Collections, Invoicing, Payments, Credit & Fraud Assessment, and Journals. Each domain owns skills, prompts, and agent configs specific to its area. This is where context is most specific and changes most frequently.
 
 The solid arrows represent **Cascade** — context inherits top-down. Every domain automatically receives Telly security standards and Fintech compliance templates without lifting a finger.
 
@@ -343,18 +343,18 @@ graph TB
         D2["Collections KB"]
         D3["Invoicing KB"]
         D4["Payments KB"]
-        D5["CAFA KB"]
+        D5["Credit & Fraud KB"]
         D6["Journals KB"]
         
-        A1["Billing Order KB"]
-        A2["Balance Manager KB"]
-        A3["WTC KB"]
-        A4["Treatment Managers KB"]
+        A1["Order Placement KB"]
+        A2["Balance Management KB"]
+        A3["Discount & Offer KB"]
+        A4["Collections Treatment Managers KB"]
         A5["Router KB"]
-        A6["FICO Collections KB"]
-        A7["OCA KB"]
-        A8["Rule Engine KB"]
-        A9["Notification Handler KB"]
+        A6["Collections Rule Engine KB"]
+        A7["Outside Collection Agency KB"]
+        A8["Fraud Rule Engine KB"]
+        A9["Anomaly Detection service KB"]
     end
     
     T2 -.->|"fork"| D1
@@ -410,7 +410,7 @@ graph TB
 
 **Template repos** contain only the skeleton — a directory structure with folders (solution-designs, specs-api, events, data-model, nfrs, component-designs, architecture-designs, feature-templates) and markdown guides explaining what belongs at that level. No actual content, just the architecture.
 
-**Forked repos** are where the real knowledge lives. A team forks the template at their level and populates it with their actual content. A Charging team forks the Domain template and fills in charging-specific solution designs, API specs, and data models. A Billing Order team forks the App template and fills in billing-specific component designs and event schemas.
+**Forked repos** are where the real knowledge lives. A team forks the template at their level and populates it with their actual content. A Charging team forks the Domain template and fills in charging-specific solution designs, API specs, and data models. A Order Placement team forks the App template and fills in billing-specific component designs and event schemas.
 
 The tree structure is identical between templates and forks — the hierarchy (Fintech → Domain → App) is preserved in both. The fork arrows show which template each team forked from; the solid arrows between forks show how the knowledge base mirrors the tiered architecture.
 
