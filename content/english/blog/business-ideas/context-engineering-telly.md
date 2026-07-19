@@ -28,6 +28,23 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 ### Context engineering
 - involves assembling a lot of things in the **context window** or the **working memory**. 
 - is it really Engineering? is it not writing a document - It's bit more complicated than that. 
+- Engineering is the application of **scientific and mathematical principles** to design, build, analyze, and **maintain** **systems** and processes that solve practical problems.
+
+### Is It Really Engineering?
+
+| Element | Prompt Engineering | Context Engineering |
+|---|---|---|
+| Scientific principles | Empirical trial-and-error, no formal theory | Cognitive science memory taxonomy (Tulving), attention mechanism research, context rot studies |
+| Mathematical principles | No quantifiable design constraints | Compounding stochasticity (0.95^10 = 0.60), token budget math, eval scoring |
+| Design | Crafting individual instructions | Memory architecture (WESP), implementation layers, tiered hierarchy |
+| Build | Writing prompts | Knowledge bases, agent configs, MCP servers, eval frameworks, hooks |
+| Analyze | Manual testing | Token consumption metrics, eval scores, failure mode analysis |
+| Maintain | No maintenance cycle | Confluence sync, version/release strategy, feedback loops, regression gates |
+| Systems | Single artifact, no state | Multi-layered memory with isolation boundaries, tool scoping, retrieval pipelines |
+| Processes | No process framework | AI-DLC gating, review workflows, quality baselines, rollback procedures |
+
+Prompt engineering is a communication skill — knowing how to operate the car. Context engineering is system design — establishing the traffic rules, road signs, and licensing system. One is writing, the other is engineering.
+
 - The context memory layers follow a taxonomy(categorization) derived from **cognitive science** and adapted for AI agent architecture.
 
 ### The 4 Memory Types (WESP)
