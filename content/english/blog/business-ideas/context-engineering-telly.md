@@ -96,7 +96,9 @@ Prompt engineering is a communication skill — knowing how to operate the car. 
 
 Context engineering involves loading from different data dynamically, in the right order, at the right size, with irrelevant stuff filtered out. Context engineering addresses all of these by managing the entire state. Remember the state is like your attention span - you don't want to put too little (it will make assumptions) or too much (context rot in other words the answer is buried somewhere in the haystack) it will not fetch the relevant information.
 
-**References — Memory Architecture:**
+<details>
+<summary><strong>References — Memory Architecture:</strong></summary>
+
 - Tulving, E. (1972). "Episodic and semantic memory." In E. Tulving & W. Donaldson, *Organization of memory.* Academic Press. pp. 381-403. [Semantic Scholar](https://www.semanticscholar.org/paper/Episodic-and-semantic-memory-Tulving/d792562462dbb687015954805d31620240db57a1)
 - [paperclipped.de](https://www.paperclipped.de/en/blog/ai-agent-memory-persistent-context-architecture/) — "The Four-Layer Memory Stack: Working Memory, Episodic Memory, Semantic Memory, Procedural Memory" (Mar 2026)
 - [data-gate.ch](https://data-gate.ch/ai-agent-memory-architecture-2026/) — "AI Agent Memory Architecture: Episodic, Semantic, Procedural & Working Memory for Autonomous Systems"
@@ -105,6 +107,8 @@ Context engineering involves loading from different data dynamically, in the rig
 - [Atlan](https://atlan.com/know/types-of-ai-agent-memory/) — "Types of AI Agent Memory: Episodic, Semantic, Procedural and More" (Jun 2026)
 - [SurePrompts](https://sureprompts.com/blog/episodic-vs-semantic-memory-for-agents) — "Episodic vs Semantic Memory for AI Agents (2026)"
 - [The New Stack](https://thenewstack.io/memory-for-ai-agents-a-new-paradigm-of-context-engineering) — "Memory for AI Agents: A New Paradigm of Context Engineering" (Jan 2026)
+
+</details>
 
 ## Introduction
 - Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production.
@@ -146,7 +150,8 @@ These are not measurement errors. When five separate analyses using different me
 
 But those studies cover AI broadly — data science, ML, generative AI pilots. The evidence for AI *engineering* failures (coding agents, autonomous PRs, AI-generated code in production) is even more stark, and it comes from a different set of sources.
 
-### The AI Engineering Failure Evidence
+<details>
+<summary><strong>The AI Engineering Failure Evidence</strong></summary>
 
 All sources below focus on AI *engineering* (coding agents, PRs, production incidents) — not data science or ML pilots.
 
@@ -176,6 +181,8 @@ All sources below focus on AI *engineering* (coding agents, PRs, production inci
 | [Sourcegraph, 2026](https://sourcegraph.com/blog/context-engineering) — Engineering guide | Stale retrieval poisons reasoning. Live queries (grep, read, MCP) outperform cached embeddings when freshness matters. | Design retrieval for staleness. Cache is a liability, not a feature, when context changes. |
 | [arXiv, 2025](https://arxiv.org/pdf/2511.19933) — Academic taxonomy | 15 failure modes: multi-step reasoning drift, version drift, cost-driven collapse. Hidden in benchmarks, emerge in production. | Benchmarks ≠ production. Only telemetry and process catch the failure modes that matter. |
 | [LangChain, Apr 2026](https://www.langchain.com/blog/context-engineering-for-agents) — Industry interview | Cognition calls context engineering *"the #1 job of engineers building AI agents."* Gartner: 40% of new apps will embed agents by 2026. | Context engineering is not optional. The gap between those who do it and those who don't is a competitive moat. |
+
+</details>
 
 **Pattern across all sources**: review-time quality perception is decoupled from production outcomes — code looks good, passes review, then breaks in production. The root cause is consistent: agents lack architectural and domain context, and human review cannot scale to catch what the agent did not know. Context engineering is the only intervention that addresses the root cause rather than the symptom.
 
