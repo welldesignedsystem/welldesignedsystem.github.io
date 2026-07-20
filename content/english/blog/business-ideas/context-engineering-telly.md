@@ -140,10 +140,8 @@ Context engineering involves loading from different data dynamically, in the rig
 
 ## Part 2: Why LLM-Based AI Projects Fail
 
-### The Scale of the Problem
-
 - **The Magic Demo Problem** — a POC proves the technology works in a sandbox. It does not prove the system works at scale with real data, real volume, real adversaries, and real edge cases. Every prompt library story follows the same arc: a clean demo → production collapse → rule explosion → context bloat → cost spike → abandonment.
-- **Bias for action does not prove AI will not fail at scale** — Amazon's "bias for action"/"two way door" is useful for disproving something: it tells you what can fail early. But success in a POC does not prove the result will hold at scale. In AI, a clean demo tells you nothing about production.
+- Amazon's "bias for action"/"two way door" is useful for disproving something: it tells you what can fail early. But success in a POC does not prove the result will hold at scale. In AI, a clean demo tells you nothing about production.
 
 ### The AI Engineering Failure Evidence
 
