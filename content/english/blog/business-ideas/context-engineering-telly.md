@@ -145,8 +145,7 @@ Context engineering involves loading from different data dynamically, in the rig
 - **The Magic Demo Problem** — a POC proves the technology works in a sandbox. It does not prove the system works at scale with real data, real volume, real adversaries, and real edge cases. Every prompt library story follows the same arc: a clean demo → production collapse → rule explosion → context bloat → cost spike → abandonment.
 - **Bias for action does not prove AI will not fail at scale** — Amazon's "bias for action"/"two way door" is useful for disproving something: it tells you what can fail early. But success in a POC does not prove the result will hold at scale. In AI, a clean demo tells you nothing about production.
 
-<details>
-<summary><strong>The AI Engineering Failure Evidence</strong></summary>
+### The AI Engineering Failure Evidence
 
 All sources below focus on AI *engineering* (coding agents, PRs, production incidents) — not data science or ML pilots.
 
@@ -176,8 +175,6 @@ All sources below focus on AI *engineering* (coding agents, PRs, production inci
 | [Sourcegraph, 2026](https://sourcegraph.com/blog/context-engineering) — Engineering guide | Stale retrieval poisons reasoning. Live queries (grep, read, MCP) outperform cached embeddings when freshness matters. | Design retrieval for staleness. Cache is a liability, not a feature, when context changes. |
 | [arXiv, 2025](https://arxiv.org/pdf/2511.19933) — Academic taxonomy | 15 failure modes: multi-step reasoning drift, version drift, cost-driven collapse. Hidden in benchmarks, emerge in production. | Benchmarks ≠ production. Only telemetry and process catch the failure modes that matter. |
 | [LangChain, Apr 2026](https://www.langchain.com/blog/context-engineering-for-agents) — Industry interview | Cognition calls context engineering *"the #1 job of engineers building AI agents."* Gartner: 40% of new apps will embed agents by 2026. | Context engineering is not optional. The gap between those who do it and those who don't is a competitive moat. |
-
-</details>
 
 **Pattern across all sources**: review-time quality perception is decoupled from production outcomes — code looks good, passes review, then breaks in production. The root cause is consistent: agents lack architectural and domain context, and human review cannot scale to catch what the agent did not know. Context engineering is the only intervention that addresses the root cause rather than the symptom.
 
