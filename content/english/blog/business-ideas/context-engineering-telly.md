@@ -40,11 +40,9 @@ You can start without this — it is almost like handing over the keys to someon
 ## Part 1: What Is Context Engineering
 - Context Engineering is the difference between **AI that is having to make guesses** and **AI that knows fully** how to do something.
 
-## Prompt Engineering
-
-- **how you talk to AI** — wording, examples, formatting, tone.
-
 ### Prompt Engineering Patterns (What Prompt Engineering Looks Like)
+
+**how you talk to AI** — wording, examples, formatting, tone. Some of the patterns:
 
 - **Few-shot prompting** — provide examples in the prompt so the model learns the pattern from demonstrations rather than rules. *"Classify arrears reasons: 'Customer missed payment after job loss' → hardship. 'Customer disputes charge amount' → billing dispute. 'Customer says invoice was never received' → delivery failure."*
 - **Chain-of-thought (CoT)** — a prompting technique where you instruct an AI model to work through a problem step-by-step, showing its reasoning process, rather than jumping straight to a final answer. *"A subscriber made three non recurring charges of $5, $10, $15 and recurring charge of $200 this month. They have a 30% discount applied. What is their final charge? Show your reasoning."*
