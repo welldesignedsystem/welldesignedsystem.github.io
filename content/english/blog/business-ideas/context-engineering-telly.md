@@ -142,11 +142,8 @@ Context engineering involves loading from different data dynamically, in the rig
 
 ### The Scale of the Problem
 
-Five independent research organizations — Gartner, MIT, RAND Corporation, BCG, and McKinsey — published AI project failure studies in 2025-2026. All five arrived at essentially the same conclusion: **70-85% of enterprise AI initiatives fail to deliver their expected value** ([Beri, 2026](https://www.beri.net/article/ai-project-failure-complete-guide-2026)). MIT's study focused specifically on generative AI and found that **95% of generative AI pilots produced no measurable P&L impact** ([MIT Project NANDA, 2025](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/)). S&P Global documented that **42% of companies abandoned at least one AI initiative in 2025**, up from just 17% the year prior ([S&P Global, 2025](https://beam.ai/agentic-insights/why-42-percent-of-ai-projects-show-zero-roi-and-how-to-be-in-the-58-percent)). The average cost of a single failed enterprise AI project: **$7.2 million** ([S&P Global](https://www.pertamapartners.com/insights/ai-project-failure-statistics-2026)).
-
-These are not measurement errors. When five separate analyses using different methodologies converge on an 80% failure rate, the problem is systemic.
-
-But those studies cover AI broadly — data science, ML, generative AI pilots. The evidence for AI *engineering* failures (coding agents, autonomous PRs, AI-generated code in production) is even more stark, and it comes from a different set of sources.
+- **The Magic Demo Problem** — a POC proves the technology works in a sandbox. It does not prove the system works at scale with real data, real volume, real adversaries, and real edge cases. Every prompt library story follows the same arc: a clean demo → production collapse → rule explosion → context bloat → cost spike → abandonment.
+- **Bias for action does not prove AI will not fail at scale** — Amazon's "bias for action"/"two way door" is useful for disproving something: it tells you what can fail early. But success in a POC does not prove the result will hold at scale. In AI, a clean demo tells you nothing about production.
 
 <details>
 <summary><strong>The AI Engineering Failure Evidence</strong></summary>
@@ -183,28 +180,6 @@ All sources below focus on AI *engineering* (coding agents, PRs, production inci
 </details>
 
 **Pattern across all sources**: review-time quality perception is decoupled from production outcomes — code looks good, passes review, then breaks in production. The root cause is consistent: agents lack architectural and domain context, and human review cannot scale to catch what the agent did not know. Context engineering is the only intervention that addresses the root cause rather than the symptom.
-
-### Learnings
-
-- **The Magic Demo Problem** — a POC proves the technology works in a sandbox. It does not prove the system works at scale with real data, real volume, real adversaries, and real edge cases. Every prompt library story follows the same arc: a clean demo → production collapse → rule explosion → context bloat → cost spike → abandonment.
-- **Bias for action does not prove AI will not fail at scale** — Amazon's "bias for action"/"two way door" is useful for disproving something: it tells you what can fail early. But success in a POC does not prove the result will hold at scale. In AI, a clean demo tells you nothing about production.
-- **Generation speed ≠ production quality** — code that passes human review fails 1.7x more often in production than human-authored code. The bottleneck shifts from writing to verifying, but verification infrastructure hasn't caught up.
-- **Reliability costs are hidden** — productivity gains are real (epics +66%, PRs +16%), but incidents/PR (+242%), bugs/dev (+54%), and code churn (+861%) rise faster. High DevOps maturity does not protect you.
-- **The review bottleneck inverts** — AI-generated PRs are larger (+51%), take 5x longer to review, and many bypass review entirely (+31%). Reviewers cannot scale by working harder — the pipeline must absorb the load with automated gates.
-- **Context mismanagement is the root cause** — without tailored context, hallucinations hit 27% and factual errors hit 46%. The fix is structural (progressive disclosure, isolation, compaction), not a better model.
-- **Failure mode: compounding stochasticity** — a 95%-reliable single call becomes 60% reliable across ten steps (0.95¹⁰). This is arithmetic, not a prompt fix. Constrain at the system level.
-- **Failure mode: context rot** — middle-of-window information is buried under 10B attention relationships at 100k tokens. Append indefinitely and that information becomes unrecoverable.
-- **Failure mode: stale retrieval** — cached vector embeddings go stale. Live queries (grep, read, MCP) outperform embeddings when freshness matters. Cache is a liability, not a feature.
-- **Failure mode: tool bloat** — too many available tools slows the model and increases hallucinated calls. Scope tool availability per task. "If a human cannot choose the right tool, the agent cannot either."
-- **Safety failures are structural, not adversarial** — constraint violations, destructive operations, auth bypasses, and deception dominate. Guardrails must enforce environmental constraints, not just filter malicious prompts.
-- **Agent code fails quietly, not obviously** — AI code shows 1.8x more high-severity findings but looks plausible at review. The review process must be structurally different from human-code review.
-- **Technical debt accumulates faster than remediation** — 24.2% of AI-introduced issues survive at HEAD. >110,000 surviving issues by Feb 2026 across all studied tools. This is systemic, not tool-specific.
-- **Agents lack context-gathering behaviour** — agents that gather context before editing succeed more often. This is a learned strategy, not a model capability gap.
-- **Governance is not keeping pace** — 46% hold CTO accountable for AI failures; only 12% have dedicated governance. Only 27% have token limits. Most orgs are flying blind.
-- **Cost governance matters** — 60% of LLM call failures are rate limits (capacity), not model quality. 69% of input tokens are system scaffolding, not reasoning. Context engineering reduces both.
-- **Benchmarks ≠ production** — the 15 failure modes that matter most (reasoning drift, version drift, cost collapse) are invisible in evals. Only telemetry and process catch them.
-- **Context engineering is THE job** — Cognition calls it "effectively the #1 job of engineers building AI agents." By 2026, 40% of new enterprise apps will embed agents. The gap between those who engineer context and those who don't is a competitive moat.
-
 
 ### Governing Principles:
 
