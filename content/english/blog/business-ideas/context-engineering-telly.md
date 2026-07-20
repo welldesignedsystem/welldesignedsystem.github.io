@@ -11,7 +11,7 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 - Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production.
 - You give access to AI and the same developer can push the entire domain full of code into production without understanding a single line of it.
 - Last year a lot of AI tools and LLM models were released for use across The Company, there was a lot of push to start adopting it. 
-- AI was being pushed as the solution to everything. There were workshops to find usecases and retrofit AI. I have been running the AI WG for over a year now, the way I saw some of it: 
+- There were workshops to find usecases and retrofit AI, yes we have to embrace it, but potential problems: 
   - **Hype Cycle awareness** — we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning ROI — models are expensive (same thing that happened with AWS). What about all the baggage AI is going to produce at scale? How do you plan to clean that up?
      - **EJB** — J2EE mandated it, XML hell, complexity killed productivity. Spring emerged.
      - **SOAP / XML web services** — enterprise WS-* stack. REST won.
