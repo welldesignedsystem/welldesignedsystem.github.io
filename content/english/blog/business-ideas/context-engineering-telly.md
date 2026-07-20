@@ -2,7 +2,7 @@
 date = '2024-07-08T12:00:00+10:00'
 draft = false
 title = 'Context Engineering: Why AI Projects Fail and How We Approached It'
-tags = ['Context Engineering', 'LLM', 'AI Agents', 'Telly']
+tags = ['Context Engineering', 'LLM', 'AI Agents', 'The Company']
 summary = "80% of AI projects fail. Here's why context mismanagement is the root cause, and how we approached context engineering in practice."
 +++
 
@@ -10,7 +10,7 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 ## Introduction
 - Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production.
 - You give access to AI and the same developer can push the entire domain full of code into production without understanding a single line of it.
-- Last year a lot of AI tools and LLM models were released for use across Telly, there was a lot of push to start adopting it. 
+- Last year a lot of AI tools and LLM models were released for use across The Company, there was a lot of push to start adopting it. 
 - AI was being pushed as the solution to everything. There were workshops to find usecases and retrofit AI. I have been running the AI WG for over a year now, the way I saw some of it: 
   - **Hype Cycle awareness** — we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning ROI — models are expensive (same thing that happened with AWS). What about all the baggage AI is going to produce at scale? How do you plan to clean that up?
      - **EJB** — J2EE mandated it, XML hell, complexity killed productivity. Spring emerged.
@@ -24,7 +24,7 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
   - **Baselines for non-deterministic output** — when everyone has their own way of doing things, how do you baseline, gate, and measure success of content that differs every time?
   - **Measuring the new velocity** — how do you measure the new velocity AI enables? How much has a skill helped or dragged a developer? Without measuring it, Parkinson's Law takes over: work expands to fill the time available. AI compresses the doing, but if you don't recalibrate expectations, the same work still takes the same time.
   - **Compounding stochasticity** — each agent layer adds variance. A 95%-reliable single step becomes 60% reliable across ten steps. How do you constrain the system, not just the prompt?
-  - **Skill discoverability** — Telly's prompt library has 200+ skills. Which 5 are relevant to your project? Without discoverability, the library is noise.
+  - **Skill discoverability** — The Company's prompt library has 200+ skills. Which 5 are relevant to your project? Without discoverability, the library is noise.
   - **Ambiguity** — models make reasonable assumptions based on training data, not your codebase. Inaccurate content is almost always an ambiguity problem. How do you make context explicit?
   - **Standardisation at scale** — even if you solve quality, how do you get teams to speak the same language? Make skills reusable? Make success reproducible? That's not a prompt problem — it's a system design problem.
   - **Engineer competence gap** — you are going to enable hundreds of engineers to generate code they barely understand, at scale. How do you prevent the gap between generation speed and comprehension from becoming a liability?
@@ -251,7 +251,7 @@ I divided the problem statement into 3 streams that can scale independently.
 
 But these three parts raise a hard question: with people able to write and contribute skills in minutes, how do you decide which of the 200+ skills are relevant to your use case? Extrapolate this to tools, agents, plugins, hooks, prompt files — the discovery problem scales with the contribution velocity. Without a solution, the library becomes noise and every team reinvents.
 
-When we looked at Telly's reality — a Fintech company running multiple product lines across regulated markets — we found a common pattern. Teams were doing the first thing well: building prompt libraries. Every squad had CLAUDE.md files, skill definitions, reusable prompt templates, agent configs, and hooks. They were versioned, reviewed, and maintained.
+When we looked at The Company's reality — a Fintech company running multiple product lines across regulated markets — we found a common pattern. Teams were doing the first thing well: building prompt libraries. Every squad had CLAUDE.md files, skill definitions, reusable prompt templates, agent configs, and hooks. They were versioned, reviewed, and maintained.
 
 But the second thing was missing entirely: **knowledge of context engineering itself**. Nobody had codified *how* to think about context — what belongs in the window, what gets retrieved on demand, how to isolate agent boundaries, how to measure context quality. Teams were building prompts in isolation, reinventing solutions to the same problems, and making the same mistakes documented in Part 2.
 
@@ -259,11 +259,11 @@ We built two hierarchies to close the gap.
 
 ### Hierarchy 1: The Tiered Context Architecture
 
-Prompt libraries already existed across Telly, but they were flat and duplicated. We introduced a three-tier hierarchy:
+Prompt libraries already existed across The Company, but they were flat and duplicated. We introduced a three-tier hierarchy:
 
 ```mermaid
 graph TB
-    subgraph TELLY["Telly Level"]
+    subgraph The Company["The Company Level"]
         A["Company-Wide Standards<br/>Skills, Agents, Hooks, MCP Servers<br/>Code Style, Security Rules"]
     end
     
@@ -297,13 +297,13 @@ graph TB
     C6 -.->|"Contribute"| B
 ```
 
-**Telly Level** — company-wide standards that every agent inherits: security rules, code style, MCP server definitions, and core skills (code review, commit message generation, documentation formatting). These are maintained by a central platform team and change infrequently.
+**The Company Level** — company-wide standards that every agent inherits: security rules, code style, MCP server definitions, and core skills (code review, commit message generation, documentation formatting). These are maintained by a central platform team and change infrequently.
 
 **Fintech Level** — patterns shared across all Fintech domains: compliance rules, regulatory templates, shared eval gates, and cross-domain skills. These are contributed by domains. When a Charging team discovers a pattern that applies to Collections too, they contribute it up to Fintech level.
 
 **Domain Level** — the sharp end, organized by product domain: Charging, Collections, Invoicing, Payments, Credit & Fraud Assessment, and Journals. Each domain owns skills, prompts, and agent configs specific to its area. This is where context is most specific and changes most frequently.
 
-The solid arrows represent **Cascade** — context inherits top-down. Every domain automatically receives Telly security standards and Fintech compliance templates without lifting a finger.
+The solid arrows represent **Cascade** — context inherits top-down. Every domain automatically receives The Company security standards and Fintech compliance templates without lifting a finger.
 
 The dotted arrows represent **Contribute** — patterns flow bottom-up. When a Charging team discovers a reusable pattern, they propose it up to Fintech level, not by copying prompts, but by contributing a skill or rule to the tier above.
 
