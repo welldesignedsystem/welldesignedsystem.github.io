@@ -12,8 +12,7 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 - You give access to AI and the same developer can push the entire domain full of code into production without understanding a single line of it.
 - Last year a lot of AI tools and LLM models were released for use across The Company, there was a lot of push to start adopting it. 
 - There were workshops to find usecases and retrofit AI, yes we have to embrace it, but potential problems: 
-  - **Gartner Hype Cycle**
-  -  we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning ROI — models are expensive (same thing that happened with AWS). What about all the baggage AI is going to produce at scale? How do you plan to clean that up?
+  - **Gartner Hype Cycle** - we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning ROI — models are expensive (same thing that happened with AWS). What about all the baggage AI is going to produce at scale? How do you plan to clean that up?
      - **EJB** — J2EE mandated it, XML hell, complexity killed productivity. Spring emerged.
      - **SOAP / XML web services** — enterprise WS-* stack. REST won.
      - **Microservices** — decompose everything. Hit distributed system costs, consistency issues, latency, availability issues. Spring Framework Reality is **Thinker vs Doer** - the nice term to this is framework being **opinionated**.
@@ -24,7 +23,7 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
   - **Reviewer scaling** — you can produce PRs at scale with AI. But who reviews them? How do review workflows keep up with generation velocity?
   - **Baselines for non-deterministic output** — when everyone has their own way of doing things, how do you baseline, gate, and measure success of content that differs every time?
   - **Measuring the new velocity** — how do you measure the new velocity AI enables? How much has a skill helped or dragged a developer? Without measuring it, Parkinson's Law takes over: work expands to fill the time available. AI compresses the doing, but if you don't recalibrate expectations, the same work still takes the same time.
-  - **Compounding stochasticity** — each agent layer adds variance. A 95%-reliable single step becomes 60% reliable across ten steps. How do you constrain the system, not just the prompt?
+  - **Compounding stochasticity** - Stochasticity is the quality of lacking a predictable pattern, where outcomes are governed by probability rather than deterministic rules. Each agent layer adds variance. A 95%-reliable single step becomes 60% reliable across ten steps. How do you constrain the system, not just the prompt?
   - **Skill discoverability** — The Company's prompt library has 200+ skills. Which 5 are relevant to your project? Without discoverability, the library is noise.
   - **Ambiguity** — models make reasonable assumptions based on training data, not your codebase. Inaccurate content is almost always an ambiguity problem. How do you make context explicit?
   - **Standardisation at scale** — even if you solve quality, how do you get teams to speak the same language? Make skills reusable? Make success reproducible? That's not a prompt problem — it's a system design problem.
