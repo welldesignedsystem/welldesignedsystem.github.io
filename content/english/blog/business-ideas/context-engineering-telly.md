@@ -10,7 +10,7 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 - Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production.
 - You give access to AI and the same developer can push the entire domain full of code into production without understanding a single line of it.
 - Last year a lot of AI tools and LLM models were released for use across The Company, there was a lot of push to start adopting it. 
-- There were workshops to find usecases and retrofit AI, yes we have to embrace it, but potential problems: 
+- I know in some teams there were workshops to find usecases and retrofit AI, yes we have to embrace it, but potential problems: 
   - **Gartner Hype Cycle** -we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning ROI — models are expensive (same thing that happened with AWS). What about all the baggage AI is going to produce at scale? How do you plan to clean that up?
      - **Microservices** — decompose everything. Hit distributed system costs, consistency issues, latency, availability issues. Spring Framework Reality is **Thinker vs Doer** - the nice term to this is framework being **opinionated**.
      - **NoSQL** — "SQL is dead". ACID got replaced with Bascially Available Soft State Eventualy Consistent. Hit missing transactions. Settled on polyglot persistence.
@@ -22,12 +22,11 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
   - **Ambiguity** — A lot of inaccuracies are caused due to models making reasonable assumptions based on training data - to fill gaps introduced by engineers. Inaccurate content is almost always an ambiguity problem. How do you make context explicit?
   - **Standardisation at scale** — even if you solve quality, how do you get teams to speak the same language? Make skills reusable? Make success reproducible? That's not a prompt problem — it's a system design problem.
   - **Engineer competence gap** — you are going to enable hundreds of engineers to generate code they barely understand, at scale. How do you prevent the gap between generation speed and comprehension from becoming a liability?
-  - **Cost governance** — who pays when every engineer burns premium tokens on every turn? How do you measure ROI per skill, per agent, per team?
   - **Rollback / incident response** — a bad context change or skill update breaks production. What's the rollback plan? How do you run incident response for AI-generated failures?
-  - **Onboarding the practice** — context engineering is a new discipline. How do you onboard engineers without bottlenecking on the platform team?
   - **The Planning Fallacy**: teams underestimated time, cost, and risk while overestimating the benefits.
 
-You have a busy town with no road rules set. You have developers, some with just basic understanding of how car operates, you want them to start driving their cars.
+You have a busy town with no road rules set. You have developers, some with just basic understanding of how car operates, you want them to start driving their cars. Context engineering is a new discipline. How do you onboard engineers without bottlenecking on the platform team?
+
 
 ## Part 1: What Is Context Engineering
 - Context Engineering is the difference between **AI that is having to make guesses** and **AI that knows fully** how to do something.
