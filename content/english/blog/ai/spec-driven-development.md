@@ -1,7 +1,7 @@
 +++
 date = '2026-07-01T06:00:00+10:00'
 draft = false
-title = 'Spec-Driven Development With AI: A 2026 Methodology Guide'
+title = 'Spec-Driven Development With AI'
 tags = ['SDD', 'Spec-Driven Development', 'AI', 'Software Engineering', 'Methodology', 'Agentic', 'Spec-First']
 summary = 'Spec-Driven Development (SDD) is a 2026 software engineering workflow where structured specifications become the source of truth and AI agents derive implementation, tests and documentation from them.'
 +++
