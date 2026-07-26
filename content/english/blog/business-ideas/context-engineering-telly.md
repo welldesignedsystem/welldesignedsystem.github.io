@@ -7,19 +7,16 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 +++
 
 ## Introduction
-- Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production.
-- You give access to AI and the same developer can push the entire domain full of code into production without understanding a single line of it.
-- Solution is not to stop using AI. Situation: You have a busy town with no road rules set. You want your drivers who have basic understanding of how car operates to start driving cars. 
-- AI augmented software development is a new discipline. Question is - How do you onboard engineers without being a bottleneck bottleneck?
-- Last year a lot of AI tools and LLM models were released for use across The Company, there was a lot of push to start adopting it. 
-  - **Gartner Hype Cycle**: we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning ROI — models are expensive (same thing that happened with AWS). What about all the baggage AI is going to produce at scale? How do you plan to clean that up?
-  - I am in the industry for long enough and seen many examples: EJB, SOAP web services, Cloud Computing, Microservices, NoSQL, Big Data / Hadoop, Block Chain/Crypto
-     - **Microservices** — decompose everything. Hit distributed system costs, consistency issues, latency, availability issues. 
-     - Spring Framework Reality is **Thinker vs Doer** - the nice term to this is framework being **opinionated**.
-     - **NoSQL** — "SQL is dead". ACID got replaced with Bascially Available Soft State Eventualy Consistent. Hit missing transactions. Settled on polyglot persistence.
+- Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production. You give access to AI and the same developer can push the entire domain full of code into production without understanding a single line of it.
+- Solution is not to stop using AI. Situation: Imagine a busy town where there are no motor vehicles and hence no road rules set. You want your people who have basic understanding of how car operates to start driving cars. 
+- AI augmented software development is a new discipline, From a 30,000 ft view you see how Fintech is approaching this problem without being a bottleneck.
+- Question is it this relevant to you: Answer is no, if you are not using AI.
+- Last year and this year a lot of push was there to adopt AI tools and LLM models across The Org:
+  - **Gartner Hype Cycle**: Its very much possible - we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning a lot of things:
+  - **Cost governance** — models are expensive, what is the ROI. 
+  - **Quality control** — how do you measure and control quality - by now you must be knowing that LLM output is non-deterministic (same input can yield different output) and every team uses different tools, how do you measure success how do you consistently reproduce it, how do you not repeat failures?
   - **Reviewer scaling** — you can produce PRs at scale with AI, how do you get the revieweres to keep up?
-  - **Baselines for non-deterministic output** — Even when the same thing in being done multiple time, model produces different output, when everyone has their own way of doing things, how do you baseline, gate, and measure success of content that differs every time?
-  - **Measuring the new velocity** — how do you measure the new velocity AI enables? How much faster are developers able to do things? Parkinson's Law takes over: work expands to fill the time available. So, if you don't recalibrate expectations, the work still takes the same time.
+  - **Measuring the new velocity** — how do you measure the new velocity AI enables? if you don't - Parkinson's Law takes over: work expands to fill the time available. So, if you don't recalibrate expectations, the work still takes the same time.
   - **Compounding stochasticity** - Stochasticity is the quality of lacking a predictable pattern, where outcomes are governed by probability rather than deterministic rules. Each agent layer adds variance. A 95%-reliable single step becomes 60% reliable across ten steps. 
   - **Skill discoverability** — The Company's prompt library has 200+ skills. Which 5 are relevant to your project? Without discoverability, the library is noise.
   - **Ambiguity** — A lot of inaccuracies are caused due to models making reasonable assumptions based on training data - to fill gaps introduced by engineers. Inaccurate content is almost always an ambiguity problem. How do you make context explicit?
@@ -27,6 +24,10 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
   - **Engineer competence gap** — you are going to enable hundreds of engineers to generate code they barely understand, at scale. How do you prevent the gap between generation speed and comprehension from becoming a liability?
   - **Rollback / incident response** — a bad context change or skill update breaks production. What's the rollback plan? How do you run incident response for AI-generated failures?
   - **The Planning Fallacy**: teams underestimated time, cost, and risk while overestimating the benefits.
+  - I am in the industry for long enough and seen many examples: EJB, SOAP web services, Cloud Computing, Microservices, NoSQL, Big Data / Hadoop, Block Chain/Crypto
+     - **Microservices** — decompose everything. Hit distributed system costs, consistency issues, latency, availability issues. 
+     - Spring Framework Reality is **Thinker vs Doer** - the nice term to this is framework being **opinionated**.
+     - **NoSQL** — "SQL is dead". ACID got replaced with Bascially Available Soft State Eventualy Consistent. Hit missing transactions. Settled on polyglot persistence.
 
 
 
