@@ -1,10 +1,11 @@
 +++
 date = '2024-07-08T12:00:00+10:00'
-draft = false
+draft = true
 title = 'Context Engineering: Why AI Projects Fail and How We Approached It'
-tags = ['Context Engineering', 'LLM', 'AI Agents', 'Preso']
+tags = ['Context Engineering', 'LLM', 'AI Agents']
 summary = "80% of AI projects fail. Here's why context mismanagement is the root cause, and how we approached context engineering in practice."
 +++
+
 
 ## Introduction
 - Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production.
@@ -12,22 +13,29 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 - Last year a lot of AI tools and LLM models were released for use across The Company, there was a lot of push to start adopting it. 
 - There were workshops to find usecases and retrofit AI, yes we have to embrace it, but potential problems: 
   - **Gartner Hype Cycle** -we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning ROI — models are expensive (same thing that happened with AWS). What about all the baggage AI is going to produce at scale? How do you plan to clean that up?
+     - **EJB** — J2EE mandated it, XML hell, complexity killed productivity. Spring emerged.
+     - **SOAP / XML web services** — enterprise WS-* stack. REST won.
      - **Microservices** — decompose everything. Hit distributed system costs, consistency issues, latency, availability issues. Spring Framework Reality is **Thinker vs Doer** - the nice term to this is framework being **opinionated**.
      - **NoSQL** — "SQL is dead". ACID got replaced with Bascially Available Soft State Eventualy Consistent. Hit missing transactions. Settled on polyglot persistence.
-  - **Reviewer scaling** — you can produce PRs at scale with AI, how do you get the revieweres to keep up?
-  - **Baselines for non-deterministic output** — Even when the same thing in being done - model produces different output, when everyone has their own way of doing things, how do you baseline, gate, and measure success of content that differs every time?
-  - **Measuring the new velocity** — how do you measure the new velocity AI enables? How much faster are developers able to do things? Parkinson's Law takes over: work expands to fill the time available. So, if you don't recalibrate expectations, the work still takes the same time.
-  - **Compounding stochasticity** - Stochasticity is the quality of lacking a predictable pattern, where outcomes are governed by probability rather than deterministic rules. Each agent layer adds variance. A 95%-reliable single step becomes 60% reliable across ten steps. 
+     - **Big Data / Hadoop** — data lake solves everything. High ops cost. Settled on simpler tools.
+     - Same pattern every time: everyone rushed in before understanding the operational cost. The survivors solved real problems instead of following the hype.
+  - **Quality control** — how do you control quality when every output is non-deterministic and every team uses different tools?
+  - **Reviewer scaling** — you can produce PRs at scale with AI. But who reviews them? How do review workflows keep up with generation velocity?
+  - **Baselines for non-deterministic output** — when everyone has their own way of doing things, how do you baseline, gate, and measure success of content that differs every time?
+  - **Measuring the new velocity** — how do you measure the new velocity AI enables? How much has a skill helped or dragged a developer? Without measuring it, Parkinson's Law takes over: work expands to fill the time available. AI compresses the doing, but if you don't recalibrate expectations, the same work still takes the same time.
+  - **Compounding stochasticity** - Stochasticity is the quality of lacking a predictable pattern, where outcomes are governed by probability rather than deterministic rules. Each agent layer adds variance. A 95%-reliable single step becomes 60% reliable across ten steps. How do you constrain the system, not just the prompt?
   - **Skill discoverability** — The Company's prompt library has 200+ skills. Which 5 are relevant to your project? Without discoverability, the library is noise.
-  - **Ambiguity** — A lot of inaccuracies are caused due to models making reasonable assumptions based on training data - to fill gaps introduced by engineers. Inaccurate content is almost always an ambiguity problem. How do you make context explicit?
+  - **Ambiguity** — models make reasonable assumptions based on training data, not your codebase. Inaccurate content is almost always an ambiguity problem. How do you make context explicit?
   - **Standardisation at scale** — even if you solve quality, how do you get teams to speak the same language? Make skills reusable? Make success reproducible? That's not a prompt problem — it's a system design problem.
   - **Engineer competence gap** — you are going to enable hundreds of engineers to generate code they barely understand, at scale. How do you prevent the gap between generation speed and comprehension from becoming a liability?
   - **Cost governance** — who pays when every engineer burns premium tokens on every turn? How do you measure ROI per skill, per agent, per team?
+  - **Security / supply chain** — AI-generated code introduces vulnerable dependencies, secret leakage, and supply chain risk. Where is the security gate in the pipeline?
   - **Rollback / incident response** — a bad context change or skill update breaks production. What's the rollback plan? How do you run incident response for AI-generated failures?
+  - **Testing the non-deterministic** — evals measure aggregate quality, but how do you write deterministic tests for stochastic outputs? Property-based testing? Snapshot diffing with thresholds?
   - **Onboarding the practice** — context engineering is a new discipline. How do you onboard engineers without bottlenecking on the platform team?
   - **The Planning Fallacy**: teams underestimated time, cost, and risk while overestimating the benefits.
 
-You have a busy town with no road rules set. You have developers, some with just basic understanding of how car operates, you want them to start driving their cars.
+You can start without this — it is almost like handing over the keys to someone who has only the most basic idea of how to operate a car, in a town where the traffic rules have not been established yet. Yes, the person can get the car rolling. At the same time we don't want to be the bottleneck.
 
 ## Part 1: What Is Context Engineering
 - Context Engineering is the difference between **AI that is having to make guesses** and **AI that knows fully** how to do something.
