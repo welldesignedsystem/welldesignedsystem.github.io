@@ -30,8 +30,6 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
      - **NoSQL** — "SQL is dead". ACID got replaced with Bascially Available Soft State Eventualy Consistent. Hit missing transactions. Settled on polyglot persistence.
 
 
-
-
 ## Part 1: What Is Context Engineering
 - Context Engineering is the difference between **AI that is having to make guesses** and **AI that knows fully** how to do something.
 
