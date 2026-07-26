@@ -1,7 +1,7 @@
 +++
 date = '2026-05-18T10:00:00+00:00'
 draft = false
-title = 'OpenClaw: The AI That Actually Does Things'
+title = 'OpenClaw'
 tags = ['AI', 'Productivity', 'Tools', 'OpenClaw']
 summary = "A complete guide to OpenClaw — what it is, how it works, its architecture, skills system, security landscape, and what makes it different from every AI assistant that came before it."
 +++

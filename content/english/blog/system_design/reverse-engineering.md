@@ -1,7 +1,7 @@
 +++
 date = '2025-06-25T12:00:00+10:00'
 draft = false
-title = 'Reverse Engineering an Existing System: Principles, Proven Accuracy, and AI-Assisted Strategies'
+title = 'Reverse Engineering Principles'
 tags = ['Reverse Engineering', 'Legacy Code', 'System Design', 'Architecture', 'AI Tools', 'Migration']
 summary = "A practitioner's guide to reverse engineering existing systems — the principles, the techniques that prove accuracy, and how AI tools are changing the game."
 +++
