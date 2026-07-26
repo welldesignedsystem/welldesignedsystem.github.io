@@ -1,7 +1,7 @@
 +++
 date = '2026-07-09T12:00:00+10:00'
 draft = false
-title = 'Context Engineering Patterns: A Complete Catalog'
+title = 'Context Engineering Patterns'
 tags = ['Context Engineering', 'Design Patterns', 'LLM', 'AI Agents', 'RAG']
 summary = "A comprehensive catalog of 30 context engineering patterns for managing LLM context windows."
 +++
