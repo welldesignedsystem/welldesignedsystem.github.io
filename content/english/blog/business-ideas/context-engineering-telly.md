@@ -7,13 +7,13 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
 +++
 
 ## Introduction
-- Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production. You give access to AI and the same developer can push the entire domain full of code into production without understanding a single line of it.
-- Solution is not to stop using AI. Situation: Imagine a busy town where there are no motor vehicles and hence no road rules set. You want your people who have basic understanding of how car operates to start driving cars. 
-- AI augmented software development is a new discipline, From a 30,000 ft view you see how Fintech is approaching this problem without being a bottleneck.
-- Question is it this relevant to you: Answer is no, if you are not using AI.
-- Last year and this year a lot of push was there to adopt AI tools and LLM models across The Org:
-  - **Gartner Hype Cycle**: Its very much possible - we are approaching the Peak of Inflated Expectations. When an organisation hits the Trough of Disillusionment they start questioning a lot of things:
-  - **Cost governance** — models are expensive, what is the ROI. 
+- Imagine few years ago one of your developers copy pasting a line of code from Stackoverflow without understanding it - that goes to production. You give access to AI and the same developer can push the entire domain full of code into production without understanding a single line of it. Yet solution is not to stop using AI.
+- I will try to give a 30,000 ft view of how Fintech approached this problem without being a bottleneck.
+- Since Last year there has been a lot of push from within Industry and Org to adopt AI tools and LLM models:
+  - **Gartner Hype Cycle**: Its very much possible 
+    - we are approaching the **Peak of Inflated Expectations**. When an organisation hits the **Trough of Disillusionment** they start questioning a lot of things:
+    - ![Gartner Hype Cycle](../img/Hype-Cycle-General.png)
+    - **Cost governance** — models are expensive, what is the ROI. 
   - **Quality control** — how do you measure and control quality - by now you must be knowing that LLM output is non-deterministic (same input can yield different output) and every team uses different tools, how do you measure success how do you consistently reproduce it, how do you not repeat failures?
   - **Reviewer scaling** — you can produce PRs at scale with AI, how do you get the revieweres to keep up?
   - **Measuring the new velocity** — how do you measure the new velocity AI enables? if you don't - Parkinson's Law takes over: work expands to fill the time available. So, if you don't recalibrate expectations, the work still takes the same time.
@@ -28,7 +28,8 @@ summary = "80% of AI projects fail. Here's why context mismanagement is the root
      - **Microservices** — decompose everything. Hit distributed system costs, consistency issues, latency, availability issues. 
      - Spring Framework Reality is **Thinker vs Doer** - the nice term to this is framework being **opinionated**.
      - **NoSQL** — "SQL is dead". ACID got replaced with Bascially Available Soft State Eventualy Consistent. Hit missing transactions. Settled on polyglot persistence.
-
+ - Situation: Imagine a busy town where there are no motor vehicles and hence no road rules set. You want your people who have basic understanding of how car operates to start driving cars. 
+ - Question is it this relevant to you: Answer is no, if you are not using AI.
 
 ## Part 1: What Is Context Engineering
 - Context Engineering is the difference between **AI that is having to make guesses** and **AI that knows fully** how to do something.
@@ -369,8 +370,6 @@ The tree structure is identical between templates and forks — the hierarchy (F
 The key difference from the Tiered Context Architecture: the knowledge base is **not inherited**. Teams contribute patterns back up to the template they forked from, so the template evolves as teams discover better approaches. A Charging team that finds a novel way to structure solution designs proposes an update to the Domain template, which then benefits all other teams that fork it in the future.
 
 ## Appendix: Gartner Hype Cycle
-
-![Gartner Hype Cycle](../img/Hype-Cycle-General.png)
 
 The Gartner Hype Cycle is a framework for tracking how a technology progresses from initial excitement to mainstream adoption. It has five phases:
 
