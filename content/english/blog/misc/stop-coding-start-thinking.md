@@ -66,8 +66,8 @@ Chess research shows almost exactly the same mechanism from a different angle. A
 That's the actual payoff of studying nature, geopolitics, chess, and military strategy alongside your engineering work: you're not collecting metaphors, you're building the same kind of pattern library that let those fireground commanders and grandmasters act correctly without stopping to calculate. The wider the set of domains you've genuinely studied, the more "shapes" you can recognize the first time your own system starts looking like one of them.
 
 ## 5. Turn fear into your edge
-
-If there's a specific thing you're avoiding — the brown-bag talk you keep dodging, the design review where you go quiet — that avoidance is information, not a verdict on your ability.
+- Now this is intoxicating and addictive. if you hate public speaking make it your biggest strength. embrace the fear - again the fear you think you must work on. Constantly be in the lookout for one.
+- If there's a specific thing you're avoiding — the brown-bag talk you keep dodging, the design review where you go quiet — that avoidance is information, not a verdict on your ability.
 
 Two different situations get treated the same way, and they shouldn't be:
 
