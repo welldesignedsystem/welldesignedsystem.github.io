@@ -16,7 +16,9 @@ You outsource the cafeteria. Obviously. Nobody hesitates on this one.
 
 And yet at work, most of us try to run the cafeteria *and* the core business at the same time — chasing competence in every adjacent skill because it feels like the job "expects" it. It doesn't. It feels that way because unclaimed territory is uncomfortable, not because mastering it is valuable.
 
-You could, in theory, get world-class at almost anything. That was never the constraint. The constraint is that mastery is expensive — in hours, in attention, in the years it takes before a skill starts compounding — and you only get to spend that budget a few times in a career. Choosing your focus area isn't modesty. It's capital allocation.
+You could, in theory, get world-class at almost anything. The constraint is that mastery is expensive — in hours, in attention, in the years it takes before a skill starts compounding — and you only get to spend that budget a few times in a career. Choosing your focus area isn't modesty. It's capital allocation.
+
+You could make Messi a world-class programmer, in theory. But you'd be stealing the most valuable hours in football and spending them on a skill that would never out-compound what he already has. Every hour spent on the wrong thing is stolen from the thing you're actually good at — and unlike money, you can't earn those hours back.
 
 ## 2. Learn the rules well enough to break them
 
@@ -26,15 +28,14 @@ Some domains are non-negotiable, and you follow them exactly, no creative interp
 
 Your craft is different. In your focus area, the rules you inherit — design patterns, "best practices," the conventional way a problem is solved — aren't laws. They're the current best guess of everyone who came before you, and your job is to understand *why* they exist well enough to know when they stop applying.
 
-There's a name for this progression, and it comes from Japanese martial arts pedagogy: **Shu-Ha-Ri**.
-
-- **Shu** — you follow the rule exactly, without deviation, until it's second nature. A karate student throws the same basic punch thousands of times before ever being trusted to modify it.
+There's a name for this progression, and it comes from Japanese karate they call it: **Shu-Ha-Ri**.
+- **Shu** — you follow the rule exactly, without deviation, until it's second nature. A karate student throws the same basic punch thousands of times before ever being trusted to modify it. Bruce Lee said - I fear not the man who has practiced 10,000 kicks once, but I fear the man who has practiced one kick 10,000 times.
 - **Ha** — you understand *why* the rule exists, and you start breaking it deliberately, in the specific situations where you understand the tradeoff better than the rule's original author did.
 - **Ri** — you've internalized the principle so completely that you've built your own form. You're no longer following the rule or breaking it. You *are* the rule now, for your context.
 
 This is a more precise way to describe what a good engineer does with the 23 classic design patterns: not memorize them as scripture, but implement each one from scratch, in your own words, until you can see exactly where it helps and exactly where it's a straitjacket for the problem you actually have.
 
-Einstein is the sharpest example of Ha-into-Ri in the history of science. Newtonian physics wasn't wrong — it was Shu, extraordinarily well-tested Shu, that had worked for two centuries. But Newton's framework quietly assumed one thing as fixed: that time and space are absolute, the same for every observer everywhere. Einstein didn't discard Newton's rules wholesale. He questioned the one assumption everyone else treated as too obvious to interrogate — and got special relativity out of it. That's the move. Not rebellion for its own sake. A precisely targeted question aimed at the one load-bearing assumption nobody else thought to check.
+Newtonian physics worked well for two centuries but Einstein understood Newtonian Physics so well that he questioned Newton's assumptions that time and space are absolute something everyone else treated as too obvious to interrogate — and got special relativity out of it. That's the move. Not rebellion for its own sake. A precisely targeted question aimed at the one load-bearing assumption nobody else thought to check.
 
 You can run the same exercise on a framework instead of a physical law. Take Spring: don't just learn its API surface, dissect it layer by layer like an onion. Start with how HTTP actually works, the Richardson Maturity Model, what a servlet is, what JEE was trying to solve, why Spring emerged as a reaction to it, why single-page applications later emerged as a reaction to *that*. Question every layer. Frameworks are written by thinkers, for doers — and the doers who eventually become thinkers are the ones who refused to stop at "it works."
 
