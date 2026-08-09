@@ -1,6 +1,6 @@
 +++
 date = '2024-08-08T00:00:00+10:00'
-draft = true
+draft = false
 title = 'Stop Coding. Start Thinking.'
 tags = ['Engineering Mindset', 'Career Growth', 'Learning', 'Thinking']
 summary = 'Coding is the instrument. Thinking is the composition. And thinking starts before you write a single line.'
