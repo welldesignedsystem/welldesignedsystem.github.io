@@ -6,20 +6,7 @@ tags = ['Engineering Mindset', 'Career Growth', 'Learning', 'Thinking']
 summary = 'Coding is the instrument. Thinking is the composition. And thinking starts before you write a single line.'
 +++
 
-## Know your wiring — introvert, extrovert, and the truth about most of us
-
-- Different people are built for different kinds of thinking, and the science behind it is more specific than "some people like parties and some don't."
-- The difference sits in brain chemistry, not confidence. 
-- Research tracing back to Cornell's Depue and Collins argues that the brain's dopamine-driven reward system — the drive toward novelty, stimulation, and social reward — is simply more reactive in extroverts. Extroverts are less sensitive to dopamine, so they need more of it — more talking, more movement, more people — to get the same payoff. 
-- Introverts run more on a quieter chemical that rewards depth, focus, and reflection instead of stimulation. 
-- I have seen few instances where some say they are an introvert as if a trend, but the same person uses that to indicate that a person is not social as if its bad.
-- According to me Neither is right or wrong wiring for an engineer. In fact both traits have their strength and weakness and a right combination can work wonders. 
-- They're just tuned for different modes: one for generating and spreading ideas fast, one for going deep on a single hard problem until it cracks open.
-- Here's the twist most personality content skips: most people aren't at either extreme. Wharton researcher Adam Grant tested this directly with 340 outbound sales reps, expecting extroverts to win — the natural assumption for a job built on talking to strangers. Instead, people in the middle of the introvert-extrovert spectrum — ambiverts — outsold both extremes and generally considered most successful because they were flexible enough to talk when it helped and listen when it mattered more. Most of us live in that middle zone whether we've ever named it or not
-- Whatever your mix, the honest move isn't to declare a winner between the two styles — it's to notice that most workplaces default to rewarding the extroverted half by design (louder voices get noticed faster in a meeting), which isn't the same as that half being objectively more correct. A good leader corrects for that default deliberately: building a team with both the people who go wide fast and the people who go deep slow, because the second group without the first never gets their work seen, and the first group without the second never has anything worth spreading.
-- If you lean deep-focus, the practical move is to pair, not to fight your wiring. Find people who are genuinely good-faith about spreading an idea, and let them carry it into the rooms where you'd rather not be the one talking. I learned this one the hard way — spend long enough attached to the wrong person for that role, someone who takes the credit instead of carrying the idea honestly, and you'll burn far more time re-establishing who actually did the work than you ever saved by staying quiet. Choose that partnership as deliberately as you chose your focus area in step one.
-
-## 1. Choose the work worth mastering
+## Choose the work worth mastering
 
 - Say you own a company and you're deciding whether to open a staff cafeteria. Do you personally learn to run a commercial kitchen or do you hire a caterer and spend your hours perfecting your business?
 - Unclaimed territory may make you uncomfortable and company wants us to be master of everything, but ideal combination is you are the best at a few and average at others. 
@@ -55,7 +42,20 @@ summary = 'Coding is the instrument. Thinking is the composition. And thinking s
 - Chess research shows almost exactly the same mechanism from a different angle. Adriaan de Groot's classic studies, later extended by Chase and Simon, found that grandmasters aren't running deeper brute-force calculation than weaker players — when shown a real game position for a few seconds, they could reconstruct over 90% of the pieces from memory, while weaker players managed roughly half. But show them a board with pieces placed *randomly*, with no real game logic behind it, and the grandmaster's advantage nearly disappears. Their edge isn't memory. It's that years of real games gave them tens of thousands of recognizable "chunks" — patterns that let them see the shape of a position at a glance instead of calculating it piece by piece.
 - That's the actual payoff of studying nature, geopolitics, chess, and military strategy alongside your engineering work: you're not collecting metaphors, you're building the same kind of pattern library that let those fireground commanders and grandmasters act correctly without stopping to calculate. The wider the set of domains you've genuinely studied, the more "shapes" you can recognize the first time your own system starts looking like one of them.
 
-## 5. Turn fear into your edge
+## Know your wiring 
+
+- Different people are built for different kinds of thinking, and the science behind it is more specific than "some people like parties and some don't."
+- The difference sits in brain chemistry, not confidence. 
+- Research tracing back to Cornell's Depue and Collins argues that the brain's dopamine-driven reward system — the drive toward novelty, stimulation, and social reward — is simply more reactive in extroverts. Extroverts are less sensitive to dopamine, so they need more of it — more talking, more movement, more people — to get the same payoff. 
+- Introverts run more on a quieter chemical that rewards depth, focus, and reflection instead of stimulation. 
+- I have seen few instances where some say they are an introvert as if a trend, but the same person uses that to indicate that a person is not social as if its bad.
+- According to me Neither is right or wrong wiring for an engineer. In fact both traits have their strength and weakness and a right combination can work wonders. 
+- They're just tuned for different modes: one for generating and spreading ideas fast, one for going deep on a single hard problem until it cracks open.
+- Here's the twist most personality content skips: most people aren't at either extreme. Wharton researcher Adam Grant tested this directly with 340 outbound sales reps, expecting extroverts to win — the natural assumption for a job built on talking to strangers. Instead, people in the middle of the introvert-extrovert spectrum — ambiverts — outsold both extremes and generally considered most successful because they were flexible enough to talk when it helped and listen when it mattered more. Most of us live in that middle zone whether we've ever named it or not
+- Whatever your mix, the honest move isn't to declare a winner between the two styles — it's to notice that most workplaces default to rewarding the extroverted half by design (louder voices get noticed faster in a meeting), which isn't the same as that half being objectively more correct. A good leader corrects for that default deliberately: building a team with both the people who go wide fast and the people who go deep slow, because the second group without the first never gets their work seen, and the first group without the second never has anything worth spreading.
+- If you lean deep-focus, the practical move is to pair, not to fight your wiring. Find people who are genuinely good-faith about spreading an idea, and let them carry it into the rooms where you'd rather not be the one talking. I learned this one the hard way — spend long enough attached to the wrong person for that role, someone who takes the credit instead of carrying the idea honestly, and you'll burn far more time re-establishing who actually did the work than you ever saved by staying quiet. Choose that partnership as deliberately as you chose your focus area in step one.
+
+## 5. Turn your biggest fear into your biggest strength
 - Now this is intoxicating and addictive. if you hate public speaking make it your biggest strength. embrace the fear - again the fear you think you must work on. Constantly be in the lookout for one.
 - If there's a specific thing you're avoiding — the brown-bag talk you keep dodging, the design review where you go quiet — that avoidance is information, not a verdict on your ability.
 
