@@ -2,39 +2,35 @@
 date = '2024-08-08T00:00:00+10:00'
 draft = false
 title = 'Stop Coding. Start Thinking.'
-tags = ['Engineering Mindset', 'Career Growth', 'Learning', 'Thinking']
-summary = 'Coding is the instrument. Thinking is the composition. And thinking starts before you write a single line.'
+tags = ['Engineering Mindset', 'Learning', 'Thinking']
+summary = 'Thinking is the composition, Learning is a strategy, Mastery is a budget, Fear is a compass'
 +++
 
 ## Choose the work worth mastering
+- ![](../img/ronaldo.jpeg)
+- You could make Ronaldo be a world-class programmer but the question is what is that worth? You are not only wasting time on the wrong thing, you are also stealing time away from the right thing. First things is - It's very important to decide what work to master.
+- Say you own a company and you need a cafeteria in it - Do you personally learn to run a commercial kitchen or do you hire a caterer and spend your hours perfecting your business?
+- Unclaimed territory may make you uncomfortable and company wants us to be master of everything, but ideal combination is you are the best at a few things and average at all the rest. 
+- You could, in theory, get world-class at almost anything. The constraint is that mastery is expensive — in hours, in attention, in the years it takes before a skill starts compounding. Choosing your focus area isn't modesty. It's capital allocation.
 
-- Say you own a company and you're deciding whether to open a staff cafeteria. Do you personally learn to run a commercial kitchen or do you hire a caterer and spend your hours perfecting your business?
-- Unclaimed territory may make you uncomfortable and company wants us to be master of everything, but ideal combination is you are the best at a few and average at others. 
-- You could, in theory, get world-class at almost anything. The constraint is that mastery is expensive — in hours, in attention, in the years it takes before a skill starts compounding — and you only get to spend that budget a few times in a career. Choosing your focus area isn't modesty. It's capital allocation.
-- You could make Messi a world-class programmer, in theory. Every hour spent on the wrong thing is many times more time wasted on what's not important away from the time whats important. So be smart in what you choose to excel in.
-
-## 2. Learn the rules well enough to break them
-
-- Once you know what you're mastering, the next decision is how you're allowed to think about it. Not every domain gets the same rules.
-- Some domains are non-negotiable, and you follow them exactly, no creative interpretation required: traffic laws, timesheets, your company's security policy. These rules exist to keep a large, uncoordinated group of people safe and functioning together. You don't get "big think" moments in this category. You just comply.
-- Your craft is different. In your focus area, the rules you inherit — design patterns, "best practices," the conventional way a problem is solved — aren't laws. They're the current best guess of everyone who came before you, and your job is to understand *why* they exist well enough to know when they stop applying.
-- There's a name for this progression, and it comes from Japanese Martial Arts they call it: **Shu-Ha-Ri**.
-  - **Shu** — you follow the rule exactly, without deviation, until it's second nature. A karate student throws the same basic punch thousands of times before ever being trusted to modify it. Bruce Lee said - I fear not the man who has practiced 10,000 kicks once, but I fear the man who has practiced one kick 10,000 times.
-  - **Ha** — you understand *why* the rule exists, and you start breaking it deliberately, in the specific situations where you understand the tradeoff better than the rule's original author did.
+## Learn the rules well enough to understand to break them
+- Once you know what you're mastering, the next decision is learning rules well enough to break them - I emphasise I am not asking you to break any rules I am talking about learning the rules.
+- I am telling once again - rules are to be followed exactly, no creative interpretation required: traffic laws, timesheets, your company's policy. 
+- These rules exist to catered to the whole society and neceassary to it safe and functioning together. You just comply.
+- Newtonian physics worked well for two centuries but Einstein understood Newtonian Physics so well that he questioned Newton's assumptions that time and space not being absolute — and this is how special theory of relativity was born.
+- Rules and protocols are there for a purpose but in your focus area it's necessary to understand *why* they exist well in the first place what are the ways around it.
+- Think of good penetration tester, or a good doctor, or a good laywer or a great investigator.
+- In Japanese Martial Arts they have something that they call: **Shu-Ha-Ri**.
+  - **Shu** — you follow the rule exactly, without deviation, until it's second nature. A karate student throws the same basic punch tens of thousands of times right first thing white belt until almost the day they stop practising. 
+  - **Ha** — you understand *why* the rule exists, and you start breaking away from it deliberately, in the specific situations where you understand the tradeoff better than the rule's original author did.
   - **Ri** — you've internalized the principle so completely that you've built your own form. You're no longer following the rule or breaking it. You *are* the rule now, for your context.
-- This is a more precise way to describe what a good engineer does with the 23 classic design patterns: not memorize them as scripture, but implement each one from scratch, in your own words, until you can see exactly where it helps and exactly where it's a straitjacket for the problem you actually have.
-- Newtonian physics worked well for two centuries but Einstein understood Newtonian Physics so well that he questioned Newton's assumptions that time and space are absolute something everyone else treated as too obvious to interrogate — and got special relativity out of it. That's the move. Not rebellion for its own sake. A precisely targeted question aimed at the one load-bearing assumption nobody else thought to check.
-- You can run the same exercise on a framework instead of a physical law. Take Spring: don't just learn its API surface, dissect it layer by layer like an onion. Start with how HTTP actually works, the Richardson Maturity Model, what a servlet is, what JEE was trying to solve, why Spring emerged as a reaction to it, why single-page applications later emerged as a reaction to *that*. Question every layer. Frameworks are written by thinkers, for doers — and the doers who eventually become thinkers are the ones who refused to stop at "it works."
+  - Bruce Lee said - I fear not the man who has practiced 10,000 kicks once, but I fear the man who has practiced one kick 10,000 times.
+- You can see this with mothers cooking - she gave you a recipe. You use the same steps and same ingredients but yet the taste is different. 
 
-## 3. Think like your adversary
-- There's a second kind of unconventional thinking that gets confused with Ha-breaking-rules, but it's actually a different skill: **adversarial modeling** — deliberately simulating the mind of whoever you're up against, rather than reasoning from your own perspective.
-- A criminal investigator doesn't solve a case by following procedure alone. At some point they have to think *as* the person they're chasing — where would I hide, what would I panic about, what mistake would I make. An ethical hacker doesn't find the vulnerability by following the developer's intended path through the system. They find it by asking what they'd do if their job was to break it, not build it.
-- Software design lives inside this same skill more often than we admit. Threat-model your own system as if you were trying to compromise it. When you're negotiating a technical decision with another team, model their incentives, not just your argument. When you're debugging a subtle race condition, stop asking "what did I intend this code to do" and start asking "what does this code actually let happen, including the paths I never intended." The bug is usually hiding in that gap.
-- Rule-breaking (Ha) is about questioning inherited assumptions in your own reasoning. Adversarial modeling is about temporarily *becoming* a different reasoning process altogether. Both are unconventional. They are not the same tool.
-
-## 4. Steal patterns from other worlds — and let them build your intuition
-- Once you've got both of those moves, the next multiplier is refusing to let your reference library stop at software.
-  - **Nature** solved distributed systems, load balancing, and fault tolerance millions of years before we did — ant colonies routing foraging paths, immune systems handling unknown threats without central coordination, mycelial networks passing signals with no single point of failure.
+## Developing the Out of the box thinking 
+- Steal patterns from other worlds — and let them build your intuition
+- This process I have seen rewires the brain. Find another area of interest totally out of software:
+  - **Nature** solved distributed systems, load balancing and fault tolerance millions of years before we did — ant colonies routing foraging paths, immune systems handling unknown threats without central coordination, mycelial networks passing signals with no single point of failure.
   - **Geopolitics** solved the problem of keeping independent actors from destructively encroaching on each other. Balance-of-power logic — clear spheres of influence, buffer zones, proportional response to provocation — is the same logic behind bounded contexts in domain-driven design: each service sovereignly owns its data, nothing reaches across the boundary uninvited, and when that boundary gets violated carelessly, you get exactly what geopolitics predicts — coupling, escalation, a mess that's expensive to unwind.
   - **Military decision-making under chaos** solved the problem of acting correctly with incomplete information and no time to deliberate. Air Force strategist John Boyd's OODA loop — Observe, Orient, Decide, Act, repeated in a tight cycle — is close to a direct blueprint for incident response. The team that cycles through that loop fastest, not the team with the most complete dashboard, usually wins the incident.
 - Here's the part worth taking seriously rather than treating as a soft skill: this kind of cross-domain practice isn't just "creative inspiration." It's how real intuition gets built, and there's solid research behind the mechanism.
@@ -70,3 +66,6 @@ Two different situations get treated the same way, and they shouldn't be:
 Every one of these is really the same instruction, worn six different ways: stop assuming the default setting — the ladder everyone climbs, the rules everyone inherits, your own personality, the domain boundaries around "software" — is the correct one just because it's the one you were handed. Decide what's worth mastering. Learn the rules well enough to know exactly where they bend. Borrow patterns from anywhere they've already been solved. Use your fear as a compass instead of a stop sign. And know precisely which kind of mind you're operating, so you can stop apologizing for it and start deploying it.
 
 Coding got you in the room. Thinking is what decides what you build once you're there.
+
+## Appendix
+![](../img/shu-ha-ri.png)
