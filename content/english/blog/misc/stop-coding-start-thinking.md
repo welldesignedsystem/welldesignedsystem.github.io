@@ -45,6 +45,7 @@ summary = 'Thinking is the composition, Learning is a strategy, Mastery is a bud
     - is the same logic behind bounded contexts in domain-driven design: each service sovereignly owns its data, nothing reaches across the boundary uninvited, and when that boundary gets violated carelessly, you get exactly what geopolitics predicts: coupling, escalation, a mess that's expensive to unwind.
 
 ## Understand your strengths and weakness - understand your wiring 
+- Like I said before you can master anything put your heart and time into.
 - Different people are built for different kinds of thinking, and the science behind it is more specific than "some people like parties and some don't."
 - The difference sits in brain chemistry.
 - Extroverts are less sensitive to dopamine, so they need more of it: more talking, more movement, more people: to get the same payoff. 
