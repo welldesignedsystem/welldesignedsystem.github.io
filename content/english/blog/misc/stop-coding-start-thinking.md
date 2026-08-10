@@ -9,9 +9,9 @@ summary = 'Thinking is the composition, Learning is a strategy, Mastery is a bud
 ## Choose the work worth mastering
 - "it's not that i'm so smart it's just that i stay with problems longer" - Albert Einstein
 - You could make Ronaldo be a world-class programmer but the question is what is that worth? You are not only wasting time on the wrong thing, you are also stealing time away from the right thing. First things is - It's very important to decide what work to master.
-- Say you own a company and you need a cafeteria in it - Do you personally learn to run a commercial kitchen or do you hire a caterer and spend your hours perfecting your business?
 - Unclaimed territory may make you uncomfortable and company wants us to be master of everything, but ideal combination is you are the best at a few things and average at all the rest. 
 - You could, in theory, get world-class at almost anything. The constraint is that mastery is expensive: in hours, in attention, in the years it takes before a skill starts compounding. Choosing your focus area isn't modesty. It's capital allocation.
+- Say you own a company and you need a cafeteria in it - Do you personally learn to run a commercial kitchen or do you hire a caterer and spend your hours perfecting your business?
 
 ## Learn the rules well enough to understand to break them
 - "I fear not the man who has practiced 10,000 kicks once, but I fear the man who has practiced one kick 10,000 times." - Bruce Lee
