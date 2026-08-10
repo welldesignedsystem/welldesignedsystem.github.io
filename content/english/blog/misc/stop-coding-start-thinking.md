@@ -7,13 +7,14 @@ summary = 'Thinking is the composition, Learning is a strategy, Mastery is a bud
 +++
 
 ## Choose the work worth mastering
-- ![](../img/ronaldo.jpeg)
+- "it's not that i'm so smart it's just that i stay with problems longer" - Albert Einstein
 - You could make Ronaldo be a world-class programmer but the question is what is that worth? You are not only wasting time on the wrong thing, you are also stealing time away from the right thing. First things is - It's very important to decide what work to master.
 - Say you own a company and you need a cafeteria in it - Do you personally learn to run a commercial kitchen or do you hire a caterer and spend your hours perfecting your business?
 - Unclaimed territory may make you uncomfortable and company wants us to be master of everything, but ideal combination is you are the best at a few things and average at all the rest. 
 - You could, in theory, get world-class at almost anything. The constraint is that mastery is expensive: in hours, in attention, in the years it takes before a skill starts compounding. Choosing your focus area isn't modesty. It's capital allocation.
 
 ## Learn the rules well enough to understand to break them
+- "I fear not the man who has practiced 10,000 kicks once, but I fear the man who has practiced one kick 10,000 times." - Bruce Lee
 - Once you know what you're mastering, the next decision is learning rules well enough to break them - I emphasise I am not asking you to break any rules I am talking about learning the rules.
 - I am telling once again - rules are to be followed exactly, no creative interpretation required: traffic laws, timesheets, your company's policy. 
 - These rules exist to catered to the whole society and neceassary to it safe and functioning together. You just comply.
@@ -24,10 +25,10 @@ summary = 'Thinking is the composition, Learning is a strategy, Mastery is a bud
   - **Shu**: you follow the rule exactly, without deviation, until it's second nature. A karate student throws the same basic punch tens of thousands of times right first thing white belt until almost the day they stop practising. 
   - **Ha**: you understand *why* the rule exists, and you start breaking away from it deliberately, in the specific situations where you understand the tradeoff better than the rule's original author did.
   - **Ri**: you've internalized the principle so completely that you've built your own form. You're no longer following the rule or breaking it. You *are* the rule now, for your context.
-  - Bruce Lee said - I fear not the man who has practiced 10,000 kicks once, but I fear the man who has practiced one kick 10,000 times.
 - You can see this with mothers cooking - she gave you a recipe. You use the same steps and same ingredients but yet the taste is different. 
 
 ## Developing the Out of the box thinking 
+- "Nature has already solved many of the problems we are grappling with. Animals, plants, and microbes are the consummate engineers." - Janine Benyus 
 - There is the actual payoff of studying nature, politics, chess and military strategy alongside your engineering work. helps build your intuition and rewire your brain.
 - Find another area of interest totally out of software:
   - **Nature** 
@@ -45,6 +46,7 @@ summary = 'Thinking is the composition, Learning is a strategy, Mastery is a bud
     - is the same logic behind bounded contexts in domain-driven design: each service sovereignly owns its data, nothing reaches across the boundary uninvited, and when that boundary gets violated carelessly, you get exactly what geopolitics predicts: coupling, escalation, a mess that's expensive to unwind.
 
 ## Understand your strengths and weakness - understand your wiring 
+- "Everybody is a genius. But if you judge a fish by its ability to climb a tree, it will live its whole life believing that it is stupid." - Albert Einstein 
 - Like I said before you can master anything put your heart and time into.
 - Different people are built for different kinds of thinking, and the science behind it is more specific than "some people like parties and some don't."
 - The difference sits in brain chemistry.
@@ -56,8 +58,10 @@ summary = 'Thinking is the composition, Learning is a strategy, Mastery is a bud
 - So dont fight your brain wiring use it to make yourself or your team successful.
 
 ## Turn your biggest fear into your biggest strength
+- "Everything you've ever wanted is on the other side of fear." — George Addair
 - You can master anything if you spend enough time on it, that said - its a strange feeling of intoxication if you can turn your biggest fear into your strength. This is one area you know the nook and corner of when you start succeeding here you become unstoppable.
 - If you fear something you know the nook and corner of it and if you learn to navigate it you naturally become the best or best.
 
 ## Appendix
+![](../img/ronaldo.jpeg)
 ![](../img/shu-ha-ri.png)
