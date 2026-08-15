@@ -18,6 +18,12 @@ defaultContentLanguage = 'en'
 # defaultContentLanguageInSubdir need to be true if you want to use the language code as a subdirectory and language specific 404 page
 defaultContentLanguageInSubdir = false
 
+############################# Security overrides #############################
+# Allow Tailwind CLI to run during local builds (theme expects it).
+[security.exec]
+	# Add tailwindcss to the allowed executables used by the theme build pipeline
+	allow = ['^(dart-)?sass$', '^go$', '^git$', '^node$', '^postcss$', '^tailwindcss$']
+
 ########################### Services #############################
 [services]
 [services.googleAnalytics]

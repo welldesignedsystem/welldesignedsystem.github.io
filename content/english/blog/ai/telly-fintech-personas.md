@@ -171,6 +171,26 @@ These apply across every phase above.
 | 7. Maintenance and evolution | Defect fixing, features, tech debt, improvement | Release cadence, debt register | IEEE 1219 / *Accelerate* (2018) |
 | 8. Retirement | Decommissioning, data archival, communication | Retirement plan | ISO/IEC/IEEE 12207 |
 
+### SDLC Flow
+
+```mermaid
+flowchart LR
+    A[Phase 0<br>Discovery] --> B[Phase 1<br>Requirements]
+    B --> C[Phase 2<br>Architecture and Design]
+    C --> D[Phase 3<br>Development]
+    D --> E[Phase 4<br>Testing and QA]
+    E --> F{Quality Gate}
+    F -->|Fail| D
+    F -->|Pass| G[Phase 5<br>CI/CD and Release]
+    G --> H[Phase 6<br>Production Operations]
+    H --> I[Phase 7<br>Maintenance and Evolution]
+    I --> J[Phase 8<br>Retirement]
+    H -.->|Hotfix| D
+    I -.->|New requirement| B
+```
+
+This is the classic pipeline the software goes through. The quality gate blocks promotion when testing fails, and two dashed feedback loops return to the system: hotfixes from production and new requirements from maintenance. Every one of these phases is executed by the personas later in this post; what AI changes is not the pipeline itself but how the work inside each phase is done.
+
 ## Software Development Personas at Telly
 
 The personas below are the standard roles found in modern software development organisations, mapped to the lifecycle phases in the previous section. They are deliberately generic — not Telly's internal org chart — because the exact titles and boundaries differ between teams. In practice one person often wears several hats, especially in small squads, and some roles exist at platform level while others are embedded in delivery squads.
@@ -253,6 +273,273 @@ The personas below are the standard roles found in modern software development o
 | 6. Production | SRE, Support Engineer, Cloud / Infrastructure Engineer | Solution Architect, ML / AI Engineer |
 | 7. Maintenance and evolution | Software Engineers, PM / PO, SRE | GRC, DPO, Data Engineer |
 | 8. Retirement | Delivery Manager, Software Engineers | GRC, Compliance Analyst |
+
+## AI-Assisted Software Development and the AI-DLC
+
+The persona matrix in the next section describes how each persona applies AI at each stage of the software development lifecycle. Before reading it, it helps to understand the full set of practices that define AI-assisted software development and the lifecycle that governs how that AI work is planned, gated and reviewed.
+
+### The Pillars of AI-Assisted Development
+
+AI-assisted software development is the practice of using LLM-based agents as collaborators across the SDLC, with humans supplying business context, judgment and accountability.
+
+**To answer directly: the five pillars in my earlier draft were not the whole story.** There is no single canonical list of pillars — different authors and organisations group the practice differently. Chip Huyen structures it as a three-layer stack (application development, model development, infrastructure), GitHub frames it as three layers (prompt engineering, agentic primitives, context management), and the *Agentic Software Engineering* research paper identifies four foundational pillars (actors, processes, tools, artifacts). The fuller set of practices, synthesised across this site and the sources below, is:
+
+| Pillar | What It Covers | Key References |
+|---|---|---|
+| Prompt engineering | How you talk to the model: wording, examples, formatting and instruction hierarchy. Determines how clearly the model is asked, not what it can know | [Context Engineering](/blog/ai/context-engineering/); Chip Huyen, *AI Engineering*, ch 5; [GitHub Blog, agentic primitives](https://github.blog/ai-and-ml/github-copilot/how-to-build-reliable-ai-workflows-with-agentic-primitives-and-context-engineering/) |
+| Context engineering | Curating what the model sees: context window, memory layers, scoping, compression and selective loading. The difference between an agent that guesses and an agent that knows | [Context Engineering](/blog/ai/context-engineering/); [Context Engineering Patterns](/blog/ai/context-patterns/); Birgitta Böckeler, [Context Engineering for Coding Agents](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html) (martinfowler.com) |
+| Retrieval and grounding (RAG) | Pulling the right external knowledge into the window: chunking, embeddings, re-ranking, freshness. Grounds the model in your data instead of its training corpus | Huyen, *AI Engineering*, ch 6 (context construction); [Context Engineering](/blog/ai/context-engineering/) |
+| Spec-driven development | Structured, versioned specifications become the source of truth and agents derive implementation, tests and documentation from them | [Spec-Driven Development With AI](/blog/ai/spec-driven-development/); GitHub Spec Kit; arXiv [process taxonomy of AI dev frameworks](https://arxiv.org/html/2606.04967) |
+| Evaluation (evals) | Testing non-deterministic output: the eval pyramid, golden datasets, invariants, model-graded metrics and CI gates. You cannot improve what you do not measure | [Testing LLM Outputs](/blog/ai/evals/), [DeepEval](/blog/ai/deepeval/), [Promptfoo](/blog/ai/promptfoo/), [Braintrust](/blog/ai/braintrust/), [pytest](/blog/ai/pytest/), [hypothesis](/blog/ai/hypothesis/), [ToolCallCheck](/blog/ai/toolcallcheck/); Huyen, ch 3-4 |
+| Agents, tools and harnesses | The execution layer: agent SDKs, tool calling, protocols and the harness that mediates context, tools, memory, verification and permissions | [Model Context Protocol](/blog/ai/mcp/), [Claude Agent SDK](/blog/ai/claude_agent_sdk/), [OpenAI Agent SDK](/blog/ai/open_ai_agent_sdk/), [A2A](/blog/ai/a2a/), [OpenCode](/blog/ai/opencode/); Anthropic, [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents); arXiv [AI Harness Engineering](https://arxiv.org/html/2605.13357) |
+| Guardrails, safety and security | Prompt injection defence, hallucination mitigation, permissions, secrets handling and supply-chain scanning for AI-generated code | Huyen, *AI Engineering* (safety chapter); OWASP Top 10 for LLM Applications |
+| Observability, tracing and cost | Monitoring model and agent behaviour, logging, tracing, token budgets and cost governance. You cannot improve what you do not measure | Huyen, *AI Engineering* (infrastructure layer); [Context Engineering](/blog/ai/context-engineering/) |
+| Model selection and adaptation | Choosing the right model and adapting it: prompt vs RAG vs fine-tuning vs structured output. Start with prompting and retrieval before reaching for training | Huyen, *AI Engineering*; [Context Engineering](/blog/ai/context-engineering/) |
+| Human oversight and governance | Deciding how much autonomy AI gets: HITL, OHOTL or AHOTL modes, review workflows, approval boundaries, traceability and audit trails | AI-DLC (below); arXiv [Agentic Software Engineering (SE 3.0)](https://arxiv.org/html/2509.06216v3) |
+
+### The AI-Driven Development Lifecycle (AI-DLC)
+
+#### Origins and Provenance
+
+AI-DLC (AI-Driven Development Life Cycle) is a software development methodology introduced by Raja SP, Principal Solutions Architect and Head of Developer Transformation Programs at Amazon Web Services, in the AWS DevOps blog post *[AI-Driven Development Life Cycle: Reimagining Software Engineering](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)* on 31 July 2025.
+
+It is important to separate three sources with different levels of authority:
+
+| Source | Owner | Status | Contribution |
+|---|---|---|---|
+| AWS DevOps blog post, July 2025 | Raja SP (AWS) | Foundational and official | The three-phase model, Mob Elaboration, Mob Construction and core terminology (Intent, Unit, Bolt) |
+| `awslabs/aidlc-workflows`, open-sourced November 2025 | AWS Labs | Official reference implementation | Adaptive workflow scaffolds (Rules and Steering files), mandatory vs conditional stages, checkpoints and audit trails |
+| AI-DLC 2026 paper, [ai-dlc.dev/paper](https://ai-dlc.dev/paper), January 2026 | The Bushido Collective | Independent community synthesis, **not** an AWS publication | HITL/OHOTL/AHOTL operating modes, Bolts, Passes, harness-enforced quality gates and completion criteria |
+
+The methodology was also presented at AWS re:Invent 2025 (session DVT214). There is one naming caveat: "ADLC" is used elsewhere for "Agent Development Lifecycle", and AWS separately uses "AI Development Life Cycle" for an unrelated ML-model-building framework — this section is about Raja SP's software-delivery AI-DLC.
+
+#### Why It Exists: The Middle Path
+
+The AWS post argues that most organisations use AI in two limited ways:
+
+- **AI-assisted development** — AI improves specific tasks such as documentation, code completion and testing.
+- **AI-autonomous development** — AI is expected to generate whole applications from user requirements with little human involvement.
+
+AWS reports that both patterns produce suboptimal outcomes in velocity and quality. AI-DLC is the proposed middle path: AI performs the heavy execution work while humans supply business context, judgment, validation and accountability. In the financial-services version of the story, the developer's role shifts from writing code to managing and validating AI-generated outputs. The 2026 community paper frames the same idea with a Google Maps analogy: humans set the destination, AI provides step-by-step directions and humans maintain oversight.
+
+#### Core Terminology
+
+| Term | Traditional Equivalent | Definition |
+|---|---|---|
+| Intent | Epic / Initiative | A high-level statement of purpose that describes what should be achieved |
+| Unit | Feature / Work package | A cohesive, self-contained work element derived from an Intent |
+| Bolt | Sprint | The smallest iteration unit in AI-DLC 2026, measured in hours or days, run in supervised (HITL), observed (OHOTL) or autonomous (AHOTL) mode |
+| Pass | Discipline iteration | A typed iteration through the standard loop (elaborate, units, execute, review) through a design, product or development lens |
+| Mob Elaboration | Requirements gathering | The whole team validates AI's questions, assumptions and proposed units |
+| Mob Construction | Development | AI proposes architecture, code and tests while the team clarifies decisions in real time |
+| Completion Criteria | Definition of Done | Verifiable conditions that determine whether a unit is complete |
+| Hat | Role | A markdown definition of an agent's behaviour, boundaries and quality gates in the community implementation |
+
+#### The Three Phases
+
+The AWS version describes three phases. The 2026 community paper keeps Inception and Operations but uses "Execution" for the build phase; the intent is the same — move from clarified intent to verified implementation to operational ownership.
+
+**Inception — WHAT to build and WHY.** AI transforms business intent into requirements, user stories, units, risks, non-functional requirements and completion criteria. The central ritual is Mob Elaboration: AI asks clarifying questions and the team validates or corrects the result. Key activities:
+
+- AI converts intent into candidate requirements and units
+- AI asks questions to uncover missing context (functional scope, business rules, edge cases, technical constraints)
+- The team validates assumptions and constraints
+- Completion criteria are defined for each unit
+- Bolt structure and supervision mode are selected
+
+**Construction — HOW to build it.** Using the validated context from Inception, AI proposes architecture, domain models, code solutions and tests. In the 2025 AWS framing this is Mob Construction; in the 2026 community paper it is Execution through Bolts. Key activities:
+
+- AI proposes architecture and technical design, typically using domain-driven design principles
+- AI implements code and supporting artifacts, unit by unit
+- AI generates tests and validation checks
+- The team reviews trade-offs and higher-risk decisions
+- Quality gates provide backpressure when output fails
+
+**Operations — run and maintain it.** AI applies the accumulated context to deployment, infrastructure as code, monitoring, rollback and ongoing maintenance. The important point is continuity: plans, requirements, design artifacts and operational knowledge are stored in the repository so later sessions do not start from scratch. In the financial-services narrative, monitoring feeds back into the coding agent's context and informs future Inception cycles, creating a virtuous loop.
+
+**How AI-DLC maps onto the SDLC.** AI-DLC does not replace the pipeline from the SDLC Flow diagram; it reorganizes how each phase is executed. Discovery and Requirements fold into Inception, Architecture and Design plus Development plus Testing fold into Construction, and CI/CD plus Production plus Maintenance fold into Operations.
+
+```mermaid
+flowchart TD
+    subgraph SDLC[Classic SDLC Phases]
+        S1[Discovery] --> S2[Requirements]
+        S2 --> S3[Architecture]
+        S3 --> S4[Development]
+        S4 --> S5[Testing]
+        S5 --> S6[CI/CD and Release]
+        S6 --> S7[Production]
+        S7 --> S8[Maintenance]
+    end
+
+    subgraph AIDLC[AI-DLC Phases]
+        I[Inception<br>Mob Elaboration]
+        C[Construction<br>Mob Construction]
+        O[Operations]
+    end
+
+    S1 -.-> I
+    S2 -.-> I
+    S3 -.-> C
+    S4 -.-> C
+    S5 -.-> C
+    S6 -.-> O
+    S7 -.-> O
+    S8 -.-> O
+```
+
+So the two diagrams are complementary: the SDLC Flow shows the phases a product goes through, and this one shows which AI-DLC phase absorbs the work of each SDLC phase.
+
+#### The Adaptive Workflow
+
+The official open-source implementation turns the three phases into an adaptive workflow with stages. Some stages are **mandatory** (green) and some are **conditional** (yellow); the workflow chooses which to run based on context and complexity. A simple bug fix skips planning and goes straight to code generation; a complex feature runs requirements analysis, architectural design and detailed testing.
+
+| Phase | Stages (mandatory or conditional) |
+|---|---|
+| Inception | Workspace Detection (greenfield vs brownfield) → Reverse Engineering (brownfield) or Requirements Analysis (greenfield) → Workflow Planning. Conditional: User Stories, Application Design, Units of Work Planning |
+| Construction | Per-unit design stages (conditional) → Code Generation Planning → Code Generation → Build and Test (unit, integration, performance, security, contract and end-to-end tests) |
+| Operations | Deployment automation, infrastructure as code, monitoring and observability setup, production readiness validation |
+
+The AWS open-sourcing blog identifies three properties that make this work:
+
+1. **Adaptive decisioning** — the workflow conforms to the problem's shape, intelligently skipping or deepening stages based on contextual assessment rather than predetermined rules.
+2. **Transparent checkpoints** — human approvals are embedded at every decision gate, preserving oversight while maintaining velocity.
+3. **End-to-end traceability** — every artifact, decision and conversation is logged, creating an inspectable trail that supports accountability and improvement.
+
+At each gate the workflow asks clarifying questions, creates an execution plan and waits for approval. The implementation uses Rules and Steering files that convert AI from a passive assistant into an adaptive decision engine.
+
+#### The AI-DLC Flow
+
+The diagram below combines the three phases, the adaptive workflow stages, the operating modes and the quality-gate loop into one picture. Dashed edges are conditional stages; the workflow only runs them when the context warrants it. Solid edges are mandatory.
+
+```mermaid
+flowchart TD
+    A[Business Intent] --> B{Workspace Detection}
+
+    subgraph INC[Inception Phase]
+        B -->|Greenfield| D[Requirements Analysis]
+        B -->|Brownfield| E[Reverse Engineering]
+        D --> F[Workflow Planning]
+        E --> F
+        F -.-> G1[User Stories]
+        F -.-> G2[Application Design]
+        F -.-> G3[Units of Work Planning]
+        G1 -.-> H[Units and Completion Criteria]
+        G2 -.-> H
+        G3 -.-> H
+    end
+
+    subgraph CON[Construction / Execution Phase]
+        H --> I{Operating Mode}
+        I -->|HITL| J1[Supervised Bolt]
+        I -->|OHOTL| J2[Observed Bolt]
+        I -->|AHOTL| J3[Autonomous Bolt]
+        J1 --> K[Per-Unit Design]
+        J2 --> K
+        J3 --> K
+        K --> M[Code Generation Planning]
+        M --> N[Code Generation]
+        N --> O[Build and Test]
+        O --> P{Quality Gates}
+        P -->|Fail| Q[Backpressure: Feedback and Pass-Back]
+        Q --> K
+        P -->|Pass| R[Review and Integration]
+    end
+
+    subgraph OPS[Operations Phase]
+        R --> S[Deploy, Monitor and Maintain]
+        S --> T[Persistent Context and Knowledge]
+    end
+
+    T --> B
+```
+
+Note the two feedback loops. The inner loop is construction backpressure: failed quality gates push the unit back through design, code generation and testing. The outer loop is lifecycle continuity: operations captures persistent context and knowledge, which feeds the next Inception cycle so no session starts from scratch.
+
+#### Operating Modes: HITL, OHOTL and AHOTL
+
+The 2026 community paper distinguishes three operating modes that form a spectrum of human involvement, not a maturity ladder:
+
+| Mode | Human Involvement | Approval Model | Best For |
+|---|---|---|---|
+| HITL (human-in-the-loop) | Continuous, blocking | Before each significant step | Novel domains, architecture decisions, production data, security and compliance risk, foundational work |
+| OHOTL (observed human-on-the-loop) | Continuous, non-blocking | Any time (interrupt) | UX, design, copy and subjective quality work, training, medium-risk changes |
+| AHOTL (autonomous human-on-the-loop) | Periodic, on-demand | At completion | Well-defined tasks with measurable acceptance criteria, batch operations, work validated by tests, types and linting |
+
+The key insight is that the human does not disappear — the human's function changes, from micromanaging execution to defining outcomes, observing progress and building quality gates. The mode-selection skill published by the community recommends choosing based on measurable factors:
+
+| Factor | HITL | OHOTL | AHOTL |
+|---|---|---|---|
+| Requirements clarity | Low | Medium | High |
+| Risk level | High | Medium | Low |
+| Test coverage | Low | Medium | High |
+| Domain familiarity | Low | Medium | High |
+| Reversibility | Difficult | Moderate | Easy |
+
+Default modes per phase: Elaboration HITL, Planning HITL, Building OHOTL, Review HITL. The general rule is to start new or unknown work in HITL and escalate autonomy only as requirements stabilise, test coverage grows and trust is earned. Downgrades (AHOTL → OHOTL → HITL) are signals to investigate root causes, not punishments.
+
+#### Backpressure, Quality Gates and Completion Criteria
+
+**Backpressure over prescription.** Instead of prescribing every implementation step, AI-DLC defines quality gates that reject non-conforming work. The 2026 paper describes harness-enforced quality gates: structured, frontmatter-driven checks that the harness runs on every Stop event. The agent cannot stop — cannot advance, cannot hand off, cannot declare work complete — until all gates pass. This is qualitatively different from asking AI to "run the tests": the agent cannot rationalise its way around a failing hook.
+
+Three properties of the enforcement mechanism:
+
+- **Detection** — the elaboration skill scans the repository for existing tooling and proposes the right gate commands, which the team confirms.
+- **Definition** — confirmed gates are saved to the Intent's frontmatter; builders may add unit-specific gates during construction.
+- **Enforcement** — the harness runs the gates synchronously on every Stop, blocking progress on failure. Intent-level and unit-level gates merge additively (unit gates add to intent gates, never replace them).
+
+Two further mechanisms from the 2026 paper:
+
+- **The ratchet rule** — quality gates are add-only. The reviewer verifies gate integrity as part of the review; removing a gate triggers a request-changes decision. Quality standards can only move forward.
+- **Completion criteria enable autonomy** — autonomy depends on precise criteria. "Make auth better" is too vague; "users can reset passwords, reset tokens expire after 15 minutes, all auth endpoints have tests and the security scan has no critical findings" gives the agent a target it can iterate toward.
+
+#### Persistent Context: Artifacts Are Memory
+
+AI-DLC's answer to the context-window problem is committed artifacts and ephemeral state. Intents, unit progress and decisions persist in version-controlled files, so the context window can be reset without losing the project's ground truth — the community implementation treats `/clear` as a feature, not a bug. The 2026 paper warns that large context windows still degrade when filled with irrelevant material, so the practical rule is to keep high-quality project knowledge on disk and load only what the current task needs. This is exactly the context engineering discipline from the [Context Engineering](/blog/ai/context-engineering/) post, applied to the development process itself.
+
+#### The Community Implementation: Four Phases and Hats
+
+The Bushido Collective's open-source plugin for Claude Code implements the methodology as four phases — Elaboration, Execution, Operation and Reflection — using git worktrees, automated tests/lint/types as quality gates, pull requests and deployment workflows. Inside each unit, the AI cycles through specialist agents, each wearing a "hat": a markdown file that defines the role's required steps, boundaries and quality gates. Built-in hats include Planner, Builder, Reviewer, Designer, Test Writer, Implementer, Refactorer, Red Team, Blue Team, Observer, Hypothesizer, Experimenter and Analyst. Passes add a disciplinary lens (design, product or dev) over the standard loop, and later passes can pass work back to earlier ones when new constraints appear.
+
+Two evolution notes: the HITL/OHOTL/AHOTL taxonomy is already being superseded inside the community's broader H·AI·K·U framework by five operating modes and a "stages" model that replaces Passes. Treat these community constructs as fast-moving rather than settled.
+
+#### Adoption and Getting Started
+
+The AWS financial-services blog recommends a three-phase adoption path:
+
+1. **Executive alignment** — confirm the leadership understands how AI-DLC differs from Agile and tie adoption to measurable business outcomes.
+2. **Technical enablement** — build deep knowledge of agentic coding tools (such as Amazon Q Developer, Kiro or Claude Code) and best practices.
+3. **Hands-on pilots** — run immersive two-to-three-day pilot sprints on real codebases to generate proof points and momentum.
+
+For a tool-agnostic start: pick one low-risk feature, write an Intent with explicit completion criteria, decompose it into one or two Units, choose a mode deliberately, store decisions and outcomes in the repo and add quality gates before increasing autonomy.
+
+#### Limitations and Caveats
+
+AI-DLC is useful but not complete by itself. Teams still need to define:
+
+- Security and compliance controls for their domain
+- Human approval boundaries for production and data access
+- Repository conventions for persistent context
+- Quality gates that actually reflect product risk
+- Evaluation metrics for productivity, defect rate, user impact and maintainability
+- Rules for when autonomous work must stop and escalate
+
+It is also worth remembering that the fuller, more operational version of the methodology (modes, passes, quality gates) comes from an independent community project, not from AWS, so teams evaluating it for enterprise use should weigh that provenance accordingly. The [AI-DLC: AI-Driven SDLC](/blog/ai/ai-dlc/) post on this site covers all of the above in depth.
+
+#### AI-DLC Key Sources
+
+| Source | What It Contributes |
+|---|---|
+| [AI-DLC: AI-Driven SDLC](/blog/ai/ai-dlc/) | This site's full treatment of the methodology, terminology and community extensions |
+| Raja SP (AWS), [AI-Driven Development Life Cycle: Reimagining Software Engineering](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) | The original methodology post, 31 July 2025 |
+| AWS, [Open-Sourcing Adaptive Workflows for AI-DLC](https://aws.amazon.com/blogs/devops/open-sourcing-adaptive-workflows-for-ai-driven-development-life-cycle-ai-dlc/) | Adaptive decisioning, checkpoints and traceability, November 2025 |
+| AWS, [Building with AI-DLC using Amazon Q Developer](https://aws.amazon.com/blogs/devops/building-with-ai-dlc-using-amazon-q-developer/) | Stage-by-stage walkthrough with conditional stages and audit trails |
+| [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) | Official open-source reference implementation (Rules and Steering files) |
+| The Bushido Collective, [AI-DLC 2026 Paper](https://ai-dlc.dev/paper) | Independent community paper: modes, passes, quality gates, hats, January 2026 |
+| AWS, [AI-Driven Development Lifecycle for Financial Services](https://aws.amazon.com/blogs/industries/ai-driven-development-lifecycle-for-financial-services/) | Fintech framing and three-phase adoption path, May 2026 |
+
+### How This Maps to the Matrix
+
+The matrix that follows is the intersection of the three building blocks: the SDLC phases from the lifecycle section, the personas from the persona list and the AI practices above. Each cell states the persona's involvement (O, R, C or A) and links to a description of how they use context engineering, spec-driven development, prompt engineering and evals at that stage, under the AI-DLC mode and quality gates that fit the risk.
 
 ## AI and Context Engineering Usage by Persona and Stage
 
@@ -485,6 +772,7 @@ This matrix maps every persona to the software development phases from the lifec
 - Gamma, E., Helm, R., Johnson, R. and Vlissides, J. (1994). *Design Patterns*. Addison-Wesley.
 - Humble, J. and Farley, D. (2010). *Continuous Delivery*. Addison-Wesley.
 - Hunt, A. and Thomas, D. (1999). *The Pragmatic Programmer*. Addison-Wesley.
+- Huyen, C. (2025). *AI Engineering*. O'Reilly.
 - Kim, G., Humble, J., Debois, P. and Willis, J. (2016). *The DevOps Handbook*. IT Revolution Press.
 - Kleppmann, M. (2017). *Designing Data-Intensive Applications*. O'Reilly.
 - Martin, R. C. (2008). *Clean Code*. Prentice Hall.
@@ -513,8 +801,20 @@ This matrix maps every persona to the software development phases from the lifec
 **Online references:**
 
 - Agile Manifesto (2001). agilemanifesto.org.
+- Anthropic (2024). *Building Effective Agents*. anthropic.com.
+- arXiv:2509.06216 (2025). *Agentic Software Engineering: Foundational Pillars and a Research Roadmap*.
+- arXiv:2606.04967 (2026). *From Prompt to Process: A Taxonomy of Agentic AI-Driven Development Frameworks*.
+- arXiv:2605.13357 (2026). *AI Harness Engineering: A Runtime Substrate for Foundation-Model Software Agents*.
+- Böckeler, B. (2026). *Context Engineering for Coding Agents*. martinfowler.com.
+- The Bushido Collective (2026). *AI-DLC 2026 Method Definition Paper*. ai-dlc.dev/paper.
 - Fowler, M. (2006). *Continuous Integration*. martinfowler.com.
+- Meppiel, D. (2025). *How to build reliable AI workflows with agentic primitives and context engineering*. GitHub Blog.
 - North, D. (2006). *Introducing BDD*.
+- SP, R. (2025). *AI-Driven Development Life Cycle: Reimagining Software Engineering*. AWS DevOps Blog.
+- AWS (2025). *Open-Sourcing Adaptive Workflows for AI-Driven Development Life Cycle (AI-DLC)*. AWS DevOps Blog.
+- AWS (2025). *Building with AI-DLC using Amazon Q Developer*. AWS DevOps Blog.
+- AWS (2026). *AI-Driven Development Lifecycle for Financial Services*. AWS Industries Blog.
+- awslabs (2025). *aidlc-workflows*. GitHub.
 - Wake, B. (2003). *INVEST in Good Stories, and SMART Tasks*.
 - Wiggins, A. (2011). *Twelve-Factor App*. 12factor.net.
 - *Principles of Chaos Engineering* (2017). principlesofchaos.org.
