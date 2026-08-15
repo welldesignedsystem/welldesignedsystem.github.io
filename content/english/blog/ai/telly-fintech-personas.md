@@ -1,9 +1,9 @@
 +++
-date = '2026-08-12T12:01:00+10:00'
+date = '2026-08-14T12:01:00+10:00'
 draft = false
 title = 'Fintech Personas at Telly'
 tags = ['Fintech','Telly','Personas','Roles']
-summary = "Placeholder for roles and contributions of Fintech personas at Telly."
+summary = "Every Fintech persona at Telly, mapped across the SDLC, AI-DLC and context engineering."
 +++
 
 ## Introduction
@@ -282,7 +282,7 @@ The persona matrix in the next section describes how each persona applies AI at 
 
 AI-assisted software development is the practice of using LLM-based agents as collaborators across the SDLC, with humans supplying business context, judgment and accountability.
 
-**To answer directly: the five pillars in my earlier draft were not the whole story.** There is no single canonical list of pillars — different authors and organisations group the practice differently. Chip Huyen structures it as a three-layer stack (application development, model development, infrastructure), GitHub frames it as three layers (prompt engineering, agentic primitives, context management), and the *Agentic Software Engineering* research paper identifies four foundational pillars (actors, processes, tools, artifacts). The fuller set of practices, synthesised across this site and the sources below, is:
+**To answer directly: the five pillars in my earlier draft were not the whole story.** There is no single canonical list of pillars — different authors and organisations group the practice differently. Chip Huyen structures it as a three-layer stack (application development, model development, infrastructure), GitHub frames it as three layers (prompt engineering, agentic primitives, context management) and the *Agentic Software Engineering* research paper identifies four foundational pillars (actors, processes, tools, artifacts). The fuller set of practices, synthesised across this site and the sources below, is:
 
 | Pillar | What It Covers | Key References |
 |---|---|---|
@@ -291,7 +291,7 @@ AI-assisted software development is the practice of using LLM-based agents as co
 | Retrieval and grounding (RAG) | Pulling the right external knowledge into the window: chunking, embeddings, re-ranking, freshness. Grounds the model in your data instead of its training corpus | Huyen, *AI Engineering*, ch 6 (context construction); [Context Engineering](/blog/ai/context-engineering/) |
 | Spec-driven development | Structured, versioned specifications become the source of truth and agents derive implementation, tests and documentation from them | [Spec-Driven Development With AI](/blog/ai/spec-driven-development/); GitHub Spec Kit; arXiv [process taxonomy of AI dev frameworks](https://arxiv.org/html/2606.04967) |
 | Evaluation (evals) | Testing non-deterministic output: the eval pyramid, golden datasets, invariants, model-graded metrics and CI gates. You cannot improve what you do not measure | [Testing LLM Outputs](/blog/ai/evals/), [DeepEval](/blog/ai/deepeval/), [Promptfoo](/blog/ai/promptfoo/), [Braintrust](/blog/ai/braintrust/), [pytest](/blog/ai/pytest/), [hypothesis](/blog/ai/hypothesis/), [ToolCallCheck](/blog/ai/toolcallcheck/); Huyen, ch 3-4 |
-| Agents, tools and harnesses | The execution layer: agent SDKs, tool calling, protocols and the harness that mediates context, tools, memory, verification and permissions | [Model Context Protocol](/blog/ai/mcp/), [Claude Agent SDK](/blog/ai/claude_agent_sdk/), [OpenAI Agent SDK](/blog/ai/open_ai_agent_sdk/), [A2A](/blog/ai/a2a/), [OpenCode](/blog/ai/opencode/); Anthropic, [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents); arXiv [AI Harness Engineering](https://arxiv.org/html/2605.13357) |
+| Agents, tools and harnesses | The execution layer: agent SDKs, tool calling, protocols and the harness that mediates context, tools, memory, verification and permissions. Includes agent skills — reusable packages that shape behaviour, such as adversarial "grill me" skills that interrogate intent and assumptions before work starts | [Model Context Protocol](/blog/ai/mcp/), [Claude Agent SDK](/blog/ai/claude_agent_sdk/), [OpenAI Agent SDK](/blog/ai/open_ai_agent_sdk/), [A2A](/blog/ai/a2a/), [OpenCode](/blog/ai/opencode/); Anthropic, [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents); arXiv [AI Harness Engineering](https://arxiv.org/html/2605.13357) |
 | Guardrails, safety and security | Prompt injection defence, hallucination mitigation, permissions, secrets handling and supply-chain scanning for AI-generated code | Huyen, *AI Engineering* (safety chapter); OWASP Top 10 for LLM Applications |
 | Observability, tracing and cost | Monitoring model and agent behaviour, logging, tracing, token budgets and cost governance. You cannot improve what you do not measure | Huyen, *AI Engineering* (infrastructure layer); [Context Engineering](/blog/ai/context-engineering/) |
 | Model selection and adaptation | Choosing the right model and adapting it: prompt vs RAG vs fine-tuning vs structured output. Start with prompting and retrieval before reaching for training | Huyen, *AI Engineering*; [Context Engineering](/blog/ai/context-engineering/) |
@@ -346,6 +346,8 @@ The AWS version describes three phases. The 2026 community paper keeps Inception
 - The team validates assumptions and constraints
 - Completion criteria are defined for each unit
 - Bolt structure and supervision mode are selected
+
+Mob Elaboration is where adversarial skills earn their keep. A "grill me" skill turns the agent from a passive assistant into an interrogator: it challenges the intent, attacks assumptions, hunts for missing edge cases and forces the team to defend the business case before anything is built. Running it here is cheap — catching a wrong assumption during Elaboration costs minutes, while catching it in Construction or Production costs a full rework cycle. It is the same discipline as a design review or a technical spike, formalised as a reusable skill. In the AI-DLC 2026 implementation this is exactly the Red Team hat.
 
 **Construction — HOW to build it.** Using the validated context from Inception, AI proposes architecture, domain models, code solutions and tests. In the 2025 AWS framing this is Mob Construction; in the 2026 community paper it is Execution through Bolts. Key activities:
 
@@ -499,6 +501,8 @@ AI-DLC's answer to the context-window problem is committed artifacts and ephemer
 #### The Community Implementation: Four Phases and Hats
 
 The Bushido Collective's open-source plugin for Claude Code implements the methodology as four phases — Elaboration, Execution, Operation and Reflection — using git worktrees, automated tests/lint/types as quality gates, pull requests and deployment workflows. Inside each unit, the AI cycles through specialist agents, each wearing a "hat": a markdown file that defines the role's required steps, boundaries and quality gates. Built-in hats include Planner, Builder, Reviewer, Designer, Test Writer, Implementer, Refactorer, Red Team, Blue Team, Observer, Hypothesizer, Experimenter and Analyst. Passes add a disciplinary lens (design, product or dev) over the standard loop, and later passes can pass work back to earlier ones when new constraints appear.
+
+The hat list is where the "grill me" idea becomes a formal role. The Red Team hat attacks assumptions and design decisions during Elaboration and Review; the Blue Team hat defends them; the Observer hat stays detached and reports what the agents actually did. Teams can express the same idea with simpler tooling — a reusable grill-me skill that interrogates intent, requirements and design before the harness gates run. Either way the principle is identical to backpressure: challenge the work before it is accepted, not after.
 
 Two evolution notes: the HITL/OHOTL/AHOTL taxonomy is already being superseded inside the community's broader H·AI·K·U framework by five operating modes and a "stages" model that replaces Passes. Treat these community constructs as fast-moving rather than settled.
 
@@ -755,6 +759,18 @@ This matrix maps every persona to the software development phases from the lifec
 - <a id="dpo-ph1"></a>**Phase 1 — Requirements (A):** approves AI-assisted privacy impact assessments and data inventory analysis.
 - <a id="dpo-ph7"></a>**Phase 7 — Maintenance (R):** reviews AI-analysed data handling changes and breach learnings.
 
+## Personas and Operating Modes
+
+The matrix codes (O, R, C, A) describe involvement, but AI-DLC adds a second dimension: how much autonomy each persona grants the AI. Mapping the codes to the operating modes from the AI-DLC section gives a rough pattern:
+
+| Mode | Personas (by dominant involvement) | Why |
+|---|---|---|
+| HITL — approve before it advances | Enterprise Architect, Security Architect, GRC, DPO, AppSec, Release Manager | These personas own the A cells and the release gates. The agent must pause, present evidence and wait for a decision at every checkpoint |
+| OHOTL — observe and redirect | PM, PO, BA, Solution Architect, Data Architect, Tech Lead, UX Researcher, UX Designer, QA, SRE, Support Engineer | These personas review judgement-heavy output: requirements, designs, UX, test strategy and incidents. They want real-time visibility and the power to intervene without blocking everything |
+| AHOTL — autonomous within gates | SWE, SDET, Data Engineer, Database Administrator, ML/AI Engineer, DevOps, Cloud Engineer | These personas produce and maintain mechanical, verifiable work. Precise completion criteria and quality gates let the agent iterate without hand-holding, and the human reviews the result |
+
+Two things matter here. First, the mode is a property of the work and its risk, not of the persona: a Software Engineer writing authentication is HITL, while the same engineer refactoring a well-tested utility is AHOTL. Second, autonomy is earned — teams move work from HITL to AHOTL only as requirements stabilise, quality gates prove themselves and trust is earned, which is exactly the escalation rule from the AI-DLC section.
+
 ## References
 
 **Books:**
@@ -796,6 +812,7 @@ This matrix maps every persona to the software development phases from the lifec
 - ITIL 4 Foundation (AXELOS, 2019).
 - ISTQB Certified Tester Foundation Level syllabus.
 - OWASP Top 10 and OWASP Application Security Verification Standard (ASVS).
+- OWASP Top 10 for LLM Applications.
 - PCI DSS, SOC 2 (AICPA) and GDPR (EU 2016/679).
 
 **Online references:**
@@ -808,6 +825,7 @@ This matrix maps every persona to the software development phases from the lifec
 - Böckeler, B. (2026). *Context Engineering for Coding Agents*. martinfowler.com.
 - The Bushido Collective (2026). *AI-DLC 2026 Method Definition Paper*. ai-dlc.dev/paper.
 - Fowler, M. (2006). *Continuous Integration*. martinfowler.com.
+- GitHub (2025). *Spec Kit: Writing specifications your team will actually use*. github.blog.
 - Meppiel, D. (2025). *How to build reliable AI workflows with agentic primitives and context engineering*. GitHub Blog.
 - North, D. (2006). *Introducing BDD*.
 - SP, R. (2025). *AI-Driven Development Life Cycle: Reimagining Software Engineering*. AWS DevOps Blog.
