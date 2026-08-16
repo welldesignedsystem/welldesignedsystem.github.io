@@ -10,9 +10,12 @@ summary = "Every Fintech persona at Telly, mapped across the SDLC, AI-DLC and co
 
 This post outlines the roles and contributions of each persona in Telly's Fintech domain with context around Engineering and AI. It builds on related posts on this site — [Context Engineering](/blog/ai/context-engineering/), [Spec-Driven Development With AI](/blog/ai/spec-driven-development/) and [Testing LLM Outputs: Evals for Models, Agents, and Skills](/blog/ai/evals/) — and references them where their concepts apply.
 
-## The Software Development Lifecycle: From Idea to Production and Beyond
-
-This tries to capture set of steps any software product goes through, from the first idea to production and beyond, following industry-standard practices from classic textbooks such as *Software Engineering* (Sommerville, 10th ed, 2016), *Software Engineering: A Practitioner's Approach* (Pressman and Maxim, 9th ed, 2020) and ISO/IEC/IEEE 12207:2017 (software life cycle processes). Teams rarely follow these phases in strict order — most modern teams iterate and overlap them — but the sequence is a reliable reference model for what must happen.
+## The Software Development Lifecycle
+Starts from the first idea to production and beyond, following classic textbooks 
+- *Software Engineering* (Sommerville, 10th ed, 2016)
+- *Software Engineering: A Practitioner's Approach* (Pressman and Maxim, 9th ed, 2020) 
+- ISO/IEC/IEEE 12207:2017 (software life cyccomprehensivele processes). 
+We have to take a generic and more  approach
 
 ### Phase 0: Discovery and Idea
 
@@ -359,7 +362,7 @@ Mob Elaboration is where adversarial skills earn their keep. A "grill me" skill 
 
 **Operations — run and maintain it.** AI applies the accumulated context to deployment, infrastructure as code, monitoring, rollback and ongoing maintenance. The important point is continuity: plans, requirements, design artifacts and operational knowledge are stored in the repository so later sessions do not start from scratch. In the financial-services narrative, monitoring feeds back into the coding agent's context and informs future Inception cycles, creating a virtuous loop.
 
-**How AI-DLC maps onto the SDLC.** AI-DLC does not replace the pipeline from the SDLC Flow diagram; it reorganizes how each phase is executed. Discovery and Requirements fold into Inception, Architecture and Design plus Development plus Testing fold into Construction, and CI/CD plus Production plus Maintenance fold into Operations.
+**How AI-DLC maps onto the SDLC.** AI-DLC does not replace the pipeline from the SDLC Flow diagram; it reorganizes how each phase is executed. Discovery and Requirements fold into Inception; Architecture and Design plus Development plus Testing fold into Construction; CI/CD plus Production plus Maintenance fold into Operations.
 
 ```mermaid
 flowchart TD
