@@ -12,7 +12,7 @@ This post outlines the roles and contributions of each persona in Telly's Fintec
 
 ## The Software Development Lifecycle: From Idea to Production and Beyond
 
-This section walks through the complete set of steps any software product goes through, from the first idea to production and beyond, following industry-standard practices from classic textbooks such as *Software Engineering* (Sommerville, 10th ed, 2016), *Software Engineering: A Practitioner's Approach* (Pressman and Maxim, 9th ed, 2020) and ISO/IEC/IEEE 12207:2017 (software life cycle processes). Teams rarely follow these phases in strict order — most modern teams iterate and overlap them — but the sequence is a reliable reference model for what must happen.
+This tries to capture set of steps any software product goes through, from the first idea to production and beyond, following industry-standard practices from classic textbooks such as *Software Engineering* (Sommerville, 10th ed, 2016), *Software Engineering: A Practitioner's Approach* (Pressman and Maxim, 9th ed, 2020) and ISO/IEC/IEEE 12207:2017 (software life cycle processes). Teams rarely follow these phases in strict order — most modern teams iterate and overlap them — but the sequence is a reliable reference model for what must happen.
 
 ### Phase 0: Discovery and Idea
 
