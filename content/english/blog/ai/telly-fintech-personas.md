@@ -343,11 +343,11 @@ There is no single canonical list of pillars — different authors and organisat
 | Context engineering | Curating what the model sees: context window, memory layers, scoping, compression and selective loading. The difference between an agent that guesses and an agent that knows | Birgitta Böckeler, [Context Engineering for Coding Agents](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html) (martinfowler.com) |
 | Retrieval and grounding | Pulling the right external knowledge into the window: chunking, embeddings, re-ranking, freshness. Grounds the model in your data instead of its training corpus | Huyen, *AI Engineering*, ch 6 (context construction); |
 | Spec-driven development | Structured, versioned specifications become the source of truth and agents derive implementation, tests and documentation from them | GitHub Spec Kit; arXiv [process taxonomy of AI dev frameworks](https://arxiv.org/html/2606.04967) |
-| Evaluation (evals) | Testing non-deterministic output: the eval pyramid, golden datasets, invariants, model-graded metrics and CI gates. You cannot improve what you do not measure | [DeepEval](..TODO provide official website link..), [Promptfoo](..TODO provide official website link..), [Braintrust](/blog/ai/braintrust/), [pytest](/blog/ai/pytest/), [hypothesis](/blog/ai/hypothesis/), [ToolCallCheck](/blog/ai/toolcallcheck/); Huyen, ch 3-4 |
-| Agents, tools and harnesses | The execution layer: agent SDKs, tool calling, protocols and the harness that mediates context, tools, memory, verification and permissions. Includes agent skills — reusable packages that shape behaviour, such as adversarial "grill me" skills that interrogate intent and assumptions before work starts | [Model Context Protocol](/blog/ai/mcp/), [Claude Agent SDK](/blog/ai/claude_agent_sdk/), [OpenAI Agent SDK](/blog/ai/open_ai_agent_sdk/), [A2A](/blog/ai/a2a/), [OpenCode](/blog/ai/opencode/); Anthropic, [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents); arXiv [AI Harness Engineering](https://arxiv.org/html/2605.13357) |
+| Evaluation (evals) | Testing non-deterministic output: the eval pyramid, golden datasets, invariants, model-graded metrics and CI gates. You cannot improve what you do not measure | [OpenAI Evals](https://github.com/openai/evals), [Promptfoo](https://promptfoo.dev), [Braintrust](https://braintrust.org), [pytest](https://docs.pytest.org/en/stable/), [Hypothesis](https://hypothesis.readthedocs.io/en/latest/), ToolCallCheck; Huyen, ch 3-4 |
+| Agents, tools and harnesses | The execution layer: agent SDKs, tool calling, protocols and the harness that mediates context, tools, memory, verification and permissions. Includes agent skills — reusable packages that shape behaviour, such as adversarial "grill me" skills that interrogate intent and assumptions before work starts | Model Context Protocol (MCP), Anthropic docs (https://www.anthropic.com/docs), OpenAI developer docs (https://platform.openai.com/docs), [Multi-agent systems](https://en.wikipedia.org/wiki/Multi-agent_system), OpenCode; Anthropic, [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents); arXiv [AI Harness Engineering](https://arxiv.org/html/2605.13357) |
 | Guardrails, safety and security | Prompt injection defence, hallucination mitigation, permissions, secrets handling and supply-chain scanning for AI-generated code | Huyen, *AI Engineering* (safety chapter); OWASP Top 10 for LLM Applications |
-| Observability, tracing and cost | Monitoring model and agent behaviour, logging, tracing, token budgets and cost governance. You cannot improve what you do not measure | Huyen, *AI Engineering* (infrastructure layer); [Context Engineering](/blog/ai/context-engineering/) |
-| Model selection and adaptation | Choosing the right model and adapting it: prompt vs RAG vs fine-tuning vs structured output. Start with prompting and retrieval before reaching for training | Huyen, *AI Engineering*; [Context Engineering](/blog/ai/context-engineering/) |
+| Observability, tracing and cost | Monitoring model and agent behaviour, logging, tracing, token budgets and cost governance. You cannot improve what you do not measure | Huyen, *AI Engineering* (infrastructure layer); [Context Engineering for Coding Agents](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html) |
+| Model selection and adaptation | Choosing the right model and adapting it: prompt vs RAG vs fine-tuning vs structured output. Start with prompting and retrieval before reaching for training | Huyen, *AI Engineering*; [Context Engineering for Coding Agents](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html) |
 | Human oversight and governance | Deciding how much autonomy AI gets: HITL, OHOTL or AHOTL modes, review workflows, approval boundaries, traceability and audit trails | AI-DLC (below); arXiv [Agentic Software Engineering (SE 3.0)](https://arxiv.org/html/2509.06216v3) |
 
 ### The AI-Driven Development Lifecycle (AI-DLC)
@@ -580,13 +580,13 @@ AI-DLC is useful but not complete by itself. Teams still need to define:
 - Evaluation metrics for productivity, defect rate, user impact and maintainability
 - Rules for when autonomous work must stop and escalate
 
-It is also worth remembering that the fuller, more operational version of the methodology (modes, passes, quality gates) comes from an independent community project, not from AWS, so teams evaluating it for enterprise use should weigh that provenance accordingly. The [AI-DLC: AI-Driven SDLC](/blog/ai/ai-dlc/) post on this site covers all of the above in depth.
+It is also worth remembering that the fuller, more operational version of the methodology (modes, passes, quality gates) comes from an independent community project, not from AWS, so teams evaluating it for enterprise use should weigh that provenance accordingly. See the AWS framing at https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/ and the community paper at https://ai-dlc.dev/paper for additional perspectives.
 
 #### AI-DLC Key Sources
 
 | Source | What It Contributes |
 |---|---|
-| [AI-DLC: AI-Driven SDLC](/blog/ai/ai-dlc/) | This site's full treatment of the methodology, terminology and community extensions |
+| AI-DLC: AI-Driven SDLC | See AWS: https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/ and the community paper at https://ai-dlc.dev/paper |
 | Raja SP (AWS), [AI-Driven Development Life Cycle: Reimagining Software Engineering](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) | The original methodology post, 31 July 2025 |
 | AWS, [Open-Sourcing Adaptive Workflows for AI-DLC](https://aws.amazon.com/blogs/devops/open-sourcing-adaptive-workflows-for-ai-driven-development-life-cycle-ai-dlc/) | Adaptive decisioning, checkpoints and traceability, November 2025 |
 | AWS, [Building with AI-DLC using Amazon Q Developer](https://aws.amazon.com/blogs/devops/building-with-ai-dlc-using-amazon-q-developer/) | Stage-by-stage walkthrough with conditional stages and audit trails |
@@ -653,7 +653,7 @@ This matrix maps every persona to the software development phases from the lifec
 
 #### Product Owner (PO)
 
-- <a id="po-ph1"></a>**Phase 1 — Requirements (O):** writes user stories and acceptance criteria with AI assistance, following [spec-driven development](/blog/ai/spec-driven-development/); context comes from domain rules in the knowledge base.
+- <a id="po-ph1"></a>**Phase 1 — Requirements (O):** writes user stories and acceptance criteria with AI assistance, following spec-driven development practices; context comes from domain rules in the knowledge base.
 - <a id="po-ph3"></a>**Phase 3 — Development (O):** refines the backlog with AI and evaluates delivered features against the Definition of Done using domain context.
 - <a id="po-ph4"></a>**Phase 4 — Testing (C):** contributes acceptance criteria that become eval cases in the automated test suite.
 - <a id="po-ph7"></a>**Phase 7 — Maintenance (O):** prioritises the maintenance backlog from production defect data with AI.
@@ -761,7 +761,7 @@ This matrix maps every persona to the software development phases from the lifec
 #### Test Automation Engineer (SDET)
 
 - <a id="sdet-ph3"></a>**Phase 3 — Development (O):** uses AI to author and maintain automated tests across the test pyramid.
-- <a id="sdet-ph4"></a>**Phase 4 — Testing (O):** runs eval and regression suites in CI and applies the [Testing LLM Outputs: Evals for Models, Agents, and Skills](/blog/ai/evals/) framework to guard non-deterministic features.
+- <a id="sdet-ph4"></a>**Phase 4 — Testing (O):** runs eval and regression suites in CI and applies eval frameworks (for example OpenAI Evals: https://github.com/openai/evals) to guard non-deterministic features.
 - <a id="sdet-ph7"></a>**Phase 7 — Maintenance (R):** reviews AI-analysed flaky test and coverage trends.
 
 #### DevOps / Platform Engineer (DevOps)
