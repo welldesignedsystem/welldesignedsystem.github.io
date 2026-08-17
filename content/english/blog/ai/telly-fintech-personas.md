@@ -8,173 +8,12 @@ summary = "Every Fintech persona at Telly, mapped across the SDLC, AI-DLC and co
 
 ## Introduction
 
-This post outlines the roles and contributions of each persona in Telly's Fintech domain with context around Engineering and AI. It builds on related posts on this site — [Context Engineering](/blog/ai/context-engineering/), [Spec-Driven Development With AI](/blog/ai/spec-driven-development/) and [Testing LLM Outputs: Evals for Models, Agents, and Skills](/blog/ai/evals/) — and references them where their concepts apply.
+This post outlines the roles and contributions of each persona in Telly's Fintech domain with context around Engineering and AI.
 
 ## The Software Development Lifecycle
-Starts from the first idea to production and beyond, following classic textbooks 
-- *Software Engineering* (Sommerville, 10th ed, 2016)
-- *Software Engineering: A Practitioner's Approach* (Pressman and Maxim, 9th ed, 2020) 
-- ISO/IEC/IEEE 12207:2017 (software life cyccomprehensivele processes). 
-We have to take a generic and more  approach
-
-### Phase 0: Discovery and Idea
-
-**What happens here:** validate that the problem is real, that people will use the solution and that building it makes business sense.
-
-- Define the problem and the target user: who it is for, what problem it solves and why now.
-- Validate demand before building. *The Lean Startup* (Ries, 2011) recommends the build-measure-learn loop and a minimal viable product (MVP) to test assumptions with real users early.
-- Run a feasibility study: technical, financial, timeline and, in fintech, regulatory and compliance.
-- Decide build vs buy vs borrow. Choose the technology only after the problem is understood — avoid following hype cycles.
-- Define success criteria and the business case; secure stakeholder alignment.
-
-**Deliverables:** problem statement, business case, MVP scope, success metrics.
-
-**References:** *The Lean Startup* (Ries, 2011); *The Mythical Man-Month* (Brooks, 1975); PMBOK Guide (PMI, 7th ed, 2021).
-
-### Phase 1: Requirements Engineering
-
-**What happens here:** capture what the system must do and how well it must do it.
-
-- Elicit requirements from stakeholders through interviews, workshops, observation and document analysis (Sommerville, 2016).
-- Analyse and prioritise. Functional requirements define what the system does; non-functional requirements (quality attributes) define performance, security, availability, scalability and usability.
-- Specify the requirements. Agile teams write user stories with acceptance criteria and follow the INVEST model (Wake, 2003). Regulated environments keep a formal software requirements specification (SRS) with traceability.
-- Validate and sign off, especially for compliance- and safety-relevant requirements.
-- Manage change: requirements evolve; track them in a product backlog or a requirements management tool.
-
-**Deliverables:** product backlog or SRS, acceptance criteria, Definition of Ready and Definition of Done.
-
-**References:** ISO/IEC/IEEE 29148 (requirements engineering); *Software Engineering* (Sommerville, 2016); the Scrum Guide (Schwaber and Sutherland).
-
-### Phase 2: Architecture and Design
-
-**What happens here:** decide how the system is structured before writing code.
-
-- Choose the architecture that fits the problem: layered, microservices, event-driven, serverless and so on. *Designing Data-Intensive Applications* (Kleppmann, 2017) is the standard reference for data-centric architectures.
-- Model the domain with Domain-Driven Design: ubiquitous language, bounded contexts, aggregates (Evans, 2003).
-- Design at two levels: high-level architecture (components, integrations, data flow, security boundaries) and low-level design (modules, interfaces, algorithms and patterns from *Design Patterns*, Gamma et al, 1994).
-- Define the data model and API contracts before implementation.
-- Record decisions as Architecture Decision Records (ADRs) so future teams know why things are the way they are.
-- Design for failure: circuit breakers, retries with backoff, timeouts, queues and graceful degradation (*Release It!*, Nygard, 2007).
-
-**Deliverables:** architecture design document, ADRs, data model, API specifications, security architecture.
-
-**References:** *Designing Data-Intensive Applications* (Kleppmann, 2017); *Clean Architecture* (Martin, 2017); *Domain-Driven Design* (Evans, 2003); *Design Patterns* (Gamma et al, 1994); *Release It!* (Nygard, 2007).
-
-### Phase 3: Development (Construction)
-
-**What happens here:** turn the design into working, tested code.
-
-- Set up version control (Git) and agree a branching strategy. Trunk-based development is the standard recommendation for teams doing continuous delivery.
-- Follow coding standards enforced by linting and static analysis. *Code Complete* (McConnell, 2004) and *Clean Code* (Martin, 2008) are the classic references for construction practices.
-- Write tests alongside code, test-first where it fits: test-driven development (Beck, 2003).
-- Review every change: pull requests, code review, pair or mob programming for complex work.
-- Integrate continuously: commit small, integrate frequently, keep the build green (Fowler, 2006).
-- Keep the code healthy: refactor in small steps (Fowler, 1999) and avoid premature optimisation.
-
-**Deliverables:** source code, unit tests, review records, CI build.
-
-**References:** *Code Complete* (McConnell, 2004); *Clean Code* (Martin, 2008); *Test-Driven Development: By Example* (Beck, 2003); *Refactoring* (Fowler, 1999); *The Pragmatic Programmer* (Hunt and Thomas, 1999).
-
-### Phase 4: Testing and Quality Assurance
-
-**What happens here:** verify the software works, and keep proving it as it changes.
-
-- Follow the test pyramid: many fast unit tests, fewer integration tests and a small number of end-to-end tests (Cohn, 2009).
-- Test at the standard levels from the ISTQB syllabus: component (unit), integration, system and acceptance testing.
-- Automate regression tests and run them in CI on every change.
-- Add non-functional testing: performance and load, security (OWASP Top 10 and OWASP ASVS), accessibility and usability.
-- Use behaviour-driven development for shared understanding: Gherkin scenarios written before the code (North, 2006).
-- Enforce quality gates before merge: code review approval, coverage thresholds, lint rules and passing tests.
-
-**Deliverables:** automated test suites, test reports, quality metrics.
-
-**References:** ISTQB Foundation syllabus; *Succeeding with Agile* (Cohn, 2009); *Introducing BDD* (North, 2006); OWASP Top 10 and OWASP ASVS.
-
-### Phase 5: Build, Continuous Integration and Release (CI/CD)
-
-**What happens here:** make the path to production fast, automated and safe.
-
-- Build and test every commit in a CI pipeline; produce immutable, versioned artifacts. Keep build, release and run separate (Twelve-Factor App, Wiggins, 2011).
-- Promote the same artifact through environments: development, test or staging, then production. Keep environments as close to production as possible (dev/prod parity).
-- Automate deployment with release pipelines so software is always in a deployable state (*Continuous Delivery*, Humble and Farley, 2010).
-- Use safe deployment patterns: rolling, blue-green or canary, with feature flags to decouple deploy from release.
-- Gate every release on automated checks: tests, static analysis, security scanning, compliance checks and health checks after deployment.
-
-**Deliverables:** CI/CD pipeline, release automation, deployment runbooks.
-
-**References:** *Continuous Delivery* (Humble and Farley, 2010); *Continuous Integration* (Fowler, 2006); *The DevOps Handbook* (Kim, Humble, Debois and Willis, 2016); Twelve-Factor App (Wiggins, 2011).
-
-### Phase 6: Production Operations and Reliability
-
-**What happens here:** run the system reliably, safely and economically once it is live.
-
-- Define reliability targets: service level indicators (SLIs), service level objectives (SLOs) and error budgets (*Site Reliability Engineering*, Beyer et al, 2016).
-- Implement observability: metrics, structured logs, distributed tracing, dashboards and alerting.
-- Set up on-call and incident management: detection, response, escalation and communication. ITIL 4 defines incident and problem management as standard practices.
-- Run blameless postmortems after every significant incident.
-- Plan capacity, backups, restore drills and disaster recovery.
-- Control cost: track cloud spend, rightsize resources and automate scaling.
-- Harden production security: vulnerability scanning, patching and regular access reviews.
-- Optionally run chaos experiments to prove failure handling works (*Principles of Chaos Engineering*, 2017).
-
-**Deliverables:** SLOs, runbooks, incident response plan, monitoring and alerting, capacity plan, disaster recovery plan.
-
-**References:** *Site Reliability Engineering* (Beyer et al, 2016); *The Site Reliability Workbook* (2018); *ITIL 4 Foundation* (AXELOS, 2019); *Principles of Chaos Engineering* (2017).
-
-### Phase 7: Maintenance and Evolution
-
-**What happens here:** keep the system alive, correct and competitive after launch.
-
-- Classify and manage maintenance work: corrective (fixing defects), adaptive (new platforms, regulations or compliance), perfective (new features and improvements) and preventive (refactoring and technical debt reduction) — IEEE 1219.
-- Manage technical debt explicitly: track it, pay it down in small steps and use automated tests as a safety net (*Refactoring*, Fowler, 1999; *Working Effectively with Legacy Code*, Feathers, 2004).
-- Release on a regular cadence with regression protection from the automated test suite.
-- Feed production telemetry back into requirements, design and testing.
-- Improve continuously using the DORA four key metrics: deployment frequency, lead time for changes, change failure rate and time to restore service (*Accelerate*, Forsgren, Humble and Kim, 2018).
-- Plan dependency and platform upgrades; never let versions drift so far that migration becomes a project in itself.
-
-**Deliverables:** maintenance backlog, release cadence, technical debt register, improvement roadmap.
-
-**References:** IEEE 1219 (software maintenance); *Refactoring* (Fowler, 1999); *Working Effectively with Legacy Code* (Feathers, 2004); *Accelerate* (Forsgren et al, 2018); CMMI-DEV for process maturity.
-
-### Phase 8: Retirement (Sunset)
-
-**What happens here:** take the system out of service cleanly and responsibly.
-
-- Decide when to retire: when the cost of running exceeds the value delivered, or a replacement exists.
-- Plan the exit: data migration or archival, decommissioning integrations, winding down third-party contracts and cleaning up DNS and certificates.
-- Communicate the plan to users and stakeholders well in advance.
-- Keep required records and audit trails, especially in regulated fintech environments.
-- Shut down in stages with a rollback path if the replacement underperforms.
-
-**Deliverables:** retirement plan, data archival or migration, final closeout report.
-
-**References:** ISO/IEC/IEEE 12207 (retirement process); PMBOK Guide (project closure).
-
-### Cross-Cutting Practices
-
-These apply across every phase above.
-
-- **Process framework:** agile (Scrum, Kanban, extreme programming) for most product work; plan-driven (waterfall) where requirements are fixed and heavily regulated; hybrid models in between. Agile Manifesto (2001).
-- **Ceremonies and cadence:** sprint planning, daily standup, review and retrospective (the Scrum Guide). Retrospectives drive continuous improvement.
-- **Estimation:** story points and planning poker based on Wideband Delphi (Boehm, 1981), relative sizing and T-shirt sizing.
-- **Quality and compliance gates:** security reviews, audit trails and traceability from requirement to production change. Fintech adds mandatory gates: ISO/IEC 27001, PCI DSS, SOC 2 and GDPR.
-- **Governance:** change management and incident management follow ITIL 4; release boards for high-risk environments.
-
-### Summary: The Full Set of Steps
-
-| Phase | Key Activities | Key Deliverable | Key Reference |
-|---|---|---|---|
-| 0. Discovery | Problem definition, feasibility, MVP validation | Business case, success metrics | *The Lean Startup* (Ries, 2011) |
-| 1. Requirements | Elicitation, analysis, specification | Backlog or SRS, acceptance criteria | ISO/IEC/IEEE 29148 |
-| 2. Architecture and design | Domain modelling, architecture, data and API design | Design docs, ADRs | *Domain-Driven Design* (Evans, 2003) |
-| 3. Development | Coding, code review, continuous integration | Source code, unit tests | *Code Complete* (McConnell, 2004) |
-| 4. Testing | Test pyramid, automated regression, non-functional testing | Test suites, reports | ISTQB / *Succeeding with Agile* (Cohn, 2009) |
-| 5. Build and release | CI/CD, deployment automation, safe release patterns | Release pipeline, runbooks | *Continuous Delivery* (Humble and Farley, 2010) |
-| 6. Production | SLOs, observability, incident management, DR | SLOs, runbooks, DR plan | *Site Reliability Engineering* (2016) |
-| 7. Maintenance and evolution | Defect fixing, features, tech debt, improvement | Release cadence, debt register | IEEE 1219 / *Accelerate* (2018) |
-| 8. Retirement | Decommissioning, data archival, communication | Retirement plan | ISO/IEC/IEEE 12207 |
 
 ### SDLC Flow
+Starts from the first idea to production and beyond. We have to take a generic approach as different domains follow a slightly different approach that works for them.
 
 ```mermaid
 flowchart LR
@@ -191,12 +30,223 @@ flowchart LR
     H -.->|Hotfix| D
     I -.->|New requirement| B
 ```
+**References:** 
+- *Software Engineering* (Sommerville, 10th ed, 2016)
+- *Software Engineering: A Practitioner's Approach* (Pressman and Maxim, 9th ed, 2020) 
+- ISO/IEC/IEEE 12207:2017 (software life cyccomprehensivele processes). 
 
-This is the classic pipeline the software goes through. The quality gate blocks promotion when testing fails, and two dashed feedback loops return to the system: hotfixes from production and new requirements from maintenance. Every one of these phases is executed by the personas later in this post; what AI changes is not the pipeline itself but how the work inside each phase is done.
+### Phase 0: Discovery and Idea
+- validates the problem is real
+- that people will use the solution 
+- building it makes business sense
+- Timing is right
+- Validate demand before building - build-measure-learn loop and a minimal viable product (MVP) to test assumptions with real users early ** The Lean Startup (Ries, 2011) **
+- Run a feasibility study: technical, financial, timeline and, in fintech, regulatory and compliance.
+- Decide build vs buy vs borrow. 
+- Choose the technology only after the problem is understood — avoid following hype cycles.
+- Define success criteria and the business case; secure stakeholder alignment.
+
+**Deliverables:** 
+- Problem statement
+- Business case
+- MVP scope
+- Success metrics.
+
+**References:** 
+- *The Lean Startup* (Ries, 2011); 
+- *The Mythical Man-Month* (Brooks, 1975); 
+- [PMBOK Guide (PMI, 7th ed, 2021).](https://tegnum.edu.pe/wp-content/uploads/2023/09/Project-Management-Institute-A-Guide-to-the-Project-Management-Body-of-Knowledge-PMBOK-R-Guide-PMBOK%C2%AE%EF%B8%8F-Guide-Project-Management-Institute-2021.pdf)
+
+### Phase 1: Requirements Engineering
+- Capture what the system must do and how well it must do it.
+- Elicit requirements from stakeholders through interviews, workshops, observation and document analysis **Software Engineering (Sommerville, 2016)**
+- Analyse and prioritise. 
+- Functional requirements define what the system does; non-functional requirements (quality attributes) define performance, security, availability, scalability and usability.
+ Specify the requirements. 
+ Elicit requirements from stakeholders through interviews, workshops, observation and document analysis.
+ Analyse and prioritise. 
+ Functional requirements define what the system does; non-functional requirements (quality attributes) define performance, security, availability, scalability and usability.
+ Specify the requirements. 
+ - Agile teams write user stories with acceptance criteria and follow the INVEST model (Wake, 2003). 
+    - **Independent** — the story can be implemented without depending on other stories.
+    - **Negotiable** — it is not a contract; details are discussed and refined with the team.
+    - **Valuable** — delivers clear value to the user or stakeholder.
+    - **Estimable** — the team can reasonably estimate the effort required.
+    - **Small** — small enough to complete within a single sprint or bolt.
+    - **Testable** — has clear acceptance criteria so it can be verified.
+ - Regulated environments keep a formal software requirements specification (SRS) with traceability.
+
+**Deliverables**
+- product backlog or SRS
+- acceptance criteria
+- Definition of Ready
+- Definition of Done.
+
+**References:** 
+- *Software Engineering* (Sommerville, 2016); the Scrum Guide (Schwaber and Sutherland).
+- ISO/IEC/IEEE 29148 (requirements engineering); 
+
+### Phase 2: Architecture and Design
+- Decide how the system is structured before writing code.
+- Choose the architecture that fits the problem: layered, microservices, event-driven, serverless and so on. 
+- Model the domain with Domain-Driven Design: ubiquitous language, bounded contexts, aggregates 
+- Design at two levels: 
+  - high-level architecture (components, integrations, data flow, security boundaries) 
+  - low-level design (modules, interfaces, algorithms and patterns from *Design Patterns*, Gamma et al, 1994).
+- Define the data model and API contracts before implementation.
+- Record decisions as Architecture Decision Records (ADRs) so future teams know why things are the way they are.
+- Design for failure: circuit breakers, retries with backoff, timeouts, queues and graceful degradation (*Release It!*, Nygard, 2007).
+
+**Deliverables:** 
+- architecture design document
+- ADRs
+- data model
+- API specifications
+- security architecture.
+
+**References:** 
+- *Designing Data-Intensive Applications* (Kleppmann, 2017); 
+- *Clean Architecture* (Martin, 2017); 
+- *Domain-Driven Design* (Evans, 2003); 
+- *Design Patterns* (Gamma et al, 1994); 
+- *Release It!* (Nygard, 2007).
+
+### Phase 3: Development (Construction)
+- Turn the design into working, tested code.
+- Set up version control (Git) and agree a branching strategy. Trunk-based development is the standard recommendation for teams doing continuous delivery.
+- Follow coding standards enforced by linting and static analysis. 
+- Write tests alongside code, test-first where it fits: test-driven development (Beck, 2003).
+- Review every change: pull requests, code review, pair or mob programming for complex work.
+- Integrate continuously: commit small, integrate frequently, keep the build green (Fowler, 2006).
+- Keep the code healthy: refactor in small steps (Fowler, 1999) and avoid premature optimisation.
+
+**Deliverables:** 
+- source code
+- unit tests
+- review records
+- CI build.
+
+**References:** 
+- *Code Complete* (McConnell, 2004); 
+- *Clean Code* (Martin, 2008); 
+- *Test-Driven Development: By Example* (Beck, 2003); 
+- *Refactoring* (Fowler, 1999); 
+- *The Pragmatic Programmer* (Hunt and Thomas, 1999).
+
+### Phase 4: Testing and Quality Assurance
+- Verify the software works, and keep proving it as it changes.
+- Follow the test pyramid: many fast unit tests, fewer integration tests and a small number of end-to-end tests (Cohn, 2009).
+- Test at the standard levels from the ISTQB syllabus: component (unit), integration, system and acceptance testing.
+- Automate regression tests and run them in CI on every change.
+- Add non-functional testing: performance and load, security (OWASP Top 10 and OWASP ASVS), accessibility and usability.
+- Use behaviour-driven development for shared understanding: Gherkin scenarios written before the code (North, 2006).
+- Enforce quality gates before merge: code review approval, coverage thresholds, lint rules and passing tests.
+
+**Deliverables:** 
+- automated test suites
+- test reports
+- quality metrics.
+
+**References:** 
+- ISTQB Foundation syllabus
+- *Succeeding with Agile* (Cohn, 2009)
+- *Introducing BDD* (North, 2006)
+- OWASP Top 10 and OWASP ASVS.
+
+### Phase 5: Build, Continuous Integration and Release (CI/CD)
+- Make the path to production fast, automated and safe.
+- Build and test every commit in a CI pipeline; produce immutable, versioned artifacts. Keep build, release and run separate (Twelve-Factor App, Wiggins, 2011).
+- Promote the same artifact through environments: development, test or staging, then production. Keep environments as close to production as possible (dev/prod parity).
+- Automate deployment with release pipelines so software is always in a deployable state (*Continuous Delivery*, Humble and Farley, 2010).
+- Use safe deployment patterns: rolling, blue-green or canary, with feature flags to decouple deploy from release.
+- Gate every release on automated checks: tests, static analysis, security scanning, compliance checks and health checks after deployment.
+
+**Deliverables:** 
+- CI/CD pipeline
+- release automation
+- deployment runbooks.
+
+**References:** 
+- *Continuous Delivery* (Humble and Farley, 2010)
+- *Continuous Integration* (Fowler, 2006); 
+- *The DevOps Handbook* (Kim, Humble, Debois and Willis, 2016); 
+- Twelve-Factor App (Wiggins, 2011).
+
+### Phase 6: Production Operations and Reliability
+- Run the system reliably, safely and economically once it is live.
+- Define reliability targets: service level indicators (SLIs), service level objectives (SLOs) and error budgets (*Site Reliability Engineering*, Beyer et al, 2016).
+- Implement observability: metrics, structured logs, distributed tracing, dashboards and alerting.
+- Set up on-call and incident management: detection, response, escalation and communication. ITIL 4 defines incident and problem management as standard practices.
+- Run blameless postmortems after every significant incident.
+- Plan capacity, backups, restore drills and disaster recovery.
+- Control cost: track cloud spend, rightsize resources and automate scaling.
+- Harden production security: vulnerability scanning, patching and regular access reviews.
+- Optionally run chaos experiments to prove failure handling works (*Principles of Chaos Engineering*, 2017).
+
+**Deliverables:** 
+- SLOs
+- runbooks
+- incident response plan
+- monitoring and alerting
+- capacity plan
+- disaster recovery plan.
+
+**References:** 
+- *Site Reliability Engineering* (Beyer et al, 2016); 
+- *The Site Reliability Workbook* (2018); 
+- *ITIL 4 Foundation* (AXELOS, 2019); 
+- *Principles of Chaos Engineering* (2017).
+
+### Phase 7: Maintenance and Evolution
+- Keep the system alive, correct and competitive after launch.
+- Classify and manage maintenance work: corrective (fixing defects), adaptive (new platforms, regulations or compliance), perfective (new features and improvements) and preventive (refactoring and technical debt reduction) — IEEE 1219.
+- Manage technical debt explicitly: track it, pay it down in small steps and use automated tests as a safety net (*Refactoring*, Fowler, 1999; *Working Effectively with Legacy Code*, Feathers, 2004).
+- Release on a regular cadence with regression protection from the automated test suite.
+- Feed production telemetry back into requirements, design and testing.
+- Improve continuously using the DORA four key metrics: deployment frequency, lead time for changes, change failure rate and time to restore service (*Accelerate*, Forsgren, Humble and Kim, 2018).
+- Plan dependency and platform upgrades; never let versions drift so far that migration becomes a project in itself.
+
+**Deliverables:** 
+- maintenance backlog
+- release cadence
+- technical debt register
+- improvement roadmap.
+
+**References:** 
+- IEEE 1219 (software maintenance); 
+- *Refactoring* (Fowler, 1999); 
+- *Working Effectively with Legacy Code* (Feathers, 2004); 
+- *Accelerate* (Forsgren et al, 2018); 
+- CMMI-DEV for process maturity.
+
+### Phase 8: Retirement (Sunset)
+- Take the system out of service cleanly and responsibly.
+- Decide when to retire: when the cost of running exceeds the value delivered, or a replacement exists.
+- Plan the exit: data migration or archival, decommissioning integrations, winding down third-party contracts and cleaning up DNS and certificates.
+- Communicate the plan to users and stakeholders well in advance.
+- Keep required records and audit trails, especially in regulated fintech environments.
+- Shut down in stages with a rollback path if the replacement underperforms.
+
+**Deliverables:** 
+- Retirement plan
+- data archival or migration
+- final closeout report.
+
+**References:** 
+- ISO/IEC/IEEE 12207 (retirement process); 
+- PMBOK Guide (project closure).
+
+### Cross-Cutting Practices
+- These apply across every phase above.
+- **Process framework:** agile (Scrum, Kanban, extreme programming) for most product work; plan-driven (waterfall) where requirements are fixed and heavily regulated; hybrid models in between. Agile Manifesto (2001).
+- **Ceremonies and cadence:** sprint planning, daily standup, review and retrospective (the Scrum Guide). Retrospectives drive continuous improvement.
+- **Estimation:** story points and planning poker based on Wideband Delphi (Boehm, 1981), relative sizing and T-shirt sizing.
+- **Quality and compliance gates:** security reviews, audit trails and traceability from requirement to production change. Fintech adds mandatory gates: ISO/IEC 27001, PCI DSS, SOC 2 and GDPR.
+- **Governance:** change management and incident management follow ITIL 4; release boards for high-risk environments.
 
 ## Software Development Personas at Telly
 
-The personas below are the standard roles found in modern software development organisations, mapped to the lifecycle phases in the previous section. They are deliberately generic — not Telly's internal org chart — because the exact titles and boundaries differ between teams. In practice one person often wears several hats, especially in small squads, and some roles exist at platform level while others are embedded in delivery squads.
+The personas below are the standard roles found in modern software development organisations, the exact titles and boundaries differ between teams. In reality one person may often wear several hats.
 
 ### Product and Delivery
 
