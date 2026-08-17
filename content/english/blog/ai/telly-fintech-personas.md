@@ -335,7 +335,7 @@ The persona matrix in the next section describes how each persona applies AI at 
 
 AI-assisted software development is the practice of using LLM-based agents as collaborators across the SDLC, with humans supplying business context, judgment and accountability.
 
-**To answer directly: the five pillars in my earlier draft were not the whole story.** There is no single canonical list of pillars — different authors and organisations group the practice differently. Chip Huyen structures it as a three-layer stack (application development, model development, infrastructure), GitHub frames it as three layers (prompt engineering, agentic primitives, context management) and the *Agentic Software Engineering* research paper identifies four foundational pillars (actors, processes, tools, artifacts). The fuller set of practices, synthesised across this site and the sources below, is:
+There is no single canonical list of pillars — different authors and organisations group the practice differently. 
 
 | Pillar | What It Covers | Key References |
 |---|---|---|
