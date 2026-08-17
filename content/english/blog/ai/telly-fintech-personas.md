@@ -354,17 +354,15 @@ There is no single canonical list of pillars — different authors and organisat
 
 #### Origins and Provenance
 
-AI-DLC (AI-Driven Development Life Cycle) is a software development methodology introduced by Raja SP, Principal Solutions Architect and Head of Developer Transformation Programs at Amazon Web Services, in the AWS DevOps blog post *[AI-Driven Development Life Cycle: Reimagining Software Engineering](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)* on 31 July 2025.
+AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructuring how humans and an AI coding assistant work together to build software: the AI drafts requirements, proposes architecture, writes code and tests and handles deployment configs — but always pauses to ask clarifying questions and get human sign-off before proceeding, at every step.
 
-It is important to separate three sources with different levels of authority:
+**Sources**
 
 | Source | Owner | Status | Contribution |
 |---|---|---|---|
-| AWS DevOps blog post, July 2025 | Raja SP (AWS) | Foundational and official | The three-phase model, Mob Elaboration, Mob Construction and core terminology (Intent, Unit, Bolt) |
+| [**AI-Driven Development Life Cycle blog**](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) also AWS re:Invent 2025 | AWS blogs | Foundational and official | The three-phase model, Mob Elaboration, Mob Construction and core terminology (Intent, Unit, Bolt) |
 | `awslabs/aidlc-workflows`, open-sourced November 2025 | AWS Labs | Official reference implementation | Adaptive workflow scaffolds (Rules and Steering files), mandatory vs conditional stages, checkpoints and audit trails |
 | AI-DLC 2026 paper, [ai-dlc.dev/paper](https://ai-dlc.dev/paper), January 2026 | The Bushido Collective | Independent community synthesis, **not** an AWS publication | HITL/OHOTL/AHOTL operating modes, Bolts, Passes, harness-enforced quality gates and completion criteria |
-
-The methodology was also presented at AWS re:Invent 2025 (session DVT214). There is one naming caveat: "ADLC" is used elsewhere for "Agent Development Lifecycle", and AWS separately uses "AI Development Life Cycle" for an unrelated ML-model-building framework — this section is about Raja SP's software-delivery AI-DLC.
 
 #### Why It Exists: The Middle Path
 
