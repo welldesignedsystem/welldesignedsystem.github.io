@@ -36,9 +36,9 @@ flowchart LR
 - ISO/IEC/IEEE 12207:2017 (software life cyccomprehensivele processes). 
 
 ### Phase 0: Discovery and Idea
-- validates the problem is real
-- that people will use the solution 
-- building it makes business sense
+- Validates the problem is real
+- That people will use the solution 
+- Building it makes business sense
 - Timing is right
 - Validate demand before building - build-measure-learn loop and a minimal viable product (MVP) to test assumptions with real users early ** The Lean Startup (Ries, 2011) **
 - Run a feasibility study: technical, financial, timeline and, in fintech, regulatory and compliance.
@@ -344,7 +344,7 @@ There is no single canonical list of pillars — different authors and organisat
 | Retrieval and grounding | Pulling the right external knowledge into the window: chunking, embeddings, re-ranking, freshness. Grounds the model in your data instead of its training corpus | Huyen, *AI Engineering*, ch 6 (context construction); |
 | Spec-driven development | Structured, versioned specifications become the source of truth and agents derive implementation, tests and documentation from them | GitHub Spec Kit; arXiv [process taxonomy of AI dev frameworks](https://arxiv.org/html/2606.04967) |
 | Evaluation (evals) | Testing non-deterministic output: the eval pyramid, golden datasets, invariants, model-graded metrics and CI gates. You cannot improve what you do not measure | [OpenAI Evals](https://github.com/openai/evals), [Promptfoo](https://promptfoo.dev), [Braintrust](https://braintrust.org), [pytest](https://docs.pytest.org/en/stable/), [Hypothesis](https://hypothesis.readthedocs.io/en/latest/), ToolCallCheck; Huyen, ch 3-4 |
-| Agents, tools and harnesses | The execution layer: agent SDKs, tool calling, protocols and the harness that mediates context, tools, memory, verification and permissions. Includes agent skills — reusable packages that shape behaviour, such as adversarial "grill me" skills that interrogate intent and assumptions before work starts | Model Context Protocol (MCP), Anthropic docs (https://www.anthropic.com/docs), OpenAI developer docs (https://platform.openai.com/docs), [Multi-agent systems](https://en.wikipedia.org/wiki/Multi-agent_system), OpenCode; Anthropic, [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents); arXiv [AI Harness Engineering](https://arxiv.org/html/2605.13357) |
+| Agents, tools and harnesses | The execution layer: agent SDKs, tool calling, protocols and the harness that mediates context, tools, memory, verification and permissions. Includes agent skills — reusable packages that shape behaviour, such as adversarial "grill me" skills that interrogate intent and assumptions before work starts | Model Context Protocol (MCP), Anthropic docs (https://www.anthropic.com/docs), OpenAI developer docs (https://platform.openai.com/docs), [Multi-agent systems](https://en.wikipedia.org/wiki/Multi-agent_system), OpenCode; Anthropic, [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents); [obra/superpowers](https://github.com/obra/superpowers) (composable skills framework); [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) (production-grade skills with Plan→Build→Verify→Review→Ship stages and evals); arXiv [AI Harness Engineering](https://arxiv.org/html/2605.13357) |
 | Guardrails, safety and security | Prompt injection defence, hallucination mitigation, permissions, secrets handling and supply-chain scanning for AI-generated code | Huyen, *AI Engineering* (safety chapter); OWASP Top 10 for LLM Applications |
 | Observability, tracing and cost | Monitoring model and agent behaviour, logging, tracing, token budgets and cost governance. You cannot improve what you do not measure | Huyen, *AI Engineering* (infrastructure layer); [Context Engineering for Coding Agents](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html) |
 | Model selection and adaptation | Choosing the right model and adapting it: prompt vs RAG vs fine-tuning vs structured output. Start with prompting and retrieval before reaching for training | Huyen, *AI Engineering*; [Context Engineering for Coding Agents](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html) |
@@ -822,6 +822,65 @@ The matrix codes (O, R, C, A) describe involvement, but AI-DLC adds a second dim
 
 Two things matter here. First, the mode is a property of the work and its risk, not of the persona: a Software Engineer writing authentication is HITL, while the same engineer refactoring a well-tested utility is AHOTL. Second, autonomy is earned — teams move work from HITL to AHOTL only as requirements stabilise, quality gates prove themselves and trust is earned, which is exactly the escalation rule from the AI-DLC section.
 
+## AI Skills and Tools by Phase
+
+**Note:** The placement of AI skills and tools across the SDLC is a work in progress. A dedicated matrix mapping each skill and tool to its optimal lifecycle phase is planned.
+
+### The AI Execution Stack
+
+To do work across the SDLC phases, a team needs a stack of AI capabilities. Context engineering is the foundation — it is what makes all other skills grounded rather than guessing — but it is not sufficient on its own. The full stack:
+
+| AI Skill | What It Does | Primary Phases |
+|---|---|---|
+| **Context engineering** | What the model sees — memory, scoping, compression, selective loading | All phases (the backbone) |
+| **Prompt engineering** | How you ask — wording, examples, instruction hierarchy, formatting | All phases |
+| **Spec-driven development** | Structured specs in → implementation, tests and docs out | 1 (Requirements), 2 (Architecture) |
+| **Code and test generation** | Creating artifacts — code, tests, infrastructure as code, pipelines | 3 (Development), 4 (Testing), 5 (Build & Release) |
+| **Evaluation (evals)** | Verifying non-deterministic output — golden datasets, model-graded metrics, CI gates | 4 (Testing), 6 (Production) |
+| **Adversarial analysis (grill me)** | Challenging assumptions, attacking edge cases, defending the business case | 0 (Discovery), 2 (Architecture review) |
+| **Retrieval and grounding** | Pulling external knowledge into the context window — chunking, embeddings, re-ranking | All phases (feeds context engineering) |
+| **Observability and analysis** | Monitoring, anomaly detection, summarisation, cost governance | 6 (Production), 7 (Maintenance) |
+| **Guardrails and safety** | Prompt injection defence, hallucination mitigation, secrets handling, supply-chain scanning | All phases (cross-cutting) |
+
+The context engineering repo feeds **spec-driven development** and **retrieval** directly. Those two are what make the other skills work — without structured specs, code generation is guessing; without retrieval, context engineering has nothing to load.
+
+### Preliminary Skill-to-Phase Mapping
+
+- **Grill Me (adversarial interrogation)** — Phase 0: Discovery. The highest value of challenging assumptions and defending the business case is before a single requirement is written. By Phase 1 you have already decided the problem is worth solving. Also applies during architecture review (Phase 2) and later review cycles.
+- **Spec-driven development** — Phase 1: Requirements and Phase 2: Architecture. Agents derive user stories, acceptance criteria, solution designs and test cases from structured specifications stored in the context engineering repo.
+- **Code and test generation** — Phase 3: Development. The most natural fit for autonomous and observed operating modes. Grounded by ADRs, design specs and domain knowledge from the context engineering repo.
+- **Evals and quality gates** — Phase 4: Testing. Non-deterministic output needs non-deterministic testing: golden datasets, model-graded metrics, invariant checks and CI gates.
+- **Retrieval and grounding** — All phases. The mechanism that pulls the right documents from the context engineering repo into the model's window for the current task.
+- **Observability and cost governance** — Phase 6: Production. Monitoring model behaviour, prompt drift, evaluation regression and token spend.
+
+### The 3D Matrix
+
+The full framework is a three-dimensional matrix:
+
+1. **SDLC Phases** (0–8) — when the work happens
+2. **Personas** (28 roles) — who does it, with O/R/C/A involvement
+3. **AI Skills** — how it gets done, with operating mode (HITL/OHOTL/AHOTL)
+
+Each cell defines the persona's involvement, the AI skill applied, the document produced or consumed, and the quality gates that must pass before advancing. The context engineering repo is the physical manifestation of this matrix — organised by phase, owned by personas, populated by AI skills, validated by gates.
+
+### Practical Implementations
+
+Two open-source projects demonstrate what the third axis (AI Skills) looks like in practice:
+
+**[obra/superpowers](https://github.com/obra/superpowers)** (82K+ stars) — a composable skills framework where skills trigger automatically based on context. Key skills map directly to our execution stack:
+
+| Superpowers Skill | Maps To |
+|---|---|
+| brainstorming | Adversarial analysis (grill me) — explores intent and requirements before implementation |
+| writing-plans | Spec-driven development — creates implementation plans before touching code |
+| verification-before-completion | Evals / quality gates — requires running verification commands before claiming work is done |
+| dispatching-parallel-agents | Agent orchestration — subagent-driven development |
+| writing-skills | Skill authoring — creating new reusable skills |
+
+**[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)** (87K+ stars) — production-grade engineering skills organised into a lifecycle: Plan → Build → Verify → Review → Ship. Encodes Google's engineering practices (Hyrum's Law, test pyramid, trunk-based development) as step-by-step agent workflows. Includes references (definition of done, testing patterns, security checklist, performance checklist, accessibility checklist, observability checklist) that function as quality gates, and a built-in evals framework.
+
+Both frameworks treat skills as markdown-based process documentation — exactly the kind of content that would live in the context engineering repo. The difference is that superpowers emphasises automatic skill discovery and composition, while agent-skills emphasises structured lifecycle stages with verifiable exit criteria.
+
 ## References
 
 **Books:**
@@ -884,6 +943,8 @@ Two things matter here. First, the mode is a property of the work and its risk, 
 - AWS (2025). *Building with AI-DLC using Amazon Q Developer*. AWS DevOps Blog.
 - AWS (2026). *AI-Driven Development Lifecycle for Financial Services*. AWS Industries Blog.
 - awslabs (2025). *aidlc-workflows*. GitHub.
+- obra (2025). *Superpowers: agentic skills framework and software development methodology*. github.com/obra/superpowers.
+- Osmani, A. (2026). *Agent Skills: production-grade engineering skills for AI coding agents*. github.com/addyosmani/agent-skills.
 - Wake, B. (2003). *INVEST in Good Stories, and SMART Tasks*.
 - Wiggins, A. (2011). *Twelve-Factor App*. 12factor.net.
 - *Principles of Chaos Engineering* (2017). principlesofchaos.org.
