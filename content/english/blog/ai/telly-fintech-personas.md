@@ -169,7 +169,13 @@ flowchart LR
 - Build and test every commit in a CI pipeline; produce immutable, versioned artifacts. Keep build, release and run separate (Twelve-Factor App, Wiggins, 2011).
 - Promote the same artifact through environments: Dev → SQI → SVT → Pre-Prod → Prod. Keep environments as close to production as possible (dev/prod parity); each environment tests the same immutable artifact.
 - Automate deployment with release pipelines so software is always in a deployable state (*Continuous Delivery*, Humble and Farley, 2010).
-- Use safe deployment patterns: rolling, blue-green or canary, with feature flags to decouple deploy from release.
+- Use safe deployment patterns to minimize risk and enable rollback:
+  - **Rolling** — gradually replace instances; steady state with no downtime; slower feedback on issues.
+  - **Blue-green** — maintain two identical environments; instant switch between versions; high infrastructure cost.
+  - **Canary** — route small % of traffic to new version; detect issues before full rollout; requires monitoring and fast rollback.
+  - **Shadow/Dark** high
+  - **A/B testing** — both versions serve live traffic simultaneously; measure user behavior and business impact; requires feature flags and analytics.
+  - Feature flags decouple deploy from release in all patterns; allow instant user-facing toggles without redeployment.
 - Gate every release on automated checks: tests, static analysis, security scanning, compliance checks and health checks after deployment.
 
 **Deliverables:** 
@@ -185,12 +191,12 @@ flowchart LR
 
 ### Phase 6: Production Operations and Reliability
 - Run the system reliably, safely and economically once it is live.
-- Define reliability targets: service level indicators (SLIs), service level objectives (SLOs) and error budgets (*Site Reliability Engineering*, Beyer et al, 2016).
-- Implement observability: metrics, structured logs, distributed tracing, dashboards and alerting.
-- Set up on-call and incident management: detection, response, escalation and communication. ITIL 4 defines incident and problem management as standard practices.
+- Define **reliability targets: service level indicators (SLIs), service level objectives (SLOs) and error budgets** (*Site Reliability Engineering*, Beyer et al, 2016).
+- Implement **observability**: metrics, structured logs, distributed tracing, dashboards and alerting.
+- Set up on-call and **incident management**: detection, response, escalation and communication. ITIL 4 defines incident and problem management as standard practices.
 - Run blameless postmortems after every significant incident.
 - Plan capacity, backups, restore drills and disaster recovery.
-- Control cost: track cloud spend, rightsize resources and automate scaling.
+- **Control cost:** track cloud spend, rightsize resources and automate scaling.
 - Harden production security: vulnerability scanning, patching and regular access reviews.
 - Optionally run chaos experiments to prove failure handling works (*Principles of Chaos Engineering*, 2017).
 
@@ -214,7 +220,11 @@ flowchart LR
 - Manage technical debt explicitly: track it, pay it down in small steps and use automated tests as a safety net (*Refactoring*, Fowler, 1999; *Working Effectively with Legacy Code*, Feathers, 2004).
 - Release on a regular cadence with regression protection from the automated test suite.
 - Feed production telemetry back into requirements, design and testing.
-- Improve continuously using the DORA four key metrics: deployment frequency, lead time for changes, change failure rate and time to restore service (*Accelerate*, Forsgren, Humble and Kim, 2018).
+- Improve continuously using the DORA four key metrics (*Accelerate*, Forsgren, Humble and Kim, 2018).: 
+  - Deployment frequency
+  - Lead time for changes 
+  - Change failure rate 
+  - Time to restore service 
 - Plan dependency and platform upgrades; never let versions drift so far that migration becomes a project in itself.
 
 **Deliverables:** 
@@ -341,7 +351,7 @@ The personas below are the standard roles found in modern software development o
 
 ## AI-Assisted Software Development and the AI-DLC
 
-The persona matrix in the next section describes how each persona applies AI at each stage of the software development lifecycle. Before reading it, it helps to understand the full set of practices that define AI-assisted software development and the lifecycle that governs how that AI work is planned, gated and reviewed.
+Before deciding the roles of each persona its necesaary to understand the full set of practices that define AI-assisted software development and the lifecycle that governs how that AI work is planned, gated and reviewed.
 
 ### The Pillars of AI-Assisted Development
 
