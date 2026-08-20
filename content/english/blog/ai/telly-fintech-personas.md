@@ -114,8 +114,9 @@ flowchart LR
 - *Release It!* (Nygard, 2007).
 
 ### Phase 3: Development (Construction)
-- Turn the design into working, tested code.
-- Set up version control (Git) and agree a branching strategy. Trunk-based development is the standard recommendation for teams doing continuous delivery.
+- Turn the **design into working, tested code**.
+- Set up version control (Git) and agree a branching strategy 
+  - Trunk-based development is the standard recommendation for teams doing continuous delivery.
 - Follow coding standards enforced by linting and static analysis. 
 - Write tests alongside code, test-first where it fits: test-driven development (Beck, 2003).
 - Review every change: pull requests, code review, pair or mob programming for complex work.
