@@ -115,11 +115,15 @@ flowchart LR
 
 ### Phase 3: Development (Construction)
 - Turn the **design into working, tested code**.
-- Set up version control (Git) and agree a branching strategy 
-  - Trunk-based development is the standard recommendation for teams doing continuous delivery.
+- Set up version control (Git) and agree a branching strategy. Common strategies:
+  - **Trunk-based development** — All developers commit to `main`; small, frequent, gated merges. Standard recommendation for continuous delivery; requires strong CI discipline.
+  - **Git Flow** — Multiple long-lived branches: `main`, `develop`, `release-*`, `hotfix-*`. Best for complex releases and scheduled versioning; higher merge overhead.
+  - **GitHub Flow** — Feature branches + pull requests → `main`. Simple, linear history; ideal for web teams and rapid feedback loops.
+  - **Feature Branching** — Each feature gets its own branch; merged when complete. Slower, isolated development; risk of long-lived branches and merge conflicts.
+  - **Release Branching** — Stable `main` + separate release branches for critical fixes. Best for critical systems and compliance environments; higher maintenance burden.
 - Follow coding standards enforced by linting and static analysis. 
-- Write tests alongside code, test-first where it fits: test-driven development (Beck, 2003).
-- Review every change: pull requests, code review, pair or mob programming for complex work.
+- Write tests alongside code: Test Driven Development (Beck, 2003).
+- Review every change: Pull requests, Code review, pair or mob programming for complex work.
 - Integrate continuously: commit small, integrate frequently, keep the build green (Fowler, 2006).
 - Keep the code healthy: refactor in small steps (Fowler, 1999) and avoid premature optimisation.
 
@@ -138,7 +142,7 @@ flowchart LR
 
 ### Phase 4: Testing and Quality Assurance
 - Verify the software works, and keep proving it as it changes.
-- Follow the test pyramid: many fast unit tests, fewer integration tests and a small number of end-to-end tests (Cohn, 2009).
+- Follow the **test pyramid**: many fast **unit tests**, fewer **integration tests** and a small number of **end-to-end tests** (Cohn, 2009).
 - Test at the standard levels from the ISTQB syllabus: component (unit), integration, system and acceptance testing.
 - Automate regression tests and run them in CI on every change.
 - Add non-functional testing: performance and load, security (OWASP Top 10 and OWASP ASVS), accessibility and usability.
@@ -244,6 +248,7 @@ flowchart LR
 - **Process framework:** agile (Scrum, Kanban, extreme programming) for most product work; plan-driven (waterfall) where requirements are fixed and heavily regulated; hybrid models in between. Agile Manifesto (2001).
 - **Ceremonies and cadence:** sprint planning, daily standup, review and retrospective (the Scrum Guide). Retrospectives drive continuous improvement.
 - **Estimation:** story points and planning poker based on Wideband Delphi (Boehm, 1981), relative sizing and T-shirt sizing.
+- **Version control and commit discipline:** Small, atomic commits with clear messages; pull request reviews before merge; pair or mob programming for complex work as code review alternative; feature flags to decouple deploy from release in production.
 - **Quality and compliance gates:** security reviews, audit trails and traceability from requirement to production change. Fintech adds mandatory gates: ISO/IEC 27001, PCI DSS, SOC 2 and GDPR.
 - **Governance:** change management and incident management follow ITIL 4; release boards for high-risk environments.
 
