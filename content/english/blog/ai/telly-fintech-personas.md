@@ -37,12 +37,12 @@ flowchart LR
 
 ### Phase 0: Discovery and Idea
 - Validates the problem is real
-- That people will use the solution 
-- Building it makes business sense
-- Timing is right
-- Validate demand before building - build-measure-learn loop and a minimal viable product (MVP) to test assumptions with real users early ** The Lean Startup (Ries, 2011) **
-- Run a feasibility study: technical, financial, timeline and, in fintech, regulatory and compliance.
-- Decide build vs buy vs borrow. 
+- That **people will use** the solution 
+- Building it makes **business sense**
+- **Timing** is right
+- Validate demand before building - **build-measure-learn** loop and a minimal viable product (**MVP**) to test assumptions with real users early - "The Lean Startup (Ries, 2011)"
+- Run a **feasibility study**: technical, financial, timeline, regulatory and compliance.
+- Decide **build vs buy vs borrow**. 
 - Choose the technology only after the problem is understood — avoid following hype cycles.
 - Define success criteria and the business case; secure stakeholder alignment.
 
@@ -58,8 +58,8 @@ flowchart LR
 - [PMBOK Guide (PMI, 7th ed, 2021).](https://tegnum.edu.pe/wp-content/uploads/2023/09/Project-Management-Institute-A-Guide-to-the-Project-Management-Body-of-Knowledge-PMBOK-R-Guide-PMBOK%C2%AE%EF%B8%8F-Guide-Project-Management-Institute-2021.pdf)
 
 ### Phase 1: Requirements Engineering
-- Capture what the system must do and how well it must do it.
-- Elicit requirements from stakeholders through interviews, workshops, observation and document analysis **Software Engineering (Sommerville, 2016)**
+- Capture what and how well the system must do.
+- Elicit requirements from stakeholders through **interviews**, **workshops**, **observation** and **document analysis** - Software Engineering (Sommerville, 2016)
 - Analyse and prioritise. 
 - Functional requirements define what the system does; non-functional requirements (quality attributes) define performance, security, availability, scalability and usability.
  Specify the requirements. 
