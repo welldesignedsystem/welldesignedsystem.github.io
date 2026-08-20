@@ -87,7 +87,7 @@ flowchart LR
     - event-driven
     - serverless 
 - Model the domain with Domain-Driven Design: 
-  - ubiquitous language — a shared vocabulary between developers and domain experts, used consistently in code, conversation and documentation. For example in fintech the team agrees on terms like `CustomerRiskProfile`, `PaymentAuthorization` or `KYCVerification` so the same words appear in domain models, APIs, tickets and conversations — eliminating the gap between "business speak" and "code speak"
+  - ubiquitous language — a shared vocabulary between developers and domain experts, used consistently in code, conversation and documentation. For example in fintech the team agrees on terms like `CustomerRiskProfile`, `PaymentAuthorization` so the same words appear in domain models, APIs, tickets and conversations — eliminating the gap between "business speak" and "code speak"
   - bounded contexts
   - aggregates 
 - Design using the C4 model (C4, Brown, 2018) — four levels of increasing detail: 
