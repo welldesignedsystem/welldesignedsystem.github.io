@@ -43,8 +43,8 @@ flowchart LR
 - Validate demand before building - **build-measure-learn** loop and a minimal viable product (**MVP**) to test assumptions with real users early - "The Lean Startup (Ries, 2011)"
 - Run a **feasibility study**: technical, financial, timeline, regulatory and compliance.
 - Decide **build vs buy vs borrow**. 
-- Choose the technology only after the problem is understood — avoid following hype cycles.
-- Define success criteria and the business case; secure stakeholder alignment.
+- Choose the technology only after the problem is understood — **avoid following hype cycles**.
+- Define **success criteria and the business case**; secure stakeholder alignment.
 
 **Deliverables:** 
 - Problem statement
@@ -58,16 +58,10 @@ flowchart LR
 - [PMBOK Guide (PMI, 7th ed, 2021).](https://tegnum.edu.pe/wp-content/uploads/2023/09/Project-Management-Institute-A-Guide-to-the-Project-Management-Body-of-Knowledge-PMBOK-R-Guide-PMBOK%C2%AE%EF%B8%8F-Guide-Project-Management-Institute-2021.pdf)
 
 ### Phase 1: Requirements Engineering
-- Capture what and how well the system must do.
 - Elicit requirements from stakeholders through **interviews**, **workshops**, **observation** and **document analysis** - Software Engineering (Sommerville, 2016)
-- Analyse and prioritise. 
-- Functional requirements define what the system does; non-functional requirements (quality attributes) define performance, security, availability, scalability and usability.
- Specify the requirements. 
- Elicit requirements from stakeholders through interviews, workshops, observation and document analysis.
- Analyse and prioritise. 
- Functional requirements define what the system does; non-functional requirements (quality attributes) define performance, security, availability, scalability and usability.
- Specify the requirements. 
- - Agile teams write user stories with acceptance criteria and follow the INVEST model (Wake, 2003). 
+- **Functional requirements** what the system does; **non-functional requirements** Quality of Service - performance, security, availability, scalability and usability.
+    - Analyse and prioritise. 
+- Agile teams write user stories with acceptance criteria and follow the **INVEST model** (Bill Wake, 2003). 
     - **Independent** — the story can be implemented without depending on other stories.
     - **Negotiable** — it is not a contract; details are discussed and refined with the team.
     - **Valuable** — delivers clear value to the user or stakeholder.
@@ -87,8 +81,11 @@ flowchart LR
 - ISO/IEC/IEEE 29148 (requirements engineering); 
 
 ### Phase 2: Architecture and Design
-- Decide how the system is structured before writing code.
-- Choose the architecture that fits the problem: layered, microservices, event-driven, serverless and so on. 
+- Design System and choose architecture that fits the problem:
+    - layered
+    - microservices
+    - event-driven
+    - serverless 
 - Model the domain with Domain-Driven Design: ubiquitous language, bounded contexts, aggregates 
 - Design at two levels: 
   - high-level architecture (components, integrations, data flow, security boundaries) 
