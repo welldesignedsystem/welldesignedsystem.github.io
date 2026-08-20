@@ -143,7 +143,11 @@ flowchart LR
 ### Phase 4: Testing and Quality Assurance
 - Verify the software works, and keep proving it as it changes.
 - Follow the **test pyramid**: many fast **unit tests**, fewer **integration tests** and a small number of **end-to-end tests** (Cohn, 2009).
-- Test at the standard levels from the ISTQB syllabus: component (unit), integration, system and acceptance testing.
+- Test at the standard levels from the ISTQB syllabus: 
+  - Component (unit) ≈ **Dev** environment
+  - Integration ≈ **SQI** System Quality Integration environment
+  - System ≈ **SVT** System Validation Testing environment
+  - Acceptance testing ≈ **UAT** & **Pre-Prod** environments
 - Automate regression tests and run them in CI on every change.
 - Add non-functional testing: performance and load, security (OWASP Top 10 and OWASP ASVS), accessibility and usability.
 - Use behaviour-driven development for shared understanding: Gherkin scenarios written before the code (North, 2006).
@@ -163,7 +167,7 @@ flowchart LR
 ### Phase 5: Build, Continuous Integration and Release (CI/CD)
 - Make the path to production fast, automated and safe.
 - Build and test every commit in a CI pipeline; produce immutable, versioned artifacts. Keep build, release and run separate (Twelve-Factor App, Wiggins, 2011).
-- Promote the same artifact through environments: development, test or staging, then production. Keep environments as close to production as possible (dev/prod parity).
+- Promote the same artifact through environments: Dev → SQI → SVT → Pre-Prod → Prod. Keep environments as close to production as possible (dev/prod parity); each environment tests the same immutable artifact.
 - Automate deployment with release pipelines so software is always in a deployable state (*Continuous Delivery*, Humble and Farley, 2010).
 - Use safe deployment patterns: rolling, blue-green or canary, with feature flags to decouple deploy from release.
 - Gate every release on automated checks: tests, static analysis, security scanning, compliance checks and health checks after deployment.
