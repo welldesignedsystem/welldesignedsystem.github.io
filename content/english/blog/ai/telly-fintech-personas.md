@@ -86,20 +86,25 @@ flowchart LR
     - microservices
     - event-driven
     - serverless 
-- Model the domain with Domain-Driven Design: ubiquitous language, bounded contexts, aggregates 
-- Design at two levels: 
-  - high-level architecture (components, integrations, data flow, security boundaries) 
-  - low-level design (modules, interfaces, algorithms and patterns from *Design Patterns*, Gamma et al, 1994).
+- Model the domain with Domain-Driven Design: 
+  - ubiquitous language — a shared vocabulary between developers and domain experts, used consistently in code, conversation and documentation. For example in fintech the team agrees on terms like `CustomerRiskProfile`, `PaymentAuthorization` or `KYCVerification` so the same words appear in domain models, APIs, tickets and conversations — eliminating the gap between "business speak" and "code speak"
+  - bounded contexts
+  - aggregates 
+- Design using the C4 model (C4, Brown, 2018) — four levels of increasing detail: 
+  - **Context** (high-level) — system boundaries, actors and external dependencies
+  - **Containers** (high-level) — deployable units (applications, data stores, message brokers) and their interactions
+  - **Components** (low-level) — modules, interfaces, data flow and security boundaries within each container
+  - **Code** (low-level) — classes, algorithms and design patterns (*Design Patterns*, Gamma et al, 1994)
 - Define the data model and API contracts before implementation.
 - Record decisions as Architecture Decision Records (ADRs) so future teams know why things are the way they are.
 - Design for failure: circuit breakers, retries with backoff, timeouts, queues and graceful degradation (*Release It!*, Nygard, 2007).
 
 **Deliverables:** 
-- architecture design document
+- Architecture design document
 - ADRs
-- data model
+- Ddata model
 - API specifications
-- security architecture.
+- Security architecture.
 
 **References:** 
 - *Designing Data-Intensive Applications* (Kleppmann, 2017); 
