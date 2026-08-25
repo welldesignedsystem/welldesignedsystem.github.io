@@ -682,6 +682,8 @@ cewl https://target.com -w custom.txt          # generate wordlist from target w
 
 Metasploit is a framework for using known exploits against systems with known CVEs. As a developer testing your own app, you will use it less than Burp, but it is essential for infrastructure testing.
 
+**Metasploitables** (sometimes written informally as "metasploitables") is a CTF/lab term for a target or vulnerability that has a ready-made exploit module in Metasploit. It does not mean a different kind of vulnerability — it simply means the exploit is available and can be tested in a controlled manner. In real pentests, you still verify the root cause, confirm the affected version, and validate impact before using an exploit module.
+
 ```bash
 msfconsole                          # launch
 search apache 2.4.49                # find exploits for a version
