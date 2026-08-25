@@ -1,3 +1,15 @@
++++
+date = '2026-08-25T09:00:00+10:00'
+draft = false
+title = 'The Software Development Lifecycle'
+tags = ['SDLC','Software Development','Fintech','Process']
+summary = "The full SDLC from discovery to retirement, with practices and references."
++++
+
+## Introduction
+
+This post is part one of a series on software engineering in Telly's fintech domain. It walks the generic lifecycle every product moves through — from first idea to retirement — before later posts map personas and AI practice onto it.
+
 ## The Software Development Lifecycle
 
 
@@ -305,5 +317,3 @@ flowchart LR
 - Wake, B. (2003). *INVEST in Good Stories, and SMART Tasks*.
 - Wiggins, A. (2011). *Twelve-Factor App*. 12factor.net.
 - *Principles of Chaos Engineering* (2017). principlesofchaos.org.
-
-

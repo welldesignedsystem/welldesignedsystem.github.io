@@ -1,3 +1,15 @@
++++
+date = '2026-08-25T09:10:00+10:00'
+draft = false
+title = 'AI-Assisted Software Development and the AI-DLC'
+tags = ['AI-DLC','Agentic AI','Fintech','Process']
+summary = "The pillars of AI-assisted development and the AI-DLC method."
++++
+
+## Introduction
+
+This post is part three of a series on software engineering in Telly's fintech domain. It covers the pillars of AI-assisted development, then goes deep on the AI-Driven Development Lifecycle: its AWS origins, the community 2026 paper, quality gates and operating modes.
+
 ## AI-Assisted Software Development and the AI-DLC
 
 Before deciding the roles of each persona its necesaary to understand the full set of practices that define AI-assisted software development and the lifecycle that governs how that AI work is planned, gated and reviewed.
@@ -401,7 +413,7 @@ It is also worth remembering that the fuller, more operational version of the me
 
 ## Where This Leads
 
-The remaining sections combine the three building blocks — the [SDLC phases](#the-software-development-lifecycle), the [personas](#software-development-personas-at-telly) and the AI practices above — into a single matrix: every persona, every phase, an O/R/C/A involvement code and the context engineering practice each applies, under the operating mode that fits the risk. See [AI and Context Engineering Usage by Persona and Stage](#ai-and-context-engineering-usage-by-persona-and-stage) and [AI Skills and Tools by Phase](#ai-skills-and-tools-by-phase).
+The next posts combine the three building blocks — the [SDLC phases](/blog/ai/fintech/software-development-lifecycle/), the [personas](/blog/ai/fintech/telly-fintech-personas/) and the AI practices above — into a single matrix: every persona, every phase, an O/R/C/A involvement code and the context engineering practice each applies, under the operating mode that fits the risk. See [AI and Context Engineering Usage by Persona and Stage](/blog/ai/fintech/persona-stage-matrix/) and [AI Skills and Tools by Phase](/blog/ai/fintech/ai-skills-by-phase/).
 
 ## References
 
@@ -428,4 +440,3 @@ The remaining sections combine the three building blocks — the [SDLC phases](#
 - AWS (2025). *Building with AI-DLC using Amazon Q Developer*. AWS DevOps Blog.
 - AWS (2026). *AI-Driven Development Lifecycle for Financial Services*. AWS Industries Blog.
 - awslabs (2025). *aidlc-workflows*. GitHub.
-

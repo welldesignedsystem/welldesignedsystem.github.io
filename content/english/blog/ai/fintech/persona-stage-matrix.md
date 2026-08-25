@@ -1,6 +1,18 @@
++++
+date = '2026-08-25T09:15:00+10:00'
+draft = false
+title = 'AI and Context Engineering Usage by Persona and Stage'
+tags = ['Context Engineering','Personas','Matrix','Fintech']
+summary = "Every persona mapped to SDLC phases with O, R, C and A codes."
++++
+
+## Introduction
+
+This post is part four of a series on software engineering in Telly's fintech domain. A matrix maps every persona to every lifecycle phase with involvement codes and describes how each applies context engineering there; it closes by connecting the codes to AI-DLC operating modes.
+
 ## AI and Context Engineering Usage by Persona and Stage
 
-This matrix maps every persona to the software development phases from the [lifecycle section](#the-software-development-lifecycle) and describes how they apply AI and context engineering in each. The underlying concepts — context windows, knowledge bases, skills, agents, prompts and evals — come from the [Context Engineering](/blog/ai/context-engineering/) post.
+This matrix maps every persona to the software development phases from the [lifecycle post](/blog/ai/fintech/software-development-lifecycle/) and describes how they apply AI and context engineering in each. The underlying concepts — context windows, knowledge bases, skills, agents, prompts and evals — come from the [Context Engineering](/blog/ai/context-engineering/) post.
 
 **Legend:** O = Owns the activity, R = Reviews, C = Contributes, A = Approves. Blank = not directly involved. Each code links to the description below.
 
@@ -214,7 +226,7 @@ This matrix maps every persona to the software development phases from the [life
 
 ## Personas and Operating Modes
 
-The matrix codes (O, R, C, A) describe involvement, but AI-DLC adds a second dimension: how much autonomy each persona grants the AI. Mapping the codes to the operating modes from the [AI-DLC section](#ai-assisted-software-development-and-the-ai-dlc) gives a rough pattern:
+The matrix codes (O, R, C, A) describe involvement, but AI-DLC adds a second dimension: how much autonomy each persona grants the AI. Mapping the codes to the operating modes from the [AI-DLC post](/blog/ai/fintech/ai-dlc/) gives a rough pattern:
 
 | Mode | Personas (by dominant involvement) | Why |
 |---|---|---|
@@ -222,5 +234,4 @@ The matrix codes (O, R, C, A) describe involvement, but AI-DLC adds a second dim
 | OHOTL — observe and redirect | PM, PO, BA, Solution Architect, Data Architect, Tech Lead, UX Researcher, UX Designer, QA, SRE, Support Engineer | These personas review judgement-heavy output: requirements, designs, UX, test strategy and incidents. They want real-time visibility and the power to intervene without blocking everything |
 | AHOTL — autonomous within gates | SWE, SDET, Data Engineer, Database Administrator, ML/AI Engineer, DevOps, Cloud Engineer | These personas produce and maintain mechanical, verifiable work. Precise completion criteria and quality gates let the agent iterate without hand-holding, and the human reviews the result |
 
-Two things matter here. First, the mode is a property of the work and its risk, not of the persona: a Software Engineer writing authentication is HITL, while the same engineer refactoring a well-tested utility is AHOTL. Second, autonomy is earned — teams move work from HITL to AHOTL only as requirements stabilise, quality gates prove themselves and trust is earned, which is exactly the escalation rule from the [AI-DLC section](#ai-assisted-software-development-and-the-ai-dlc).
-
+Two things matter here. First, the mode is a property of the work and its risk, not of the persona: a Software Engineer writing authentication is HITL, while the same engineer refactoring a well-tested utility is AHOTL. Second, autonomy is earned — teams move work from HITL to AHOTL only as requirements stabilise, quality gates prove themselves and trust is earned, which is exactly the escalation rule from the [AI-DLC post](/blog/ai/fintech/ai-dlc/).

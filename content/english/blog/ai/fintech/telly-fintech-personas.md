@@ -1,3 +1,15 @@
++++
+date = '2026-08-25T09:05:00+10:00'
+draft = false
+title = 'Software Development Personas at Telly'
+tags = ['Fintech','Telly','Personas','Roles']
+summary = "Every Fintech persona at Telly, mapped across the SDLC."
++++
+
+## Introduction
+
+This post is part two of a series on software engineering in Telly's fintech domain. It outlines the roles and contributions of each persona in the delivery organisation; companion posts cover the [lifecycle](/blog/ai/fintech/software-development-lifecycle/) they work within and the [AI-DLC](/blog/ai/fintech/ai-dlc/) practices reshaping it.
+
 ## Software Development Personas at Telly
 
 
@@ -81,4 +93,3 @@ The personas below are the standard roles found in modern software development o
 | 6. Production | SRE, Support Engineer, Cloud / Infrastructure Engineer | Solution Architect, ML / AI Engineer |
 | 7. Maintenance and evolution | Software Engineers, PM / PO, SRE | GRC, DPO, Data Engineer |
 | 8. Retirement | Delivery Manager, Software Engineers | GRC, Compliance Analyst |
-

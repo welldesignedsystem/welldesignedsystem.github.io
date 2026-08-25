@@ -1,3 +1,15 @@
++++
+date = '2026-08-25T09:20:00+10:00'
+draft = false
+title = 'AI Skills and Tools by Phase'
+tags = ['AI Skills','Evals','Agents','Fintech']
+summary = "The AI execution stack mapped across the SDLC phases."
++++
+
+## Introduction
+
+This post is part five of a series on software engineering in Telly's fintech domain. It collects the AI capability stack a team needs, maps each skill to the lifecycle phase where it earns its keep and shows two open-source implementations of the ideas.
+
 ## AI Skills and Tools by Phase
 
 **Note:** The placement of AI skills and tools across the SDLC is a work in progress. A dedicated matrix mapping each skill and tool to its optimal lifecycle phase is planned.
@@ -63,5 +75,3 @@ Both frameworks treat skills as markdown-based process documentation — exactly
 
 - obra (2025). *Superpowers: agentic skills framework and software development methodology*. github.com/obra/superpowers.
 - Osmani, A. (2026). *Agent Skills: production-grade engineering skills for AI coding agents*. github.com/addyosmani/agent-skills.
-
-
