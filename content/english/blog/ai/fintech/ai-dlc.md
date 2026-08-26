@@ -61,7 +61,26 @@ AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructu
 | OHOTL (observed human-on-the-loop) | Observed mode: AI works continuously while a human watches in real time and can interrupt at any moment |
 | AHOTL (autonomous human-on-the-loop) | Autonomous mode: AI iterates within quality gates until done and the human reviews at completion |
 
-HITL/OHOTL/AHOTL get their full comparison, selection factors and default modes in the Operating Modes section below.
+
+#### Core Terminology
+
+| Term | Traditional Equivalent | Definition |
+|---|---|---|
+| Intent | Epic / Initiative | A high-level statement of purpose that describes what should be achieved |
+| Unit | Feature / Work package | A cohesive, self-contained work element derived from an Intent |
+| Bolt | Sprint | The smallest iteration unit in AI-DLC 2026, measured in hours or days, run in supervised (HITL), observed (OHOTL) or autonomous (AHOTL) mode |
+| Pass | Discipline iteration | A typed iteration through the standard loop (elaborate, units, execute, review) through a design, product or development lens |
+| Mob Elaboration | Requirements gathering | The whole team validates AI's questions, assumptions and proposed units |
+| Mob Construction | Development | AI proposes architecture, code and tests while the team clarifies decisions in real time |
+| Completion Criteria | Definition of Done | Verifiable conditions that determine whether a unit is complete |
+| Hat | Role | A markdown definition of an agent's behaviour, boundaries and quality gates in the community implementation |
+| Named Workflow | Prescribed process | An ordered hat sequence that gives a Bolt its internal rhythm: default, adversarial, design, hypothesis, tdd or bdd |
+| Operation | Runbook task | File-based operational spec declaring type (scheduled, reactive or process), owner, trigger and runtime |
+| Knowledge Artifact | Documentation | Structured institutional memory in the project knowledge layer: design, architecture, product, conventions or domain |
+| Completion Announcement | Release communications | Communication artifacts generated on Intent completion: changelog, release notes, social posts or blog draft |
+
+> These are AI-DLC specific terms. The concepts map to well-known agile ideas like Intent, Unit, Bolt etc these are deliberately renamed to shed the assumptions carried by traditional terminology.
+
 
 **What these rule files concretely look like.** They are resident markdown instructions rather than executable skills — no scripts, no trigger-on-match loading, just standing orders the agent reads every session. The open-source release ships two folders ([awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows)):
 
@@ -79,8 +98,6 @@ aidlc-rules/
     └── extensions/             ← opt-in rule packs: security, testing, resiliency
 ```
 
-Extension rules follow a fixed format — `## Rule SEC-01: Title` with a **Rule** section and a **Verification** section — and act as blocking constraints: a stage cannot proceed while a verification fails. An optional `<name>.opt-in.md` presents the user a multiple-choice question during Requirements Analysis before loading its rules. The identical markdown installs unchanged into each tool's native instruction location:
-
 | Tool | Installed as |
 |---|---|
 | Kiro | `.kiro/steering/aws-aidlc-rules/` |
@@ -90,11 +107,19 @@ Extension rules follow a fixed format — `## Rule SEC-01: Title` with a **Rule*
 | GitHub Copilot | `.github/copilot-instructions.md` |
 | OpenAI Codex | `AGENTS.md` |
 
-**Rules versus steering is vendor branding, not different technology.** Amazon Q Developer, Cursor and Cline all name their version *rules*; Kiro coined *steering files*; Claude Code, GitHub Copilot and OpenAI Codex express the same idea through their own instruction conventions (`CLAUDE.md`, `copilot-instructions.md`, `AGENTS.md`). The capabilities differ only in scoping detail: Kiro steering offers inclusion modes (always, auto or manual plus glob patterns such as `fileMatchPattern`), Cursor rules support `alwaysApply` or description-based smart matching and Q rules stay deliberately plain workspace markdown. Same category everywhere — resident instructions loaded every session.
+Amazon Q Developer, Cursor and Cline all name their version *rules*; Kiro coined *steering files*; Claude Code, GitHub Copilot and OpenAI Codex express the same idea through their own instruction conventions (`CLAUDE.md`, `copilot-instructions.md`, `AGENTS.md`). The capabilities differ only in scoping detail: Kiro steering offers inclusion modes (always, auto or manual plus glob patterns such as `fileMatchPattern`), Cursor rules support `alwaysApply` or description-based smart matching and Q rules stay deliberately plain workspace markdown. Same category everywhere — resident instructions loaded every session.
 
-A session starts with the phrase *"Using AI-DLC, ..."* and the agent then follows the state machine defined in the markdown. The distinction from skills matters: instructions are always-in-context declarative knowledge ("know this, obey this"), while skills are lazy-loaded procedural packages invoked when a task matches ("when doing X, follow these steps"). AI-DLC deliberately chose the former so the process transfers across tools and models unchanged.
+Your coding agents follows the state machine defined in the markdown. The distinction from skills matters: instructions are always-in-context declarative knowledge ("know this, obey this"), while skills are lazy-loaded procedural packages invoked when a task matches ("when doing X, follow these steps"). AI-DLC deliberately chose the former so the process transfers across tools and models unchanged.
 
-The 2026 paper is equally explicit about its intellectual inputs: Geoffrey Huntley's Ralph Wiggum technique ("deterministically bad in an undeterministic world") contributes the try-fail-iterate autonomous loop; Anthropic's harness design for long-running agents provides the orchestration model; Steve Wilson (OWASP) articulated human-on-the-loop governance; paddo.dev supplied the SDLC-collapse analysis and the 19-agent trap; HumanLayer's 12 Factor Agents shaped the context engineering guidance.
+The 2026 paper is equally explicit about its intellectual inputs:
+
+| Contributor | Idea | Relevance to AI-DLC |
+|---|---|---|
+| Geoffrey Huntley, Ralph Wiggum technique ("deterministically bad in an undeterministic world") | The try-fail-iterate autonomous loop — let the agent attempt work freely, accept that early attempts will be wrong and iterate until the quality gates pass | Underpins the Bolt execution model: the agent runs autonomously within a loop, failing fast and adjusting rather than requiring a perfect plan upfront |
+| Anthropic, *Building Effective Agents* | Harness design for long-running agents — structured orchestration with tool calling, memory and verification boundaries | Provides the runtime architecture: rules files, checkpoints and quality gates that keep the agent within bounds during extended Construction and Operations phases |
+| Steve Wilson (OWASP) | Human-on-the-loop governance — the human observes and interrupts rather than approving every step | Shapes the HITL/OHOTL/AHOTL operating mode taxonomy: the human's role shifts from approving each action to defining outcomes, setting gates and intervening when needed |
+| paddo.dev | SDLC-collapse analysis and the 19-agent trap — sequential phases dissolve when iteration is cheap; one agent per job title loses context at every handoff | Drives the core claim that phases compress into continuous flow with checkpoints, and argues against multi-agent org-chart mirroring in favour of simpler loops with rich context |
+| HumanLayer, 12 Factor Agents | Context engineering guidance — how to scope, load and manage what an agent sees | Informs the persistent context model: five memory layers (rules, session, project, organisational, runtime) that keep the agent grounded across Bolts without starting from scratch |
 
 #### Why It Exists: The Middle Path
 
@@ -117,23 +142,6 @@ The 2026 paper goes further than the AWS framing: its foundational claim is that
 | Approval required to proceed | Review identifies needed adjustments |
 
 Rituals calibrated to slow cadences lose their rationale: story-point estimation blurs when AI flattens simple and complex tasks, velocity measures activity rather than value and upfront design becomes a tax when try-fail-adjust cycles take seconds. Backward flow also becomes normal rather than exceptional — a later pass discovering a constraint that invalidates an earlier assumption sends work back without anyone declaring failure. The paper's slogan for this first-principles rethink: we need automobiles, not faster horse chariots.
-
-#### Core Terminology
-
-| Term | Traditional Equivalent | Definition |
-|---|---|---|
-| Intent | Epic / Initiative | A high-level statement of purpose that describes what should be achieved |
-| Unit | Feature / Work package | A cohesive, self-contained work element derived from an Intent |
-| Bolt | Sprint | The smallest iteration unit in AI-DLC 2026, measured in hours or days, run in supervised (HITL), observed (OHOTL) or autonomous (AHOTL) mode |
-| Pass | Discipline iteration | A typed iteration through the standard loop (elaborate, units, execute, review) through a design, product or development lens |
-| Mob Elaboration | Requirements gathering | The whole team validates AI's questions, assumptions and proposed units |
-| Mob Construction | Development | AI proposes architecture, code and tests while the team clarifies decisions in real time |
-| Completion Criteria | Definition of Done | Verifiable conditions that determine whether a unit is complete |
-| Hat | Role | A markdown definition of an agent's behaviour, boundaries and quality gates in the community implementation |
-| Named Workflow | Prescribed process | An ordered hat sequence that gives a Bolt its internal rhythm: default, adversarial, design, hypothesis, tdd or bdd |
-| Operation | Runbook task | File-based operational spec declaring type (scheduled, reactive or process), owner, trigger and runtime |
-| Knowledge Artifact | Documentation | Structured institutional memory in the project knowledge layer: design, architecture, product, conventions or domain |
-| Completion Announcement | Release communications | Communication artifacts generated on Intent completion: changelog, release notes, social posts or blog draft |
 
 #### The Three Phases
 
