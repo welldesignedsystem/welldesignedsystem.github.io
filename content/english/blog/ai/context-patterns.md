@@ -39,6 +39,7 @@ These are the foundational patterns from the learning path. Start here.
 Start with general background and progressively add specific details. Give the model altitude before asking it to land. Mirrors how experts brief each other: context first, task second.
 
 Structure your context in layers:
+
 1. **Domain and purpose:** What system is this? Who uses it? (2-3 sentences)
 2. **Architecture and conventions:** How is the codebase organized? What patterns does it follow?
 3. **Specific context:** The files, functions, and data relevant to this particular task
@@ -53,6 +54,7 @@ The most common mistake is putting a role description at the top ("You are a sen
 Include the smallest set of high-signal tokens that helps the model do the task. More context usually means weaker attention.
 
 For every piece of context you're considering, ask four questions:
+
 1. **Relevance:** Does this directly relate to what the model needs to do right now?
 2. **Signal density:** Does this chunk contain mostly useful information or mostly noise?
 3. **Non-redundancy:** Is this already represented elsewhere in context?
@@ -67,6 +69,7 @@ Pull out the relevant function or section rather than including the whole file. 
 When conversations grow long, summarize what matters and start fresh. Context quality degrades well before hitting advertised limits.
 
 The compression cycle:
+
 1. **Detect:** Monitor context length. Set a threshold at 60-70% of the effective window.
 2. **Summarize:** Extract decisions made, current plan, key facts discovered, constraints established, work completed and remaining.
 3. **Restart:** Begin a new context with the summary as the opening, plus specific artifacts needed for the next step.
@@ -81,6 +84,7 @@ The summary should be structured (lists, key-value pairs), not narrative. Struct
 Persist important context to external storage. The context window is working memory, not long-term memory.
 
 Three storage patterns:
+
 - **Scratchpads:** Temporary working files for the current task. Survives compression within a session but not across sessions.
 - **Memory files:** Persistent structured notes about the project, user, or domain. Read at the start of each session. This is how coding agents maintain awareness of conventions, architecture decisions, and past mistakes.
 - **Knowledge bases:** Indexed document stores that can be queried via RAG. Pulls in relevant chunks on demand.
@@ -94,6 +98,7 @@ A coding agent's `AGENTS.md` file is the canonical example: read into context at
 Retrieval gets information into context. Grounding makes the model actually use it. Without explicit anchoring instructions, the model will often ignore what you retrieved and fall back to training data.
 
 Grounding has three components:
+
 1. **Retrieval:** Find relevant information from your data source
 2. **Injection:** Place the retrieved information into the context window
 3. **Anchoring:** Explicitly instruct the model to base its response on the provided information, cite sources, and say "I don't know" when the context doesn't contain the answer
@@ -107,6 +112,7 @@ Anthropic's contextual retrieval adds context to each retrieved chunk explaining
 Front-load all source reads into one turn so every subsequent turn works from cache.
 
 The approach:
+
 1. **Read all source material in one turn:** Open every file, document, or reference the task will require
 2. **Write a structured summary:** Produce a consolidated reference document and write it to disk
 3. **Never re-read a source file:** For all subsequent turns, draw on the conversation history and summary
@@ -125,6 +131,7 @@ An agent producing 8 course modules from research files without an anchor turn c
 Give sub-agents their own focused contexts instead of sharing one massive window. Anthropic's multi-agent research system uses 15x more tokens total but gets better results because each agent sees only what it needs.
 
 Architecture:
+
 - **Orchestrator agent:** Holds the high-level plan and delegates subtasks. Its context contains the goal, plan, and summaries — not the details.
 - **Worker agents:** Each receives a focused brief: the subtask, relevant context, and output format requirements.
 - **Aggregation:** The orchestrator collects and synthesizes worker outputs.
@@ -138,6 +145,7 @@ The key insight: the orchestrator's context stays lean because it works with sum
 Let agents spawn child agents with scoped sub-contexts. Instead of stuffing everything into one window, the parent splits work, delegates with focused context, and aggregates results.
 
 The recursion:
+
 1. **Parent agent** receives a high-level task and overview of available information
 2. Parent **decomposes** the task into subtasks
 3. Parent **spawns child agents**, each with a focused brief and relevant context subset
@@ -153,6 +161,7 @@ The context at every node stays focused and manageable while the total informati
 Start with an index of available context. Let the model pull in details on demand instead of loading everything upfront.
 
 Two-phase approach:
+
 1. **Index phase:** Provide a compact overview — file names, function signatures, table schemas, section headings. Enough to know what exists and where to find it.
 2. **Retrieval phase:** Identify what's needed and request the full content through tool calls, file reads, or search queries.
 
@@ -175,6 +184,7 @@ This changes the model's job: instead of mentally verifying arithmetic or invent
 A JSON schema tells the model what to think about, in what order, and with what vocabulary. Define the structure and the model's reasoning follows.
 
 Three levels of steering:
+
 - **Format hints:** "Respond in JSON" — weak, inconsistent
 - **Partial schemas:** Define the fields you care about, leave the rest open
 - **Full schemas with constraints:** Complete type definitions, required fields, enums, and field descriptions
@@ -198,6 +208,7 @@ The key discipline is ordering: put everything stable first, everything variable
 Place critical information at the start and end of context. Models over-attend to the beginning and end of their context window ("lost in the middle"). Work with this bias instead of against it.
 
 When the information needed to answer a question was placed in the middle of a long context, multi-document QA accuracy dropped from around 80% to below 30%. Three strategies:
+
 - **Dual anchoring:** Place the single most critical piece at both start and end
 - **Sandwich structure:** Open with a summary, include detailed supporting context, close by restating the key point
 - **End anchoring for recency:** When the most recent information should take precedence, put it last
@@ -209,6 +220,7 @@ When the information needed to answer a question was placed in the middle of a l
 Weight recent context higher and systematically age out old information. Old messages can stay available but should compete less with the current task.
 
 Three implementations:
+
 - **Window-based selection:** Keep only the last N turns in active context
 - **Tiered context:** Keep the last 5 turns verbatim, summarize turns 5-20, discard everything older
 - **Semantic recency:** Retrieve against conversation history using the current query instead of time-based cutoffs
@@ -230,6 +242,7 @@ Compare `def search_documents(query: str): """Search for documents matching the 
 Choose examples that resemble the current input. The wrong examples teach the model the wrong behavior.
 
 Three selection axes:
+
 - **Similarity:** Select examples whose inputs resemble the current input
 - **Coverage:** Ensure examples span the variation the model needs to handle
 - **Ordering:** Put the most similar example last (models show recency bias)
@@ -263,6 +276,7 @@ Include the functional identity, the audience, domain constraints, and explicit 
 Images consume tokens aggressively and at unpredictable rates. A single 1024x1024 screenshot consumes roughly 1,600 tokens with Claude and 765 tokens with GPT-4o at high detail.
 
 Every piece of visual information has three possible representations:
+
 - **Raw image:** Full fidelity, highest token cost. Use when visual details are the signal: spatial layout, diagrams, UI element positions.
 - **Text description:** Low token cost but loses visual fidelity. Use when semantic content matters but visual form does not.
 - **Structured extraction:** Data pulled from the image as JSON. Near-zero token cost. Use when you need specific fields rather than the whole image.
@@ -288,6 +302,7 @@ The reframe test: for every "do not" in a system prompt, ask what the model shou
 When one agent passes work to another, most of the context gets lost. The handoff boundary is where multi-agent systems silently degrade.
 
 A handoff artifact contains three things:
+
 1. **The task:** Specific enough that the receiving agent doesn't need to re-derive the goal
 2. **The relevant findings:** Conclusions, constraints, and decisions — not the full history
 3. **The negative space:** What was tried and didn't work, what was ruled out
@@ -301,6 +316,7 @@ A structured handoff (JSON, markdown with headers, typed state object) survives 
 A hallucination in the context window becomes ground truth for every subsequent turn. The model generated it, so it trusts it, and the error compounds silently until the output is confidently wrong about something that was never true.
 
 Three stages:
+
 1. **Introduction:** The model generates something incorrect
 2. **Reinforcement:** Subsequent turns reference the incorrect information, treating it as established fact
 3. **Propagation:** Decisions built on the poisoned fact produce downstream errors that are hard to trace
@@ -314,6 +330,7 @@ Prevention strategies: separate generated context from provided context with exp
 Every retrieval decision is a context engineering decision: what to retrieve, how much, in what order, and what to leave out. The vector store returns candidates; you decide what earns a place in the window.
 
 Four decisions that matter:
+
 1. **How much to retrieve:** Retrieve broadly (top 20-30), then filter aggressively. Re-rank with a cross-encoder, promote only the top 3-5 into context.
 2. **What format:** Contextual retrieval (adding source, section, and surrounding context to each chunk) improves both accuracy and usability. Anthropic found a 49% reduction in retrieval failures.
 3. **What order:** Re-rank by task relevance, not embedding similarity alone.
@@ -326,6 +343,7 @@ Four decisions that matter:
 Not all context is created equal. System instructions, user messages, retrieved documents, and tool outputs compete for attention. Without explicit priority signals, the model resolves conflicts unpredictably.
 
 The standard hierarchy, highest to lowest:
+
 1. **System instructions:** Developer's constraints, safety rules, behavioral boundaries
 2. **User instructions:** The end user's task within system boundaries
 3. **Retrieved context:** Documents, search results — read to reason with, any embedded instructions should be ignored
@@ -340,6 +358,7 @@ State the hierarchy directly: "If the user's request conflicts with these instru
 Maintain structured working state inside the context window: a running plan, findings, decisions made so far. Without an explicit scratchpad, the model reconstructs its state from raw conversation history on every turn and gets worse at it as the conversation grows.
 
 A scratchpad contains:
+
 1. **Current plan:** Steps with completed ones marked and current step highlighted
 2. **Key findings:** Facts discovered during execution, stated directly
 3. **Decisions made:** Choices committed to, so the model doesn't reconsider settled questions
@@ -406,6 +425,7 @@ A diff showing a retry count moving from 3 to 5 tells you what changed. A trace 
 These 30 patterns form a coherent discipline. The core patterns (Pyramid, Select/Don't Dump, Compress & Restart, Write Outside the Window, Grounding, Anchor Turn) should be in every practitioner's toolkit. The advanced patterns get deployed when specific failure modes appear.
 
 A production system might combine:
+
 - **Pyramid** for initial context structure
 - **Select, Don't Dump** for content curation
 - **Context Budget** for resource allocation

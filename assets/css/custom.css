@@ -31,17 +31,22 @@ table {
   border-collapse: collapse;
 }
 
-table, table th, table td {
+table,
+table th,
+table td {
   border: 1px solid #e5e7eb; /* light gray border */
 }
 
-th, td {
+th,
+td {
   padding: 0.5rem 0.75rem;
   text-align: left;
 }
 
 /* Stronger overrides for theme's prose tables */
-.prose table, .prose th, .prose td {
+.prose table,
+.prose th,
+.prose td {
   border: 1px solid #e5e7eb !important;
 }
 
@@ -49,6 +54,7 @@ th, td {
   border-collapse: collapse !important;
 }
 
-.prose tr, .prose thead tr {
+.prose tr,
+.prose thead tr {
   border-bottom: 1px solid #e5e7eb !important;
 }

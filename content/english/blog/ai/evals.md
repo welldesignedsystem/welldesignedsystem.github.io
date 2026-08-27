@@ -8,7 +8,7 @@ summary = "LLM outputs are non-deterministic, which breaks the assumptions most 
 
 ## Part 1: Why This Is a Different Testing Problem
 
-- **Traditional software testing** is based on **determinism** of systems - `assertEqual(f(x), y)` works because `f` is deterministic. 
+- **Traditional software testing** is based on **determinism** of systems - `assertEqual(f(x), y)` works because `f` is deterministic.
 - The moment you put an **LLM in the equation, this assumption breaks**. Ask Claude the same question twice, at the same temperature and you can get two answers that are both "correct" but not identical — different wording, different tool-call order, different length.
 - Ask an **agent to complete a multi-step task** and you get a **trajectory**, not a single output: a chain of reasoning, tool calls and intermediate states that can diverge wildly between runs while still arriving at a valid result.
 - You're not testing for equality anymore (`unittest`/`pytest` in their classic form) — you're testing for **membership in an acceptable set**, scored probabilistically. That reframing is what "evals" are.
@@ -35,12 +35,13 @@ L6          X        Human review (spot-check samples)
 L5         XXX       Statistical sampling (N runs at temp > 0)
 L4        XXXXX      Golden dataset (curated specs, regression gate)
 L2       XXXXXXX     Model-graded (semantic judgment, per-PR only)
-L1+L3   XXXXXXXXX    Deterministic + invariants 
+L1+L3   XXXXXXXXX    Deterministic + invariants
 ```
 
 Each layer up has fewer X's (fewer checks), costs more per check, and runs less frequently. e.g. The pile-up at the base catches the 80% that can be expressed as code assertions. The tip catches what slips through — but you need that tip to be narrow, because expensive checks at scale become noise.
 
 ### Relationship.
+
 ```mermaid
 flowchart BT
     L6["Layer 6 — Human-in-the-Loop"]
@@ -58,8 +59,8 @@ flowchart BT
 
 ### Layer 1 — Deterministic / Structural Checks (cheapest, do these first)
 
-- Anything that _can_ be checked without another model call. These are fast, free and have zero grader-side noise. 
-- The generation and the check are separate steps — the model call produces the output (non-deterministic), and then the check inspects it with plain code (deterministic). 
+- Anything that _can_ be checked without another model call. These are fast, free and have zero grader-side noise.
+- The generation and the check are separate steps — the model call produces the output (non-deterministic), and then the check inspects it with plain code (deterministic).
 
 Examples:
 
@@ -72,14 +73,13 @@ Examples:
 - Regex / substring matches for known-good or known-bad patterns e.g. _secret detection:_ re.search(r"sk-[A-Za-z0-9]{20,}", output)
 - Latency and token-cost thresholds
 
-If you can express the check as code, do it. This layer should be the majority of your suite 
+If you can express the check as code, do it. This layer should be the majority of your suite
 
 > **Few references:** [FutureAGI (Feb 2026)](https://futureagi.com/blog/deterministic-llm-evaluation-metrics-2026/) reports deterministic checks catch _30 to 60 percent of failures before any LLM judge fires_. The [G-Eval production guide (Mar 2026)](https://futureagi.com/blog/g-eval-definitive-guide-2026/) recommends routing every response through a deterministic floor (schema, regex, length, banned phrases) before any LLM judge call, dropping the judge bill 80–90% without losing detection rate. Both sources converge on the same finding: 60–80% of the scoring criteria in a typical eval suite can be implemented as plain code rather than requiring an LLM judge. The consensus: deterministic checks are the cheapest, fastest, and most reliable layer — they should be the base of every eval pyramid.
 
 [runnable example defines the same four scorers (`score_contains`, `score_excludes`, `score_max_words`, `score_valid_json`), applies them to a 5-case golden dataset, and prints results.](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/01-deterministic.py#L22-L39)
 
 Each scorer is a plain Python function — no LLM, no API call, no judge model. They are composable: a single golden case can combine `score_contains` + `score_max_words` + `score_excludes` and the overall score is simply the mean of the individual checks.
-
 
 Tools that implement this layer:
 
@@ -100,15 +100,15 @@ The same output is then scored on three axes: is it _correct_ (factually accurat
 Things that make this reliable instead of vibes-based:
 
 - **Use a rubric, not a vague instruction.** instead of asking "Is this good?" - "Score against these five specific criteria" is a good one.
-- **Calibrate the judge against human labels.** Periodically have a human score a sample and check the judge agrees e.g. 
-  - sample random 20 cases weekly and compare; 
+- **Calibrate the judge against human labels.** Periodically have a human score a sample and check the judge agrees e.g.
+  - sample random 20 cases weekly and compare;
   - after editing the judge prompt or rubric (the judge is an LLM call — changing its prompt changes its scoring behavior, so re-validate against human labels);
-  - when golden dataset scores drift unexpectedly without a corresponding change to the generator. 
+  - when golden dataset scores drift unexpectedly without a corresponding change to the generator.
   - If the judge disagrees with the human on more than ~10% of samples, fix the rubric before trusting the automated score.
 - **Watch for judge biases**: Randomize order, control for length, and occasionally cross-check with a different model as judge. e.g. of Biases:
   - position bias (favoring the first option in a comparison)
   - length bias (favoring longer answers)
-  - self-preference bias (a model judge favoring outputs from its own family). 
+  - self-preference bias (a model judge favoring outputs from its own family).
 - **Never let this be your only signal.** Model-graded evals add noise on top of the agent's own noise. Deterministic checks are your ground truth; LLM-as-judge fills the gap deterministic checks can't reach.
 
 Tools that implement this:
@@ -136,7 +136,7 @@ Instead of checking a specific output, check properties that must hold across _a
 
 This is where a lot of practical agent _safety_ testing actually lives — you're not testing quality, you're testing that the guardrails hold no matter what path the agent takes to get there.
 
->The implementation looks the same as Layer 1 (regex, file checks, no LLM), but the *target* differs. A deterministic check answers "given *this specific input*, does the output pass?" — it runs against golden dataset cases and tests for expected behavior. A property-based invariant answers "does this property hold for *every possible input*?" — it uses random/edge-case input generation (e.g. Hypothesis) to stress-test the boundary. Example: a deterministic check says "for this pet-store spec, every path has a route file." A property-based invariant says "for *any* spec, the skill never writes files outside allowed directories." One verifies correctness for a known case; the other verifies safety across unknowns.
+> The implementation looks the same as Layer 1 (regex, file checks, no LLM), but the _target_ differs. A deterministic check answers "given _this specific input_, does the output pass?" — it runs against golden dataset cases and tests for expected behavior. A property-based invariant answers "does this property hold for _every possible input_?" — it uses random/edge-case input generation (e.g. Hypothesis) to stress-test the boundary. Example: a deterministic check says "for this pet-store spec, every path has a route file." A property-based invariant says "for _any_ spec, the skill never writes files outside allowed directories." One verifies correctness for a known case; the other verifies safety across unknowns.
 
 Tools that implement this:
 
@@ -149,9 +149,9 @@ Tools that implement this:
 
 ### Layer 4 — Golden Datasets and Regression Tracking
 
-- [Code examples](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/04-golden-dataset.py) 
+- [Code examples](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/04-golden-dataset.py)
 - [Full implementation](https://github.com/welldesignedsystem/baba-yaga/blob/main/src/eval.py).
-- Curate a set of real inputs — pulled from actual usage rather than invented — and snapshot how your system scores against them over time. 
+- Curate a set of real inputs — pulled from actual usage rather than invented — and snapshot how your system scores against them over time.
 - here you are asserting the **eval score on that set doesn't regress (go down)** when you change a prompt, swap a model version or edit a skill definition.
 - The discipline that matters here: **score your current production system before setting an acceptance bar.** Don't invent a target in a vacuum — measure the baseline, then gate merges on "no regression below baseline" rather than an arbitrary absolute number. E.g. _"tool-selection success: current baseline 88%, acceptance bar 95%, anything below baseline blocks deploy."_
 
@@ -193,9 +193,9 @@ Tools that implement this:
 - **Best for:** minimal setups where the discipline of "nothing below our measured baseline merges" is the goal — the companion repo does exactly this with `eval-baseline.json` in git and `--gate` in CI.
 - **Downside:** no web UI, no dashboards, no cross-team visibility. You build the runner yourself — but the total surface fits in a single file.
 
->  regression is an overloaded term:
-Statistical regression (ML) — modeling relationships between variables to predict a continuous value (e.g. house prices from sq footage, bedrooms). "Regression" in this sense is about fitting a function.
-Regression testing / score regression (eval) — a change causing performance to degrade relative to a known baseline. The "regress" here is literal: things went backward.
+> regression is an overloaded term:
+> Statistical regression (ML) — modeling relationships between variables to predict a continuous value (e.g. house prices from sq footage, bedrooms). "Regression" in this sense is about fitting a function.
+> Regression testing / score regression (eval) — a change causing performance to degrade relative to a known baseline. The "regress" here is literal: things went backward.
 
 ### Layer 5 — Statistical Sampling
 
@@ -216,7 +216,7 @@ Tools that implement this:
 
 ### Layer 6 — Human-in-the-Loop
 
-- [Code Example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/06-human-review.py#L64-L83) 
+- [Code Example](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/06-human-review.py#L64-L83)
 - [exports eval results to CSV for annotation, then reports disagreements between human and automated scores](https://github.com/welldesignedsystem/baba-yaga/blob/main/scripts/layers/06-human-review.py#L23-L32).
 - No rubric anticipates every edge case. Sample production traffic (5–10% is a common starting point) for manual review and feed disagreements between human and judge scores back into refining the rubric. This is also where you catch the failure modes that are only obvious to a domain expert — a technically well-formed answer that's subtly wrong in a way no automated check would flag.
 
@@ -554,27 +554,27 @@ The skill definition is at [`.github/skills/nextjs-api-from-spec/SKILL.md`](http
 
 The skill promises to produce code with these properties:
 
-| Claim | Where it's stated in SKILL.md |
-|---|---|
-| Valid TypeScript (`tsc --noEmit`) | Output section |
-| ESM `import`/`export` syntax | Output section |
-| Zod schemas matching TypeScript types | Procedure step 3 |
-| Route handler per path + operation | Procedure step 4 |
-| Typed fetch client functions per operationId | Procedure step 5 |
-| JSDoc on every handler | Procedure step 4 |
-| No `any`, prefer `unknown` | Output section |
-| No eval / require / hardcoded secrets | Output section |
-| All external input validated with Zod | Output section |
-| Barrel exports (`*/index.ts`) | Procedure step 6 |
-| Reads `baseUrl` from env var or `/api` | Procedure step 5 |
-| Error class with status + body | Example output |
-| No `process.env` in handlers | (invariant — implied by "config module" pattern) |
-| All responses use `NextResponse.json()` | (invariant — App Router convention) |
-| Files within allowed directories only | (invariant — structural constraint) |
+| Claim                                        | Where it's stated in SKILL.md                    |
+| -------------------------------------------- | ------------------------------------------------ |
+| Valid TypeScript (`tsc --noEmit`)            | Output section                                   |
+| ESM `import`/`export` syntax                 | Output section                                   |
+| Zod schemas matching TypeScript types        | Procedure step 3                                 |
+| Route handler per path + operation           | Procedure step 4                                 |
+| Typed fetch client functions per operationId | Procedure step 5                                 |
+| JSDoc on every handler                       | Procedure step 4                                 |
+| No `any`, prefer `unknown`                   | Output section                                   |
+| No eval / require / hardcoded secrets        | Output section                                   |
+| All external input validated with Zod        | Output section                                   |
+| Barrel exports (`*/index.ts`)                | Procedure step 6                                 |
+| Reads `baseUrl` from env var or `/api`       | Procedure step 5                                 |
+| Error class with status + body               | Example output                                   |
+| No `process.env` in handlers                 | (invariant — implied by "config module" pattern) |
+| All responses use `NextResponse.json()`      | (invariant — App Router convention)              |
+| Files within allowed directories only        | (invariant — structural constraint)              |
 
 ### The pyramid
 
-Not all checks are equal. The pyramid shows the *shape* of the eval suite — wide, cheap base tapering to narrow, expensive tip:
+Not all checks are equal. The pyramid shows the _shape_ of the eval suite — wide, cheap base tapering to narrow, expensive tip:
 
 ```
 L6          X        Human review (spot-check samples)
@@ -588,29 +588,29 @@ Volume ↑ · Cost ↑ · Frequency ↓
 
 Each layer up has fewer X's (fewer checks), costs more per check, and runs less frequently. The pile-up at the base catches the 80% that can be expressed as code assertions. The tip catches what slips through — but you need that tip to be narrow, because expensive checks at scale become noise.
 
-The golden dataset (L4) isn't a separate check type — it's *the same L1–L2 checks* run against curated inputs with a regression gate. Sampling (L5) repeats the same suite N times. Human review (L6) compares automated scores against a domain expert. L3 (property-based invariants) doesn't appear as a separate layer because invariants are just more deterministic checks — they belong in L1. The six layers in Part 2 remain valid as a taxonomy, but in practice you organize them by *shape*: three check types (L1, L2, and everything above is process around them).
+The golden dataset (L4) isn't a separate check type — it's _the same L1–L2 checks_ run against curated inputs with a regression gate. Sampling (L5) repeats the same suite N times. Human review (L6) compares automated scores against a domain expert. L3 (property-based invariants) doesn't appear as a separate layer because invariants are just more deterministic checks — they belong in L1. The six layers in Part 2 remain valid as a taxonomy, but in practice you organize them by _shape_: three check types (L1, L2, and everything above is process around them).
 
 ### Layer 1 — Deterministic + invariants (15 checks, $0)
 
 Every claim that can be expressed as a code assertion, including invariants that must hold regardless of input:
 
-| # | Check | What it verifies | Implementation in eval_skill.py |
-|---|---|---|---|
-| 1 | `tsc --noEmit` | Generated directory is valid TypeScript | `check_tsc_no_emit()` — writes files to temp dir, runs `npx tsc --noEmit` |
-| 2 | ESM imports | No `require()` anywhere | `check_esm_imports()` — string search |
-| 3 | Route file per path | Each OpenAPI path → `app/api/.../route.ts` | `check_route_file_per_path()` — parse spec, glob generated files |
-| 4 | Export matches method | `GET` endpoint → `export async function GET` | `check_named_export_matches_method()` — regex per route file |
-| 5 | JSDoc on handlers | Every exported function has `/** ... */` | `check_jsdoc_on_handlers()` — regex for JSDoc preceding each export |
-| 6 | Zod schema per type | For each schema in spec, a `{Name}Schema` exists | `check_zod_schema_per_type()` — extract schema names from spec, grep generated code |
-| 7 | No `any` | Uses `unknown` instead of `any` | `check_no_any()` — regex with false-positive guards |
-| 8 | No banned patterns | No `eval(`, `require(`, hardcoded secrets | `check_no_eval_require_secrets()` — regex for secret-like strings |
-| 9 | Input validation | Route handlers call `.parse()` or `.safeParse()` | `check_all_input_validated()` — check every route file uses Zod parsing |
-| 10 | Barrel exports | `types/index.ts`, `schemas/index.ts` | `check_barrel_exports()` — file existence check |
-| 11 | Client per operation | For every `operationId`, a typed client function | `check_client_function_per_operation()` — extract operationIds, find matching exports |
-| 12 | Client error handling | Throws `ApiError` on non-2xx | `check_client_throws_api_error()` — search for `throw new ApiError` |
-| 13 | Base URL from env | Client reads `NEXT_PUBLIC_API_URL` | `check_base_url_from_env()` — string search |
-| 14 | No `process.env` in handlers | Config not scattered across route files | `check_no_process_env_in_handlers()` — grep route files for env access |
-| 15 | `NextResponse.json()` | No bare `new Response()` in handlers | `check_wraps_in_next_response()` — grep for disallowed patterns |
+| #   | Check                        | What it verifies                                 | Implementation in eval_skill.py                                                       |
+| --- | ---------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| 1   | `tsc --noEmit`               | Generated directory is valid TypeScript          | `check_tsc_no_emit()` — writes files to temp dir, runs `npx tsc --noEmit`             |
+| 2   | ESM imports                  | No `require()` anywhere                          | `check_esm_imports()` — string search                                                 |
+| 3   | Route file per path          | Each OpenAPI path → `app/api/.../route.ts`       | `check_route_file_per_path()` — parse spec, glob generated files                      |
+| 4   | Export matches method        | `GET` endpoint → `export async function GET`     | `check_named_export_matches_method()` — regex per route file                          |
+| 5   | JSDoc on handlers            | Every exported function has `/** ... */`         | `check_jsdoc_on_handlers()` — regex for JSDoc preceding each export                   |
+| 6   | Zod schema per type          | For each schema in spec, a `{Name}Schema` exists | `check_zod_schema_per_type()` — extract schema names from spec, grep generated code   |
+| 7   | No `any`                     | Uses `unknown` instead of `any`                  | `check_no_any()` — regex with false-positive guards                                   |
+| 8   | No banned patterns           | No `eval(`, `require(`, hardcoded secrets        | `check_no_eval_require_secrets()` — regex for secret-like strings                     |
+| 9   | Input validation             | Route handlers call `.parse()` or `.safeParse()` | `check_all_input_validated()` — check every route file uses Zod parsing               |
+| 10  | Barrel exports               | `types/index.ts`, `schemas/index.ts`             | `check_barrel_exports()` — file existence check                                       |
+| 11  | Client per operation         | For every `operationId`, a typed client function | `check_client_function_per_operation()` — extract operationIds, find matching exports |
+| 12  | Client error handling        | Throws `ApiError` on non-2xx                     | `check_client_throws_api_error()` — search for `throw new ApiError`                   |
+| 13  | Base URL from env            | Client reads `NEXT_PUBLIC_API_URL`               | `check_base_url_from_env()` — string search                                           |
+| 14  | No `process.env` in handlers | Config not scattered across route files          | `check_no_process_env_in_handlers()` — grep route files for env access                |
+| 15  | `NextResponse.json()`        | No bare `new Response()` in handlers             | `check_wraps_in_next_response()` — grep for disallowed patterns                       |
 
 **15 checks**, all deterministic, all zero-cost, all noise-free. This is the wide base — code asserts that run on every commit.
 
@@ -634,7 +634,7 @@ OpenAPI spec title: {spec_title}
 Generated files: {file_listing}"""
 ```
 
-Run this only on PRs that change the skill prompt — not on every commit. At ~$0.01 per judge call, the cost doesn't matter on its own, but the *noise* does — you don't want a stochastic judge gate-keeping every diff. Reserve it for intentional prompt changes.
+Run this only on PRs that change the skill prompt — not on every commit. At ~$0.01 per judge call, the cost doesn't matter on its own, but the _noise_ does — you don't want a stochastic judge gate-keeping every diff. Reserve it for intentional prompt changes.
 
 ### Layer 4 — Golden dataset (regression gate)
 
@@ -642,12 +642,12 @@ The golden dataset is the same L1 + L2 checks, but run against curated inputs wi
 
 Four specs in `tests/`:
 
-| Case | Why it's there |
-|---|---|
-| `pet-store.yaml` | Flat CRUD, 6 operations, nested schemas, multipart upload, enums, nullables — covers the happy path |
+| Case             | Why it's there                                                                                           |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |
+| `pet-store.yaml` | Flat CRUD, 6 operations, nested schemas, multipart upload, enums, nullables — covers the happy path      |
 | `ecommerce.yaml` | 9 operations, pagination, allOf composition, deeply nested schemas, 20+ query params — stresses handling |
-| `minimal.yaml` | Single endpoint, no named schemas, no params — edge case the skill should handle gracefully |
-| `malformed.yaml` | Invalid YAML — skill should reject with an error rather than hallucinate code |
+| `minimal.yaml`   | Single endpoint, no named schemas, no params — edge case the skill should handle gracefully              |
+| `malformed.yaml` | Invalid YAML — skill should reject with an error rather than hallucinate code                            |
 
 Run with:
 
@@ -703,9 +703,10 @@ Refine the L1 checks or L2 judge prompt to close the gap, then re-run. The goal 
 
 ### What this demonstrates
 
-The pyramid isn't about which layer number a check belongs to. It's about the *shape* of signal: a wide, cheap, deterministic base that catches 80% of failures on every commit, a narrow semantic judge for the PRs that matter, and process layers (dataset, sampling, humans) that don't add new check types but make the existing ones regression-trackable and statistically sound.
+The pyramid isn't about which layer number a check belongs to. It's about the _shape_ of signal: a wide, cheap, deterministic base that catches 80% of failures on every commit, a narrow semantic judge for the PRs that matter, and process layers (dataset, sampling, humans) that don't add new check types but make the existing ones regression-trackable and statistically sound.
 
 For this skill:
+
 - **15 checks in L1** — deterministic, $0, every commit
 - **3 criteria in L2** — semantic, ~$0.01, per-PR only
 - **L4-L6 are process**, not check types — they apply L1+L2 across curated inputs, multiple runs, and human review
