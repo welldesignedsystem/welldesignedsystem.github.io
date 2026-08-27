@@ -76,10 +76,7 @@ AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructu
   - The AWS blog (2025) says - Epics are replaced by "Units" of Work (dont misunderstand it for intent). The hierarchy is Intent → Unit → Bolt. Source: [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) and [method definition PDF](https://prod.d13rzhkk8cj2z0.amplifyapp.com/aidlc.pdf).
   - In traditional agile, an Epic is big — it spans multiple features, teams, repos and sprints. A Unit in AI-DLC is feature-scoped: a focused piece of work within a single Intent. Epics are generally bigger than Units. The scope shrinks because AI handles the decomposition that traditionally required human planning — backlog grooming, Epic writing, story splitting. The AI-managed part of AI-DLC is that decomposition work, which is why Unit replaces Epic at a smaller granularity.
   - In traditional agile, an Epic holds the full scope, stories, acceptance criteria and dependencies in one document. AI-DLC distributes that across the repository: the **Intent** holds purpose, the **Unit** decomposition holds scope, the Unit DAG (Directed Acyclic Graph) holds dependencies and the Knowledge Artifacts hold domain context. No single file replaces the Epic — the repository is the source of truth.
-  - For greenfield projects this creates a gap: before Mob Elaboration there is nothing between the Intent and the Units. The decomposition only exists after the AI asks questions and the team validates. In traditional agile you would write the Epic first with full scope, then decompose. In AI-DLC the Intent is deliberately vague — the AI is supposed to discover the scope through questions.
-  - The risk: the AI's training corpus is its mental set (**Einstellung effect**) — it asks questions and proposes decompositions based on patterns it has seen, not on the unique constraints of your specific problem. It cannot think outside its training data any more than a person can think outside their experience without deliberate effort.
-  - In Mob Elaboration the AI's questions frame the solution space. If those questions are biased toward familiar patterns, the answers will be too. The methodology relies on context engineering (loading domain-specific knowledge into the window) and human oversight (the team validates or corrects) to counter this.
-  - For greenfield projects this risk is highest: no existing codebase, no Knowledge Artifacts, nothing domain-specific to ground the AI's questions. The AI will ask what it has seen in training. If nobody in the room has domain knowledge the AI lacks, the AI's mental set becomes the team's mental set. The human-in-the-loop defence only works if the humans can see what the AI cannot.
+  - For greenfield projects this creates a gap: before Mob Elaboration there is nothing between the Intent and the Units. The decomposition only exists after the AI asks questions and the team validates. In traditional agile you would write the Epic first with full scope, then decompose. In AI-DLC the Intent is deliberately vague — the AI is supposed to discover the scope through questions. See [Core Terminology: Mob Elaboration](#mob-elaboration) for the greenfield gap, AI question bias risk and grill-me workflow.
 
 ##### Unit
 
@@ -105,6 +102,28 @@ AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructu
 - **Traditional Equivalent:** Requirements gathering
 - **Definition:** The whole team validates AI's questions, assumptions and proposed units in a single session with a shared screen, led by a facilitator. AI converts intent into candidate requirements, user stories and units; the team validates or corrects the result.
 - **What Changed:** Requirements gathering produces documents through meetings. Mob Elaboration is the AI asking clarifying questions and the team validating in real time — the conversation _is_ the artifact.
+- **Key activities:**
+  - AI converts intent into candidate requirements and units
+  - AI asks questions to uncover missing context (functional scope, business rules, edge cases, technical constraints)
+  - The team validates assumptions and constraints
+  - Completion criteria are defined for each unit
+  - Bolt structure and supervision mode are selected
+- **Grill-me workflow:** The /grill-me skill fits into Mob Elaboration as the adversarial interrogation step. Two approaches work:
+  - **Option A:** Brainstorm → Team agreements → Grill-me interrogates the agreed plan → Revised plan → Build. This catches flaws after convergence — cheap compared to catching them in Construction.
+  - **Option B (stronger):** Brainstorm → Grill-me interrogates during brainstorming → Team agrees on a plan that has already survived interrogation → Build. This hardens the plan _before_ anyone commits to it, so agreements are already stress-tested.
+  - Either way, grill-me turns the agent from a passive assistant into an interrogator: it challenges the intent, attacks assumptions, hunts for missing edge cases and forces the team to defend the business case before anything is built. Running it here is cheap — catching a wrong assumption during Elaboration costs minutes, while catching it in Construction or Production costs a full rework cycle. Source: [grill-me skill](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md); [AI Hero, /grill-me](https://www.aihero.dev/skills-grill-me).
+- **Adversarial spec review:** 
+  - An isolated subagent challenges the specs against defined categories. The [kabaka/ai-dlc adversarial-reviewer](https://github.com/kabaka/ai-dlc/blob/main/.claude/agents/adversarial-reviewer.md) community implementation probes for: 
+    - faithfulness defects (claims that misstate behaviour)
+    - triggering/routing failures (descriptions that won't fire)
+    - cross-platform breakage (guidance that silently breaks other tools)
+    - hidden incompleteness (stubs, placeholders, fabricated "green" results)
+    - design fragility (loops that thrash, ambiguous ownership, scope creep). 
+  - The  [asdlc.io adversarial code review](https://asdlc.io/patterns/adversarial-code-review/) pattern checks spec violations, security issues, edge cases and anti-patterns. High-confidence mechanical fixes apply automatically; everything else goes back to the team. The AI-DLC 2026 implementation formalises both halves: the adversarial spec review interrogates specs during Inception and the adversarial workflow — the red-team hat tries to break the implementation while the blue-team hat hardens it — repeats the exercise against code during Construction.
+- **Tool compatibility:** The principle is fresh eyes — a different model or clean session reviews the output, not the same model that generated it. Claude Code can spawn new subagents (strongest form). Cursor, Copilot and VS Code cannot spawn subagents, but you can open a new chat window for the critic or use a different model (GPT vs Claude). **Any tool can run adversarial review as a CI/CD gate in GitHub Actions, which is the most portable approach.** The asdlc.io pattern notes this is currently manual — "as of December 2025, this requires manual orchestration" — but CI/CD integration and IDE integration are on the automation roadmap. Source: [asdlc.io](https://asdlc.io/patterns/adversarial-code-review/) ("Not Automated (Yet)"); [cross-model adversarial review](https://codex.danielvaughan.com/2026/03/28/cross-model-adversarial-review/) (fresh eyes principle).
+- **Knowledge bootstrap:** Brownfield intents begin with a knowledge bootstrap phase that synthesises the existing codebase into knowledge artifacts complete with confidence scores; greenfield intents seed empty scaffolds.
+- **Greenfield gap:** Before Mob Elaboration there is nothing between the Intent and the Units. The decomposition only exists after the AI asks questions and the team validates. In traditional agile you would write the Epic first with full scope, then decompose. In AI-DLC the Intent is deliberately vague — the AI is supposed to discover the scope through questions.
+- **AI question bias risk:** The AI's training corpus is its mental set (Einstellung effect). In Mob Elaboration the AI's questions frame the solution space. If those questions are biased toward familiar patterns, the answers will be too. The methodology relies on context engineering (loading domain-specific knowledge into the window) and human oversight (the team validates or corrects) to counter this. For greenfield projects this risk is highest: no existing codebase, no Knowledge Artifacts, nothing domain-specific to ground the AI's questions. The human-in-the-loop defence only works if the humans can see what the AI cannot.
 
 ##### Mob Construction
 
@@ -253,17 +272,7 @@ Rituals calibrated to slow cadences lose their rationale: story-point estimation
 
 The AWS version describes three phases. The 2026 community paper keeps Inception and Operations but uses "Execution" for the build phase; the intent is the same — move from clarified intent to verified implementation to operational ownership.
 
-**Inception — WHAT to build and WHY.** AI transforms business intent into requirements, user stories, units, risks, non-functional requirements and completion criteria. The central ritual is Mob Elaboration: AI asks clarifying questions and the team validates or corrects the result. Key activities:
-
-- AI converts intent into candidate requirements and units
-- AI asks questions to uncover missing context (functional scope, business rules, edge cases, technical constraints)
-- The team validates assumptions and constraints
-- Completion criteria are defined for each unit
-- Bolt structure and supervision mode are selected
-- An isolated **adversarial spec review** subagent challenges the specs across seven categories — contradictions between units, hidden complexity, unvalidated assumptions, dependency ordering errors, scope creep, completeness gaps and boundary violations. High-confidence mechanical fixes apply automatically; everything else goes back to the team
-- Brownfield intents begin with a **knowledge bootstrap** phase that synthesises the existing codebase into knowledge artifacts complete with confidence scores; greenfield intents seed empty scaffolds
-
-Mob Elaboration is where adversarial skills earn their keep. A "grill me" skill turns the agent from a passive assistant into an interrogator: it challenges the intent, attacks assumptions, hunts for missing edge cases and forces the team to defend the business case before anything is built. Running it here is cheap — catching a wrong assumption during Elaboration costs minutes, while catching it in Construction or Production costs a full rework cycle. It is the same discipline as a design review or a technical spike, formalised as a reusable skill. The AI-DLC 2026 implementation formalises both halves of it: the adversarial spec review interrogates specs during Inception and the adversarial workflow — the red-team hat tries to break the implementation while the blue-team hat hardens it — repeats the exercise against code during Construction.
+**Inception — WHAT to build and WHY.** AI transforms business intent into requirements, user stories, units, risks, non-functional requirements and completion criteria. The central ritual is Mob Elaboration — see [Core Terminology: Mob Elaboration](#mob-elaboration) for the full workflow, including grill-me integration, adversarial spec review and knowledge bootstrap. In short: AI asks clarifying questions, the team validates or corrects the result, and adversarial skills challenge assumptions before anything is built.
 
 **Construction — HOW to build it.** Using the validated context from Inception, AI proposes architecture, domain models, code solutions and tests. In the 2025 AWS framing this is Mob Construction; in the 2026 community paper it is Execution through Bolts. Key activities:
 
