@@ -141,7 +141,7 @@ AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructu
 - **Roles:** AI collapses the designer-to-developer handoff — the artifact _is_ the design — so every discipline builds through the same loop: designers steer with aesthetic judgment, engineers with architectural pattern knowledge and PMs with business context. Experience acts as a multiplier; high-quality output still requires seasoned operators, whether reviewing directly or guiding mob execution.
 - **Construction stages:** Per-unit design stages (conditional) → Code Generation Planning → Code Generation → Build and Test (unit, integration, performance, security, contract and end-to-end tests). See [Stage reference](https://awslabs.github.io/aidlc-workflows/reference/04-stages/construction/).
 - **Verification gate (Construction → Operation):** The official AWS implementation runs a boundary gate before Construction completes that checks architecture-to-code-to-tests alignment, that all code traces to design, and that test coverage meets acceptance criteria. This is separate from per-Bolt gates — it validates the integrated codebase, not individual units. Source: [aidlc-workflows construction stages](https://awslabs.github.io/aidlc-workflows/reference/04-stages/construction/).
-- **How accuracy is ensured:** Quality gates provide backpressure — the harness blocks progress until all gates pass (cross-reference the [Quality Gates and Completion Criteria](#backpressure-quality-gates-and-completion-criteria) section for full detail). Gates are add-only with a ratchet: unit-specific gates may be added during construction but never removed. The test suite is the source of truth. The TDD and BDD workflows write acceptance tests before implementation. The adversarial workflow repeats the **red-team/blue-team exercise against code** during Construction (see [Adversarial spec review](#mob-elaboration) for the companion Elaboration half).
+- **How accuracy is ensured:** Quality gates provide backpressure — the harness blocks progress until all gates pass (cross-reference the [Quality Gates and Completion Criteria](#backpressure-quality-gates-and-completion-criteria) section for full detail). Gates are add-only with a ratchet: unit-specific gates may be added during construction but never removed. The test suite is the source of truth. The TDD workflow writes failing tests before implementation, and a BDD-style custom workflow extends that to acceptance tests written before implementation. The adversarial workflow repeats the **red-team/blue-team exercise against code** during Construction (see [Adversarial spec review](#mob-elaboration) for the companion Elaboration half).
 - **How success is measured:** Accuracy is tracked through requirements precision, design stability and code acceptance rate. Measure the _complete_ development lifecycle including rework and revision cycles, not just how fast AI generates initial artifacts. Use end-to-end metrics — time from idea inception to launch — and track defect escape rate and failed-deployment rate alongside velocity. Source: [community measurement guide](https://github.com/NayanaKolhe/aws_ai_dlc/blob/main/06-planning-implementation-and-measurement.md); Raja SP, [re:Invent 2025 DVT214](https://youtu.be/1HNUH6j5t4A) (end-to-end metrics).
 - **How to learn from mistakes:** The community implementation adds a **Reflection** phase after Execution, where outcomes feed back so failures are not repeated. Persistent memory stores what was tried and what worked (cross-reference [Persistent Context](#persistent-context-artifacts-are-memory) for the memory layers). Passes have backward flow — a later pass discovering a constraint sends work back without declaring failure. In the financial-services narrative, monitoring feeds back into the coding agent's context and informs future Inception cycles, creating a virtuous loop.
 - **Standards caveat:** There is no single canonical verification standard for AI-DLC. AWS provides workflow-level gates (per-Bolt gates, the Construction → Operation verification gate). The community contributes backpressure, Reflection and memory patterns. These are methods and defaults, not formal standards — teams must define the measurable success criteria for their own domain. Source: [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/); [Bushido Collective 2026 paper](https://github.com/thebushidocollective/ai-dlc). How the community mechanisms are actually done:
@@ -257,7 +257,7 @@ The necessary caution is the **19-agent trap** already noted above: personas are
 ##### Named Workflow
 
 - **Traditional Equivalent:** Prescribed process
-- **Definition:** An ordered hat sequence that gives a Bolt its internal rhythm: default, adversarial, design, hypothesis, tdd or bdd. Teams can define custom workflows following the same mechanism.
+- **Definition:** An ordered hat sequence that gives a Bolt its internal rhythm. The community plugin ships five built-ins — default, adversarial, design, hypothesis and tdd — and teams can define custom workflows following the same mechanism.
 - **What Changed:** A process lives in documentation. A Named Workflow is an ordered hat sequence (planner → builder → reviewer) that the Bolt executes automatically. The process runs, not just exists.
 
 ##### Operation
@@ -284,11 +284,77 @@ These terms describe how AI-DLC works in practice rather than what things are ca
 
 ###### Rules files
 
-Markdown configuration committed to the repository and auto-loaded into every agent session. In the AI-DLC implementation they carry the process logic: the stage library, heuristics for deciding which stages apply and checkpoint instructions.
+Markdown configuration committed to the repository and auto-loaded into every agent session. In the AI-DLC implementation they carry the process logic — the full operating manual the agent reads before doing anything. Concretely, that "process logic" decomposes into three things:
+
+- **Stage library** — the catalog of every stage the workflow knows about: workspace detection, reverse engineering, requirements analysis, user stories, application design, units of work planning, code generation planning, code generation, build and test, deployment and so on. Each entry describes what the stage does, when it makes sense and what it must produce. The library tells the agent what building blocks exist.
+- **Heuristics for deciding which stages apply** — the rules of thumb that make the workflow _adaptive_ rather than linear. Not every task runs every stage; the agent assesses the request's complexity and shape, then selects which stages to execute. This is the mandatory-versus-conditional split: a one-line bug fix should skip planning and go straight to code generation, while a complex feature should run requirements analysis and architectural design. The heuristics encode that judgment (see [Mandatory (green) stages](#mandatory-green-stages) and [Conditional (yellow) stages](#conditional-yellow-stages)).
+- **Checkpoint instructions** — the rules governing human approval gates between stages: when the agent must pause, present its plan plus clarifying questions and wait for explicit sign-off before advancing (see [Checkpoints](#checkpoints)).
+
+A simplified rules file might read:
+
+```markdown
+# Project Workflow Rules
+
+## Stage Library
+
+The workflow consists of: Discovery, Requirements, Design, Code, Build,
+Deploy. See the stage details in aidlc-rule-details/.
+
+## Which Stages Apply
+
+- Execute required: Discovery -> Code -> Build -> Deploy
+- Design runs only if the request touches new or complex architecture
+- Requirements runs only if the request is not already fully specified
+
+## Checkpoints
+
+- After every stage, present the plan and ask before proceeding
+- Do not advance until the user explicitly confirms
+```
+
+The actual `core-workflow.md` in the AWS release is this same idea written out in full prose (~25 KB) — the whole state machine the agent follows. See below for the file layout.
+
+**How Rules relate to spec-driven development.** They operate at different layers, so they complement rather than compete. Rules and Steering files are the *process* layer — they describe how work happens, apply project-wide, and are written once and committed. They are abstract in the sense that they mention no specific feature. Spec-driven development (see [The Pillars of AI-Assisted Development](#the-pillars-of-ai-assisted-development)) is the *per-Intent content* layer — each Intent gets its own concrete specification (requirements, units, completion criteria, domain design) that becomes the source of truth for that feature's implementation, tests and documentation. The layering:
+
+```text
+Rules / Steering files   HOW work happens — process, all work, once
+        │ (consulted every session)
+        ▼
+Spec (per Intent)        WHAT this feature is — produced in Inception,
+                         source of truth for this feature's build
+        │
+        ▼
+Implementation / Tests   derived from the spec
+```
+
+Rules say "how will the team and agent work?"; specs say "what is this feature and when is it done?". Every feature's spec is created *using* the rules — the rules decide which stages run (including whether requirements analysis runs at all), and the spec that results is what Construction consumes. Rule files never reference a feature; specs never define the process.
 
 ###### Steering files
 
-The Kiro equivalent of Rules: persistent markdown context (product overview, repo structure, tech conventions) loaded into every session so the agent steers by project knowledge rather than per-prompt instructions.
+The Kiro equivalent of Rules: persistent markdown context (product overview, repo structure, tech conventions) loaded into every session so the agent steers by project knowledge rather than per-prompt instructions. Where a Rules file describes the _process_, a Steering file describes the _project_ — the standing facts and conventions the agent should know without being told each session. A simplified example:
+
+```markdown
+# Project Steering
+
+## Product Overview
+
+Fintech payments orchestration platform. Core value: routing payments
+across PSPs with retry and reconciliation.
+
+## Repo Structure
+
+- /api — REST services (Node/TypeScript, Fastify)
+- /web — admin dashboard (React)
+- /shared — shared types and libraries
+
+## Conventions
+
+- Money values are integer cents, never floats
+- Every money mutation is wrapped in a transaction and audit-logged
+- Secrets come from the vault, never from env vars committed to git
+```
+
+The distinction from skills matters: instructions (Rules and Steering) are always-in-context declarative knowledge ("know this, obey this"), while skills are lazy-loaded procedural packages invoked when a task matches ("when doing X, follow these steps"). AI-DLC deliberately chose the former so the process transfers across tools and models unchanged.
 
 ###### Mandatory (green) stages
 
@@ -318,34 +384,7 @@ Observed mode: AI works continuously while a human watches in real time and can 
 
 Autonomous mode: AI iterates within quality gates until done and the human reviews at completion.
 
-**What these rule files concretely look like.** They are resident markdown instructions rather than executable skills — no scripts, no trigger-on-match loading, just standing orders the agent reads every session. The open-source release ships two folders ([awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows)):
-
-```
-aidlc-rules/
-├── aws-aidlc-rules/
-│   └── core-workflow.md        ← the entire adaptive workflow described in
-│                                 prose (~25 KB): stages, decision heuristics,
-│                                 checkpoint behaviour
-└── aws-aidlc-rule-details/
-    ├── common/                 ← detailed stage procedures referenced
-    ├── inception/                 conditionally by core-workflow.md
-    ├── construction/
-    ├── operations/
-    └── extensions/             ← opt-in rule packs: security, testing, resiliency
-```
-
-| Tool               | Installed as                                              |
-| ------------------ | --------------------------------------------------------- |
-| Kiro               | `.kiro/steering/aws-aidlc-rules/`                         |
-| Amazon Q Developer | `.amazonq/rules/aws-aidlc-rules/`                         |
-| Cursor             | `.cursor/rules/ai-dlc-workflow.mdc` (`alwaysApply: true`) |
-| Claude Code        | `CLAUDE.md`                                               |
-| GitHub Copilot     | `.github/copilot-instructions.md`                         |
-| OpenAI Codex       | `AGENTS.md`                                               |
-
-Amazon Q Developer, Cursor and Cline all name their version _rules_; Kiro coined _steering files_; Claude Code, GitHub Copilot and OpenAI Codex express the same idea through their own instruction conventions (`CLAUDE.md`, `copilot-instructions.md`, `AGENTS.md`). The capabilities differ only in scoping detail: Kiro steering offers inclusion modes (always, auto or manual plus glob patterns such as `fileMatchPattern`), Cursor rules support `alwaysApply` or description-based smart matching and Q rules stay deliberately plain workspace markdown. Same category everywhere — resident instructions loaded every session.
-
-Your coding agents follows the state machine defined in the markdown. The distinction from skills matters: instructions are always-in-context declarative knowledge ("know this, obey this"), while skills are lazy-loaded procedural packages invoked when a task matches ("when doing X, follow these steps"). AI-DLC deliberately chose the former so the process transfers across tools and models unchanged.
+On disk, these rule files take the specific forms described in the [Appendix: Directory Structure and Layout](#directory-structure-and-layout), including the `aidlc-rules/` folder tree, where each tool installs them, and the two concrete rule-file formats in use today (the AI-DLC extension convention and the path-scoped convention). The key point is that they are resident markdown instructions rather than executable skills — no scripts, no trigger-on-match loading, just standing orders the agent reads every session. AI-DLC deliberately chose this declarative form so the process transfers across tools and models unchanged.
 
 The 2026 paper is equally explicit about its intellectual inputs:
 
@@ -558,20 +597,21 @@ Abundance still demands economy. Model performance degrades once the window pass
 
 #### The Community Implementation: Four Phases and Hats
 
-The Bushido Collective's open-source plugin for Claude Code implements the methodology as four phases — Elaboration, Execution, Operation and Reflection — using git worktrees, automated tests/lint/types as quality gates, pull requests and deployment workflows. Inside each unit, the AI cycles through specialist agents, each wearing a "hat": a markdown file that defines the role's required steps, boundaries and quality gates. Built-in hats include Planner, Builder, Reviewer, Designer, Test Writer, Implementer, Refactorer, Red Team, Blue Team, Observer, Hypothesizer, Experimenter and Analyst. Passes add a disciplinary lens (design, product or dev) over the standard loop, and later passes can pass work back to earlier ones when new constraints appear.
+The Bushido Collective's open-source plugin for Claude Code implements the methodology as four phases — Elaboration, Execution, Operation and Reflection — using git worktrees, automated tests/lint/types as quality gates, pull requests and deployment workflows. Inside each unit, the AI cycles through specialist agents, each wearing a "hat": a markdown file that defines the role's required steps, boundaries and quality gates (the built-in hats are listed under [Core Terminology: Hat](#hat)). Passes add a disciplinary lens (design, product or dev) over the standard loop, and later passes can pass work back to earlier ones when new constraints appear.
 
 The hat list is where the "grill me" idea becomes a formal role. The Red Team hat attacks assumptions and design decisions during Elaboration and Review; the Blue Team hat defends them; the Observer hat stays detached and reports what the agents actually did. Teams can express the same idea with simpler tooling — a reusable grill-me skill that interrogates intent, requirements and design before the harness gates run. Either way the principle is identical to backpressure: challenge the work before it is accepted, not after.
 
 Bolts get their internal rhythm from **named workflows** — predefined hat sequences chosen per unit in frontmatter:
 
-| Workflow    | Hat Sequence                                          | Purpose                                                                      |
-| ----------- | ----------------------------------------------------- | ---------------------------------------------------------------------------- |
-| default     | planner → builder → reviewer                          | Standard execution cycle                                                     |
-| adversarial | red-team → blue-team                                  | Security-focused: break the implementation, then harden it                   |
-| design      | planner → designer → reviewer                         | Visual and UX execution for design-discipline units                          |
-| hypothesis  | observer → hypothesizer → experimenter → analyst      | Scientific debugging and investigation                                       |
-| tdd         | test-writer → implementer → refactorer                | Test-driven development with explicit red-green-refactor phases              |
-| bdd         | planner → acceptance-test-writer → builder → reviewer | Behaviour-driven development: acceptance tests written before implementation |
+| Workflow    | Hat Sequence                                        | Purpose                                                         |
+| ----------- | --------------------------------------------------- | --------------------------------------------------------------- |
+| default     | planner → builder → reviewer                        | Standard execution cycle                                        |
+| adversarial | planner → builder → red-team → blue-team → reviewer | Security-focused: break the implementation, then harden it      |
+| design      | planner → designer → reviewer                       | Visual and UX execution for design-discipline units             |
+| hypothesis  | observer → hypothesizer → experimenter → analyst    | Scientific debugging and investigation                          |
+| tdd         | test-writer → implementer → refactorer → reviewer   | Test-driven development with explicit red-green-refactor phases |
+
+These five are the plugin's built-ins, per the [README](https://github.com/thebushidocollective/ai-dlc). Teams often add others as custom workflows — for example a `bdd` workflow (planner → acceptance-test-writer → builder → reviewer) that writes acceptance tests before implementation, using a custom `acceptance-test-writer` hat defined in `.ai-dlc/hats/`.
 
 Custom workflows follow the same mechanism: ordered hats, each with its own instructions and completion signal, executed inside the bolt loop.
 
@@ -636,7 +676,9 @@ It is also worth remembering that the fuller, more operational version of the me
 | AWS, [AI-Driven Development Lifecycle for Financial Services](https://aws.amazon.com/blogs/industries/ai-driven-development-lifecycle-for-financial-services/)        | Fintech framing and three-phase adoption path, May 2026                                                                                    |
 | AI-DLC 2026 companion runbooks (via [ai-dlc.dev/paper](https://ai-dlc.dev/paper))                                                                                     | Playbooks referenced by the paper: mode selection, autonomous bolts, incremental adoption, metrics and compliance-audit framework mappings |
 
-## Appendix: Directory Structure and Layout
+## Appendix
+
+### Directory Structure and Layout
 
 AI-DLC work lands on disk in three different ways depending on the implementation, and the folder names are easy to conflate. They are not the same thing:
 
@@ -730,7 +772,7 @@ The community plugin for Claude Code uses a hidden `.ai-dlc/` directory at the p
 | `state/`              | Ephemeral, session-scoped state cleared on reset — the current hat, learnings and blockers                                                                                                                         |
 | `knowledge/`          | The project knowledge layer persisting the five artifact types (design, architecture, product, conventions, domain) across intents, as described in [Persistent Context](#persistent-context-artifacts-are-memory) |
 | `hats/`               | Custom hats; project hats resolve before plugin built-ins so a team can override or add roles, as discussed under [Hat](#hat)                                                                                      |
-| `workflows.yml`       | Custom named workflows beyond the built-in default, adversarial, design, hypothesis, tdd and bdd                                                                                                                   |
+| `workflows.yml`       | Custom named workflows beyond the built-in default, adversarial, design, hypothesis and tdd                                                                                                                        |
 
 The distinction between `intent.md`/`unit-*.md`/`discovery.md` (committed — artifacts are memory) and `state/` (ephemeral — cleared on reset) mirrors the AWS workspace's committed-versus-gitignored split.
 
@@ -762,9 +804,73 @@ Different folder names and schemas hide a common set of principles:
 
 The takeaway: the names and locations differ, but the pattern — committed artifacts plus ephemeral runtime state, with knowledge layered in — is consistent. Check which implementation a project uses, then read its layout accordingly.
 
-## Where This Leads
+#### Rule File Formats and Conventions
 
-The next posts combine the three building blocks — the [SDLC phases](/blog/ai/fintech/software-development-lifecycle/), the [personas](/blog/ai/fintech/telly-fintech-personas/) and the AI practices above — into a single matrix: every persona, every phase, an O/R/C/A involvement code and the context engineering practice each applies, under the operating mode that fits the risk. See [AI and Context Engineering Usage by Persona and Stage](/blog/ai/fintech/persona-stage-matrix/) and [AI Skills and Tools by Phase](/blog/ai/fintech/ai-skills-by-phase/).
+Beyond the workspaces above, the rule and steering files themselves have no industry-standard format. Each tool ships its own convention, and the de facto open baseline (`AGENTS.md`) is deliberately minimal — plain Markdown with no required headings and no mandatory frontmatter — so it carries the "how this project works" layer but nothing structured. For the structured parts — what a rule file must contain, how rules are scoped to paths, how opt-in extensions are declared — there is no shared schema; every tool (and every rule pack) rolls its own.
+
+The official AWS release ships two folders ([awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows)):
+
+```text
+aidlc-rules/
+├── aws-aidlc-rules/
+│   └── core-workflow.md        ← the entire adaptive workflow described in
+│                                 prose (~25 KB): stages, decision heuristics,
+│                                 checkpoint behaviour
+└── aws-aidlc-rule-details/
+    ├── common/                 ← detailed stage procedures referenced
+    ├── inception/                 conditionally by core-workflow.md
+    ├── construction/
+    ├── operations/
+    └── extensions/             ← opt-in rule packs: security, testing, resiliency
+```
+
+Each tool installs these in its own rules or steering location:
+
+| Tool               | Installed as                                              |
+| ------------------ | --------------------------------------------------------- |
+| Kiro               | `.kiro/steering/aws-aidlc-rules/`                         |
+| Amazon Q Developer | `.amazonq/rules/aws-aidlc-rules/`                         |
+| Cursor             | `.cursor/rules/ai-dlc-workflow.mdc` (`alwaysApply: true`) |
+| Claude Code        | `CLAUDE.md`                                               |
+| GitHub Copilot     | `.github/copilot-instructions.md`                         |
+| OpenAI Codex       | `AGENTS.md`                                               |
+
+Amazon Q Developer, Cursor and Cline all name their version _rules_; Kiro coined _steering files_; Claude Code, GitHub Copilot and OpenAI Codex express the same idea through their own instruction conventions (`CLAUDE.md`, `copilot-instructions.md`, `AGENTS.md`). The capabilities differ only in scoping detail: Kiro steering offers inclusion modes (always, auto or manual plus glob patterns such as `fileMatchPattern`), Cursor rules support `alwaysApply` or description-based smart matching and Q rules stay deliberately plain workspace markdown. Same category everywhere — resident instructions loaded every session.
+
+**Example one — the AI-DLC extension rule convention.** The official AWS implementation imposes a fixed shape on its rules. Extension rules (security, resiliency, compliance, or your own) are defined as sequential headings with a `Rule` section stating the requirement and a `Verification` section with the concrete checks the model evaluates:
+
+```markdown
+## Rule SECURITY-01: Input validation on all API boundaries
+
+**Rule**: Reject malformed or unexpected input at every public entry point
+before any processing occurs.
+
+**Verification**:
+
+- Every public endpoint validates its request body against a schema
+- Unsupported content types return 4xx, not a stack trace
+- No raw user input is interpolated into logs or error messages
+```
+
+The rule ID (`<PREFIX-NN>`, here `SECURITY-01`) must be unique across all loaded extensions, because it is referenced in audit logs and compliance summaries — the rule file is not just prose, it produces traceable evidence. Each extension pairs its rules file with an `*.opt-in.md` partner that the workflow scans for and presents as a multiple-choice prompt during requirements analysis; opting in loads the rules file (derived by stripping `.opt-in.md`), opting out never loads it, and omitting the opt-in file makes the extension always enforced. Rules are blocking by default: a failing verification stops the stage until resolved.
+
+**Example two — the path-scoped rule convention.** The emerging shape for rules that should fire only when the agent touches certain files is a Markdown file with optional YAML frontmatter carrying scoping metadata, mirroring how Cursor and several other tools express smart matching:
+
+```markdown
+---
+description: Backend API conventions — loaded when touching API files
+trigger: auto
+paths:
+  - src/api/**
+  - src/routes/**
+---
+
+- Validate all request bodies with zod schemas before processing
+- Return errors as `{ error, code }`, never free-form messages
+- Every new endpoint needs an integration test in tests/api/
+```
+
+The frontmatter fields (`description`, `trigger`, `paths`) capture the common subset that already exists scattered across tools — Cursor's `alwaysApply` and description matching, Kiro's `fileMatchPattern` globs, Q's scoping — but each tool names and interprets them differently. That divergence, with no ratifying body, is exactly why it remains a convention rather than a standard.
 
 ## References
 
