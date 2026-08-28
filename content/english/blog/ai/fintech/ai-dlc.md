@@ -130,6 +130,7 @@ AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructu
 - **Traditional Equivalent:** Development
 - **Definition:** AI proposes architecture, domain models, code solutions and tests while the team clarifies decisions in real time. Multiple units run in parallel through Mob Execution, with teams exchanging integration specifications at human checkpoints.
 - **What Changed:** Traditional development is individuals writing code against specifications. Mob Construction is the AI proposing architecture, code and tests while the team clarifies decisions as they emerge.
+- **Domain relationship:** Construction does not invent the domain model — it realizes it. The domain design (bounded contexts, ubiquitous language, entities, interfaces) is produced and validated during Mob Elaboration and stored at `<record>/inception/domain-design/`, which every Construction design stage reads as an input (see [Mob Elaboration](#mob-elaboration)). A Unit is itself domain-grained: the method definition calls Units "analogous to Subdomains in DDD or Epics in Scrum", and the community paper says "Units are analogous to Bounded Contexts in DDD or Epics in Scrum" (see [Unit](#unit)). Construction is therefore domain-aware but per-unit in execution — the domain boundaries are set in advance during Inception and Construction fills them in.
 - **Key activities:**
   - AI proposes architecture and technical design. Design techniques are tools, not requirements: DDD, TDD and BDD are applied when domain complexity warrants them and skipped when verification can validate correctness faster — the test suite, not the architecture document, becomes the source of truth
   - AI implements code and supporting artifacts, unit by unit
@@ -140,22 +141,118 @@ AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructu
 - **Roles:** AI collapses the designer-to-developer handoff — the artifact _is_ the design — so every discipline builds through the same loop: designers steer with aesthetic judgment, engineers with architectural pattern knowledge and PMs with business context. Experience acts as a multiplier; high-quality output still requires seasoned operators, whether reviewing directly or guiding mob execution.
 - **Construction stages:** Per-unit design stages (conditional) → Code Generation Planning → Code Generation → Build and Test (unit, integration, performance, security, contract and end-to-end tests). See [Stage reference](https://awslabs.github.io/aidlc-workflows/reference/04-stages/construction/).
 - **Verification gate (Construction → Operation):** The official AWS implementation runs a boundary gate before Construction completes that checks architecture-to-code-to-tests alignment, that all code traces to design, and that test coverage meets acceptance criteria. This is separate from per-Bolt gates — it validates the integrated codebase, not individual units. Source: [aidlc-workflows construction stages](https://awslabs.github.io/aidlc-workflows/reference/04-stages/construction/).
-- **How accuracy is ensured:** Quality gates provide backpressure — the harness blocks progress until all gates pass (cross-reference the [Quality Gates and Completion Criteria](#backpressure-quality-gates-and-completion-criteria) section for full detail). Gates are add-only with a ratchet: unit-specific gates may be added during construction but never removed. The test suite is the source of truth. The TDD and BDD workflows write acceptance tests before implementation. The adversarial workflow repeats the red-team/blue-team exercise against code during Construction (see [Adversarial spec review](#mob-elaboration) for the companion Elaboration half).
+- **How accuracy is ensured:** Quality gates provide backpressure — the harness blocks progress until all gates pass (cross-reference the [Quality Gates and Completion Criteria](#backpressure-quality-gates-and-completion-criteria) section for full detail). Gates are add-only with a ratchet: unit-specific gates may be added during construction but never removed. The test suite is the source of truth. The TDD and BDD workflows write acceptance tests before implementation. The adversarial workflow repeats the **red-team/blue-team exercise against code** during Construction (see [Adversarial spec review](#mob-elaboration) for the companion Elaboration half).
 - **How success is measured:** Accuracy is tracked through requirements precision, design stability and code acceptance rate. Measure the _complete_ development lifecycle including rework and revision cycles, not just how fast AI generates initial artifacts. Use end-to-end metrics — time from idea inception to launch — and track defect escape rate and failed-deployment rate alongside velocity. Source: [community measurement guide](https://github.com/NayanaKolhe/aws_ai_dlc/blob/main/06-planning-implementation-and-measurement.md); Raja SP, [re:Invent 2025 DVT214](https://youtu.be/1HNUH6j5t4A) (end-to-end metrics).
 - **How to learn from mistakes:** The community implementation adds a **Reflection** phase after Execution, where outcomes feed back so failures are not repeated. Persistent memory stores what was tried and what worked (cross-reference [Persistent Context](#persistent-context-artifacts-are-memory) for the memory layers). Passes have backward flow — a later pass discovering a constraint sends work back without declaring failure. In the financial-services narrative, monitoring feeds back into the coding agent's context and informs future Inception cycles, creating a virtuous loop.
-- **Standards caveat:** There is no single canonical verification standard for AI-DLC. AWS provides workflow-level gates (per-Bolt gates, the Construction → Operation verification gate). The community contributes backpressure, Reflection and memory patterns. These are methods and defaults, not formal standards — teams must define the measurable success criteria for their own domain. Source: [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/); [Bushido Collective 2026 paper](https://github.com/thebushidocollective/ai-dlc).
+- **Standards caveat:** There is no single canonical verification standard for AI-DLC. AWS provides workflow-level gates (per-Bolt gates, the Construction → Operation verification gate). The community contributes backpressure, Reflection and memory patterns. These are methods and defaults, not formal standards — teams must define the measurable success criteria for their own domain. Source: [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/); [Bushido Collective 2026 paper](https://github.com/thebushidocollective/ai-dlc). How the community mechanisms are actually done:
+  - **Backpressure** is harness-enforced quality gates, not "please run the tests". A stop hook injects context on every Stop event and the agent cannot advance, hand off or declare work complete until all gates pass. Gates are frontmatter-driven — the discovery skill inspects repo tooling (`package.json`, `go.mod`, `pyproject.toml`, `Cargo.toml`) and proposes gate commands (tests, lint, types) the team confirms. Enforcement is scoped: only building hats (builder, implementer, refactorer) are gate-enforced while planner, reviewer and designer hats skip silently, and a `stop_hook_active` flag lets an already-blocked subagent stop on its second attempt to avoid deadlock in nested scenarios. Full detail in the [Quality Gates and Completion Criteria](#backpressure-quality-gates-and-completion-criteria) section.
+  - **Reflection** is an explicit user-invoked phase (`/ai-dlc:reflect`) run after Execution and Operation complete, which analyzes the finished cycle and captures learnings. Those learnings are written to the ephemeral scratchpad (`.ai-dlc/{slug}/state/scratchpad.md`) and documented blockers to `blockers.md`, so they feed the next cycle's context rather than being lost across `/clear`. Backward-flow passes reinforce this: a later pass that discovers a new constraint sends work back to earlier phases instead of declaring failure, and in the financial-services narrative monitoring feeds back into future Inception cycles, creating a virtuous loop.
+  - **Memory** ("artifacts are memory"): intent, unit progress and decisions persist as committed artifacts in `.ai-dlc/` (intent.md, unit-\*.md, discovery.md) so the context window can be reset without losing ground truth, while ephemeral state (`.ai-dlc/{slug}/state/` — iteration.json, scratchpad.md, blockers.md) tracks the current hat and learnings only within a session. On top of this sit the five memory-provider layers (Rules, Session, Project, Organisational, Runtime — see [Persistent Context](#persistent-context-artifacts-are-memory)) and the project knowledge layer (`.ai-dlc/knowledge/`) persisting design, architecture, product, conventions and domain artifacts across intents.
 
 ##### Completion Criteria
 
 - **Traditional Equivalent:** Definition of Done
 - **Definition:** Verifiable conditions that determine whether a unit is complete — precise enough that an autonomous agent can iterate toward them without hand-holding.
 - **What Changed:** DoD is a shared checklist. Completion Criteria are precise, verifiable conditions per Unit — the difference between "code is reviewed" and "users can reset passwords, reset tokens expire after 15 minutes, all auth endpoints have tests and the security scan has no critical findings." Precision enables autonomy.
+- **Forward-looking idea — evidence-backed completion verification (proposed, not yet a standard):** Today completion criteria are checked by automated gates (tests, lint, types) plus the reviewer hat. A further step is to make the gate itself produce a human-reviewable proof document rather than a bare pass/fail:
+  - **Extract** a structured document from the code via `code → AST → documentation`, generated against a fixed markdown template.
+  - **Compare** the filled template against the knowledge base produced in the Inception/Elaboration phase (domain design, requirements, unit criteria — the [Knowledge Artifacts](#knowledge-artifact)).
+  - **Score** each criterion against a rubric to measure how much of it the implementation actually satisfies, and derive a **confidence level** from a weightage across criteria.
+  - **Output** a document for manual approval carrying per-criterion scores, justification and proof (line-level references, tests, trailer links), so a human reviews evidence rather than trusting a pass/fail and the gate's verdict is inspectable and auditable rather than a black box.
+
+The appeal is that it keeps the checkpoint meaningful — the gate produces an audit trail instead of an opaque binary, aligning with the [auditable checkpoints](#compliance-and-audit-integration) pattern for regulated domains. It is a proposal for how Completion Criteria could evolve, not a documented AI-DLC mechanism.
 
 ##### Hat
 
 - **Traditional Equivalent:** Role
 - **Definition:** A markdown definition of an agent's behaviour, boundaries and quality gates in the community implementation. Each Hat defines the role's required steps, completion signal and what it can and cannot do. Built-in hats include Planner, Builder, Reviewer, Designer, Test Writer, Implementer, Refactorer, Red Team, Blue Team, Observer, Hypothesizer, Experimenter and Analyst.
 - **What Changed:** A Role is a job title and responsibilities. A Hat is executable, not aspirational — the agent follows the Hat's instructions exactly.
+- **Two levels: base hats and personas.** The built-in hats are functional primitives (what work gets done). Teams compose them into **personas** that model company roles (Product Owner, Business Analyst, Solution Architect, Developer, SRE, Chapter Lead) as layers bundling the hats the role orchestrates, the phases and decisions it owns and the gates it must satisfy. See [Company Roles as Personas](#company-roles-as-personas).
+
+##### Company Roles as Personas
+
+The built-in hats are functional primitives — Planner, Builder, Reviewer, Test Writer, Red Team, Blue Team, Observer and the rest describe _what work gets done_, not _who owns it_. A team can compose those primitives into its own **personas**: a company role modelled as a named layer that bundles the hats the role would orchestrate, the phases and decisions it owns, and the quality gates it must satisfy. Personas are a conceptual reorganisation of the real, documented customization mechanism (project hats and workflows) — a forward-looking framing rather than a separate standard.
+
+The mental model is two levels:
+
+```text
+Persona (company role — who owns it)         e.g. Developer
+└── Bundled base hats (what gets done)       Planner → Builder → Test Writer → Implementer → Refactorer → Reviewer
+    └── Owned phases / decision rights       Construction: trade-off choices within a unit
+    └── Quality gates it must satisfy        unit tests pass, lint/types clean, coverage floor, completion criteria met
+```
+
+The tree below expands each persona into the hats and agents it uses, showing how the reusable base hats are composed per role:
+
+```text
+AI-DLC Personas
+├── PRODUCT OWNER
+│   ├── hats:   red-team, blue-team, grill-me review
+│   ├── owns:   intent, success criteria, sign-off
+│   └── gates:  requirements approval, release approval
+│       └── uses agent: product-agent (requirements objection)
+├── BUSINESS ANALYST
+│   ├── hats:   planner, reviewer
+│   ├── owns:   requirements elicitation, domain modelling
+│   └── uses agents: product-agent, compliance-agent (rules check)
+├── SOLUTION ARCHITECT
+│   ├── hats:   designer, reviewer (architect lean)
+│   ├── owns:   design gates, ADRs, trade-offs
+│   └── gates:  design review vs NFRs + domain knowledge
+│       └── uses agent: architect-agent
+├── DEVELOPER
+│   ├── hats:   planner, builder, test-writer, implementer, refactorer, reviewer
+│   ├── owns:   construction — per-unit code and tests
+│   └── gates:  unit completion criteria, coverage floor, lint/types
+│       └── uses agent: developer-agent
+├── TESTER / SDET
+│   ├── hats:   test-writer, reviewer, red-team
+│   ├── owns:   test strategy, traceable test evidence
+│   └── gates:  coverage floor, acceptance tests pass
+│       └── uses agent: quality-agent
+├── SRE
+│   ├── hats:   observer + scheduled/reactive operations
+│   ├── owns:   operations, rollback, SLOs
+│   └── gates:  runbooks, rollback readiness, SLO conformance
+│       └── uses agent: operations-agent, pipeline-deploy-agent
+├── LEAD ENGINEER
+│   ├── hats:   reviewer, refactorer, architect lean
+│   ├── owns:   technical quality, cross-unit concerns, mentoring
+│   └── gates:  design review, code review on higher-risk decisions
+├── CHAPTER LEAD
+│   ├── hats:   observer, reviewer (standards conformance)
+│   ├── owns:   method (memory/ + knowledge layers), people growth
+│   └── gates:  standards conformance
+└── COMPLIANCE / SECURITY (AppSec, GRC, DPO)
+    ├── hats:   reviewer (security/compliance lean)
+    ├── owns:   security and compliance gates
+    └── gates:  auditable checkpoints, automated compliance gates
+        └── uses agent: compliance-agent, devsecops-agent
+```
+
+The composer principle holds throughout: each persona is a thin layer over a handful of reusable base hats and agent types, not a bespoke agent per title. Note the provenance of each column: the **hats** are the community implementation's built-ins (Bushido Collective plugin, see [Hat](#hat)); the **agents** are the AWS official `aidlc-workflows` agent catalogue (Product, Architect, Developer, Quality, Operations, Pipeline & Deploy, Compliance, DevSecOps — see [AI-DLC Key Sources](#ai-dlc-key-sources)); and the **personas, ownership and gates** are the forward-looking composition proposed here, not a single industry standard.
+
+**Developer** — the execution persona. Bundles Planner, Builder, Test Writer, Implementer, Refactorer and Reviewer. Owns Construction: it proposes and writes code and tests, resolves trade-offs within the boundaries of a unit, and must satisfy the unit's completion criteria before its gate passes. The writer hats are gate-enforced by the harness; the reviewer hat verifies the diff and criteria.
+
+**Product Owner** — the intent-owning persona. Owns the requirement and success side rather than the build: it writes user stories and acceptance criteria with AI assistance, owns the Intent's success criteria and completion sign-off, and uses the adversarial red-team/blue-team or grill-me review to interrogate whether the plan is right before anything is built. It is the decision maker at requirements sign-off and release approval checkpoints.
+
+**Solution Architect** — the design-owning persona. Owns the design gates: it bundles the Designer hat plus the architect lean (ADR authoring, trade-off analysis) and reviews each design stage against the domain knowledge base and non-functional requirements. It is where architecture-level decisions are surfaced and approved, sitting between Inception's domain design and Construction's realisation.
+
+**Site Reliability Engineer (SRE)** — the operations-owning persona. Owns Operations and the production loop: it bundles the Observer hat for monitoring, owns scheduled and reactive operations (rollback on error-rate spikes, secret rotation, runbook readiness) and monitors the feedback loop that feeds production behaviour back into future Inception cycles. Its gates check SLOs, runbooks and rollback readiness placed in the Deployment Unit.
+
+**Chapter Lead** — the people-and-method-owning persona, distinct from delivery personas. It does not produce units; it owns people growth, guild standards and the shared _method_ (the `memory/` and knowledge layers). It bundles Observer and Reviewer hats for standards conformance and owns how the team works and what it knows, rather than owning specific code.
+
+The personas in this post map onto the [fintech personas post](/blog/ai/fintech/telly-fintech-personas/), which covers the full roster — including Business Analyst, SME, Product Manager, UX Designer, Data Engineer, Tech Lead, Test Automation Engineer, Release Manager, AppSec Engineer, Support Engineer, Enterprise Architect and Cloud Engineer — and maps each to lifecycle phases and operating modes.
+
+| Persona            | Bundled base hats                                                | Owns                                   | Gate it must satisfy                                 |
+| ------------------ | ---------------------------------------------------------------- | -------------------------------------- | ---------------------------------------------------- |
+| Developer          | Planner, Builder, Test Writer, Implementer, Refactorer, Reviewer | Construction: per-unit code and tests  | Unit completion criteria, coverage floor, lint/types |
+| Product Owner      | Red Team, Blue Team, grill-me                                    | Intent, success criteria, sign-off     | Requirements and release approval                    |
+| Solution Architect | Designer, Reviewer (architect lean)                              | Design gates, ADRs, trade-offs         | Design review against NFRs and domain knowledge      |
+| SRE                | Observer + scheduled/reactive operations                         | Operations, rollback, SLOs             | Runbooks, rollback readiness, SLO conformance        |
+| Chapter Lead       | Observer, Reviewer (standards)                                   | Method, people growth, knowledge layer | Standards conformance                                |
+
+The necessary caution is the **19-agent trap** already noted above: personas are compositions of a few hats inside a single bolt loop, not a licence to scaffold one full agent per job title. Complex swarms consistently underperform simple loops with rich relevant context, so the persona framing succeeds when it bundles _review and oversight_ hats around one build loop rather than spawning a dedicated agent per role.
 
 ##### Named Workflow
 
@@ -286,7 +383,7 @@ Rituals calibrated to slow cadences lose their rationale: story-point estimation
 
 The AWS version describes three phases. The 2026 community paper keeps Inception and Operations but uses "Execution" for the build phase; the intent is the same — move from clarified intent to verified implementation to operational ownership.
 
-**Inception — WHAT to build and WHY.** AI transforms business intent into requirements, user stories, units, risks, non-functional requirements and completion criteria. The central ritual is Mob Elaboration — see [Core Terminology: Mob Elaboration](#mob-elaboration) for the full workflow, including grill-me integration, adversarial spec review and knowledge bootstrap. In short: AI asks clarifying questions, the team validates or corrects the result, and adversarial skills challenge assumptions before anything is built.
+**Inception — WHAT to build and WHY.** AI transforms business intent into requirements, user stories, units, risks, non-functional requirements and completion criteria. The central ritual is Mob Elaboration — see [Core Terminology: Mob Elaboration](#mob-elaboration) for the full workflow, including grill-me integration, adversarial spec review and knowledge bootstrap. In short: AI asks clarifying questions, the team validates or corrects the result, and adversarial skills challenge assumptions before anything is built. This phase also produces the domain design — bounded contexts, ubiquitous language, entities, interfaces — that Construction later consumes and realizes (see [Core Terminology: Mob Construction](#mob-construction)).
 
 **Construction — HOW to build it.** Using the validated context from Inception, AI proposes architecture, domain models, code solutions and tests. In the 2025 AWS framing this is Mob Construction; in the 2026 community paper it is Execution through Bolts. See [Core Terminology: Mob Construction](#mob-construction) for the full set of activities, stages, verification gates, accuracy mechanisms, measurement and learning-from-mistakes. In short: AI proposes and builds, the team reviews trade-offs and higher-risk decisions, and quality gates provide backpressure when output fails.
 
@@ -538,6 +635,132 @@ It is also worth remembering that the fuller, more operational version of the me
 | The Bushido Collective, [AI-DLC 2026 Paper](https://ai-dlc.dev/paper)                                                                                                 | Independent community paper: modes, passes, quality gates, hats, January 2026                                                              |
 | AWS, [AI-Driven Development Lifecycle for Financial Services](https://aws.amazon.com/blogs/industries/ai-driven-development-lifecycle-for-financial-services/)        | Fintech framing and three-phase adoption path, May 2026                                                                                    |
 | AI-DLC 2026 companion runbooks (via [ai-dlc.dev/paper](https://ai-dlc.dev/paper))                                                                                     | Playbooks referenced by the paper: mode selection, autonomous bolts, incremental adoption, metrics and compliance-audit framework mappings |
+
+## Appendix: Directory Structure and Layout
+
+AI-DLC work lands on disk in three different ways depending on the implementation, and the folder names are easy to conflate. They are not the same thing:
+
+- **`aidlc/`** — the AWS official `awslabs/aidlc-workflows` neutral workspace directory at the project root. Committed to git, browsable, holds everything AI-DLC produces. This is the layout to care about.
+- **`.aidlc/`** (dot prefix) — the AWS harness-specific engine directory, but only on the opencode and GitHub Copilot harnesses. On other harnesses it is `.claude/`, `.kiro/` or `.codex/`.
+- **`.ai-dlc/`** (dot + dash) — the Bushido Collective community plugin layout for Claude Code. A different folder, a different file schema and different conventions from the AWS layout above.
+
+Read every occurrence of `aidlc/` in this post's body text as the AWS neutral workspace, and `.ai-dlc/` as the community plugin. The two are related but not interchangeable.
+
+#### The AWS Official `aidlc/` Workspace
+
+The AWS reference implementation copies its engine into a single harness-specific directory and keeps everything else under a neutral `aidlc/` directory organized by space, then by intent:
+
+```
+my-project/
+├── aidlc/                        EVERYTHING AI-DLC — neutral, committed, browsable
+│   ├── active-space              cursor: which space you are in (gitignored, per-user)
+│   └── spaces/
+│       ├── default/              the only space most teams ever see
+│       │   ├── memory/           THE METHOD — how this team works (committed)
+│       │   │   ├── org.md        framework defaults
+│       │   │   ├── team.md       your team's practices (overrides org)
+│       │   │   ├── project.md    project-specific practices (overrides team)
+│       │   │   ├── phases/       phase-scoped rules
+│       │   │   └── templates/    output-format overrides, one per artifact
+│       │   ├── knowledge/        DOMAIN KNOWLEDGE — standards an agent reads (committed)
+│       │   │   ├── documents/    your originals: PDFs, Word, Markdown (you own this)
+│       │   │   └── documentkb/   THE CATALOG — derived from documents/ (tool-owned)
+│       │   │       ├── index.json
+│       │   │       └── <doc-id>/   metadata.json + extracted content.md
+│       │   ├── codekb/           CODE KNOWLEDGE — what each repo is (committed)
+│       │   │   └── <repo>/         architecture, component inventory, freshness marker
+│       │   └── intents/          THE RECORD — one subdir per piece of work
+│       │       ├── active-intent cursor: which intent is current (gitignored)
+│       │       ├── intents.json  the registry: every intent + scope/repos/status
+│       │       └── 260624-export-bug/   an intent record dir
+│       │           ├── aidlc-state.md   where this intent is in the lifecycle
+│       │           ├── audit/          the decision trail
+│       │           └── inception/…     construction/{unit}/…  operation/…
+│       │
+│       └── payments-team/        another SPACE (another team) — identical shape
+├── repo-a/                       your code repos live as siblings (each its own git)
+└── repo-b/
+```
+
+The meaning of each piece:
+
+| Path                                    | Purpose                                                                                                                                                                                        |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `aidlc/active-space`                    | Cursor recording which space is active (gitignored, per-user so two teammates can sit in different spaces)                                                                                     |
+| `spaces/<name>/`                        | One team's self-contained world: its method, knowledge, code knowledge and intent record. `spaces/default/` is free; adding a team is purely additive                                          |
+| `memory/`                               | The method: `org.md` (framework defaults) → `team.md` (your practices) → `project.md` (most specific wins), plus `phases/` for phase-scoped rules and `templates/` for output-format overrides |
+| `knowledge/documents/`                  | Your original source documents (PDFs, Word, Markdown). You own and organise these; AI-DLC never reorganises them                                                                               |
+| `knowledge/documentkb/`                 | The tool-derived catalog: `index.json` plus per-document metadata and extracted content. Rebuildable by `/aidlc knowledge sync`, so hand-editing it is a mistake                               |
+| `codekb/<repo>/`                        | Per-repo code knowledge: architecture, component inventory, a freshness marker                                                                                                                 |
+| `intents/`                              | The record of every piece of work: an `intents.json` registry (uuid, slug, dirName, scope, repos, status) plus one record dir per intent                                                       |
+| `<record>/` (e.g. `260624-export-bug/`) | A single intent's record: `aidlc-state.md` (lifecycle position), `audit/` (decision trail), `inception/` (including `domain-design/`), `construction/{unit}/` and `operation/` artifacts       |
+| `intents/<YYMMDD>-<label>/`             | Record dirs sort chronologically by compact UTC date; identity itself is the UUIDv7 in `intents.json`, not the directory name                                                                  |
+| `active-intent`                         | Cursor recording which intent is current (gitignored, per-user)                                                                                                                                |
+
+The rule of thumb for what is committed: **cursors and runtime scratch are local, the shared work is committed.** `active-space`, `active-intent`, `runtime-graph.json`, per-session bindings and the document sync journal are gitignored; `memory/`, `knowledge/`, `codekb/`, `intents.json` and every record's state, audit shards and artifacts are committed so the team shares them. An optional `repos.json` manifest at the workspace root declares the expected sibling repos for an intent that spans more than one codebase.
+
+Sources: [Spaces and Intents](https://awslabs.github.io/aidlc-workflows/guide/03-spaces-and-intents/); [Construction stage reference](https://awslabs.github.io/aidlc-workflows/reference/04-stages/construction/).
+
+#### The Bushido Collective `.ai-dlc/` Layout
+
+The community plugin for Claude Code uses a hidden `.ai-dlc/` directory at the project root:
+
+```
+.ai-dlc/
+  add-oauth-login/              an Intent (slugified name)
+    intent.md                   intent definition + frontmatter (workflow, git, announcements)
+    unit-01-setup-provider.md   a Unit, with its own frontmatter
+    unit-02-callback-handler.md
+    discovery.md                domain discovery notes from elaboration
+    state/                      EPHEMERAL — cleared on /ai-dlc:reset
+      iteration.json            current hat, iteration count, status
+      scratchpad.md             learnings and progress notes
+      blockers.md               documented blockers
+  knowledge/                    project knowledge layer persisted across intents
+  hats/                         custom hats (project override wins over plugin built-ins)
+  workflows.yml                 custom named workflows
+```
+
+| Path                  | Purpose                                                                                                                                                                                                            |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `{intent-slug}/`      | One directory per Intent, named by a slugified version of the intent (e.g. `add-oauth-login/`)                                                                                                                     |
+| `intent.md`           | The intent definition with frontmatter: workflow, git strategy, announcements, status, epic reference                                                                                                              |
+| `unit-{NN}-{slug}.md` | A Unit, with frontmatter: status, `depends_on` (DAG ordering), branch, discipline, workflow override, ticket                                                                                                       |
+| `discovery.md`        | Domain discovery notes captured during elaboration                                                                                                                                                                 |
+| `state/`              | Ephemeral, session-scoped state cleared on reset — the current hat, learnings and blockers                                                                                                                         |
+| `knowledge/`          | The project knowledge layer persisting the five artifact types (design, architecture, product, conventions, domain) across intents, as described in [Persistent Context](#persistent-context-artifacts-are-memory) |
+| `hats/`               | Custom hats; project hats resolve before plugin built-ins so a team can override or add roles, as discussed under [Hat](#hat)                                                                                      |
+| `workflows.yml`       | Custom named workflows beyond the built-in default, adversarial, design, hypothesis, tdd and bdd                                                                                                                   |
+
+The distinction between `intent.md`/`unit-*.md`/`discovery.md` (committed — artifacts are memory) and `state/` (ephemeral — cleared on reset) mirrors the AWS workspace's committed-versus-gitignored split.
+
+Source: [The Bushido Collective ai-dlc README](https://github.com/thebushidocollective/ai-dlc).
+
+#### Harness-Specific Engine Directories
+
+The AWS reference copies its engine into a harness-specific directory that is the **only** part of the layout that differs by tool:
+
+| Harness                     | Engine dir |
+| --------------------------- | ---------- |
+| Claude Code                 | `.claude/` |
+| Kiro (CLI and IDE)          | `.kiro/`   |
+| Codex CLI                   | `.codex/`  |
+| opencode and GitHub Copilot | `.aidlc/`  |
+
+This directory holds the engine's tools, hooks, skills and agents. You never browse it — it just runs `/aidlc`. Everything else AI-DLC produces lives under the neutral `aidlc/` directory regardless of harness, so teams switch tools without moving their work. The Bushido plugin is distributed differently: it installs into Claude Code as a plugin (`.claude-plugin/`) rather than via a harness engine directory.
+
+Source: [AI-DLC Workflows — Spaces and Intents](https://awslabs.github.io/aidlc-workflows/guide/03-spaces-and-intents/).
+
+#### What the Two Implementations Share
+
+Different folder names and schemas hide a common set of principles:
+
+- **Artifacts are memory** — intent, unit and progress files are committed so the context window can be reset without losing ground truth; ephemeral state tracks only the current session.
+- **Committed versus ephemeral split** — shared work is version-controlled while cursors, runtime state and scratchpads are per-user or cleared on reset.
+- **Domain and code knowledge live separately** — a knowledge layer for standards and domain vocabulary and a code-knowledge layer for repository structure, so agents read them every session rather than searching afresh.
+- **Multi-team isolation** — the AWS layout uses named spaces; the community plugin scopes everything under the project's own `.ai-dlc/` directory.
+
+The takeaway: the names and locations differ, but the pattern — committed artifacts plus ephemeral runtime state, with knowledge layered in — is consistent. Check which implementation a project uses, then read its layout accordingly.
 
 ## Where This Leads
 
