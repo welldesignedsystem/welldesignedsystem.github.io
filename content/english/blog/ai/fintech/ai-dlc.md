@@ -430,8 +430,7 @@ The AWS version describes three phases. The 2026 community paper keeps 3 phases:
 
 **Operations — run and maintain it.** AI applies the accumulated context to deployment, infrastructure as code, monitoring, rollback and ongoing maintenance. Operational work itself becomes file-based: each operation lives as a spec in `.ai-dlc/{intent}/operations/`, typed as **scheduled** (cron-driven tasks such as secret rotation or cache warming), **reactive** (trigger-driven responses such as rollback on error-rate spikes) or **process** (human-cadence routines such as quarterly security reviews), with an ownership model of agent-owned scripts executing autonomously within boundaries or human-owned checklists tracked by the agent. Each intent ships a **Deployment Unit** bundling code artifacts, configuration, infrastructure definitions and validation suites with automated rollback procedures. The important point is continuity: plans, requirements, design artifacts and operational knowledge are stored in the repository so later sessions do not start from scratch — and when an intent completes, configured completion announcements generate changelog entries, release notes, social posts or blog drafts from the same artifacts, closing the gap between code-complete and users knowing about it. In the financial-services narrative, monitoring feeds back into the coding agent's context and informs future Inception cycles, creating a virtuous loop.
 
-**How AI-DLC maps onto the SDLC.** AI-DLC does not delete the pipeline from the SDLC Flow diagram; it compresses it into continuous flow with checkpoints, absorbing each phase's work. Discovery and Requirements fold into Inception; Architecture and Design plus Development plus Testing fold into Construction; CI/CD plus Production plus Maintenance fold into Operations.
-
+**How AI-DLC maps onto the SDLC.
 ```mermaid
 flowchart TD
     subgraph SDLC[Classic SDLC Phases]
@@ -460,7 +459,7 @@ flowchart TD
     S8 -.-> O
 ```
 
-So the two diagrams are complementary: the SDLC Flow shows the phases a product goes through, and this one shows which AI-DLC phase absorbs the work of each SDLC phase.
+So the two diagrams are complementary: the classic SDLC Flow shows the phases a product goes through, and this one shows which AI-DLC phase this post proposes absorbs the work of each SDLC phase.
 
 #### The Adaptive Workflow
 
