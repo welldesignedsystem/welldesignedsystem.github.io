@@ -403,11 +403,11 @@ The AWS post argues that most organisations use AI in two limited ways:
 - **AI-assisted development** — AI improves specific tasks such as documentation, code completion and testing.
 - **AI-managed development** — AI is expected to generate whole applications from user requirements with little human involvement.
 
-AWS reports that both patterns produce suboptimal outcomes in velocity and quality. AI-DLC is the proposed middle path: AI performs the heavy execution work while humans supply business context, judgment, validation and accountability. In the financial-services version of the story, the developer's role shifts from writing code to managing and validating AI-generated outputs. The 2026 community paper frames the same idea with a Google Maps analogy: humans set the destination, AI provides step-by-step directions and humans maintain oversight.
+**AWS reports that both patterns produce suboptimal outcomes in velocity and quality. AI-DLC is the proposed middle path: AI performs the heavy execution work while humans supply business context, judgment, validation and accountability.** In the financial-services version of the story, the developer's role shifts from writing code to managing and validating AI-generated outputs. The 2026 community paper frames the same idea with a Google Maps analogy: humans set the destination, AI provides step-by-step directions and humans maintain oversight.
 
 #### Reimagine Rather Than Retrofit: The Collapsing SDLC
 
-The 2026 paper goes further than the AWS framing: its foundational claim is that sequential phases are not being accelerated but dissolved. Phase boundaries existed because iteration was expensive — handoffs between specialised roles, documents to transfer context and approval gates made economic sense when rework took weeks. With AI driving iteration cost toward zero, context loss at handoffs becomes the dominant cost, so the phases collapse into continuous flow punctuated by checkpoints.
+The 2026 paper goes further than the AWS framing: its foundational claim is that sequential phases are not being accelerated but dissolved. **Phase boundaries existed because iteration was expensive** — handoffs between specialised roles, documents to transfer context and approval gates made economic sense when rework took weeks. With AI driving iteration cost toward zero, context loss at handoffs becomes the dominant cost, so the phases collapse into continuous flow punctuated by checkpoints.
 
 | Handoff (traditional SDLC)         | Checkpoint (AI-DLC 2026)             |
 | ---------------------------------- | ------------------------------------ |
@@ -871,6 +871,33 @@ paths:
 ```
 
 The frontmatter fields (`description`, `trigger`, `paths`) capture the common subset that already exists scattered across tools — Cursor's `alwaysApply` and description matching, Kiro's `fileMatchPattern` globs, Q's scoping — but each tool names and interprets them differently. That divergence, with no ratifying body, is exactly why it remains a convention rather than a standard.
+
+#### How Spec-Driven Development Fits In
+
+Spec-driven development (see [The Pillars of AI-Assisted Development](#the-pillars-of-ai-assisted-development)) is where the structured specification is the source of truth and the agents derive implementation, tests and documentation from it. In the AI-DLC appendix context, that specification is not a separate artifact stream — it lives *inside* the same on-disk layout described above. The three layers are:
+
+```text
+Rules / Steering files   HOW work happens — process, all work, once
+        │ (consulted every session)
+        ▼
+Spec (per Intent)        WHAT this feature is — intent.md, unit-*.md,
+                         discovery.md, domain design, completion criteria
+        │ (source of truth for this feature's build)
+        ▼
+Implementation / Tests   derived from the spec
+```
+
+Where each piece of the spec lands on disk:
+
+| Spec element                          | Where it lives                                                                             |
+| ------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Intent (purpose, frontmatter)         | `aidlc/intents/<id>/` (AWS) or `.ai-dlc/{intent}/intent.md` (community)                    |
+| Units and their completion criteria   | `aidlc/intents/<id>/construction/{unit}/...` (AWS) or `.ai-dlc/{intent}/unit-*.md`         |
+| Requirements and domain design        | `aidlc/intents/<id>/inception/` including `domain-design/` (AWS); `discovery.md` (comm.)   |
+| Domain knowledge the spec draws on    | `aidlc/spaces/<name>/knowledge/` (AWS) or `.ai-dlc/knowledge/` (community)                 |
+| How the spec is produced              | The stage library and heuristics in the Rules, which decide whether requirements analysis runs at all |
+
+The relationship holds across both implementations: the Rules and Steering files define the *process* that produces the spec, the *spec* is the versioned source of truth for a particular Intent, and the agent iterates against that spec until its completion criteria pass. Rules neither replace nor duplicate the spec — the two live at different levels and the appendix layouts keep them in separate, committed directories.
 
 ## References
 
