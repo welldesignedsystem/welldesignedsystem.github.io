@@ -314,7 +314,7 @@ Deploy. See the stage details in aidlc-rule-details/.
 
 The actual `core-workflow.md` in the AWS release is this same idea written out in full prose (~25 KB) — the whole state machine the agent follows. See below for the file layout.
 
-**How Rules relate to spec-driven development.** They operate at different layers, so they complement rather than compete. Rules and Steering files are the *process* layer — they describe how work happens, apply project-wide, and are written once and committed. They are abstract in the sense that they mention no specific feature. Spec-driven development (see [The Pillars of AI-Assisted Development](#the-pillars-of-ai-assisted-development)) is the *per-Intent content* layer — each Intent gets its own concrete specification (requirements, units, completion criteria, domain design) that becomes the source of truth for that feature's implementation, tests and documentation. The layering:
+**How Rules relate to spec-driven development.** They operate at different layers, so they complement rather than compete. Rules and Steering files are the _process_ layer — they describe how work happens, apply project-wide, and are written once and committed. They are abstract in the sense that they mention no specific feature. Spec-driven development (see [The Pillars of AI-Assisted Development](#the-pillars-of-ai-assisted-development)) is the _per-Intent content_ layer — each Intent gets its own concrete specification (requirements, units, completion criteria, domain design) that becomes the source of truth for that feature's implementation, tests and documentation. The layering:
 
 ```text
 Rules / Steering files   HOW work happens — process, all work, once
@@ -327,7 +327,7 @@ Spec (per Intent)        WHAT this feature is — produced in Inception,
 Implementation / Tests   derived from the spec
 ```
 
-Rules say "how will the team and agent work?"; specs say "what is this feature and when is it done?". Every feature's spec is created *using* the rules — the rules decide which stages run (including whether requirements analysis runs at all), and the spec that results is what Construction consumes. Rule files never reference a feature; specs never define the process.
+Rules say "how will the team and agent work?"; specs say "what is this feature and when is it done?". Every feature's spec is created _using_ the rules — the rules decide which stages run (including whether requirements analysis runs at all), and the spec that results is what Construction consumes. Rule files never reference a feature; specs never define the process.
 
 ###### Steering files
 
@@ -422,15 +422,16 @@ Rituals calibrated to slow cadences lose their rationale: story-point estimation
 
 The AWS version describes three phases. The 2026 community paper keeps 3 phases:
 
-**Inception — WHAT to build and WHY.** AI transforms business intent into requirements, user stories, units, risks, non-functional requirements and completion criteria. The central ritual is Mob Elaboration 
-    - See [Core Terminology: Mob Elaboration](#mob-elaboration) for the full workflow, including grill-me integration, adversarial spec review and knowledge bootstrap. In short: AI asks clarifying questions, the team validates or corrects the result, and adversarial skills challenge assumptions before anything is built. This phase also produces the domain design — bounded contexts, ubiquitous language, entities, interfaces — that Construction later consumes and realizes (see [Core Terminology: Mob Construction](#mob-construction)).
+**Inception — WHAT to build and WHY.** AI transforms business intent into requirements, user stories, units, risks, non-functional requirements and completion criteria. The central ritual is Mob Elaboration - See [Core Terminology: Mob Elaboration](#mob-elaboration) for the full workflow, including grill-me integration, adversarial spec review and knowledge bootstrap. In short: AI asks clarifying questions, the team validates or corrects the result, and adversarial skills challenge assumptions before anything is built. This phase also produces the domain design — bounded contexts, ubiquitous language, entities, interfaces — that Construction later consumes and realizes (see [Core Terminology: Mob Construction](#mob-construction)).
 
-**Construction — HOW to build it.** Using the validated context from Inception, AI proposes architecture, domain models, code solutions and tests. In the 2025 AWS framing this is Mob Construction; in the 2026 community paper it is Execution through Bolts. 
-  - See [Core Terminology: Mob Construction](#mob-construction) for the full set of activities, stages, verification gates, accuracy mechanisms, measurement and learning-from-mistakes. In short: AI proposes and builds, the team reviews trade-offs and higher-risk decisions, and quality gates provide backpressure when output fails.
+**Construction — HOW to build it.** Using the validated context from Inception, AI proposes architecture, domain models, code solutions and tests. In the 2025 AWS framing this is Mob Construction; in the 2026 community paper it is Execution through Bolts.
+
+- See [Core Terminology: Mob Construction](#mob-construction) for the full set of activities, stages, verification gates, accuracy mechanisms, measurement and learning-from-mistakes. In short: AI proposes and builds, the team reviews trade-offs and higher-risk decisions, and quality gates provide backpressure when output fails.
 
 **Operations — run and maintain it.** AI applies the accumulated context to deployment, infrastructure as code, monitoring, rollback and ongoing maintenance. Operational work itself becomes file-based: each operation lives as a spec in `.ai-dlc/{intent}/operations/`, typed as **scheduled** (cron-driven tasks such as secret rotation or cache warming), **reactive** (trigger-driven responses such as rollback on error-rate spikes) or **process** (human-cadence routines such as quarterly security reviews), with an ownership model of agent-owned scripts executing autonomously within boundaries or human-owned checklists tracked by the agent. Each intent ships a **Deployment Unit** bundling code artifacts, configuration, infrastructure definitions and validation suites with automated rollback procedures. The important point is continuity: plans, requirements, design artifacts and operational knowledge are stored in the repository so later sessions do not start from scratch — and when an intent completes, configured completion announcements generate changelog entries, release notes, social posts or blog drafts from the same artifacts, closing the gap between code-complete and users knowing about it. In the financial-services narrative, monitoring feeds back into the coding agent's context and informs future Inception cycles, creating a virtuous loop.
 
-**How AI-DLC maps onto the SDLC.
+\*\*How AI-DLC maps onto the SDLC.
+
 ```mermaid
 flowchart TD
     subgraph SDLC[Classic SDLC Phases]
@@ -873,9 +874,61 @@ paths:
 
 The frontmatter fields (`description`, `trigger`, `paths`) capture the common subset that already exists scattered across tools — Cursor's `alwaysApply` and description matching, Kiro's `fileMatchPattern` globs, Q's scoping — but each tool names and interprets them differently. That divergence, with no ratifying body, is exactly why it remains a convention rather than a standard.
 
-#### How Spec-Driven Development Fits In
+### Spec-Driven Development (SDD)
 
-Spec-driven development (see [The Pillars of AI-Assisted Development](#the-pillars-of-ai-assisted-development)) is where the structured specification is the source of truth and the agents derive implementation, tests and documentation from it. In the AI-DLC appendix context, that specification is not a separate artifact stream — it lives *inside* the same on-disk layout described above. The three layers are:
+Spec-driven development (SDD) is a pillar of AI-assisted development (see [The Pillars of AI-Assisted Development](#the-pillars-of-ai-assisted-development)): a structured specification becomes the source of truth and the agents derive implementation, tests and documentation from it. This section explains what SDD is, the levels it comes in, the tools that implement it and how it fits into AI-DLC. It draws on Birgitta Böckeler's survey [_Understanding Spec-Driven-Development: Kiro, spec-kit, and Tessl_](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) (martinfowler.com, 2025).
+
+#### What SDD Is
+
+SDD means writing a spec before writing code with AI — "documentation first". The spec becomes the source of truth for both the human and the AI. Two definitions frame it:
+
+- GitHub's spec-kit: "In this new world, maintaining software means evolving specifications. [...] The lingua franca of development moves to a higher level, and code is the last-mile approach."
+- Tessl: "A development approach where specs — not code — are the primary artifact. Specs describe intent in structured, testable language, and agents generate code to match them."
+
+The term is still semantically diffuse — Böckeler notes people sometimes use "spec" loosely, even as a synonym for "a detailed prompt" — so it helps to pin down what a spec actually is rather than rely on the label alone.
+
+#### The Three Levels of SDD
+
+Böckeler observes that what tools call "spec-driven development" sits at several levels of commitment, and they build on each other:
+
+- **Spec-first** — a well-thought-out spec is written first, then used to guide the AI-assisted workflow for the task at hand. Once the task is done, the spec may be discarded; the next change starts a fresh spec.
+- **Spec-anchored** — the spec is kept after the task completes and continues to be the reference for the feature's evolution and maintenance. The spec is updated as the feature grows, rather than re-derived each time.
+- **Spec-as-source** — the spec is the main source file over time. Only the spec is edited by the human; the human never touches the code, which is generated from the spec.
+
+All SDD approaches are spec-first, but not all aim to be spec-anchored or spec-as-source — and even the spec-anchored tools rarely make their long-term maintenance strategy explicit. The spec-as-source level in particular carries a cautionary history: Böckeler draws the parallel to model-driven development (MDD), where hand-built generators turned structured models or DSLs into code. MDD never took off for business applications because it sat at an awkward abstraction level and created too much overhead and constraint. LLMs remove some of that overhead — no predefined parseable language, no elaborate generators — but they add non-determinism, so spec-as-source risks the downsides of both worlds: the inflexibility of MDD and the non-determinism of LLMs.
+
+#### What a Spec Is
+
+There is no general definition of "spec"; the closest consistent description Böckeler found is a comparison to a Product Requirements Document. Her working definition: a spec is a structured, behavior-oriented artifact — or a set of related artifacts — written in natural language that expresses software functionality and serves as guidance to AI coding agents. Each SDD variant defines its own structure, level of detail and how the artifacts are organised in the project.
+
+The distinction between **specs** and the general context documents of a codebase (sometimes called a **memory bank**): rules files, or high-level descriptions of the product and codebase, like AGENTS.md, project.md and architecture.md. Context documents are relevant across all coding sessions in the codebase, whereas specs are only relevant to the task that creates or changes the particular functionality. This distinction maps directly onto the Rules-versus-Spec layering used throughout this post (see [Rules files](#rules-files)): rules are the cross-session memory bank, and the per-Intent spec is the task-scoped artifact.
+
+#### The Tools
+
+Three tools label themselves SDD, and they are quite different from each other — a reminder that "SDD" is not one thing.
+
+**Kiro** (the most lightweight) is mostly spec-first. Its workflow is Requirements → Design → Tasks, with each step represented by one markdown document. Requirements are structured as user stories in "As a..." format with acceptance criteria in GIVEN/WHEN/THEN format. The design document holds component architecture, data flow, data models, error handling, testing strategy and implementation approach. Tasks trace back to requirement numbers and carry UI affordances to run and review one task at a time. Kiro's memory bank is its "steering", whose default topology is product.md, structure.md and tech.md.
+
+**Spec-kit** (GitHub's version, a CLI with slash commands) is the most customisable because it drops artifacts directly into the workspace. Its workflow is Constitution → Specify → Plan → Tasks. The constitution is a powerful, effectively immutable rules file that the workflow applies to every change — essentially a memory bank. Each workflow step instantiates a set of files and prompts from templates, and makes heavy use of checklists inside the files to track clarifications, constitution violations and research tasks; the checklists act like a definition of done per step (interpreted by AI, so not guaranteed). One spec is made up of many files — spec, plan, tasks, data-model, api, component, research, and templates. GitHub aspires to spec-anchored ("living, executable artifacts that evolve... specs become the shared source of truth"), but spec-kit creates a branch per spec, which suggests it treats a spec as a living artifact for the lifetime of a change request rather than for the lifetime of a feature.
+
+**Tessl** (CLI plus MCP server) is the only one explicitly aiming at spec-anchored, and it is exploring spec-as-source. Generated code carries a `// GENERATED FROM SPEC - DO NOT EDIT` marker, with roughly a 1:1 mapping between a spec and a code file. Tags such as `@generate` and `@test` tell it what to produce, and the exposed interfaces are put into the spec so the critical public surface stays under maintainer control. The low, per-file abstraction level reduces the number of steps and interpretations the LLM performs, lowering error chances — but non-determinism still showed when Böckeler generated the same code multiple times from one spec, forcing her to iterate the spec toward more specificity and repeatability.
+
+#### Cautions Via the Tools
+
+Böckeler's hands-on testing surfaced several caveats that any SDD adoption should weigh:
+
+- **One workflow does not fit every size.** Both Kiro and spec-kit felt like "a sledgehammer to crack a nut" for small fixes — a trivial bug became four user stories with sixteen acceptance criteria in Kiro, and spec-kit's elaborate, file-heavy review was overkill for a medium feature. An effective SDD tool needs flexibility for different problem sizes and types.
+- **Reviewing markdown versus reviewing code.** Spec-kit produced a lot of verbose, repetitive markdown for the human to review, some of which already contained code. Böckeler notes she would rather review code than those files; SDD needs a good spec-review experience or it becomes a tax.
+- **A false sense of control.** Larger context windows do not guarantee the agent picks up everything. In her spec-kit run, the agent ignored research notes describing existing classes and regenerated them as new duplicates. Conversely, it sometimes went overboard following an instruction too eagerly. Small, iterative steps have historically been the reliable way to stay in control, which sits awkwardly with heavy up-front spec design.
+- **Separating functional from technical spec is hard.** SDD tools want to keep functional requirements apart from technical implementation (to enable switching tech stacks), but in practice Böckeler found it confusing, the tooling inconsistent, and our profession already struggles to separate requirements from implementation in ordinary user stories.
+- **Who is the target user?** SDD tools push product- and requirements-analysis work onto developers without making that explicit, and it is unclear how far cross-skilling is meant to go.
+- **The Verschlimmbesserung risk.** Elaborate, file-heavy workflows may amplify existing challenges such as review overload and hallucination — making something worse in the attempt to make it better.
+
+The takeaway is not that SDD is worthless — the general principle of spec-first is valuable, and how to structure a memory bank and a good spec for AI are among the most-asked practitioner questions. It is that SDD is not a single settled practice, and the more elaborate variants deserve scrutiny.
+
+#### How SDD Fits Into AI-DLC
+
+In the AI-DLC context, the SDD specification is not a separate artifact stream — it lives inside the same on-disk layout described throughout this appendix. The three layers are:
 
 ```text
 Rules / Steering files   HOW work happens — process, all work, once
@@ -888,17 +941,21 @@ Spec (per Intent)        WHAT this feature is — intent.md, unit-*.md,
 Implementation / Tests   derived from the spec
 ```
 
+- AI-DLC occupies the **spec-first, leaning spec-anchored**, part of the spectrum — it is not spec-as-source. The per-Intent artifacts (intent.md, unit-\*.md, discovery.md, the domain design and the completion criteria) are committed to the repository as "artifacts are memory" (see [Persistent Context: Artifacts Are Memory](#persistent-context-artifacts-are-memory)), so they persist beyond the task and feed future evolution, which is spec-anchoring in behaviour. But humans still read and edit the code and validate outcomes, so AI-DLC stops short of spec-as-source.
+- The SDD **memory bank** maps onto the AI-DLC Rules and Steering files — the process layer that is loaded every session and applies across all work (see [Rules files](#rules-files) and [Steering files](#steering-files)). The SDD **spec** maps onto the per-Intent layer.
+- The **definition-of-done / checklist** role that spec-kit's checklists play maps onto AI-DLC's **completion criteria** — precise, verifiable conditions per Unit that gate autonomy (see [Core Terminology: Completion Criteria](#completion-criteria)).
+
 Where each piece of the spec lands on disk:
 
-| Spec element                          | Where it lives                                                                             |
-| ------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Intent (purpose, frontmatter)         | `aidlc/intents/<id>/` (AWS) or `.ai-dlc/{intent}/intent.md` (community)                    |
-| Units and their completion criteria   | `aidlc/intents/<id>/construction/{unit}/...` (AWS) or `.ai-dlc/{intent}/unit-*.md`         |
-| Requirements and domain design        | `aidlc/intents/<id>/inception/` including `domain-design/` (AWS); `discovery.md` (comm.)   |
-| Domain knowledge the spec draws on    | `aidlc/spaces/<name>/knowledge/` (AWS) or `.ai-dlc/knowledge/` (community)                 |
-| How the spec is produced              | The stage library and heuristics in the Rules, which decide whether requirements analysis runs at all |
+| Spec element                        | Where it lives                                                                                        |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Intent (purpose, frontmatter)       | `aidlc/intents/<id>/` (AWS) or `.ai-dlc/{intent}/intent.md` (community)                               |
+| Units and their completion criteria | `aidlc/intents/<id>/construction/{unit}/...` (AWS) or `.ai-dlc/{intent}/unit-*.md`                    |
+| Requirements and domain design      | `aidlc/intents/<id>/inception/` including `domain-design/` (AWS); `discovery.md` (comm.)              |
+| Domain knowledge the spec draws on  | `aidlc/spaces/<name>/knowledge/` (AWS) or `.ai-dlc/knowledge/` (community)                            |
+| How the spec is produced            | The stage library and heuristics in the Rules, which decide whether requirements analysis runs at all |
 
-The relationship holds across both implementations: the Rules and Steering files define the *process* that produces the spec, the *spec* is the versioned source of truth for a particular Intent, and the agent iterates against that spec until its completion criteria pass. Rules neither replace nor duplicate the spec — the two live at different levels and the appendix layouts keep them in separate, committed directories.
+The relationship holds across both implementations: the Rules and Steering files define the _process_ that produces the spec, the _spec_ is the versioned source of truth for a particular Intent, and the agent iterates against that spec until its completion criteria pass. Rules neither replace nor duplicate the spec — the two live at different levels, and the appendix layouts keep them in separate, committed directories.
 
 ## References
 
@@ -917,6 +974,7 @@ The relationship holds across both implementations: the Rules and Steering files
 - arXiv:2606.04967 (2026). _From Prompt to Process: A Taxonomy of Agentic AI-Driven Development Frameworks_.
 - arXiv:2605.13357 (2026). _AI Harness Engineering: A Runtime Substrate for Foundation-Model Software Agents_.
 - Böckeler, B. (2026). _Context Engineering for Coding Agents_. martinfowler.com.
+- Böckeler, B. (2025). _Understanding Spec-Driven-Development: Kiro, spec-kit, and Tessl_. martinfowler.com.
 - The Bushido Collective (2026). _AI-DLC 2026 Method Definition Paper_. ai-dlc.dev/paper.
 - GitHub (2025). _Spec Kit: Writing specifications your team will actually use_. github.blog.
 - Meppiel, D. (2025). _How to build reliable AI workflows with agentic primitives and context engineering_. GitHub Blog.
