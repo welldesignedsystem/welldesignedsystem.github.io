@@ -505,10 +505,10 @@ flowchart TD
         I -->|HITL| J1[Supervised Bolt]
         I -->|OHOTL| J2[Observed Bolt]
         I -->|AHOTL| J3[Autonomous Bolt]
-        J1 --> K[Per-Unit Design]
-        J2 --> K
-        J3 --> K
-        K --> M[Code Generation Planning]
+        J1 -.-> K[Per-Unit Design]
+        J2 -.-> K
+        J3 -.-> K
+        K -.-> M[Code Generation Planning]
         M --> N[Code Generation]
         N --> O[Build and Test]
         O --> P{Quality Gates}
