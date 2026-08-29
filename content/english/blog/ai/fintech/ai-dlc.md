@@ -12,7 +12,7 @@ This post is part three of a series on software engineering in Telly's fintech d
 
 ### Two approaches to AI in software development
 
-There are two dominant approaches to using AI in software development, and understanding the distinction matters before diving into AI-DLC:
+There are two dominant approaches to using AI in software development, and understanding the distinction matters before diving into AI-DLC. (The two approaches are the ends of a spectrum of autonomy; see [Stages of AI Development Autonomy](#stages-of-ai-development-autonomy) in the appendix for the fuller picture.)
 
 **AI-assisted development** — AI enhances specific tasks: code completion, documentation, test generation. The human writes the code; the AI speeds up individual steps. Think GitHub Copilot in its default mode. The human controls the process end-to-end; the AI is a faster keyboard.
 
@@ -680,6 +680,44 @@ It is also worth remembering that the fuller, more operational version of the me
 
 ## Appendix
 
+### Stages of AI Development Autonomy
+
+The main text introduces the "two approaches" framing (AI-assisted versus AI-managed) as the extreme ends of a spectrum, and this appendix records the fuller picture. AI in software development is better described as a **spectrum of autonomy** — how much of the work, and which decisions, fall to the AI rather than the human — and several frameworks describe compatible levels within it:
+
+```mermaid
+flowchart LR
+    subgraph ASSISTED[AI-assisted -- human holds the process]
+        direction LR
+        A[Autocomplete] --> B[Co-Developer]
+        B --> C[Supervised Agent]
+        C --> D[Autonomous Agent]
+    end
+
+    subgraph MANAGED[AI-managed -- AI holds the process]
+        direction LR
+        E[Full Autonomy]
+    end
+
+    D -.->|escalation| E
+
+    B -.- bd([Human reviews every change])
+    C -.- cd([Human audits logged decisions])
+    D -.- dd([Human sets policy, audits results])
+
+    classDef approved fill:#e3f2fd,stroke:#1976d2;
+    classDef independent fill:#fff3e0,stroke:#f57c00;
+    class A,B approved;
+    class C,D,E independent;
+```
+
+The shaded line marks the critical boundary these taxonomies draw: on the left (blue) the agent executes **only with human approval**; on the right (orange) it **decides and executes independently** and the human only audits. That is the same boundary the HITL/OHOTL/AHOTL modes draw in AI-DLC.
+
+- **Bitloops describes a four-level continuum** — Autocomplete → Co-Developer → Supervised Agent → Autonomous Agent — where each step shifts decision-making and trust from the human toward the agent: autocomplete suggests tokens the human accepts or rejects; a co-developer implements well-specified tasks under human review; a supervised agent executes within guardrails while the human audits its logged decisions; an autonomous agent operates with minimal human gatekeeping within domain constraints ([Bitloops, AI as Co-Developer vs. Autonomous Agent](https://bitloops.com/resources/ai-native-development/ai-as-co-developer-vs-autonomous-agent)).
+- **Several independent frameworks converge on a five- to six-level scale analogized to the SAE J3016 autonomous-driving standard** (none → full autonomy), including the Cloud Security Alliance's autonomy levels for agentic AI and DeepMind's levels of AGI ([Cloud Security Alliance, Autonomy Levels for Agentic AI](https://cloudsecurityalliance.org/blog/2026/01/28/levels-of-autonomy)). The critical dividing line across these taxonomies is between an agent that executes only with human approval and an agent that decides and executes independently — the same boundary the HITL/OHOTL/AHOTL modes draw in AI-DLC.
+- The same CSA analysis notes that production systems today cluster at the lower approval-gated levels, and that full autonomy is widely considered unsafe for enterprise deployment ([Cloud Security Alliance, Autonomy Levels for Agentic AI](https://cloudsecurityalliance.org/blog/2026/01/28/levels-of-autonomy)).
+
+AI-DLC sits on this spectrum rather than at an extreme: AI drives the process but pauses for human sign-off at every step, and how much autonomy it gets is a deliberate choice per Unit (HITL, OHOTL or AHOTL), not a blanket decision. Source: [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/); [Bitloops, AI as Co-Developer vs. Autonomous Agent](https://bitloops.com/resources/ai-native-development/ai-as-co-developer-vs-autonomous-agent).
+
 ### Directory Structure and Layout
 
 AI-DLC work lands on disk in three different ways depending on the implementation, and the folder names are easy to conflate. They are not the same thing:
@@ -975,6 +1013,7 @@ The relationship holds across both implementations: the Rules and Steering files
 - arXiv:2605.13357 (2026). _AI Harness Engineering: A Runtime Substrate for Foundation-Model Software Agents_.
 - Böckeler, B. (2026). _Context Engineering for Coding Agents_. martinfowler.com.
 - Böckeler, B. (2025). _Understanding Spec-Driven-Development: Kiro, spec-kit, and Tessl_. martinfowler.com.
+- Cloud Security Alliance (2026). _Autonomy Levels for Agentic AI_. cloudsecurityalliance.org.
 - The Bushido Collective (2026). _AI-DLC 2026 Method Definition Paper_. ai-dlc.dev/paper.
 - GitHub (2025). _Spec Kit: Writing specifications your team will actually use_. github.blog.
 - Meppiel, D. (2025). _How to build reliable AI workflows with agentic primitives and context engineering_. GitHub Blog.
