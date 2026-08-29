@@ -27,7 +27,9 @@ There are two dominant approaches to using AI in software development (The two a
 - You ask for a database query; it writes the schema, migrations, ORM layer and API endpoints. 
 This is both the appeal and the risk: **the output looks complete but may include decisions you never validated, patterns you never chose and scope you never approved.**
 
-Both extremes have problems. AI-assisted development constrains AI's capabilities and reinforces outdated inefficiencies — you still plan, document and hand off the same way, just faster. AI-managed development produces suboptimal results in velocity and quality — the AI makes hundreds of invisible architectural decisions per second, and nobody reviews them until production breaks.
+**Both extremes have problems:** 
+- AI-assisted development constrains AI's capabilities and reinforces outdated inefficiencies — you still plan, document and hand off the same way, just faster. 
+- AI-managed development produces suboptimal results in velocity and quality — the AI makes hundreds of invisible architectural decisions per second, and nobody reviews them until production breaks.
 
 **AI-DLC positions itself between these two extremes.** AI drives the process — it drafts requirements, proposes architecture, writes code and tests — but always pauses to ask clarifying questions and get human sign-off before proceeding, at every step. The human does not write code; the human validates AI's decisions. This is the HITL/OHOTL/AHOTL spectrum: how much autonomy AI gets is a deliberate choice per Unit, not a blanket decision. Source: [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) ("Both these approaches have produced suboptimal results... AI-DLC aims to address"); [Bitloops, AI as Co-Developer vs. Autonomous Agent](https://bitloops.com/resources/ai-native-development/ai-as-co-developer-vs-autonomous-agent) (spectrum from Autocomplete → Co-Developer → Supervised Agent → Autonomous Agent).
 
