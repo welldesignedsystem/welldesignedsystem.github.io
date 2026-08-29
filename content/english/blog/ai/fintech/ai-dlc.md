@@ -6,13 +6,9 @@ tags = ['AI-DLC','Agentic AI','Fintech','Process']
 summary = "The pillars of AI-assisted development and the AI-DLC method."
 +++
 
-## Introduction
-
-It covers the pillars of AI-assisted development, AI-Driven Development Lifecycle: AWS origins, the community 2026 paper, quality gates and operating modes.
-
 ### Two approaches to AI in software development
 
-There are two dominant approaches to using AI in software development (The two approaches are the ends of a spectrum of autonomy; see [Stages of AI Development Autonomy](#stages-of-ai-development-autonomy) in the appendix for the fuller picture.)
+Dominant approaches to using AI in software development, they are the two ends of a spectrum of autonomy; see [Stages of AI Development Autonomy](#stages-of-ai-development-autonomy):
 
 **AI-assisted development** 
 - AI enhances specific tasks: **code completion, documentation, test generation**.
@@ -21,34 +17,37 @@ There are two dominant approaches to using AI in software development (The two a
 
 **AI-managed development** 
 - AI is expected to **generate entire applications from a prompt, with minimal human intervention**.
-- The human describes what they want; the AI plans, codes, tests and deploys, "vibe coding" tools that build a full-stack app from a paragraph of instructions.
-- Human **surrenders granular control in exchange for speed**. A common pitfall: when you ask AI to do work, it is naturally helpful to a fault — it does more than what you need.
-- You ask for a login page; it builds the entire authentication system with OAuth, session management, password reset, email verification and role-based access control.
-- You ask for a database query; it writes the schema, migrations, ORM layer and API endpoints. 
+- The **the AI plans, codes, tests and deploys, "vibe coding" tools that build a full-stack app from a paragraph of instructions.**
+- Human **surrenders granular control in exchange for speed**. 
+- A common pitfall: **mostly AI is more helpful to a fault — it does more than what you need**, so much so its a problem.
+- If you ask it to modify a database query - it rewrites schema, migration scripts, ORM layer and API endpoints. 
 This is both the appeal and the risk: **the output looks complete but may include decisions you never validated, patterns you never chose and scope you never approved.**
 
 **Both extremes have problems:** 
-- AI-assisted development constrains AI's capabilities and reinforces outdated inefficiencies — you still plan, document and hand off the same way, just faster. 
-- AI-managed development produces suboptimal results in velocity and quality — the AI makes hundreds of invisible architectural decisions per second, and nobody reviews them until production breaks.
+- AI-assisted development 
+  - constrains AI's capabilities and reinforces outdated inefficiencies — **you still plan, document and hand off the same way, just faster.**
+  - Raja SP argues (re:Invent 2025, DVT214) that in AI-assisted mode, **the process stays the same as the pre-AI era: "people throwing documents at each other and attending many meetings to solve problems."**
+  - **AI saves time on individual tasks**, but that time gets consumed by **Scrum ceremonies** — planning, refinement, stand-ups, retrospectives, estimation — **that were designed for a world where iteration were slower and expensive**.
+  - The operations team waits for dev, QA waits for release, **circular dependencies** create escalation meetings and alignment meetings, and someone later says "what you did is wrong, go back and redo it."
+  - AI makes coding faster, but the meeting overhead that surrounds it remains unchanged. The result: velocity improvement is not significant.
+  - Data supports parts of this — employees spend 31 hours/month in meetings, roughly half considered wasted; 71% of senior managers say meetings are unproductive ([meeting statistics 2026](https://speakwiseapp.com/blog/unnecessary-meetings-statistics)).
+  - The counter-argument ([Scrum.org](https://www.scrum.org/resources/blog/myth-11-scrum-we-spend-too-much-time-meetings)): the issue is not meetings per se, but that the meeting cadence was designed for slower iteration.
+
+- AI-managed development produces suboptimal results in **velocity** and **quality**
+  - **Velocity (speed):** looks fast but isn't. The AI churns out code immediately, but problems aren't caught until late, so you spend time fixing, re-explaining and redoing. Net speed ends up slower than it seemed.
+  - **Quality:** lower. The AI makes **hundreds of invisible architectural decisions per second**, and nobody reviews them **until production breaks** — so bugs, wrong patterns and unapproved scope slip through.
 
 **AI-DLC positions itself between these two extremes.** AI drives the process 
-- it **drafts requirements, proposes architecture, writes code and tests**
-- always pauses to ask clarifying questions and get human sign-off before proceeding, at every step.
+- It **drafts requirements, proposes architecture, writes code and tests**
+- Pauses to ask clarifying questions and get human sign-off before proceeding, at every step.
 - The human does not write code; the human validates AI's decisions.
 - This is the **HITL/OHOTL/AHOTL** spectrum: **how much autonomy AI gets is a deliberate choice per Unit, not a blanket decision**.
-- Source:
+
+**Source:**
+  - [meeting statistics 2026](https://speakwiseapp.com/blog/unnecessary-meetings-statistics)
+  - [Scrum.org](https://www.scrum.org/resources/blog/myth-11-scrum-we-spend-too-much-time-meetings)
   - [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)
   - [Bitloops: Spectrum from Autocomplete → Co-Developer → Supervised Agent → Autonomous Agent](https://bitloops.com/resources/ai-native-development/ai-as-co-developer-vs-autonomous-agent) .
-
-**Why AI-assisted often disappoints:** 
-- Raja SP argues (re:Invent 2025, DVT214) that in AI-assisted mode, **the process stays the same as the pre-AI era: "people throwing documents at each other and attending many meetings to solve problems."**
-- AI saves time on individual tasks, but that time gets consumed by Scrum ceremonies — planning, refinement, stand-ups, retrospectives, estimation — that were designed for a world where iteration was expensive.
-- The operations team waits for dev, QA waits for release, circular dependencies create escalation meetings and alignment meetings, and someone later says "what you did is wrong, go back and redo it."
-- AI makes coding faster, but the meeting overhead that surrounds it remains unchanged. The result: velocity improvement is not significant.
-- Data supports parts of this — employees spend 31 hours/month in meetings, roughly half considered wasted; 71% of senior managers say meetings are unproductive ([meeting statistics 2026](https://speakwiseapp.com/blog/unnecessary-meetings-statistics)).
-- The counter-argument ([Scrum.org](https://www.scrum.org/resources/blog/myth-11-scrum-we-spend-too-much-time-meetings)): the issue is not meetings per se, but that the meeting cadence was designed for slower iteration.
--  With AI enabling faster loops, those same meetings become bottlenecks.
--  Source:
   - Raja SP, [re:Invent 2025 DVT214](https://youtu.be/1HNUH6j5t4A) (transcribed [here](https://zenn.dev/kiiwami/articles/45a7ac851f2aeb27?locale=en));
   - [Azure Authority analysis](https://azureauthority.in/ai-dlc-the-ai-driven-development-life-cycle-that-replaces-sprints-with-bolts).
 
@@ -743,6 +742,7 @@ The shaded line marks the critical boundary these taxonomies draw: on the left (
 - **Bitloops describes a four-level continuum** — Autocomplete → Co-Developer → Supervised Agent → Autonomous Agent — where each step shifts decision-making and trust from the human toward the agent: autocomplete suggests tokens the human accepts or rejects; a co-developer implements well-specified tasks under human review; a supervised agent executes within guardrails while the human audits its logged decisions; an autonomous agent operates with minimal human gatekeeping within domain constraints ([Bitloops, AI as Co-Developer vs. Autonomous Agent](https://bitloops.com/resources/ai-native-development/ai-as-co-developer-vs-autonomous-agent)).
 - **Several independent frameworks converge on a five- to six-level scale analogized to the SAE J3016 autonomous-driving standard** (none → full autonomy), including the Cloud Security Alliance's autonomy levels for agentic AI and DeepMind's levels of AGI ([Cloud Security Alliance, Autonomy Levels for Agentic AI](https://cloudsecurityalliance.org/blog/2026/01/28/levels-of-autonomy)). The critical dividing line across these taxonomies is between an agent that executes only with human approval and an agent that decides and executes independently — the same boundary the HITL/OHOTL/AHOTL modes draw in AI-DLC.
 - The same CSA analysis notes that production systems today cluster at the lower approval-gated levels, and that full autonomy is widely considered unsafe for enterprise deployment ([Cloud Security Alliance, Autonomy Levels for Agentic AI](https://cloudsecurityalliance.org/blog/2026/01/28/levels-of-autonomy)).
+- **A concrete fixture: Antigravity (Google).** Antigravity, Google's agentic coding platform integrated with Android Studio, sits on the managed side of the spectrum. The developer states the intent in natural language; the agent plans, writes code, runs tests, fixes failures and iterates in a persistent, sandboxed thinking session before presenting a change for human review. It is not full autonomy because the human still sets the goal, approves the plan and reviews the resulting change, and Google ships it as a preview. So it is best placed at the Autonomous Agent tier — orange on the diagram, not the far right. Notably, Google's own tagline calls it "AI-assisted software development," a reminder that the assisted-versus-managed labels are contested and any single tool can cross the line ([Google, Introducing Google Antigravity](https://antigravity.google/blog/introducing-google-antigravity)).
 
 AI-DLC sits on this spectrum rather than at an extreme: AI drives the process but pauses for human sign-off at every step, and how much autonomy it gets is a deliberate choice per Unit (HITL, OHOTL or AHOTL), not a blanket decision. Source: [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/); [Bitloops, AI as Co-Developer vs. Autonomous Agent](https://bitloops.com/resources/ai-native-development/ai-as-co-developer-vs-autonomous-agent).
 
@@ -1042,6 +1042,7 @@ The relationship holds across both implementations: the Rules and Steering files
 - Böckeler, B. (2026). _Context Engineering for Coding Agents_. martinfowler.com.
 - Böckeler, B. (2025). _Understanding Spec-Driven-Development: Kiro, spec-kit, and Tessl_. martinfowler.com.
 - Cloud Security Alliance (2026). _Autonomy Levels for Agentic AI_. cloudsecurityalliance.org.
+- Google (2025). _Introducing Google Antigravity, a New Era in AI-Assisted Software Development_. antigravity.google.
 - The Bushido Collective (2026). _AI-DLC 2026 Method Definition Paper_. ai-dlc.dev/paper.
 - GitHub (2025). _Spec Kit: Writing specifications your team will actually use_. github.blog.
 - Meppiel, D. (2025). _How to build reliable AI workflows with agentic primitives and context engineering_. GitHub Blog.
