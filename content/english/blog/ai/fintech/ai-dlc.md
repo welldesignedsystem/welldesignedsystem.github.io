@@ -40,7 +40,17 @@ This is both the appeal and the risk: **the output looks complete but may includ
   - [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)
   - [Bitloops: Spectrum from Autocomplete → Co-Developer → Supervised Agent → Autonomous Agent](https://bitloops.com/resources/ai-native-development/ai-as-co-developer-vs-autonomous-agent) .
 
-**Why AI-assisted often disappoints:** Raja SP argues (re:Invent 2025, DVT214) that in AI-assisted mode, the process stays the same as the pre-AI era: "people throwing documents at each other and attending many meetings to solve problems." AI saves time on individual tasks, but that time gets consumed by Scrum ceremonies — planning, refinement, stand-ups, retrospectives, estimation — that were designed for a world where iteration was expensive. The operations team waits for dev, QA waits for release, circular dependencies create escalation meetings and alignment meetings, and someone later says "what you did is wrong, go back and redo it." AI makes coding faster, but the meeting overhead that surrounds it remains unchanged. The result: velocity improvement is not significant. Data supports parts of this — employees spend 31 hours/month in meetings, roughly half considered wasted; 71% of senior managers say meetings are unproductive ([meeting statistics 2026](https://speakwiseapp.com/blog/unnecessary-meetings-statistics)). The counter-argument ([Scrum.org](https://www.scrum.org/resources/blog/myth-11-scrum-we-spend-too-much-time-meetings)): the issue is not meetings per se, but that the meeting cadence was designed for slower iteration. With AI enabling faster loops, those same meetings become bottlenecks. Source: Raja SP, [re:Invent 2025 DVT214](https://youtu.be/1HNUH6j5t4A) (transcribed [here](https://zenn.dev/kiiwami/articles/45a7ac851f2aeb27?locale=en)); [Azure Authority analysis](https://azureauthority.in/ai-dlc-the-ai-driven-development-life-cycle-that-replaces-sprints-with-bolts).
+**Why AI-assisted often disappoints:** 
+- Raja SP argues (re:Invent 2025, DVT214) that in AI-assisted mode, **the process stays the same as the pre-AI era: "people throwing documents at each other and attending many meetings to solve problems."**
+- AI saves time on individual tasks, but that time gets consumed by Scrum ceremonies — planning, refinement, stand-ups, retrospectives, estimation — that were designed for a world where iteration was expensive.
+- The operations team waits for dev, QA waits for release, circular dependencies create escalation meetings and alignment meetings, and someone later says "what you did is wrong, go back and redo it."
+- AI makes coding faster, but the meeting overhead that surrounds it remains unchanged. The result: velocity improvement is not significant.
+- Data supports parts of this — employees spend 31 hours/month in meetings, roughly half considered wasted; 71% of senior managers say meetings are unproductive ([meeting statistics 2026](https://speakwiseapp.com/blog/unnecessary-meetings-statistics)).
+- The counter-argument ([Scrum.org](https://www.scrum.org/resources/blog/myth-11-scrum-we-spend-too-much-time-meetings)): the issue is not meetings per se, but that the meeting cadence was designed for slower iteration.
+-  With AI enabling faster loops, those same meetings become bottlenecks.
+-  Source:
+  - Raja SP, [re:Invent 2025 DVT214](https://youtu.be/1HNUH6j5t4A) (transcribed [here](https://zenn.dev/kiiwami/articles/45a7ac851f2aeb27?locale=en));
+  - [Azure Authority analysis](https://azureauthority.in/ai-dlc-the-ai-driven-development-life-cycle-that-replaces-sprints-with-bolts).
 
 ## AI-Assisted Software Development and the AI-DLC
 
