@@ -8,13 +8,13 @@ summary = "The pillars of AI-assisted development and the AI-DLC method."
 
 ## Introduction
 
-This post is part three of a series on software engineering in Telly's fintech domain. It covers the pillars of AI-assisted development, then goes deep on the AI-Driven Development Lifecycle: its AWS origins, the community 2026 paper, quality gates and operating modes.
+It covers the pillars of AI-assisted development, AI-Driven Development Lifecycle: AWS origins, the community 2026 paper, quality gates and operating modes.
 
 ### Two approaches to AI in software development
 
-There are two dominant approaches to using AI in software development, and understanding the distinction matters before diving into AI-DLC. (The two approaches are the ends of a spectrum of autonomy; see [Stages of AI Development Autonomy](#stages-of-ai-development-autonomy) in the appendix for the fuller picture.)
+There are two dominant approaches to using AI in software development (The two approaches are the ends of a spectrum of autonomy; see [Stages of AI Development Autonomy](#stages-of-ai-development-autonomy) in the appendix for the fuller picture.)
 
-**AI-assisted development** — AI enhances specific tasks: code completion, documentation, test generation. The human writes the code; the AI speeds up individual steps. Think GitHub Copilot in its default mode. The human controls the process end-to-end; the AI is a faster keyboard.
+**AI-assisted development** — AI enhances specific tasks: **code completion, documentation, test generation**. The human writes the code; the AI speeds up individual steps. Think GitHub Copilot in its default mode. The human controls the process end-to-end; the AI is a faster keyboard.
 
 **AI-managed development** — AI is expected to generate entire applications from a prompt, with minimal human intervention. The human describes what they want; the AI plans, codes, tests and deploys. Think "vibe coding" tools that build a full-stack app from a paragraph of instructions. The human surrenders granular control in exchange for speed. A common pitfall: when you ask AI to do work, it is naturally helpful to a fault — it does more than what you need. You ask for a login page; it builds the entire authentication system with OAuth, session management, password reset, email verification and role-based access control. You ask for a database query; it writes the schema, migrations, ORM layer and API endpoints. The AI cannot help itself — it generates the whole application because that is what its training rewards. This is both the appeal and the risk: the output looks complete but may include decisions you never validated, patterns you never chose and scope you never approved.
 
