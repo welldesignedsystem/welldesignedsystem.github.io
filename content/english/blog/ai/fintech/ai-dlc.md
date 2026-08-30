@@ -136,8 +136,8 @@ AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructu
   - Completion criteria are defined for each unit
   - Bolt structure and supervision mode are selected
 - **Grill-me workflow:** The /grill-me skill fits into Mob Elaboration as the adversarial interrogation step. Two approaches work:
-  - **Option A:** Brainstorm → Team agreements → Grill-me interrogates the agreed plan → Revised plan → Build. This catches flaws after convergence — cheap compared to catching them in Construction.
-  - **Option B (stronger):** Brainstorm → Grill-me interrogates during brainstorming → Team agrees on a plan that has already survived interrogation → Build. This hardens the plan _before_ anyone commits to it, so agreements are already stress-tested.
+  - **Option A:** **Brainstorm → Team agreements → Grill-me** interrogates the **agreed plan → Revised plan → Build**. This catches flaws after convergence — **cheap compared to catching them in Construction**.
+  - **Option B (stronger):** **Brainstorm → Grill-me interrogates during brainstorming → Team agrees on a plan that has already survived interrogation → Build.** This hardens the plan _before_ anyone commits to it, so agreements are already stress-tested.
   - Either way, grill-me turns the agent from a passive assistant into an interrogator: it challenges the intent, attacks assumptions, hunts for missing edge cases and forces the team to defend the business case before anything is built. Running it here is cheap — catching a wrong assumption during Elaboration costs minutes, while catching it in Construction or Production costs a full rework cycle. Source: [grill-me skill](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md); [AI Hero, /grill-me](https://www.aihero.dev/skills-grill-me).
 - **Adversarial spec review:**
   - An isolated subagent challenges the specs against defined categories. The [kabaka/ai-dlc adversarial-reviewer](https://github.com/kabaka/ai-dlc/blob/main/.claude/agents/adversarial-reviewer.md) community implementation probes for:
