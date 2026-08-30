@@ -513,44 +513,40 @@ The diagram below combines the three phases, the adaptive workflow stages, the o
 
 ```mermaid
 flowchart TD
-    A[Business Intent] --> B{Workspace Detection}
 
     subgraph INC[Inception Phase]
-        B -->|Greenfield| D[Requirements Analysis]
-        B -->|Brownfield| E[Reverse Engineering]
-        D --> F[Workflow Planning]
+        A[Business Intent] --> B[Mob Elaboration]
+        B --> C[Requirements Analysis]
+        C --> D[Application Design]
+        C --> E[Units of Work Planning]
+        D --> F[Adversarial Spec Review]
         E --> F
-        F -.-> G1[User Stories]
-        F -.-> G2[Application Design]
-        F -.-> G3[Units of Work Planning]
-        G1 -.-> H[Units and Completion Criteria]
-        G2 -.-> H
-        G3 -.-> H
+        F --> G[Units and Completion Criteria]
     end
 
     subgraph CON[Construction / Execution Phase]
-        H --> I{Operating Mode}
-        I -->|HITL| J1[Supervised Bolt]
-        I -->|OHOTL| J2[Observed Bolt]
-        I -->|AHOTL| J3[Autonomous Bolt]
-        J1 -.-> K[Per-Unit Design]
-        J2 -.-> K
-        J3 -.-> K
-        K -.-> M[Code Generation Planning]
-        M --> N[Code Generation]
-        N --> O[Build and Test]
-        O --> P{Quality Gates}
-        P -->|Fail| Q[Backpressure: Feedback and Pass-Back]
-        Q --> K
-        P -->|Pass| R[Review and Integration]
+        G --> H{Operating Mode}
+        H -->|HITL| I1[Supervised Bolt]
+        H -->|OHOTL| I2[Observed Bolt]
+        H -->|AHOTL| I3[Autonomous Bolt]
+        I1 -.- J[Per-Unit Design]
+        I2 -.- J
+        I3 -.- J
+        J --> K[Code Generation Planning]
+        K --> L[Code Generation]
+        L --> M[Build and Test]
+        M --> N{Quality Gates}
+        N -->|Fail| O[Backpressure: Feedback and Pass-Back]
+        O --> J
+        N -->|Pass| P[Review and Integration]
     end
 
     subgraph OPS[Operations Phase]
-        R --> S[Deploy, Monitor and Maintain]
-        S --> T[Persistent Context and Knowledge]
+        P --> Q[Deploy, Monitor and Maintain]
+        Q --> R[Persistent Context and Knowledge]
     end
 
-    T --> B
+    R --> B
 ```
 
 Note the two feedback loops. The inner loop is construction backpressure: failed quality gates push the unit back through design, code generation and testing. The outer loop is lifecycle continuity: operations captures persistent context and knowledge, which feeds the next Inception cycle so no session starts from scratch.
@@ -1051,3 +1047,5 @@ The relationship holds across both implementations: the Rules and Steering files
 - AWS (2025). _Building with AI-DLC using Amazon Q Developer_. AWS DevOps Blog.
 - AWS (2026). _AI-Driven Development Lifecycle for Financial Services_. AWS Industries Blog.
 - awslabs (2025). _aidlc-workflows_. GitHub.
+
+```
