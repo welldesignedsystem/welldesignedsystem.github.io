@@ -511,39 +511,50 @@ At each gate the workflow asks clarifying questions, creates an execution plan a
 
 The diagram below combines the three phases, the adaptive workflow stages, the operating modes and the quality-gate loop into one picture. Dashed edges are conditional stages; the workflow only runs them when the context warrants it. Solid edges are mandatory.
 
+**Hat legend:**
+
+| Icon | Hat                      | Role                                                       |
+| ---- | ------------------------ | ---------------------------------------------------------- |
+| 🎩   | Planner                  | Decompose intent into units and bolts                      |
+| 👒   | Designer                 | Design lens, UX, architecture review                        |
+| 👷   | Builder                  | Write code, tests and artifacts                            |
+| 🕵️   | Reviewer                 | Verify completion criteria, review                         |
+| 🪖   | Red / Blue               | Adversarial security attack-defend                         |
+| 🧩   | Integrator               | Intent-level integration                                   |
+
 ```mermaid
 flowchart TD
 
     subgraph INC[Inception Phase]
-        A[Business Intent] --> B[Mob Elaboration]
-        B --> C[Requirements Analysis]
-        C --> D[Application Design]
-        C --> E[Units of Work Planning]
-        D --> F[Adversarial Spec Review]
+        A["Business Intent <sub>[🎩]</sub>"] --> B["Mob Elaboration <sub>[🎩👒🕵️]</sub>"]
+        B --> C["Requirements Analysis <sub>[🎩]</sub>"]
+        C --> D["Application Design <sub>[👒]</sub>"]
+        C --> E["Units of Work Planning <sub>[🎩]</sub>"]
+        D --> F["Adversarial Spec Review <sub>[🪖]</sub>"]
         E --> F
-        F --> G[Units and Completion Criteria]
+        F --> G["Units and Completion Criteria <sub>[🎩🕵️]</sub>"]
     end
 
     subgraph CON[Construction / Execution Phase]
         G --> H{Operating Mode}
-        H -->|HITL| I1[Supervised Bolt]
-        H -->|OHOTL| I2[Observed Bolt]
-        H -->|AHOTL| I3[Autonomous Bolt]
-        I1 -.- J[Per-Unit Design]
+        H -->|HITL| I1["Supervised Bolt <sub>[👷]</sub>"]
+        H -->|OHOTL| I2["Observed Bolt <sub>[👷]</sub>"]
+        H -->|AHOTL| I3["Autonomous Bolt <sub>[👷]</sub>"]
+        I1 -.- J["Per-Unit Design <sub>[👒]</sub>"]
         I2 -.- J
         I3 -.- J
-        J --> K[Code Generation Planning]
-        K --> L[Code Generation]
-        L --> M[Build and Test]
-        M --> N{Quality Gates}
-        N -->|Fail| O[Backpressure: Feedback and Pass-Back]
+        J --> K["Code Generation Planning <sub>[🎩👷]</sub>"]
+        K --> L["Code Generation <sub>[👷]</sub>"]
+        L --> M["Build and Test <sub>[👷🕵️]</sub>"]
+        M --> N{"Quality Gates <sub>[🕵️🪖🧩]</sub>"}
+        N -->|Fail| O["Backpressure: Feedback and Pass-Back <sub>[🎩🕵️]</sub>"]
         O --> J
-        N -->|Pass| P[Review and Integration]
+        N -->|Pass| P["Review and Integration <sub>[🕵️🧩🪖]</sub>"]
     end
 
     subgraph OPS[Operations Phase]
-        P --> Q[Deploy, Monitor and Maintain]
-        Q --> R[Persistent Context and Knowledge]
+        P --> Q["Deploy, Monitor and Maintain"]
+        Q --> R["Persistent Context and Knowledge <sub>[🎩👒👷🕵️]</sub>"]
     end
 
     R --> B
