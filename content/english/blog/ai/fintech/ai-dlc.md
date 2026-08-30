@@ -80,8 +80,6 @@ There is no single canonical list of pillars — different authors and organisat
 
 AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructuring how humans and an AI coding assistant work together to build software: the AI drafts requirements, proposes architecture, writes code and tests and handles deployment configs — but always pauses to ask clarifying questions and get human sign-off before proceeding, at every step.
 
-**Sources**
-
 | Source                                                                                                                                     | Owner                  | Status                                                      | Contribution                                                                                                          |
 | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | [**AI-Driven Development Life Cycle blog**](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) also AWS re:Invent 2025 | AWS blogs              | Foundational and official                                   | The three-phase model, Mob Elaboration, Mob Construction and core terminology (Intent, Unit, Bolt)                    |
@@ -92,7 +90,9 @@ AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructu
 
 - Core terminologies that are AI-DLC specific — AWS draws equivalences to agile terms (Epic → Unit, Sprint → Bolt), but these can be misleading. The scope is narrower: an Intent is a feature or technical outcome, not an Epic that spans multiple teams, repos and sprints. The pattern across all of them: traditional terms assume humans plan and document, AI-DLC terms assume AI executes and humans set direction, define boundaries and review outcomes. AI-DLC sits between AI-assisted (AI helps with tasks) and AI-managed (AI does everything) — AI drives the process but humans validate every decision.
 
-- **Note: AI-DLC scope is development, not full lifecycle.** AI-DLC covers **Inception**, **Construction** and **Operations** — the phases where AI actively collaborates on building software. It does not address upstream activities (portfolio planning, funding, governance) or downstream activities (maintenance, decommissioning, end-of-life). SDLC is the umbrella; AI-DLC reimagines the build methodology within it. Source: AWS blog ("AI-DLC is an AI-centric transformative approach to software development" — [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)); method definition PDF ("existing software development methods... SDLC methods need to be reimagined" — [method definition PDF](https://prod.d13rzhkk8cj2z0.amplifyapp.com/aidlc.pdf)); the three phases (Inception, Construction, Operations) cover requirements/design, build, and deploy — not maintenance or decommissioning.
+AI-DLC covers **Inception**, **Construction** and **Operations** — the phases where AI actively collaborates on building AI-DLC reimagines SDLC and build methodology within it. Source: 
+- AI-DLC is an AI-centric transformative approach to software development" — [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)
+- ; the three phases (Inception, Construction, Operations) cover requirements/design, build, and deploy — not maintenance or decommissioning. - [AIDLC - Method definition](https://prod.d13rzhkk8cj2z0.amplifyapp.com/aidlc.pdf)
 
 ##### Intent
 
