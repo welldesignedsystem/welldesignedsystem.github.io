@@ -96,8 +96,8 @@ AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructu
 
 ##### Intent
 
-- **Traditional Equivalent:** None — new concept. The hierarchy is Intent → Unit → Bolt, not a flat replacement of any single agile term, it may seem a replacement for Epic but it's not.
-- **Definition:** A high-level statement of purpose that **describes what should be achieved** — a business goal, a feature or a technical outcome (e.g., "Add OAuth login", "Reduce API latency by 50%", "Migrate from monolith to microservices"). **Serves as the starting point for AI-driven decomposition into Units**.
+- **Traditional Equivalent:** None — new concept. The hierarchy is Intent → Unit → Bolt.
+- **Definition:** Describes **what should be achieved** — a business goal, a feature or a technical outcome (e.g., "Add OAuth login", "Reduce API latency by 50%", "Migrate from monolith to microservices"). **Serves as the starting point for AI-driven decomposition into Units**.
 - **What Changed:** An Epic describes _what_ to build — a solution the team already understands. An Intent describes _why_ — an outcome the AI must first clarify through questions before proposing a solution. Epic decomposes; Intent discovers.
 - **Note:**
   - The AWS blog (2025) says - Epics are replaced by "Units" of Work (dont misunderstand it for intent). The hierarchy is Intent → Unit → Bolt. Source: [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) and [method definition PDF](https://prod.d13rzhkk8cj2z0.amplifyapp.com/aidlc.pdf).
