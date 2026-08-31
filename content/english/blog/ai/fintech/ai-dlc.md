@@ -513,51 +513,57 @@ The diagram below combines the three phases, the adaptive workflow stages, the o
 
 **Hat legend:**
 
-| Icon | Hat                      | Role                                                       |
-| ---- | ------------------------ | ---------------------------------------------------------- |
-| 🎩   | Planner                  | Decompose intent into units and bolts                      |
-| 👒   | Designer                 | Design lens, UX, architecture review                        |
-| 👷   | Builder                  | Write code, tests and artifacts                            |
-| 🕵️   | Reviewer                 | Verify completion criteria, review                         |
-| 🪖   | Red / Blue               | Adversarial security attack-defend                         |
-| 🧩   | Integrator               | Intent-level integration                                   |
+| Icon | Hat                      | Role                                                       | Personas                                              |
+| ---- | ------------------------ | ----------------------------------------------------------- | ------------------------------------------------------ |
+| 🎩   | Planner                  | Decompose intent into units and bolts                      | Business Analyst, Developer                            |
+| 👒   | Designer                 | Design lens, UX, architecture review                       | Solution Architect                                    |
+| 👷   | Builder                  | Write code, tests and artifacts                            | Developer                                             |
+| 🕵️   | Reviewer                 | Verify completion criteria, review                         | Business Analyst, Solution Architect, Developer, Tester/SDET, Lead Engineer, Chapter Lead, Compliance/Security |
+| 🪖   | Red / Blue               | Adversarial security attack-defend                         | Product Owner, Tester/SDET                            |
+| 🧩   | Integrator               | Intent-level integration                                   | —                                                     |
 
 ```mermaid
 flowchart TD
+    A["Business Intent <sub>[🎩]</sub>"] --> B{Workspace Detection}
 
-    subgraph INC[Inception Phase]
-        A["Business Intent <sub>[🎩]</sub>"] --> B["Mob Elaboration <sub>[🎩👒🕵️]</sub>"]
-        B --> C["Requirements Analysis <sub>[🎩]</sub>"]
-        C --> D["Application Design <sub>[👒]</sub>"]
-        C --> E["Units of Work Planning <sub>[🎩]</sub>"]
-        D --> F["Adversarial Spec Review <sub>[🪖]</sub>"]
+    subgraph INC[Inception Phase — Mob Elaboration]
+        B -->|Greenfield| D["Requirements Analysis <sub>[🎩]</sub>"]
+        B -->|Brownfield| E["Reverse Engineering <sub>[🎩]</sub>"]
+        D --> F["Workflow Planning <sub>[🎩]</sub>"]
         E --> F
-        F --> G["Units and Completion Criteria <sub>[🎩🕵️]</sub>"]
+        F -.-> G1["User Stories <sub>[🎩]</sub>"]
+        F -.-> G2["Application Design <sub>[👒]</sub>"]
+        F -.-> G3["Units of Work Planning <sub>[🎩]</sub>"]
+        F -.-> G4["Adversarial Spec Review <sub>[🪖]</sub>"]
+        G1 -.-> H["Units and Completion Criteria <sub>[🎩🕵️]</sub>"]
+        G2 -.-> H
+        G3 -.-> H
+        G4 -.-> H
     end
 
     subgraph CON[Construction / Execution Phase]
-        G --> H{Operating Mode}
-        H -->|HITL| I1["Supervised Bolt <sub>[👷]</sub>"]
-        H -->|OHOTL| I2["Observed Bolt <sub>[👷]</sub>"]
-        H -->|AHOTL| I3["Autonomous Bolt <sub>[👷]</sub>"]
-        I1 -.- J["Per-Unit Design <sub>[👒]</sub>"]
-        I2 -.- J
-        I3 -.- J
-        J --> K["Code Generation Planning <sub>[🎩👷]</sub>"]
-        K --> L["Code Generation <sub>[👷]</sub>"]
-        L --> M["Build and Test <sub>[👷🕵️]</sub>"]
-        M --> N{"Quality Gates <sub>[🕵️🪖🧩]</sub>"}
-        N -->|Fail| O["Backpressure: Feedback and Pass-Back <sub>[🎩🕵️]</sub>"]
-        O --> J
-        N -->|Pass| P["Review and Integration <sub>[🕵️🧩🪖]</sub>"]
+        H --> I{Operating Mode}
+        I -->|HITL| J1["Supervised Bolt <sub>[👷]</sub>"]
+        I -->|OHOTL| J2["Observed Bolt <sub>[👷]</sub>"]
+        I -->|AHOTL| J3["Autonomous Bolt <sub>[👷]</sub>"]
+        J1 --> K["Per-Unit Design <sub>[👒]</sub>"]
+        J2 --> K
+        J3 --> K
+        K --> M["Code Generation Planning <sub>[🎩👷]</sub>"]
+        M --> N["Code Generation <sub>[👷]</sub>"]
+        N --> O["Build and Test <sub>[👷🕵️]</sub>"]
+        O --> P{"Quality Gates <sub>[🕵️🪖🧩]</sub>"}
+        P -->|Fail| Q["Backpressure: Feedback and Pass-Back <sub>[🎩🕵️]</sub>"]
+        Q --> K
+        P -->|Pass| R["Review and Integration <sub>[🕵️🧩🪖]</sub>"]
     end
 
     subgraph OPS[Operations Phase]
-        P --> Q["Deploy, Monitor and Maintain"]
-        Q --> R["Persistent Context and Knowledge <sub>[🎩👒👷🕵️]</sub>"]
+        R --> S["Deploy, Monitor and Maintain"]
+        S --> T["Persistent Context and Knowledge <sub>[🎩👒👷🕵️]</sub>"]
     end
 
-    R --> B
+    T --> B
 ```
 
 Note the two feedback loops. The inner loop is construction backpressure: failed quality gates push the unit back through design, code generation and testing. The outer loop is lifecycle continuity: operations captures persistent context and knowledge, which feeds the next Inception cycle so no session starts from scratch.
