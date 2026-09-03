@@ -12,7 +12,7 @@ summary = "Where AI-DLC and the spectrum of AI development autonomy are heading.
 
 ### The AI-DLC Workflow
 
-The workflow combines the three phases, the adaptive workflow stages, the operating modes and the quality-gate loop. Dashed edges are conditional stages; solid edges are mandatory.
+The workflow combines the three phases, the adaptive workflow stages, the operating modes and the quality-gate loop. Dashed edges are conditional stages; solid edges are mandatory. **Green nodes** are mandatory stages (always run); **yellow nodes** are conditional stages (run only when complexity warrants).
 
 **Hat legend** (see the workflow diagram and stage breakdown below):
 
@@ -70,15 +70,22 @@ flowchart TD
     end
 
     T --> B
+
+    classDef green fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    classDef yellow fill:#fff8e1,stroke:#ffc107,stroke-width:2px
+
+    class A,B,D,E,F,M,N,O,P,R,S1,S2,S3,S4,T green
+    class G1,G2,G3,G4,K yellow
 ```
 
 #### Stage-by-stage breakdown
 
 - **Business Intent**
-  - A high-level goal, feature or technical outcome — deliberately vague so the AI discovers scope through questions rather than executing a pre-baked plan
-  - Example: "Add OAuth login", "Reduce API latency by 50%", "Migrate from monolith to microservices"
+  - can be any - business problem, high-level goal, feature or technical outcome 
   - Key difference from a traditional Epic: an Epic describes _what_ to build (a solution the team already understands); an Intent describes _why_ (an outcome the AI must first clarify)
   - **"Epic decomposes; Intent discovers"** — the Intent is the starting point for AI-driven decomposition into Units, not a fully-scoped work item
+  - deliberately vague so the AI discovers scope through questions rather than executing a pre-baked plan
+  - Example: "Add OAuth login", "Reduce API latency by 50%", "Migrate from monolith to microservices"
   - In traditional agile, an Epic holds full scope, stories, acceptance criteria and dependencies in one document. AI-DLC distributes that across the repository: Intent holds purpose, Unit decomposition holds scope, the Unit DAG holds dependencies, Knowledge Artifacts hold domain context — no single file replaces the Epic
   - Hat: Planner 🎩
 

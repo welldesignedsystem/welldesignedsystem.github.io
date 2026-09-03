@@ -32,7 +32,7 @@ Push to `main` → GitHub Actions (Node 24, Hugo latest) → GitHub Pages. CI bu
 
 ## Architecture
 
-- **Theme**: `github.com/zeon-studio/hugoplate` — Hugo module (auto-downloaded). Module imports in `config/_default/module.toml`.
+- **Theme**: `github.com/zeon-studio/hugoplate` is **vendored** in `themes/hugoplate/` and committed to the repo (115 files). `hugo.toml` sets `theme = "hugoplate"`, and the build fails if `themes/` is removed — the local copy is the active source, not an auto-downloaded module. If you edit theme templates/styles, edit `themes/hugoplate/`, not the `config/_default/module.toml` import. Helper modules (search, mermaid, icons, etc.) are declared in `config/_default/module.toml`.
 - **Asset pipeline**: TailwindCSS v4 via `@tailwindcss/cli` (no `tailwind.config.js`, no PostCSS). Entrypoint: `assets/css/custom.css`.
 - **Custom plugins**: `tailwind-plugin/` (`tw-bs-grid.js`, `tw-theme.js`).
 - **Mermaid diagrams**: supported via `github.com/hugomods/mermaid` Hugo module (CDN).
