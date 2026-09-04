@@ -10,21 +10,24 @@ summary = "The pillars of AI-assisted development and the AI-DLC method."
 
 Dominant approaches to using AI in software development, they are the two ends of a spectrum of autonomy; see [Stages of AI Development Autonomy](#stages-of-ai-development-autonomy):
 
-**AI-assisted development** 
+**AI-assisted development**
+
 - AI enhances specific tasks: **code completion, documentation, test generation**.
 - The human writes the code; the AI speeds up individual steps. Think GitHub Copilot in its default mode.
 - The human controls the process end-to-end; the **AI is a faster keyboard**.
 
-**AI-managed development** 
+**AI-managed development**
+
 - AI is expected to **generate entire applications from a prompt, with minimal human intervention**.
 - The **the AI plans, codes, tests and deploys, "vibe coding" tools that build a full-stack app from a paragraph of instructions.**
-- Human **surrenders granular control in exchange for speed**. 
+- Human **surrenders granular control in exchange for speed**.
 - A common pitfall: **mostly AI is more helpful to a fault — it does more than what you need**, so much so its a problem.
-- If you ask it to modify a database query - it rewrites schema, migration scripts, ORM layer and API endpoints. 
-This is both the appeal and the risk: **the output looks complete but may include decisions you never validated, patterns you never chose and scope you never approved.**
+- If you ask it to modify a database query - it rewrites schema, migration scripts, ORM layer and API endpoints.
+  This is both the appeal and the risk: **the output looks complete but may include decisions you never validated, patterns you never chose and scope you never approved.**
 
-**Both extremes have problems:** 
-- AI-assisted development 
+**Both extremes have problems:**
+
+- AI-assisted development
   - constrains AI's capabilities and reinforces outdated inefficiencies — **you still plan, document and hand off the same way, just faster.**
   - Raja SP argues (re:Invent 2025, DVT214) that in AI-assisted mode, **the process stays the same as the pre-AI era: "people throwing documents at each other and attending many meetings to solve problems."**
   - **AI saves time on individual tasks**, but that time gets consumed by **Scrum ceremonies** — planning, refinement, stand-ups, retrospectives, estimation — **that were designed for a world where iteration were slower and expensive**.
@@ -37,19 +40,21 @@ This is both the appeal and the risk: **the output looks complete but may includ
   - **Velocity (speed):** looks fast but isn't. The AI churns out code immediately, but problems aren't caught until late, so you spend time fixing, re-explaining and redoing. Net speed ends up slower than it seemed.
   - **Quality:** lower. The AI makes **hundreds of invisible architectural decisions per second**, and nobody reviews them **until production breaks** — so bugs, wrong patterns and unapproved scope slip through.
 
-**AI-DLC positions itself between these two extremes.** AI drives the process 
+**AI-DLC positions itself between these two extremes.** AI drives the process
+
 - It **drafts requirements, proposes architecture, writes code and tests**
 - Pauses to ask clarifying questions and get human sign-off before proceeding, at every step.
 - The human does not write code; the human validates AI's decisions.
 - This is the **HITL/OHOTL/AHOTL** spectrum: **how much autonomy AI gets is a deliberate choice per Unit, not a blanket decision**.
 
 **Source:**
-  - [meeting statistics 2026](https://speakwiseapp.com/blog/unnecessary-meetings-statistics)
-  - [Scrum.org](https://www.scrum.org/resources/blog/myth-11-scrum-we-spend-too-much-time-meetings)
-  - [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)
-  - [Bitloops: Spectrum from Autocomplete → Co-Developer → Supervised Agent → Autonomous Agent](https://bitloops.com/resources/ai-native-development/ai-as-co-developer-vs-autonomous-agent) .
-  - Raja SP, [re:Invent 2025 DVT214](https://youtu.be/1HNUH6j5t4A) (transcribed [here](https://zenn.dev/kiiwami/articles/45a7ac851f2aeb27?locale=en));
-  - [Azure Authority analysis](https://azureauthority.in/ai-dlc-the-ai-driven-development-life-cycle-that-replaces-sprints-with-bolts).
+
+- [meeting statistics 2026](https://speakwiseapp.com/blog/unnecessary-meetings-statistics)
+- [Scrum.org](https://www.scrum.org/resources/blog/myth-11-scrum-we-spend-too-much-time-meetings)
+- [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)
+- [Bitloops: Spectrum from Autocomplete → Co-Developer → Supervised Agent → Autonomous Agent](https://bitloops.com/resources/ai-native-development/ai-as-co-developer-vs-autonomous-agent) .
+- Raja SP, [re:Invent 2025 DVT214](https://youtu.be/1HNUH6j5t4A) (transcribed [here](https://zenn.dev/kiiwami/articles/45a7ac851f2aeb27?locale=en));
+- [Azure Authority analysis](https://azureauthority.in/ai-dlc-the-ai-driven-development-life-cycle-that-replaces-sprints-with-bolts).
 
 ## AI-Assisted Software Development and the AI-DLC
 
@@ -90,7 +95,8 @@ AI-DLC (AI-Driven Development Life Cycle) is a framework that is about restructu
 
 - Core terminologies that are AI-DLC specific — AWS draws equivalences to agile terms (Epic → Unit, Sprint → Bolt), but these can be misleading. The scope is narrower: an Intent is a feature or technical outcome, not an Epic that spans multiple teams, repos and sprints. The pattern across all of them: traditional terms assume humans plan and document, AI-DLC terms assume AI executes and humans set direction, define boundaries and review outcomes. AI-DLC sits between AI-assisted (AI helps with tasks) and AI-managed (AI does everything) — AI drives the process but humans validate every decision.
 
-AI-DLC covers **Inception**, **Construction** and **Operations** — the phases where AI actively collaborates on building AI-DLC reimagines SDLC and build methodology within it. Source: 
+AI-DLC covers **Inception**, **Construction** and **Operations** — the phases where AI actively collaborates on building AI-DLC reimagines SDLC and build methodology within it. Source:
+
 - AI-DLC is an AI-centric transformative approach to software development" — [AWS blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)
 - ; the three phases (Inception, Construction, Operations) cover requirements/design, build, and deploy — not maintenance or decommissioning. - [AIDLC - Method definition](https://prod.d13rzhkk8cj2z0.amplifyapp.com/aidlc.pdf)
 
@@ -513,14 +519,14 @@ The diagram below combines the three phases, the adaptive workflow stages, the o
 
 **Hat legend:**
 
-| Icon | Hat                      | Role                                                       | Personas                                              |
-| ---- | ------------------------ | ----------------------------------------------------------- | ------------------------------------------------------ |
-| 🎩   | Planner                  | Decompose intent into units and bolts                      | Business Analyst, Developer                            |
-| 👒   | Designer                 | Design lens, UX, architecture review                       | Solution Architect                                    |
-| 👷   | Builder                  | Write code, tests and artifacts                            | Developer                                             |
-| 🕵️   | Reviewer                 | Verify completion criteria, review                         | Business Analyst, Solution Architect, Developer, Tester/SDET, Lead Engineer, Chapter Lead, Compliance/Security |
-| 🪖   | Red / Blue               | Adversarial security attack-defend                         | Product Owner, Tester/SDET                            |
-| 🧩   | Integrator               | Intent-level integration                                   | —                                                     |
+| Icon | Hat        | Role                                  | Personas                                                                                                       |
+| ---- | ---------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| 🎩   | Planner    | Decompose intent into units and bolts | Business Analyst, Developer                                                                                    |
+| 👒   | Designer   | Design lens, UX, architecture review  | Solution Architect                                                                                             |
+| 👷   | Builder    | Write code, tests and artifacts       | Developer                                                                                                      |
+| 🕵️   | Reviewer   | Verify completion criteria, review    | Business Analyst, Solution Architect, Developer, Tester/SDET, Lead Engineer, Chapter Lead, Compliance/Security |
+| 🪖   | Red / Blue | Adversarial security attack-defend    | Product Owner, Tester/SDET                                                                                     |
+| 🧩   | Integrator | Intent-level integration              | —                                                                                                              |
 
 ```mermaid
 flowchart TD
@@ -1064,5 +1070,7 @@ The relationship holds across both implementations: the Rules and Steering files
 - AWS (2025). _Building with AI-DLC using Amazon Q Developer_. AWS DevOps Blog.
 - AWS (2026). _AI-Driven Development Lifecycle for Financial Services_. AWS Industries Blog.
 - awslabs (2025). _aidlc-workflows_. GitHub.
+
+```
 
 ```

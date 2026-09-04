@@ -113,6 +113,7 @@ A shared runtime resolver maps `(provider, model)` tuples to `(api_mode, api_key
 A central tool registry (`tools/registry.py`) registers 70+ tools across ~28 toolsets. Each tool file **self-registers at import time** via a `registry.register()` call — there is no manual import list. The registry handles schema collection, dispatch, availability checking (`check_fn`) and error wrapping.
 
 Tool backends are pluggable:
+
 - **Terminal**: 7 backends (local, Docker, SSH, Daytona, Modal, Singularity, Vercel Sandbox)
 - **Browser**: 5 backends
 - **Web**: 4 backends
@@ -144,14 +145,14 @@ Generates ShareGPT-format trajectories from agent sessions — used to produce t
 
 ### Design Principles
 
-| Principle | What it means in practice |
-|---|---|
-| **Prompt stability** | System prompt does not change mid-conversation; no cache-breaking mutations except explicit user actions |
-| **Observable execution** | Every tool call is visible via callbacks; progress shows in CLI spinner and gateway chat messages |
-| **Interruptible** | API calls and tool execution can be cancelled mid-flight by user input or signals |
-| **Platform-agnostic core** | One `AIAgent` serves CLI, gateway, ACP, batch and API server |
-| **Loose coupling** | MCP, plugins, memory providers and RL environments use registry patterns, not hard dependencies |
-| **Profile isolation** | Each profile gets its own `HERMES_HOME`, config, memory, sessions and gateway PID |
+| Principle                  | What it means in practice                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Prompt stability**       | System prompt does not change mid-conversation; no cache-breaking mutations except explicit user actions |
+| **Observable execution**   | Every tool call is visible via callbacks; progress shows in CLI spinner and gateway chat messages        |
+| **Interruptible**          | API calls and tool execution can be cancelled mid-flight by user input or signals                        |
+| **Platform-agnostic core** | One `AIAgent` serves CLI, gateway, ACP, batch and API server                                             |
+| **Loose coupling**         | MCP, plugins, memory providers and RL environments use registry patterns, not hard dependencies          |
+| **Profile isolation**      | Each profile gets its own `HERMES_HOME`, config, memory, sessions and gateway PID                        |
 
 ### Where Settings Live
 
@@ -271,15 +272,15 @@ hermes config set OPENROUTER_API_KEY sk-or-...   # saves to .env
 
 Common slash commands for beginners:
 
-| Command | What it does |
-|---|---|
-| `/help` | Show all available commands |
-| `/tools` | List available tools |
-| `/model` | Switch models interactively |
-| `/personality pirate` | Try a fun personality |
-| `/save` | Save the conversation |
-| `/new` | Start a fresh conversation |
-| `/title My Session` | Name the current session |
+| Command               | What it does                |
+| --------------------- | --------------------------- |
+| `/help`               | Show all available commands |
+| `/tools`              | List available tools        |
+| `/model`              | Switch models interactively |
+| `/personality pirate` | Try a fun personality       |
+| `/save`               | Save the conversation       |
+| `/new`                | Start a fresh conversation  |
+| `/title My Session`   | Name the current session    |
 
 **Interrupt the agent:** type a new message and press Enter mid-turn to interrupt the current task and switch to your new instructions. `Ctrl+C` also works.
 
@@ -315,17 +316,17 @@ The gateway claims the handoff, creates a new thread on the destination, and re-
 
 Tools are functions that extend the agent. They are grouped into **toolsets** that can be enabled or disabled per platform.
 
-| Category | Tools |
-|---|---|
-| Web | `web_search`, `web_extract` |
-| X Search | `x_search` (off by default, opt in) |
-| Terminal & Files | `terminal`, `process`, `read_file`, `patch` |
-| Browser | `browser_navigate`, `browser_snapshot`, `browser_vision` |
-| Media | `vision_analyze`, `image_generate`, `text_to_speech` |
-| Orchestration | `todo`, `clarify`, `execute_code`, `delegate_task` |
-| Memory | `memory`, `session_search` |
-| Automation | `cronjob` |
-| Integrations | Home Assistant (`ha_*`), MCP servers |
+| Category         | Tools                                                    |
+| ---------------- | -------------------------------------------------------- |
+| Web              | `web_search`, `web_extract`                              |
+| X Search         | `x_search` (off by default, opt in)                      |
+| Terminal & Files | `terminal`, `process`, `read_file`, `patch`              |
+| Browser          | `browser_navigate`, `browser_snapshot`, `browser_vision` |
+| Media            | `vision_analyze`, `image_generate`, `text_to_speech`     |
+| Orchestration    | `todo`, `clarify`, `execute_code`, `delegate_task`       |
+| Memory           | `memory`, `session_search`                               |
+| Automation       | `cronjob`                                                |
+| Integrations     | Home Assistant (`ha_*`), MCP servers                     |
 
 Common toolset names: `web`, `search`, `terminal`, `file`, `browser`, `vision`, `image_gen`, `skills`, `tts`, `todo`, `memory`, `session_search`, `cronjob`, `code_execution`, `delegation`, `clarify`, `homeassistant`, `messaging`, `spotify`. Platform presets include `hermes-cli` and `hermes-telegram`. Dynamic MCP toolsets appear as `mcp-<server>`.
 
@@ -340,7 +341,7 @@ Terminal backends (config in `~/.hermes/config.yaml`):
 
 ```yaml
 terminal:
-  backend: local    # local | docker | ssh | modal | daytona | vercel_sandbox | singularity
+  backend: local # local | docker | ssh | modal | daytona | vercel_sandbox | singularity
   cwd: "."
   timeout: 180
 ```
@@ -370,10 +371,10 @@ Background processes are supported via the `process` tool (`list`, `poll`, `wait
 
 Hermes has **bounded, curated memory** that persists across sessions via two markdown files in `~/.hermes/memories/`:
 
-| File | Purpose | Char limit |
-|---|---|---|
+| File        | Purpose                                                                  | Char limit                |
+| ----------- | ------------------------------------------------------------------------ | ------------------------- |
 | `MEMORY.md` | Agent's personal notes — environment facts, conventions, lessons learned | 2,200 chars (~800 tokens) |
-| `USER.md` | User profile — preferences, communication style, expectations | 1,375 chars (~500 tokens) |
+| `USER.md`   | User profile — preferences, communication style, expectations            | 1,375 chars (~500 tokens) |
 
 Memory is injected as a **frozen snapshot** into the system prompt at session start. The agent manages its own memory through the `memory` tool with three actions — `add`, `replace`, `remove` (no `read`; memory is auto-injected). When full, the tool tells the agent to consolidate entries and retry.
 
@@ -485,7 +486,8 @@ Two transport types:
 mcp_servers:
   filesystem:
     command: "npx"
-    args: ["-y", "@modelcontextprotocol/server-filesystem", "/home/user/projects"]
+    args:
+      ["-y", "@modelcontextprotocol/server-filesystem", "/home/user/projects"]
 ```
 
 MCP tools are prefixed `mcp_<server>_<tool>`, e.g. `mcp_filesystem_read_file`. Servers can send `notifications/tools/list_changed` and Hermes auto-refetches. Reload with `/reload-mcp`.
@@ -568,12 +570,15 @@ required_environment_variables:
   - name: WEATHER_API_KEY
     prompt: "Enter your API key"
 ---
+
 # Weather Check
 
 ## When to Use
+
 Use this skill when the user asks for the current weather.
 
 ## Procedure
+
 1. Call the `weather` tool with the location.
 2. Format the result as a short summary.
 ```
@@ -660,12 +665,12 @@ Voice is what makes this an assistant that "makes calls" with you. Add to `~/.he
 
 ```yaml
 stt:
-  provider: "local"        # local (free) | groq | openai | mistral | xai
+  provider: "local" # local (free) | groq | openai | mistral | xai
   local:
     model: "base"
 
 tts:
-  provider: "edge"         # edge (free) | elevenlabs | openai | ...
+  provider: "edge" # edge (free) | elevenlabs | openai | ...
   edge:
     voice: "en-US-AriaNeural"
 ```

@@ -1,6 +1,6 @@
 +++
 date = '2026-09-01T09:10:00+10:00'
-draft = true
+draft = false
 title = 'AI-DLC Notes: Trends and the Autonomy Spectrum'
 tags = ['AI-DLC','Agentic AI','Fintech','Process']
 summary = "Where AI-DLC and the spectrum of AI development autonomy are heading."
@@ -123,7 +123,7 @@ flowchart TD
 
 - **Workspace Detection**
   - The workflow branches on whether the project is greenfield or brownfield — this single decision determines how all of Inception proceeds.
-  - **Greenfield** 
+  - **Greenfield**
     - this is an opportunity to get practices in place from day 1.
     - AI can be used to brainstorm the ideas
     - existing templates can serve as context to the skills like /grill-me, a focused adversarial review pattern that interrogates the proposed plan, surfaces hidden assumptions and weak spots, and pushes the team to defend the design before build work starts
@@ -194,13 +194,13 @@ flowchart TD
   - The governing principle: **default to more supervision when uncertain** — loosening control later is easier than recovering from an autonomous mistake
   - Mode-selection factors:
 
-    | Factor | HITL | OHOTL | AHOTL |
-    | --- | --- | --- | --- |
-    | Requirements clarity | Low | Medium | High |
-    | Risk level | High | Medium | Low |
-    | Test coverage | Low | Medium | High |
-    | Domain familiarity | Low | Medium | High |
-    | Reversibility | Difficult | Moderate | Easy |
+    | Factor               | HITL      | OHOTL    | AHOTL |
+    | -------------------- | --------- | -------- | ----- |
+    | Requirements clarity | Low       | Medium   | High  |
+    | Risk level           | High      | Medium   | Low   |
+    | Test coverage        | Low       | Medium   | High  |
+    | Domain familiarity   | Low       | Medium   | High  |
+    | Reversibility        | Difficult | Moderate | Easy  |
 
   - Default modes per phase: Elaboration HITL, Planning HITL, Building OHOTL, Review HITL
   - Example decisions:
@@ -294,13 +294,13 @@ flowchart TD
   - **"Artifacts are memory"**: intents, unit progress and decisions persist as committed files so the context window can be reset without losing ground truth. The community implementation treats `/clear` as a feature, not a bug
   - Five memory providers the agent can query:
 
-    | Layer | Location | Speed | Purpose |
-    | --- | --- | --- | --- |
-    | Rules | Project rule files | Instant | Conventions, patterns, constraints |
-    | Session | Working files, scratchpads | Fast | Current task context and progress |
-    | Project | Git history, codebase | Indexed | What was tried and what worked |
-    | Organisational | Connected systems via MCP | Query | Institutional knowledge: tickets, ADRs, runbooks |
-    | Runtime | Monitoring systems | Query | Production behaviour and incidents |
+    | Layer          | Location                   | Speed   | Purpose                                          |
+    | -------------- | -------------------------- | ------- | ------------------------------------------------ |
+    | Rules          | Project rule files         | Instant | Conventions, patterns, constraints               |
+    | Session        | Working files, scratchpads | Fast    | Current task context and progress                |
+    | Project        | Git history, codebase      | Indexed | What was tried and what worked                   |
+    | Organisational | Connected systems via MCP  | Query   | Institutional knowledge: tickets, ADRs, runbooks |
+    | Runtime        | Monitoring systems         | Query   | Production behaviour and incidents               |
 
   - **Context economy warning**: model performance degrades once the window passes ~40–60% utilisation (the "dumb zone"). Material buried mid-context receives less attention than whatever sits at the edges. Countermeasures: monitor context budget with alerts, extract static reference material into companion files, inject prior-bolt learnings lazily at point of use, scope context per role (the reviewer hat sees the diff and completion criteria, never the full elaboration history)
   - **The 19-agent trap**: scaffolding one agent per job title (mirroring the org chart) loses context at every handoff. Complex swarms consistently underperform simple loops with rich relevant context. Personas succeed when they bundle review and oversight hats around one build loop, not when they spawn a dedicated agent per role
@@ -310,23 +310,23 @@ flowchart TD
 
 The AI-DLC personas below can wear one or more hats depending on the work being performed. The mapping combines the implementation's domain agents, reviewer agents and adaptive workflow composer with common Scrum and delivery roles.
 
-| Persona | Hat mapping |
-| --- | --- |
-| Product Owner / Product Manager / Business Analyst | [Planner], [Reviewer], [Red / Blue] |
-| UX / Product Designer | [Designer], [Builder], [Reviewer] |
-| Scrum Master / Delivery Manager / Engineering Manager | [Planner], [Integrator], [Reviewer] |
-| Solutions Architect / Technical Architect | [Planner], [Designer], [Builder], [Reviewer], [Integrator] |
-| AWS Platform Engineer | [Designer], [Builder], [Reviewer] |
-| Compliance Specialist | [Planner], [Reviewer], [Red / Blue] |
-| DevSecOps Engineer | [Builder], [Reviewer], [Red / Blue] |
-| Developer / Scrum Team Developer | [Planner], [Builder], [Reviewer] |
-| QA Engineer / Tester | [Builder], [Reviewer], [Red / Blue] |
-| Pipeline and Deployment Engineer | [Builder], [Integrator], [Reviewer] |
-| SRE / Operations Engineer | [Builder], [Reviewer], [Integrator] |
-| Stakeholder | [Planner], [Reviewer] |
-| Product Lead Reviewer | [Reviewer] |
-| Architecture Reviewer | [Reviewer] |
-| Adaptive Workflow Composer | [Planner], [Integrator] |
+| Persona                                               | Hat mapping                                                |
+| ----------------------------------------------------- | ---------------------------------------------------------- |
+| Product Owner / Product Manager / Business Analyst    | [Planner], [Reviewer], [Red / Blue]                        |
+| UX / Product Designer                                 | [Designer], [Builder], [Reviewer]                          |
+| Scrum Master / Delivery Manager / Engineering Manager | [Planner], [Integrator], [Reviewer]                        |
+| Solutions Architect / Technical Architect             | [Planner], [Designer], [Builder], [Reviewer], [Integrator] |
+| AWS Platform Engineer                                 | [Designer], [Builder], [Reviewer]                          |
+| Compliance Specialist                                 | [Planner], [Reviewer], [Red / Blue]                        |
+| DevSecOps Engineer                                    | [Builder], [Reviewer], [Red / Blue]                        |
+| Developer / Scrum Team Developer                      | [Planner], [Builder], [Reviewer]                           |
+| QA Engineer / Tester                                  | [Builder], [Reviewer], [Red / Blue]                        |
+| Pipeline and Deployment Engineer                      | [Builder], [Integrator], [Reviewer]                        |
+| SRE / Operations Engineer                             | [Builder], [Reviewer], [Integrator]                        |
+| Stakeholder                                           | [Planner], [Reviewer]                                      |
+| Product Lead Reviewer                                 | [Reviewer]                                                 |
+| Architecture Reviewer                                 | [Reviewer]                                                 |
+| Adaptive Workflow Composer                            | [Planner], [Integrator]                                    |
 
 ### Notes
 
@@ -335,8 +335,7 @@ The AI-DLC personas below can wear one or more hats depending on the work being 
 
 ### References
 
-- Raja SP, *AI-Driven Development Life Cycle*, AWS DevOps Blog, 31 Jul 2025. https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/
-- Bushido Collective, *AI-DLC 2026*, Jan 2026. https://ai-dlc.dev/paper
+- Raja SP, _AI-Driven Development Life Cycle_, AWS DevOps Blog, 31 Jul 2025. https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/
+- Bushido Collective, _AI-DLC 2026_, Jan 2026. https://ai-dlc.dev/paper
 - AWS AI-DLC Method Definition. https://prod.d13rzhkk8cj2z0.amplifyapp.com/aidlc.pdf
-- awslabs/aidlc-workflows, *Phases and Stages*. https://awslabs.github.io/aidlc-workflows/guide/04-phases-and-stages/
-
+- awslabs/aidlc-workflows, _Phases and Stages_. https://awslabs.github.io/aidlc-workflows/guide/04-phases-and-stages/
