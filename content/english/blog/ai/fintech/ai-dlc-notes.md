@@ -16,47 +16,49 @@ The workflow combines the three phases, the adaptive workflow stages, the operat
 
 **Hat responsibilities**
 
+Think of these as the roles the AI or team plays at different moments in the workflow. They are not strict job titles; they are responsibilities that help keep planning, design, delivery, review and security separate.
+
 - **[Planner]**
-  - Clarifies the Intent and identifies what still needs to be understood
-  - Breaks the work into Units, Bolts and verifiable completion criteria
-  - Selects priorities, dependencies, operating modes and the next execution steps
-  - Records assumptions, open questions, risks and possible blockers
-  - Revises the plan when new evidence or review feedback changes the shape of the work
+  - Defines the goal and clarifies what is still unknown
+  - Breaks the work into smaller Units and turns the goal into clear completion criteria
+  - Chooses priorities, dependencies, operating mode and the next step to take
+  - Tracks assumptions, open questions, risks and blockers
+  - Updates the plan when new evidence or review feedback changes the direction
 
 - **[Designer]**
-  - Turns requirements into domain, system, interface or user-experience designs
-  - Defines architecture, component boundaries, data models and interaction flows
-  - Evaluates design alternatives and makes trade-offs visible
-  - Specifies responsive behaviour, accessibility and other quality attributes when relevant
-  - Produces designs that the Builder can implement and the Reviewer can verify
+  - Turns the requirement into a workable design for the system, data, interfaces or user experience
+  - Defines the structure, boundaries and flow of the solution
+  - Compares options and makes trade-offs explicit
+  - Specifies important quality constraints such as usability, accessibility and reliability when needed
+  - Produces a design the Builder can implement and the Reviewer can check
 
 - **[Builder]**
-  - Implements the approved plan and completion criteria one increment at a time
-  - Writes or updates application code, infrastructure, tests and supporting artifacts
-  - Uses test, lint, type, security and other quality checks as backpressure
-  - Documents progress, decisions and blockers while working
-  - Iterates until the criteria are met or a human decision is required
+  - Implements the agreed plan in small steps
+  - Writes or updates code, tests, infrastructure and supporting artifacts
+  - Uses tests, linting, type checks and security checks as feedback while building
+  - Documents progress, decisions and blockers as work moves forward
+  - Keeps iterating until the criteria are met or a human decision is needed
 
 - **[Reviewer]**
-  - Checks every completion criterion against the implementation and its evidence
+  - Checks whether the result actually meets the stated completion criteria
   - Reviews correctness, maintainability, security, edge cases and operational readiness
-  - Runs or verifies the relevant tests, quality gates and traceability links
-  - Identifies defects with specific, actionable feedback ordered by severity
-  - Approves the work or requests changes with a clear rationale
+  - Verifies the relevant tests, quality gates and evidence before approving work
+  - Identifies defects with clear, actionable feedback
+  - Approves the work or requests changes with a reasoned explanation
 
 - **[Red / Blue]**
-  - **Red Team:** attacks the design or implementation to find vulnerabilities, bypasses and unsafe assumptions
-  - **Blue Team:** fixes confirmed findings with defensive controls and regression tests
-  - Covers threats such as injection, authentication bypass, privilege escalation, data exposure and insecure configuration
-  - Keeps discovery separate from remediation so the security review remains objective
-  - Re-tests the hardened result and records unresolved risk for human review
+  - **Red Team:** tries to break the design or implementation and looks for security flaws, bypasses and unsafe assumptions
+  - **Blue Team:** fixes the confirmed problems and adds defensive controls and regression tests
+  - Covers issues such as injection, auth bypass, privilege escalation, data exposure and insecure configuration
+  - Keeps attack testing separate from remediation so the review stays objective
+  - Re-tests the hardened result and records unresolved risks for human review
 
 - **[Integrator]**
-  - Verifies that completed Units work together across the merged intent
-  - Checks shared APIs, data flows, contracts, dependencies and cross-unit behaviour
-  - Runs the full intent-level verification suite after integration
-  - Confirms the combined result satisfies criteria that span multiple Units
-  - Accepts the integrated work or identifies the Units that must return for rework
+  - Checks that completed Units work correctly together across the full intent
+  - Verifies APIs, contracts, data flow and cross-unit behaviour
+  - Runs the final verification across the combined result
+  - Confirms the work satisfies the end-to-end criteria for the whole task
+  - Accepts the integrated result or sends the relevant Units back for rework
 
 ```mermaid
 flowchart TD
