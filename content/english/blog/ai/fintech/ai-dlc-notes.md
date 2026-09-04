@@ -24,6 +24,7 @@ Think of these as the roles the AI or team plays at different moments in the wor
   - Chooses priorities, dependencies, operating mode and the next step to take
   - Tracks assumptions, open questions, risks and blockers
   - Updates the plan when new evidence or review feedback changes the direction
+  - Source: Bushido Collective, "The Hat System — [Planner]", AI-DLC. https://ai-dlc.dev/docs/hats#planner
 
 - **[Designer]**
   - Turns the requirement into a workable design for the system, data, interfaces or user experience
@@ -31,6 +32,7 @@ Think of these as the roles the AI or team plays at different moments in the wor
   - Compares options and makes trade-offs explicit
   - Specifies important quality constraints such as usability, accessibility and reliability when needed
   - Produces a design the Builder can implement and the Reviewer can check
+  - Source: Bushido Collective, "The Hat System — [Designer]", AI-DLC. https://ai-dlc.dev/docs/hats#designer
 
 - **[Builder]**
   - Implements the agreed plan in small steps
@@ -38,6 +40,7 @@ Think of these as the roles the AI or team plays at different moments in the wor
   - Uses tests, linting, type checks and security checks as feedback while building
   - Documents progress, decisions and blockers as work moves forward
   - Keeps iterating until the criteria are met or a human decision is needed
+  - Source: Bushido Collective, "The Hat System — [Builder]", AI-DLC. https://ai-dlc.dev/docs/hats#builder
 
 - **[Reviewer]**
   - Checks whether the result actually meets the stated completion criteria
@@ -45,6 +48,7 @@ Think of these as the roles the AI or team plays at different moments in the wor
   - Verifies the relevant tests, quality gates and evidence before approving work
   - Identifies defects with clear, actionable feedback
   - Approves the work or requests changes with a reasoned explanation
+  - Source: Bushido Collective, "The Hat System — [Reviewer]", AI-DLC. https://ai-dlc.dev/docs/hats#reviewer
 
 - **[Red / Blue]**
   - **Red Team:** tries to break the design or implementation and looks for security flaws, bypasses and unsafe assumptions
@@ -52,6 +56,7 @@ Think of these as the roles the AI or team plays at different moments in the wor
   - Covers issues such as injection, auth bypass, privilege escalation, data exposure and insecure configuration
   - Keeps attack testing separate from remediation so the review stays objective
   - Re-tests the hardened result and records unresolved risks for human review
+  - Source: Bushido Collective, "The Hat System — [Red Team] / [Blue Team]", AI-DLC. https://ai-dlc.dev/docs/hats#red-team
 
 - **[Integrator]**
   - Checks that completed Units work correctly together across the full intent
@@ -59,6 +64,7 @@ Think of these as the roles the AI or team plays at different moments in the wor
   - Runs the final verification across the combined result
   - Confirms the work satisfies the end-to-end criteria for the whole task
   - Accepts the integrated result or sends the relevant Units back for rework
+  - Source: Bushido Collective, "The Hat System — [Integrator]", AI-DLC. https://ai-dlc.dev/docs/hats#integrator
 
 ```mermaid
 flowchart TD
@@ -117,26 +123,32 @@ flowchart TD
 
 - **Business Intent**
   - can be any - **business problem, high-level goal, feature or technical outcome**
-  - Key difference from a traditional Epic: an Epic describes _what_ to build (a solution the team already understands); an Intent describes _why_ (an outcome the AI must first clarify)
-  - Epic focuses on decomposes; **Intent focuses on discovery**
-  - deliberately vague so the **AI discovers scope through questions** rather than executing a pre-baked plan
-  - Example: "I want to migrate a legacy system", "Reduce API latency by 50%", "I want to implement a new payment method"
-  - In traditional agile
-    - by the time you discuss Epic you have full scope, stories, acceptance criteria and dependencies what's pending is Decomposing it.
-    - AI-DLC distributes that across the repository: Intent holds purpose, Unit decomposition holds scope, the Unit DAG holds dependencies, Knowledge Artifacts hold domain context — no single file replaces the Epic
+  - Key difference from a traditional Epic: an Epic describes _what_ to build (a solution the team already understands); by the time you discuss Epic you have full scope, stories, acceptance criteria and dependencies. **Epic focuses on decomposition**
+  - an Intent describes _why_ which is an outcome that you are going to task the AI to first clarify. This is deliberately vague so the **AI discovers scope through questions** rather than executing a pre-baked plan. - **Intent focuses on discovery**
+  - now its possible to be ambigous,
+  - [Matt Pocock's Grill me skill](https://www.aihero.dev/skills-grill-me)
+  - [Matt Pocoks whole Playlist](https://www.youtube.com/watch?v=gaDdrDdczO4&list=PLH-fZ_5p3Lrc&index=1)
+  - Example: 
+    - Provide accurate, real-time balance visibility and control for telecom customers.
+    - I want to migrate a legacy system Flexy into microservice.
+    - Reduce API latency by 50% for this endpoint.
+    - Costing looks wrong in the current system. Fix it without breaking the existing calculation.
+  - There is no one replacement for Epic. AI-DLC distributes that across the repository: 
+    - Intent holds purpose
+    - Unit decomposition holds scope
+    - the Unit DAG holds dependencies
+    - Knowledge Artifacts hold domain context 
 
 - **Workspace Detection**
   - The workflow branches on whether the project is greenfield or brownfield — this single decision determines how all of Inception proceeds.
   - **Greenfield**
-    - this is an opportunity to get practices in place from day 1.
-    - AI can be used to brainstorm the ideas
-    - existing templates can serve as context to the skills like /grill-me, a focused adversarial review pattern that interrogates the proposed plan, surfaces hidden assumptions and weak spots, and pushes the team to defend the design before build work starts
-    - the AI creates candidate requirements from scratch (no existing codebase to learn from)
-  - **Brownfield** → the AI first reverse-engineers the existing codebase into knowledge artifacts before doing any new work
-  - Brownfield detection triggers a knowledge bootstrap phase that synthesises the codebase with confidence scores
+    - A greenfield project is a project that starts from scratch with no existing product, codebase, infrastructure, or legacy system to preserve.
+  - **Brownfield** 
+    - In contrast, a brownfield project is when you are working inside an existing system that already has code, constraints, dependencies and historical decisions.
 
 - **Requirements Analysis (greenfield)**
-  - No existing codebase; the AI converts the intent into candidate requirements, user stories and units for the team to validate
+  - Opportunity to start Top Down approach from Day 1.
+  - No existing codebase; the AI converts the intent into candidate requirements, user stories and units for the team to validate, AI can be used to brainstorm ideas and do these tasks for you.
   - **The "greenfield gap"**: before Mob Elaboration there is nothing between the Intent and the Units — the decomposition only exists after the AI asks questions and the team validates
   - In traditional agile you would write the Epic first with full scope, then decompose. In AI-DLC the Intent is deliberately vague — the AI is supposed to discover the scope through questions
   - **AI question bias risk**: the AI's training corpus is its mental set (Einstellung effect). If the AI's questions frame the solution space toward familiar patterns, the answers will be too. For greenfield projects this risk is highest — no existing codebase, no Knowledge Artifacts, nothing domain-specific to ground the AI's questions
@@ -144,9 +156,13 @@ flowchart TD
 
 - **Reverse Engineering (brownfield)**
   - An existing codebase is synthesised into knowledge artifacts complete with confidence scores before any new work begins
+  - Meet in the middle approach, Team with good documentation or a Team with outdated documentation.
+  - the AI skills to reverse-engineers the existing codebase into knowledge artifacts before doing any new work
   - **Knowledge bootstrap**: brownfield intents begin with this phase — the AI reads the codebase and produces structured knowledge (architecture, module boundaries, data flow, conventions) with confidence ratings
   - Knowledge artifacts are stored in the project knowledge layer (`<repo>/.ai-dlc/knowledge/`) and persist across intents
   - Greenfield projects seed empty scaffolds instead — the knowledge layer exists but starts empty
+
+- Personally I don't AI replacing a person here - Personally, I see it in the lines of some basic rules I apply when I mentor someone...
 
 - **Workflow Planning**
   - The AI decides which stages apply based on complexity — this is what makes the workflow _adaptive_ rather than linear
@@ -174,6 +190,7 @@ flowchart TD
   - The AI-managed part of AI-DLC _is_ this decomposition work, which is why Unit replaces Epic at a smaller granularity
 
 - **Adversarial Spec Review (conditional)**
+- a focused adversarial review pattern that interrogates the proposed plan, surfaces hidden assumptions and weak spots, and pushes the team to defend the design before build work starts
   - An isolated reviewer challenges the specs before anything is built — **catching a wrong assumption during Elaboration costs minutes, while catching it in Construction or Production costs a full rework cycle**
   - Two approaches (the "grill-me" workflow):
     - **Option A**: Brainstorm → Team agrees → Grill-me interrogates the agreed plan → Revised plan → Build (catches flaws after convergence)
@@ -341,5 +358,6 @@ The AI-DLC personas below can wear one or more hats depending on the work being 
 
 - Raja SP, _AI-Driven Development Life Cycle_, AWS DevOps Blog, 31 Jul 2025. https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/
 - Bushido Collective, _AI-DLC 2026_, Jan 2026. https://ai-dlc.dev/paper
+- Bushido Collective, _The Hat System_, AI-DLC Docs. https://ai-dlc.dev/docs/hats
 - AWS AI-DLC Method Definition. https://prod.d13rzhkk8cj2z0.amplifyapp.com/aidlc.pdf
 - awslabs/aidlc-workflows, _Phases and Stages_. https://awslabs.github.io/aidlc-workflows/guide/04-phases-and-stages/
