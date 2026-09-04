@@ -1,5 +1,5 @@
 +++
-date = '2026-09-02T09:10:00+10:00'
+date = '2026-09-01T09:10:00+10:00'
 draft = true
 title = 'AI-DLC Notes: Trends and the Autonomy Spectrum'
 tags = ['AI-DLC','Agentic AI','Fintech','Process']
@@ -122,8 +122,12 @@ flowchart TD
   - In traditional agile, an Epic holds full scope, stories, acceptance criteria and dependencies in one document. AI-DLC distributes that across the repository: Intent holds purpose, Unit decomposition holds scope, the Unit DAG holds dependencies, Knowledge Artifacts hold domain context — no single file replaces the Epic
 
 - **Workspace Detection**
-  - The workflow branches on whether the project is greenfield or brownfield — this single decision determines how all of Inception proceeds
-  - **Greenfield** → the AI creates candidate requirements from scratch (no existing codebase to learn from)
+  - The workflow branches on whether the project is greenfield or brownfield — this single decision determines how all of Inception proceeds.
+  - **Greenfield** 
+    - this is an opportunity to get practices in place from day 1.
+    - AI can be used to brainstorm the ideas
+    - existing templates can serve as context to the skills like /grill-me, a focused adversarial review pattern that interrogates the proposed plan, surfaces hidden assumptions and weak spots, and pushes the team to defend the design before build work starts
+    - the AI creates candidate requirements from scratch (no existing codebase to learn from)
   - **Brownfield** → the AI first reverse-engineers the existing codebase into knowledge artifacts before doing any new work
   - Brownfield detection triggers a knowledge bootstrap phase that synthesises the codebase with confidence scores
 
