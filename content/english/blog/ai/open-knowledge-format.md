@@ -3,7 +3,7 @@ date = '2026-09-03T12:00:05+10:00'
 draft = false
 title = 'Open Knowledge Format (OKF)'
 tags = ['OKF', 'Open Knowledge Format', 'Context Engineering', 'Knowledge Base', 'AI Agents', 'Design Patterns']
-summary = 'A practical guide to designing portable, trustworthy knowledge bundles for AI agents.'
+summary = 'Practical guide to portable, trustworthy knowledge bundles for AI agents.'
 +++
 
 Open Knowledge Format (OKF) is a small open specification for the knowledge layer around data and systems: a directory of Markdown documents, each with YAML frontmatter. It formalises the emerging LLM-wiki pattern into something humans can read, agents can traverse and tools can exchange. Google Cloud introduced it in June 2026 and the current specification is v0.2. [Google's announcement](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing) and the [canonical specification](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md) are the sources of truth.
@@ -356,8 +356,6 @@ WHERE event_date = @reporting_date
 ```
 ````
 
-````
-
 The `runtime` defines how parameters should be interpreted. The `executor` describes how to run the computation and what evidence it must return. The `attester` names deterministic code which checks that receipt. OKF itself executes neither: it records the contract so different consumers can enforce the same rule.
 
 This is a strong pattern for high-impact numbers:
@@ -374,7 +372,7 @@ sequenceDiagram
     Agent->>Attester: Validate receipt deterministically
     Attester-->>Agent: Pass or fail verdict
     Agent-->>Agent: Use result only with evidence
-````
+```
 
 The attester should be deterministic, not another LLM. Otherwise the system is checking a stochastic interpretation with another stochastic interpretation.
 

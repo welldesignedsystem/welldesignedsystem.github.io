@@ -114,12 +114,14 @@ flowchart TD
 #### Stage-by-stage breakdown
 
 - **Business Intent**
-  - can be any - **business problem, high-level goal, feature or technical outcome **
+  - can be any - **business problem, high-level goal, feature or technical outcome**
   - Key difference from a traditional Epic: an Epic describes _what_ to build (a solution the team already understands); an Intent describes _why_ (an outcome the AI must first clarify)
   - Epic focuses on decomposes; **Intent focuses on discovery**
   - deliberately vague so the **AI discovers scope through questions** rather than executing a pre-baked plan
   - Example: "I want to migrate a legacy system", "Reduce API latency by 50%", "I want to implement a new payment method"
-  - In traditional agile, an Epic holds full scope, stories, acceptance criteria and dependencies in one document. AI-DLC distributes that across the repository: Intent holds purpose, Unit decomposition holds scope, the Unit DAG holds dependencies, Knowledge Artifacts hold domain context — no single file replaces the Epic
+  - In traditional agile
+    - by the time you discuss Epic you have full scope, stories, acceptance criteria and dependencies what's pending is Decomposing it.
+    - AI-DLC distributes that across the repository: Intent holds purpose, Unit decomposition holds scope, the Unit DAG holds dependencies, Knowledge Artifacts hold domain context — no single file replaces the Epic
 
 - **Workspace Detection**
   - The workflow branches on whether the project is greenfield or brownfield — this single decision determines how all of Inception proceeds.
