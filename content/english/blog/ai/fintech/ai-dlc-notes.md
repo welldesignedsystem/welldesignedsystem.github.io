@@ -124,10 +124,7 @@ flowchart TD
 - **Business Intent**
   - can be any - **business problem, high-level goal, feature or technical outcome**
   - Key difference from a traditional Epic: an Epic describes _what_ to build (a solution the team already understands); by the time you discuss Epic you have full scope, stories, acceptance criteria and dependencies. **Epic focuses on decomposition**
-  - an Intent describes _why_ which is an outcome that you are going to task the AI to first clarify. This is deliberately vague so the **AI discovers scope through questions** rather than executing a pre-baked plan. - **Intent focuses on discovery**
-  - now its possible to be ambigous,
-  - [Matt Pocock's Grill me skill](https://www.aihero.dev/skills-grill-me)
-  - [Matt Pocoks whole Playlist](https://www.youtube.com/watch?v=gaDdrDdczO4&list=PLH-fZ_5p3Lrc&index=1)
+  - an Intent describes _why_ which is an outcome that you are going to task the AI to first clarify. It is possible, even desirable, for an Intent to be ambiguous — it is deliberately vague so the **AI discovers scope through questions** rather than executing a pre-baked plan. **Intent focuses on discovery**
   - Example: 
     - Provide accurate, real-time balance visibility and control for telecom customers.
     - I want to migrate a legacy system Flexy into microservice.
@@ -138,6 +135,9 @@ flowchart TD
     - Unit decomposition holds scope
     - the Unit DAG holds dependencies
     - Knowledge Artifacts hold domain context 
+  - Refereneces
+    - [Matt Pocock's Grill me skill](https://www.aihero.dev/skills-grill-me)
+    - [Matt Pocoks whole Playlist](https://www.youtube.com/watch?v=gaDdrDdczO4&list=PLH-fZ_5p3Lrc&index=1)
 
 - **Workspace Detection**
   - The workflow branches on whether the project is greenfield or brownfield — this single decision determines how all of Inception proceeds.
