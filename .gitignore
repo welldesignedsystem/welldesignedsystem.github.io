@@ -56,3 +56,4 @@ coverage/
 *.orig
 
 code-review-comments/
+* copy.*

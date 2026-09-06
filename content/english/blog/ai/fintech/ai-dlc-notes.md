@@ -201,32 +201,21 @@ flowchart TD
       - **Forward-looking idea:** evidence-backed completion verification — the gate produces a human-reviewable proof document (per-criterion scores, justification, line-level references) rather than a bare pass/fail, making the gate's verdict inspectable and auditable
 
 - **Operating Mode selection**
-  - Each Bolt runs supervised (HITL), observed (OHOTL) or autonomous (AHOTL) depending on the work's shape and risk — **not a maturity ladder, but a deliberate choice per Unit**
-  - The governing principle: **default to more supervision when uncertain** — loosening control later is easier than recovering from an autonomous mistake
-  - Mode-selection factors:
-
-    | Factor               | HITL      | OHOTL    | AHOTL |
-    | -------------------- | --------- | -------- | ----- |
-    | Requirements clarity | Low       | Medium   | High  |
-    | Risk level           | High      | Medium   | Low   |
-    | Test coverage        | Low       | Medium   | High  |
-    | Domain familiarity   | Low       | Medium   | High  |
-    | Reversibility        | Difficult | Moderate | Easy  |
-
-  - Default modes per phase: Elaboration HITL, Planning HITL, Building OHOTL, Review HITL
-  - Example decisions:
-    - Implement a new algorithm → HITL (novel, requires judgment)
-    - Add CRUD endpoints → AHOTL (well-understood pattern)
-    - Migrate a database schema → HITL (high risk, data integrity)
-    - Build a UI component → OHOTL (subjective design quality)
-    - Update documentation → AHOTL (clear criteria, low risk)
-  - Modes are provisional — shifting work between modes mid-stream as understanding develops is a first-class feature
-  - Downgrades (AHOTL → OHOTL → HITL) are signals to investigate root causes, not punishments
+  - Bolt is an execution of a slice of work. 
+  - Each Bolt runs depending on the work's shape and risk — **a deliberate choice per Unit** is made here.
+  - HITL = Human-in-the-loop
+    - the AI does work with direct human approval or guidance at key points used when requirements are unclear, risk is high, or the task is novel 
+  - OHOTL = Observed human-over-the-loop
+    - the AI works mostly autonomously, but a human watches and can intervene if it drifts used for moderate-risk, somewhat familiar work where oversight is useful but not constant
+  - AHOTL = Autonomous human-over-the-loop
+    - Here is the real power of what we do.
+    - the AI works independently within defined bounds, with humans checking afterwards or only when exceptions arise. 
+    - Used when your the task is well-understood and the context is created well enough to let the agent iterate without constant input.
 
 - **Per-Unit Design (conditional)**
   - Design stages that run only when a Unit warrants them — conditional on the Unit's complexity and risk profile
   - For simple Units (e.g. CRUD endpoints, documentation updates) this stage is skipped entirely
-  - For complex Units (e.g. new algorithms, architecture changes) this produces the per-unit design before code generation begins
+  - For complex Units (e.g. implement a specific algorithmic scaling, architecture changes) this produces the per-unit design before code generation begins
   - The community implementation breaks this into four conditional sub-stages: Functional Design (unit-level architecture, interface contracts, data models), NFR Requirements (performance targets, security constraints, scalability needs), NFR Design (caching strategy, auth patterns, capacity planning) and Infrastructure Design (Terraform modules, CloudFormation, container definitions). Each runs only when the Unit's complexity warrants it
   - Reads the domain design from Inception as input — Construction does not invent the domain model, it realises it
 

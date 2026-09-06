@@ -16,7 +16,7 @@ Hugo static site (hugoplate theme, TailwindCSS v4, Hugo modules). Deployed to Gi
 
 Push to `main` → GitHub Actions (Node 24, Hugo latest) → GitHub Pages. CI builds with `hugo --gc --minify --baseURL "$URL"` (not `npm run build`) — GitHub Pages injects the URL. CI uses `npm ci`.
 
-**Tracked despite `.gitignore`** (CI needs them): `package-lock.json` and `hugo_stats.json` — do not delete.
+**Tracked despite `.gitignore`** (CI needs them): `package-lock.json` and `hugo_stats.json` — do not delete. `hugo_stats.json` churns whenever content tags/classes change; commits routinely include it alongside content edits — that's expected, not drift.
 
 ## Content
 
