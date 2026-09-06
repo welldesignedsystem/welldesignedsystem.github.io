@@ -124,45 +124,39 @@ flowchart TD
 - **Business Intent**
   - can be any - **business problem, high-level goal, feature or technical outcome**
   - Key difference from a traditional Epic: an Epic describes _what_ to build (a solution the team already understands); by the time you discuss Epic you have full scope, stories, acceptance criteria and dependencies. **Epic focuses on decomposition**
-  - an Intent describes _why_ which is an outcome that you are going to task the AI to first clarify. It is possible, even desirable, for an Intent to be ambiguous — it is deliberately vague so the **AI discovers scope through questions** rather than executing a pre-baked plan. **Intent focuses on discovery**
+  - an Intent only describes the _why_ part - outcome you are going get AI to clarify and build. You purposfully make the Intent  ambiguous — it is deliberately vague so the **AI discovers scope through questions** rather than executing a pre-baked plan. **Intent focuses on discovery**
+  - There is no one replacement for Epic. AI-DLC distributes that across the repository: 
+    - **Intent holds purpose**, **Unit decomposition holds scope**, **the Unit DAG holds dependencies**, **Knowledge Artifacts hold domain context**
   - Example: 
     - Provide accurate, real-time balance visibility and control for telecom customers.
     - I want to migrate a legacy system Flexy into microservice.
     - Reduce API latency by 50% for this endpoint.
-    - Costing looks wrong in the current system. Fix it without breaking the existing calculation.
-  - There is no one replacement for Epic. AI-DLC distributes that across the repository: 
-    - Intent holds purpose
-    - Unit decomposition holds scope
-    - the Unit DAG holds dependencies
-    - Knowledge Artifacts hold domain context 
-  - Refereneces
+    - Costing looks wrong in the current system. Help fix it without breaking the existing calculation.
+  - References
     - [Matt Pocock's Grill me skill](https://www.aihero.dev/skills-grill-me)
     - [Matt Pocoks whole Playlist](https://www.youtube.com/watch?v=gaDdrDdczO4&list=PLH-fZ_5p3Lrc&index=1)
+    - [Einstellung effect](https://en.wikipedia.org/wiki/Einstellung_effect) the AI's training corpus is its mental set 
+      - **AI question bias risk**: . If the AI's questions frame the solution space toward familiar patterns, the answers will be too. For greenfield projects this risk is highest — no existing codebase, no Knowledge Artifacts, nothing domain-specific to ground the AI's questions
+  - The defence: context engineering (loading domain-specific knowledge into the window) and human oversight (the team validates or corrects)
+    - [Socratic Questioning or Guided Discovery](https://en.wikipedia.org/wiki/Socratic_questioning)
 
 - **Workspace Detection**
-  - The workflow branches on whether the project is greenfield or brownfield — this single decision determines how all of Inception proceeds.
+  - The workflow branches on whether the project is greenfield or brownfield — (talking to aws folks part...).
+  - **Templates**: Empty scaffolds the knowledge layer exists but enforces thought pattern/direction across Fintech.
+  - **Knowledge bootstrap**: the AI reads the codebase and produces structured knowledge (architecture, module boundaries, data flow, conventions) with confidence ratings
+
   - **Greenfield**
     - A greenfield project is a project that starts from scratch with no existing product, codebase, infrastructure, or legacy system to preserve.
+    - Opportunity to start Top Down approach from Day 1. **Understand** else **Counter productive.**
+    - **The "greenfield gap"**: before Mob Elaboration there is nothing between the Intent and the Units — the decomposition only exists after the AI asks questions and the team validates
   - **Brownfield** 
-    - In contrast, a brownfield project is when you are working inside an existing system that already has code, constraints, dependencies and historical decisions.
-
-- **Requirements Analysis (greenfield)**
-  - Opportunity to start Top Down approach from Day 1.
-  - No existing codebase; the AI converts the intent into candidate requirements, user stories and units for the team to validate, AI can be used to brainstorm ideas and do these tasks for you.
-  - **The "greenfield gap"**: before Mob Elaboration there is nothing between the Intent and the Units — the decomposition only exists after the AI asks questions and the team validates
-  - In traditional agile you would write the Epic first with full scope, then decompose. In AI-DLC the Intent is deliberately vague — the AI is supposed to discover the scope through questions
-  - **AI question bias risk**: the AI's training corpus is its mental set (Einstellung effect). If the AI's questions frame the solution space toward familiar patterns, the answers will be too. For greenfield projects this risk is highest — no existing codebase, no Knowledge Artifacts, nothing domain-specific to ground the AI's questions
-  - The defence: context engineering (loading domain-specific knowledge into the window) and human oversight (the team validates or corrects)
-
-- **Reverse Engineering (brownfield)**
-  - An existing codebase is synthesised into knowledge artifacts complete with confidence scores before any new work begins
-  - Meet in the middle approach, Team with good documentation or a Team with outdated documentation.
-  - the AI skills to reverse-engineers the existing codebase into knowledge artifacts before doing any new work
-  - **Knowledge bootstrap**: brownfield intents begin with this phase — the AI reads the codebase and produces structured knowledge (architecture, module boundaries, data flow, conventions) with confidence ratings
-  - Knowledge artifacts are stored in the project knowledge layer (`<repo>/.ai-dlc/knowledge/`) and persist across intents
-  - Greenfield projects seed empty scaffolds instead — the knowledge layer exists but starts empty
-
-- Personally I don't AI replacing a person here - Personally, I see it in the lines of some basic rules I apply when I mentor someone...
+    - We have teams with 
+      - Full Documentation
+      - No Documentation 
+      - Outdated/incorrect documentation 💀
+    - Skills to convert code into a well defined template driven document using concepts like Abstract Syntax Tree, Queryable Knowledge Graph.
+ - References
+   - [Greenfield Gap](https://ai-dlc.dev/paper#lifecycle-entry-points)
 
 - **Workflow Planning**
   - The AI decides which stages apply based on complexity — this is what makes the workflow _adaptive_ rather than linear
@@ -171,44 +165,40 @@ flowchart TD
   - **Three properties that make this work** (per AWS): adaptive decisioning (conforms to the problem's shape), transparent checkpoints (human approvals at every gate), end-to-end traceability (every artifact and decision is logged)
 
 - **User Stories (conditional)**
-  - Requirements structured in "As a..." format — only generated when requirements are not already fully specified
-  - Skipped for well-understood tasks (e.g. "update documentation", "add CRUD endpoint") where the intent is self-explanatory
-  - Runs for complex features where scope needs to be broken down into testable, reviewable chunks
+  - Skipped for well-understood tasks (e.g. "context engg compliant", "simple task like adding an end point") where the intent is self-explanatory for other cases where features are complex complex or the scope needs to be broken down into testable, reviewable chunks
   - The AI proposes stories; the team validates or corrects — the conversation _is_ the artifact
 
 - **Application Design (conditional)**
-  - Architecture, domain model and interface decisions — only when the work touches new or complex architecture
-  - **Design techniques are tools, not requirements**: DDD, TDD and BDD are applied when domain complexity warrants them and skipped when verification can validate correctness faster
-  - The test suite, not the architecture document, becomes the source of truth
-  - The domain design (bounded contexts, ubiquitous language, entities, interfaces) is produced here and stored at `<repo>/.ai-dlc/knowledge/` — every Construction design stage reads this as input
+  - Architecture, domain model and interface decisions — only when the work touches specilised or complex architecture e.g. 
+    - Specialised Application Design Decisions like a combination of decomposition strategy based e.g. after you have functionally decomposed a system you want to partition a specific function.
+    - The test suite, not the architecture document, becomes the source of truth
+ 
+ - **Adversarial Spec Review (conditional)**
+  - this stage pushes the team to defend the design before build work starts. 
+  - interrogates the proposed plan
+  - hidden assumptions and weak spots 
+  - we introduced this - it's basically challenging the specs before anything is built — **cost of fixing a bug quickly increases as it goes further in any lifecycle**.
+  - **Fresh eyes principle**: a different model or clean session reviews the output, not the same model that generated it. 
+    - Claude Code can spawn subagents; 
+    - Cursor/Copilot/VS Code can open a new chat or use a different model. 
+    - CI/CD integration is the most portable approach
 
 - **Units of Work Planning (conditional)**
   - Decomposes the intent into Units, each with a chosen operating mode (HITL, OHOTL, AHOTL) and completion criteria
-  - **A Unit is the unit of autonomy, not just the unit of scope** — it determines how much human oversight the work requires
-  - In traditional agile, an Epic is big (spans multiple features, teams, repos and sprints). A Unit is feature-scoped: a focused piece of work within a single Intent
+  - **A Unit is the unit of autonomy, not just the unit of scope** — it determines how much human oversight the work requires.
+  - **Epic v/s Unit**
+    - In traditional agile, an Epic is big (spans multiple features, teams, repos and sprints). 
+    - A Unit is feature-scoped: a focused piece of work within a single Intent
   - The scope shrinks because AI handles the decomposition that traditionally required human planning — backlog grooming, Epic writing, story splitting
   - The AI-managed part of AI-DLC _is_ this decomposition work, which is why Unit replaces Epic at a smaller granularity
 
-- **Adversarial Spec Review (conditional)**
-- a focused adversarial review pattern that interrogates the proposed plan, surfaces hidden assumptions and weak spots, and pushes the team to defend the design before build work starts
-  - An isolated reviewer challenges the specs before anything is built — **catching a wrong assumption during Elaboration costs minutes, while catching it in Construction or Production costs a full rework cycle**
-  - Two approaches (the "grill-me" workflow):
-    - **Option A**: Brainstorm → Team agrees → Grill-me interrogates the agreed plan → Revised plan → Build (catches flaws after convergence)
-    - **Option B (stronger)**: Brainstorm → Grill-me interrogates _during_ brainstorming → Team agrees on a plan that has already survived interrogation → Build (hardens the plan before anyone commits)
-  - Probes for five defect categories:
-    1. **Faithfulness defects** — claims that misstate behaviour
-    2. **Triggering/routing failures** — descriptions that won't fire
-    3. **Cross-platform breakage** — guidance that silently breaks other tools
-    4. **Hidden incompleteness** — stubs, placeholders, fabricated "green" results
-    5. **Design fragility** — loops that thrash, ambiguous ownership, scope creep
-  - **Fresh eyes principle**: a different model or clean session reviews the output, not the same model that generated it. Claude Code can spawn subagents; Cursor/Copilot/VS Code can open a new chat or use a different model. CI/CD integration is the most portable approach
-  - Turning the agent from a passive assistant into an interrogator — it challenges the intent, attacks assumptions, hunts for missing edge cases and forces the team to defend the business case
-
 - **Units and Completion Criteria**
   - The validated output of Inception: precise, verifiable conditions per Unit that gate autonomy
-  - **"Precision enables autonomy"**: "Make auth better" is too vague; "users can reset passwords, reset tokens expire after 15 minutes, all auth endpoints have tests and the security scan has no critical findings" gives the agent a target it can iterate toward
-  - The difference between a Definition of Done (shared checklist) and Completion Criteria (precise, verifiable conditions per Unit): DoD says "code is reviewed"; Completion Criteria say exactly what must be true for each Unit
-  - Forward-looking idea: evidence-backed completion verification — the gate produces a human-reviewable proof document (per-criterion scores, justification, line-level references) rather than a bare pass/fail, making the gate's verdict inspectable and auditable
+  - **"Precision enables autonomy"**: "Make auth better" v/s "users can reset passwords, reset tokens expire after 15 minutes, all auth endpoints have tests and the security scan has no critical findings" gives the agent a target it can iterate toward
+  - **Agile v/s AIDLC**
+    - **Definition of Done**, is a Agile/Scrum concept - shared checklist e.g. DoD says "code is reviewed"; 
+    - **Completion Criteria** - Completion Criteria say exactly what must be true for each **Unit**
+      - **Forward-looking idea:** evidence-backed completion verification — the gate produces a human-reviewable proof document (per-criterion scores, justification, line-level references) rather than a bare pass/fail, making the gate's verdict inspectable and auditable
 
 - **Operating Mode selection**
   - Each Bolt runs supervised (HITL), observed (OHOTL) or autonomous (AHOTL) depending on the work's shape and risk — **not a maturity ladder, but a deliberate choice per Unit**
