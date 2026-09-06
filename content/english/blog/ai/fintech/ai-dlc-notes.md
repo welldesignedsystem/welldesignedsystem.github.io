@@ -11,34 +11,26 @@ A sneakpeak into how AI will be an enabler for every roles helping people focus 
 In order to understand that we have to able to see the trend of the industry and where things are headed atleast in the near future.
 
 ### Introduction
-
-1. Credentials to predict future of roles few pattern of roles 
-2. Videos and blogs 
-3. Trend among Managers who understand AI well.
-
 ### Good News and Bad News 
 
+#### Bad News 
 Today's roles — Product Owner, Scrum Master, Developer, QA and SRE — are all **built around a traditional SDLC designed** for human-driven, long-running processes. Waterfall, Agile and Scrum assume iteration are expensive: 
-- lot of handoffs between roles
+- lot of handoffs between roles - leading inter role dependencies
 - documents thrown at each other to transfer context
 - approval gates and cadence rituals like standups, sprints and story points. 
+Retrofitting AI only reinforces the old inefficiencies. Way I see it this will undergo a transformation. 
 
-Retrofitting AI only reinforces the old inefficiencies. So the roles designed for that cadence, and the SDLC they serve, may not scale. 
-
-- People worried if AI will take their jobs. 
-- Chatgpt has made AI more intuitive and accessible to those who can use it.
-
-**Why SDLC may not scale with AI**
-
-- **Cadence collapse.** Sprints and story points assume human-speed iteration; AI iterates in minutes or hours, rendering the rituals obsolete ("Reimagine Rather Than Retrofit", Bushido).
-- **Phase economics invert.** Sequential phases existed because rework was expensive; with AI, try-fail-adjust is nearly free, so approval gates become friction, not quality control ("Embrace the Collapsing SDLC", Bushido).
-- **Retrofitting constrains the AI.** Assistant-style adoption limits what AI can do and preserves outdated inefficiencies (AWS blog).
-- **Ad-hoc use does not scale.** No backpressure, no completion criteria, no operating-mode selection and context lost between sessions ("Why AI-DLC Over Ad-Hoc AI Assistance", Bushido).
-- **Handoff overhead dominates.** Each role-to-role handoff loses context; with AI the artifact is the design, so boundaries that existed to manage handoffs become redundant ("Everyone Becomes a Builder", Bushido).
+#### Good News
+- Credentials to predict future of roles few pattern of roles.. 
+  - Common trend among Manager who understand AI, They understand that their people are going to play an ever more significant role.
+  - [The People say AI will replace them often assume work is going to be of same volume and be at same rate. What they dont realize is called - Jevons Paradox - as Efficiency increases More work gets created, not less.]((https://www.linkedin.com/posts/satyanadella_jevons-paradox-wikipedia-activity-7289521182721093633-5gJ5/))
+  - leave everything else - say hospitals can replace all their doctors for AI they can't hold it accountable for the decision and the outcome. When someone just used AI to 5 page document and asked me to review it - I see lack of accountability there.
+  - What I have learnt is that - Unless you resist AI, AI will not replace people. I say resist - because the tools are getting more and more intuitive now a days - AI is attacking the learning curve. 
+  - The way I see it - **you are going to have to continue to get better at what you are doing** - but also **start doing a bit of a lot of what other personas do**.
+- I am no one to advice senior people - but my advice to the junior engineers work on your Fundamentals not your AI skills, work on building a solid foundation thats how you can increase your ability to be accountable. AI will suggest 9 good options - you should be able to pick the one best option from the 9 or suggest the 10th.
+- Videos and blogs 
 
 ### The AI-DLC Workflow
-
-The workflow combines the three phases, the adaptive workflow stages, the operating modes and the quality-gate loop. Dashed edges are conditional stages; solid edges are mandatory. **Green nodes** are mandatory stages (always run); **yellow nodes** are conditional stages (run only when complexity warrants).
 
 **Hat responsibilities**
 
