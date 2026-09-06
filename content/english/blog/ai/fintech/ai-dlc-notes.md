@@ -1,14 +1,40 @@
 +++
-date = '2026-09-01T09:10:00+10:00'
+date = '2021-09-01T09:10:00+10:00'
 draft = false
 title = 'AI-DLC Notes: Trends and the Autonomy Spectrum'
 tags = ['AI-DLC','Agentic AI','Fintech','Process']
 summary = "Where AI-DLC and the spectrum of AI development autonomy are heading."
 +++
 
-### The Autonomy Spectrum: Where Teams Actually Land
+A sneakpeak into how AI will be an enabler for every roles helping people focus on judgement, decision and problem solving.
 
-### Where the Trend Is Heading
+In order to understand that we have to able to see the trend of the industry and where things are headed atleast in the near future.
+
+### Introduction
+
+1. Credentials to predict future of roles few pattern of roles 
+2. Videos and blogs 
+3. Trend among Managers who understand AI well.
+
+### Good News and Bad News 
+
+Today's roles — Product Owner, Scrum Master, Developer, QA and SRE — are all **built around a traditional SDLC designed** for human-driven, long-running processes. Waterfall, Agile and Scrum assume iteration are expensive: 
+- lot of handoffs between roles
+- documents thrown at each other to transfer context
+- approval gates and cadence rituals like standups, sprints and story points. 
+
+Retrofitting AI as an assistant only constrains it and reinforces the old inefficiencies. So the roles designed for that cadence, and the SDLC they serve, may not scale. 
+
+- People worried if AI will take their jobs. 
+- Chatgpt has made AI more intuitive and accessible to those who can use it.
+
+**Why SDLC may not scale with AI**
+
+- **Cadence collapse.** Sprints and story points assume human-speed iteration; AI iterates in minutes or hours, rendering the rituals obsolete ("Reimagine Rather Than Retrofit", Bushido).
+- **Phase economics invert.** Sequential phases existed because rework was expensive; with AI, try-fail-adjust is nearly free, so approval gates become friction, not quality control ("Embrace the Collapsing SDLC", Bushido).
+- **Retrofitting constrains the AI.** Assistant-style adoption limits what AI can do and preserves outdated inefficiencies (AWS blog).
+- **Ad-hoc use does not scale.** No backpressure, no completion criteria, no operating-mode selection and context lost between sessions ("Why AI-DLC Over Ad-Hoc AI Assistance", Bushido).
+- **Handoff overhead dominates.** Each role-to-role handoff loses context; with AI the artifact is the design, so boundaries that existed to manage handoffs become redundant ("Everyone Becomes a Builder", Bushido).
 
 ### The AI-DLC Workflow
 
