@@ -23,7 +23,7 @@ Today's roles — Product Owner, Scrum Master, Developer, QA and SRE — are all
 - documents thrown at each other to transfer context
 - approval gates and cadence rituals like standups, sprints and story points. 
 
-Retrofitting AI as an assistant only constrains it and reinforces the old inefficiencies. So the roles designed for that cadence, and the SDLC they serve, may not scale. 
+Retrofitting AI only reinforces the old inefficiencies. So the roles designed for that cadence, and the SDLC they serve, may not scale. 
 
 - People worried if AI will take their jobs. 
 - Chatgpt has made AI more intuitive and accessible to those who can use it.
