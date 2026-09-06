@@ -121,7 +121,7 @@ flowchart TD
 
 #### Stage-by-stage breakdown
 
-- **Business Intent**
+##### Business Intent
   - can be any - **business problem, high-level goal, feature or technical outcome**
   - Key difference from a traditional Epic: an Epic describes _what_ to build (a solution the team already understands); by the time you discuss Epic you have full scope, stories, acceptance criteria and dependencies. **Epic focuses on decomposition**
   - an Intent only describes the _why_ part - outcome you are going get AI to clarify and build. You purposfully make the Intent  ambiguous — it is deliberately vague so the **AI discovers scope through questions** rather than executing a pre-baked plan. **Intent focuses on discovery**
@@ -140,7 +140,7 @@ flowchart TD
   - The defence: context engineering (loading domain-specific knowledge into the window) and human oversight (the team validates or corrects)
     - [Socratic Questioning or Guided Discovery](https://en.wikipedia.org/wiki/Socratic_questioning)
 
-- **Workspace Detection**
+##### Workspace Detection
   - The workflow branches on whether the project is greenfield or brownfield — (talking to aws folks part...).
   - **Templates**: Empty scaffolds the knowledge layer exists but enforces thought pattern/direction across Fintech.
   - **Knowledge bootstrap**: the AI reads the codebase and produces structured knowledge (architecture, module boundaries, data flow, conventions) with confidence ratings
@@ -158,22 +158,22 @@ flowchart TD
  - References
    - [Greenfield Gap](https://ai-dlc.dev/paper#lifecycle-entry-points)
 
-- **Workflow Planning**
+##### Workflow Planning
   - The AI decides which stages apply based on complexity — this is what makes the workflow _adaptive_ rather than linear
   - A one-line bug fix skips planning and goes straight to code generation; a complex feature runs the full chain (User Stories → Application Design → Units of Work Planning → Adversarial Spec Review)
   - Encodes the mandatory-versus-conditional split: the AI assesses the request's shape and selects which stages to execute
   - **Three properties that make this work** (per AWS): adaptive decisioning (conforms to the problem's shape), transparent checkpoints (human approvals at every gate), end-to-end traceability (every artifact and decision is logged)
 
-- **User Stories (conditional)**
+##### User Stories (conditional)
   - Skipped for well-understood tasks (e.g. "context engg compliant", "simple task like adding an end point") where the intent is self-explanatory for other cases where features are complex complex or the scope needs to be broken down into testable, reviewable chunks
   - The AI proposes stories; the team validates or corrects — the conversation _is_ the artifact
 
-- **Application Design (conditional)**
+##### Application Design (conditional)
   - Architecture, domain model and interface decisions — only when the work touches specilised or complex architecture e.g. 
     - Specialised Application Design Decisions like a combination of decomposition strategy based e.g. after you have functionally decomposed a system you want to partition a specific function.
     - The test suite, not the architecture document, becomes the source of truth
  
- - **Adversarial Spec Review (conditional)**
+ ##### Adversarial Spec Review (conditional)
   - this stage pushes the team to defend the design before build work starts. 
   - interrogates the proposed plan
   - hidden assumptions and weak spots 
@@ -183,7 +183,7 @@ flowchart TD
     - Cursor/Copilot/VS Code can open a new chat or use a different model. 
     - CI/CD integration is the most portable approach
 
-- **Units of Work Planning (conditional)**
+##### Units of Work Planning (conditional)
   - Decomposes the intent into Units, each with a chosen operating mode (HITL, OHOTL, AHOTL) and completion criteria
   - **A Unit is the unit of autonomy, not just the unit of scope** — it determines how much human oversight the work requires.
   - **Epic v/s Unit**
@@ -192,7 +192,7 @@ flowchart TD
   - The scope shrinks because AI handles the decomposition that traditionally required human planning — backlog grooming, Epic writing, story splitting
   - The AI-managed part of AI-DLC _is_ this decomposition work, which is why Unit replaces Epic at a smaller granularity
 
-- **Units and Completion Criteria**
+##### Units and Completion Criteria
   - The validated output of Inception: precise, verifiable conditions per Unit that gate autonomy
   - **"Precision enables autonomy"**: "Make auth better" v/s "users can reset passwords, reset tokens expire after 15 minutes, all auth endpoints have tests and the security scan has no critical findings" gives the agent a target it can iterate toward
   - **Agile v/s AIDLC**
@@ -200,7 +200,7 @@ flowchart TD
     - **Completion Criteria** - Completion Criteria say exactly what must be true for each **Unit**
       - **Forward-looking idea:** evidence-backed completion verification — the gate produces a human-reviewable proof document (per-criterion scores, justification, line-level references) rather than a bare pass/fail, making the gate's verdict inspectable and auditable
 
-- **Operating Mode selection**
+##### Operating Mode selection
   - Bolt is an execution of a slice of work. 
   - Each Bolt runs depending on the work's shape and risk — **a deliberate choice per Unit** is made here.
   - HITL = Human-in-the-loop
@@ -212,7 +212,7 @@ flowchart TD
     - the AI works independently within defined bounds, with humans checking afterwards or only when exceptions arise. 
     - Used when your the task is well-understood and the context is created well enough to let the agent iterate without constant input.
 
-- **Per-Unit Design (conditional)**
+##### Per-Unit Design (conditional)
   - Design stages that run only when a Unit warrants them — conditional on the Unit's complexity and risk profile
   - For simple Units (e.g. CRUD endpoints, documentation updates) this stage is skipped entirely
   - For complex Units (e.g. implement a specific algorithmic scaling, architecture changes) this produces the per-unit design before code generation begins
@@ -223,17 +223,17 @@ flowchart TD
     - **Infrastructure Design** (Terraform modules, CloudFormation, container definitions). Each runs only when the Unit's complexity warrants it
   - Reads the domain design from Inception as input — Construction does not invent the domain model, it realises it
 
-- **Code Generation Planning**
+##### Code Generation Planning
   - The agent lays out the implementation plan before writing any code — **think before you build**
   - The agent decides: file structure, module boundaries, data flow, interface contracts, test strategy
   - The plan is reviewed before execution begins, catching structural issues before code exists
 
-- **Code Generation**
+##### Code Generation
   - AI implements code and supporting artifacts, unit by unit — the [Builder] hat is the primary executor
   - Multiple Units can run in parallel through Mob Execution: collocated teams each own a Unit, exchange integration specifications (API contracts, event schemas) and coordinate cross-unit concerns at human checkpoints
   - AI collapses the designer-to-developer handoff — the artifact _is_ the design — so every discipline builds through the same loop
 
-- **Build and Test**
+##### Build and Test
   - Six test types run against the implementation: 
     - unit
     - integration
@@ -245,7 +245,7 @@ flowchart TD
   - TDD workflow: write failing tests before implementation; BDD-style extends this to acceptance tests written before implementation
   - **"You cannot improve what you do not measure"** — the test suite is the measurement instrument
 
-- **Quality Gates**
+##### Quality Gates
   - Harness-enforced checks (tests, lint, types) that block progress until all pass — **the agent cannot advance, hand off or declare work complete otherwise**
   - **"The agent cannot rationalise its way around a failing hook"** — qualitatively different from asking AI to "run the tests"
   - Four properties make enforcement robust:
@@ -255,21 +255,21 @@ flowchart TD
     4. **Loop prevention** — a `stop_hook_active` flag lets a subagent that has already been blocked once stop on its second attempt, preventing deadlock in nested scenarios
   - Gates are frontmatter-driven — they live in the Unit's configuration, not scattered across CI scripts
 
-- **Backpressure: Feedback and Pass-Back (fail)**
+##### Backpressure: Feedback and Pass-Back (fail)
   - Failing gates push work back through design, code generation and testing until it converges — **the inner feedback loop**
   - This is not "go fix it" — the agent receives structured feedback (which gate failed, what was expected, what was observed) and iterates
   - The loop continues until all gates pass or the agent escalates to human review
   - **Backward flow becomes normal rather than exceptional** — a later pass discovering a constraint that invalidates an earlier assumption sends work back without anyone declaring failure
   - High churn (many iterations per Bolt) usually means poorly written completion criteria — the measurement feedback loop
 
-- **Review and Integration (pass)**
+##### Review and Integration (pass)
   - Passing work is reviewed, integrated across Units and checked for cross-unit coherence
   - **Review is not a rubber stamp** — the [Reviewer] hat verifies completion criteria, checks diff quality and confirms the Unit meets its declared success conditions
   - Cross-unit integration: when multiple Units run in parallel, this stage catches conflicts, duplicate logic, inconsistent interfaces and broken contracts between Units
   - The [Red Team] hat can be activated here for adversarial code review — probing for spec violations, security issues, edge cases and anti-patterns before the work moves to Operations
   - High-confidence mechanical fixes apply automatically; everything else goes back to the team
 
-- **Deployment Automation (Operations)**
+##### Deployment Automation (Operations)
   - Production deployment pipelines, rollback procedures and release orchestration — operational work is **file-based**, not runbook-based
   - Three operation types (each lives as a spec in `.ai-dlc/{intent}/operations/`):
     - **Scheduled** — cron-driven tasks (secret rotation, cache warming, log rotation)
@@ -278,26 +278,26 @@ flowchart TD
   - Agent-owned scripts execute autonomously within boundaries; human-owned checklists are tracked by the agent
   - Each intent ships a **Deployment Unit** bundling code artifacts, configuration, infrastructure definitions and validation suites with automated rollback procedures
 
-- **Infrastructure as Code (Operations)**
+##### Infrastructure as Code (Operations)
   - Infrastructure definitions, configuration management and environment provisioning managed through version-controlled specs
   - IaC lives alongside application code — the same git repository, the same review process, the same quality gates
   - Enables reproducible environments: the same spec produces dev, staging and production environments
   - Infrastructure changes go through the same Construction pipeline as application code — plan, implement, test, gate, review
 
-- **Monitoring and Observability (Operations)**
+##### Monitoring and Observability (Operations)
   - Monitoring setup, alerting, logging and observability configuration to track production behaviour and surface issues
   - **The virtuous loop**: monitoring feeds back into the coding agent's context and informs future Inception cycles — production behaviour becomes input for the next Intent
   - Example: an error-rate spike detected by monitoring triggers a reactive Operation (automatic rollback) and simultaneously feeds context into the next Inception cycle so the root cause is addressed in the next Bolt
   - Observability data becomes part of the Persistent Context — future sessions know what happened in production
 
-- **Production Readiness Validation (Operations)**
+##### Production Readiness Validation (Operations)
   - Pre-deployment checks confirming the system meets SLOs, runbooks are in place and rollback is ready before release
   - **The boundary gate between Construction and Operations** — validates the integrated codebase, not individual Units
   - Checks: architecture-to-code-to-tests alignment, all code traces to design, test coverage meets acceptance criteria
   - Runbooks, rollback readiness and SLO conformance are verified — the system is not released until these are confirmed
   - For regulated domains (fintech): auditable checkpoints at requirements sign-off, design approval, code review and release approval, with autonomous work permitted between them
 
-- **Persistent Context and Knowledge**
+##### Persistent Context and Knowledge
   - Plans, requirements, design artifacts and operational knowledge stored in the repo feed the next Inception cycle — **the outer feedback loop**
   - **"Artifacts are memory"**: intents, unit progress and decisions persist as committed files so the context window can be reset without losing ground truth. The community implementation treats `/clear` as a feature, not a bug
   - Five memory providers the agent can query:
@@ -335,6 +335,25 @@ The AI-DLC personas below can wear one or more hats depending on the work being 
 | Product Lead Reviewer                                 | [Reviewer]                                                 |
 | Architecture Reviewer                                 | [Reviewer]                                                 |
 | Adaptive Workflow Composer                            | [Planner], [Integrator]                                    |
+
+#### Traditional-to-AI-DLC Role Transformation
+
+How the legacy org chart maps onto an AI-DLC team. This is not a renaming — the old role's decision-making largely moves into Intent approval, gate definition and AI oversight.
+
+| Traditional role                 | Becomes in AI-DLC                        | Key shift                                                                                                          |
+| -------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Product Owner / PM / BA          | **Intent Steward**                       | Owns a deliberately vague Intent and validates the AI's scope-discovery questions; decomposition (Epics, stories) moves to the AI |
+| Scrum Master / Delivery Manager  | **Workflow Composer**                    | Chooses the adaptive stages and per-Unit operating mode (HITL / OHOTL / AHOTL); sprint ceremonies fall away        |
+| Developer                        | **Builder + gate author**                | Writes tests and gates first, runs supervised or observed bolts, verifies agent output; designer-to-dev handoff collapses |
+| QA / Tester                      | **Gate Curator**                         | Defines completion criteria and frontmatter-driven quality gates; the test suite, not docs, is the source of truth |
+| Security / Penetration Tester    | **Red / Blue**                           | Adversarial spec review and code probing kept separate from remediation                                             |
+| DevOps / Platform Engineer       | **Operations-as-Code owner**             | Deployments, rollback and runbooks are file-based specs; each Intent ships a Deployment Unit to bundle code, config and validation |
+| SRE / Operations                 | **Observability steward**                | Monitoring feeds the next Inception cycle (virtuous loop); Runtime memory layer                                    |
+| Solutions / Technical Architect  | **[Designer] hat + Knowledge curator**   | Produces per-unit designs and Persistent Context that survives context resets                                      |
+| Project / Program Manager        | **Absorbed into repo as tracker**        | Intent → Unit DAG and Persistent Context replace status reporting ("artifacts are memory")                         |
+| Senior dev / code reviewer       | **[Reviewer] hat + fresh-eyes agent**    | Verifies completion criteria; a different model or clean session reviews the output                                 |
+| Technical writer                 | **Knowledge Artifacts + auto-announcements** | Docs live as committed artifact files; changelogs and posts generated from completion announcements               |
+| Stakeholder                      | **Gate approver**                        | Steers through transparent checkpoints and approval gates instead of status meetings                                |
 
 ### Notes
 
