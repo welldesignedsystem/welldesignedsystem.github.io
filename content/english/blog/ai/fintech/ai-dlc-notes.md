@@ -216,13 +216,16 @@ flowchart TD
   - Design stages that run only when a Unit warrants them — conditional on the Unit's complexity and risk profile
   - For simple Units (e.g. CRUD endpoints, documentation updates) this stage is skipped entirely
   - For complex Units (e.g. implement a specific algorithmic scaling, architecture changes) this produces the per-unit design before code generation begins
-  - The community implementation breaks this into four conditional sub-stages: Functional Design (unit-level architecture, interface contracts, data models), NFR Requirements (performance targets, security constraints, scalability needs), NFR Design (caching strategy, auth patterns, capacity planning) and Infrastructure Design (Terraform modules, CloudFormation, container definitions). Each runs only when the Unit's complexity warrants it
+  - **Community implementation breaks this into four conditional sub-stages:** 
+    - **Functional Design** (unit-level architecture, interface contracts, data models)
+    - **NFR Requirements** (performance targets, security constraints, scalability needs)
+    - **NFR Design** (caching strategy, auth patterns, capacity planning) 
+    - **Infrastructure Design** (Terraform modules, CloudFormation, container definitions). Each runs only when the Unit's complexity warrants it
   - Reads the domain design from Inception as input — Construction does not invent the domain model, it realises it
 
 - **Code Generation Planning**
   - The agent lays out the implementation plan before writing any code — **think before you build**
   - The agent decides: file structure, module boundaries, data flow, interface contracts, test strategy
-  - This is where [Planner], [Builder] hats overlap — planning the implementation is part of the build process
   - The plan is reviewed before execution begins, catching structural issues before code exists
 
 - **Code Generation**
@@ -231,11 +234,16 @@ flowchart TD
   - AI collapses the designer-to-developer handoff — the artifact _is_ the design — so every discipline builds through the same loop
 
 - **Build and Test**
-  - Six test types run against the implementation: **unit, integration, performance, security, contract and end-to-end**
+  - Six test types run against the implementation: 
+    - unit
+    - integration
+    - performance
+    - security
+    - contract 
+    - end-to-end
   - The test suite is the source of truth — not the architecture document, not the design spec
   - TDD workflow: write failing tests before implementation; BDD-style extends this to acceptance tests written before implementation
   - **"You cannot improve what you do not measure"** — the test suite is the measurement instrument
-  - For visual/design work: visual gates activate automatically when the unit's discipline is frontend, comparing a reference image (Figma export, previous bolt screenshot, wireframe) against the implementation via a vision model, producing a pass/warn/fail verdict with annotated differences
 
 - **Quality Gates**
   - Harness-enforced checks (tests, lint, types) that block progress until all pass — **the agent cannot advance, hand off or declare work complete otherwise**
