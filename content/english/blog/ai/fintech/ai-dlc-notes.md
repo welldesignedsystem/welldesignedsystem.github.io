@@ -268,21 +268,15 @@ The AI-DLC personas below can wear one or more hats depending on the work being 
 
 | Persona                                               | Hat mapping                                                |
 | ----------------------------------------------------- | ---------------------------------------------------------- |
-| Product Owner / Product Manager / Business Analyst    | [Planner], [Reviewer], [Red / Blue]                        |
-| UX / Product Designer                                 | [Designer], [Builder], [Reviewer]                          |
-| Scrum Master / Delivery Manager / Engineering Manager | [Planner], [Integrator], [Reviewer]                        |
-| Solutions Architect / Technical Architect             | [Planner], [Designer], [Builder], [Reviewer], [Integrator] |
-| AWS Platform Engineer                                 | [Designer], [Builder], [Reviewer]                          |
-| Compliance Specialist                                 | [Planner], [Reviewer], [Red / Blue]                        |
-| DevSecOps Engineer                                    | [Builder], [Reviewer], [Red / Blue]                        |
-| Developer / Scrum Team Developer                      | [Planner], [Builder], [Reviewer]                           |
-| QA Engineer / Tester                                  | [Builder], [Reviewer], [Red / Blue]                        |
-| Pipeline and Deployment Engineer                      | [Builder], [Integrator], [Reviewer]                        |
-| SRE / Operations Engineer                             | [Builder], [Reviewer], [Integrator]                        |
-| Stakeholder                                           | [Planner], [Reviewer]                                      |
-| Product Lead Reviewer                                 | [Reviewer]                                                 |
-| Architecture Reviewer                                 | [Reviewer]                                                 |
-| Adaptive Workflow Composer                            | [Planner], [Integrator]                                    |
+| Product Owner / PM / Business Analyst / Scrum master / SME | [Planner], [Reviewer], [Red / Blue]                        |
+| UX / Product Designer / SME                               | [Designer], [Builder], [Reviewer]                          |
+| Scrum Master / Delivery Manager                           | [Planner], [Integrator], [Reviewer]                        |
+| Solutions / Technical Architect                           | [Planner], [Designer], [Builder], [Reviewer], [Integrator] |
+| Engineering Leaders / DevSecOps Engineer                  | [Builder], [Reviewer], [Red / Blue]                        |
+| Developer                                                | [Planner], [Builder], [Reviewer]                           |
+| QA / Tester                                               | [Builder], [Reviewer], [Red / Blue]                        |
+| Pipeline and Deployment Engineer                          | [Builder], [Integrator], [Reviewer]                        |
+| SRE / Operations Engineer                                 | [Builder], [Reviewer], [Integrator]                        |
 
 #### Persona Evolution: Old Role → New Role
 
