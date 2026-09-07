@@ -6,29 +6,27 @@ tags = ['AI-DLC','Agentic AI','Fintech','Process']
 summary = "Where AI-DLC and the spectrum of AI development autonomy are heading."
 +++
 
-A sneakpeak into how AI will be an enabler for every roles helping people focus on judgement, decision and problem solving.
+A sneakpeak into how AI will be an enabler for the roles within Fintech - helping our people focus on 
+- judgement
+- decision 
+- problem solving
 
-In order to understand that we have to able to see the trend of the industry and where things are headed atleast in the near future.
+In order to understand this its helpful to understand the trend of the industry. 
 
-### Introduction
-### Good News and Bad News 
-
-#### Bad News 
-Today's roles — Product Owner, Scrum Master, Developer, QA and SRE — are all **built around a traditional SDLC designed** for human-driven, long-running processes. Waterfall, Agile and Scrum assume iteration are expensive: 
+### Things that are going to change 
+#### Bad
+- Today's roles — Product Owner, Scrum Master, Developer, QA and SRE — are all **built around a traditional SDLC** designed with only human in focus
+- Waterfall, Agile and Scrum assume iteration are expensive and long running.
 - lot of handoffs between roles - leading inter role dependencies
 - documents thrown at each other to transfer context
 - approval gates and cadence rituals like standups, sprints and story points. 
 Retrofitting AI only reinforces the old inefficiencies. Way I see it this will undergo a transformation. 
-
-#### Good News
-- Credentials to predict future of roles few pattern of roles.. 
-  - Common trend among Manager who understand AI, They understand that their people are going to play an ever more significant role.
-  - [The People say AI will replace them often assume work is going to be of same volume and be at same rate. What they dont realize is called - Jevons Paradox - as Efficiency increases More work gets created, not less.]((https://www.linkedin.com/posts/satyanadella_jevons-paradox-wikipedia-activity-7289521182721093633-5gJ5/))
-  - leave everything else - say hospitals can replace all their doctors for AI they can't hold it accountable for the decision and the outcome. When someone just used AI to 5 page document and asked me to review it - I see lack of accountability there.
-  - What I have learnt is that - Unless you resist AI, AI will not replace people. I say resist - because the tools are getting more and more intuitive now a days - AI is attacking the learning curve. 
-  - The way I see it - **you are going to have to continue to get better at what you are doing** - but also **start doing a bit of a lot of what other personas do**.
-- I am no one to advice senior people - but my advice to the junior engineers work on your Fundamentals not your AI skills, work on building a solid foundation thats how you can increase your ability to be accountable. AI will suggest 9 good options - you should be able to pick the one best option from the 9 or suggest the 10th.
-- Videos and blogs 
+#### Good
+  - [The People say AI will replace them often assume work is going to be of same volume and be at better rate. What they dont realize is called - Jevons Paradox - as Efficiency increases More work gets created, not less.]((https://www.linkedin.com/posts/satyanadella_jevons-paradox-wikipedia-activity-7289521182721093633-5gJ5/))
+  - Common trend among Manager who understand AI, They understand that their people are going to play an ever more significant role, the advice they give is just continue to get better at what you do.
+  - leave everything else - hospitals brought AI instead of Doctors - they can't hold it accountable for the decision and the outcome. 
+  - Unless you resist AI, AI will not replace people. I say resist - because the tools are getting more and more intuitive now a days - AI is attacking the learning curve. 
+  - I would ask a junior software engineer to work on Fundamentals not your AI skills, work on building a solid foundation thats how you can increase your ability to be accountable. AI will suggest 9 good options - you should be able to pick the one best option from the 9 or suggest the 10th.
 
 ### The AI-DLC Workflow
 
@@ -36,53 +34,12 @@ Retrofitting AI only reinforces the old inefficiencies. Way I see it this will u
 
 Think of these as the roles the AI or team plays at different moments in the workflow. They are not strict job titles; they are responsibilities that help keep planning, design, delivery, review and security separate.
 
-- **[Planner]**
-  - Defines the goal and clarifies what is still unknown
-  - Breaks the work into smaller Units and turns the goal into clear completion criteria
-  - Chooses priorities, dependencies, operating mode and the next step to take
-  - Tracks assumptions, open questions, risks and blockers
-  - Updates the plan when new evidence or review feedback changes the direction
-  - Source: Bushido Collective, "The Hat System — [Planner]", AI-DLC. https://ai-dlc.dev/docs/hats#planner
-
-- **[Designer]**
-  - Turns the requirement into a workable design for the system, data, interfaces or user experience
-  - Defines the structure, boundaries and flow of the solution
-  - Compares options and makes trade-offs explicit
-  - Specifies important quality constraints such as usability, accessibility and reliability when needed
-  - Produces a design the Builder can implement and the Reviewer can check
-  - Source: Bushido Collective, "The Hat System — [Designer]", AI-DLC. https://ai-dlc.dev/docs/hats#designer
-
-- **[Builder]**
-  - Implements the agreed plan in small steps
-  - Writes or updates code, tests, infrastructure and supporting artifacts
-  - Uses tests, linting, type checks and security checks as feedback while building
-  - Documents progress, decisions and blockers as work moves forward
-  - Keeps iterating until the criteria are met or a human decision is needed
-  - Source: Bushido Collective, "The Hat System — [Builder]", AI-DLC. https://ai-dlc.dev/docs/hats#builder
-
-- **[Reviewer]**
-  - Checks whether the result actually meets the stated completion criteria
-  - Reviews correctness, maintainability, security, edge cases and operational readiness
-  - Verifies the relevant tests, quality gates and evidence before approving work
-  - Identifies defects with clear, actionable feedback
-  - Approves the work or requests changes with a reasoned explanation
-  - Source: Bushido Collective, "The Hat System — [Reviewer]", AI-DLC. https://ai-dlc.dev/docs/hats#reviewer
-
-- **[Red / Blue]**
-  - **Red Team:** tries to break the design or implementation and looks for security flaws, bypasses and unsafe assumptions
-  - **Blue Team:** fixes the confirmed problems and adds defensive controls and regression tests
-  - Covers issues such as injection, auth bypass, privilege escalation, data exposure and insecure configuration
-  - Keeps attack testing separate from remediation so the review stays objective
-  - Re-tests the hardened result and records unresolved risks for human review
-  - Source: Bushido Collective, "The Hat System — [Red Team] / [Blue Team]", AI-DLC. https://ai-dlc.dev/docs/hats#red-team
-
-- **[Integrator]**
-  - Checks that completed Units work correctly together across the full intent
-  - Verifies APIs, contracts, data flow and cross-unit behaviour
-  - Runs the final verification across the combined result
-  - Confirms the work satisfies the end-to-end criteria for the whole task
-  - Accepts the integrated result or sends the relevant Units back for rework
-  - Source: Bushido Collective, "The Hat System — [Integrator]", AI-DLC. https://ai-dlc.dev/docs/hats#integrator
+- **[Planner]** — sets the goal, breaks it into Units and defines the completion criteria.
+- **[Designer]** — turns the intent into a workable design for the system, data and interfaces.
+- **[Builder]** — implements the plan and iterates until the Unit meets its criteria.
+- **[Reviewer]** — verifies quality, evidence and whether the work satisfies the requirements.
+- **[Adversial Hat]** — attacks the design and implementation, then hardens and fixes the issues.
+- **[Integrator]** — checks that completed Units work together as one coherent result.
 
 ```mermaid
 flowchart TD
@@ -140,9 +97,10 @@ flowchart TD
 #### Stage-by-stage breakdown
 
 ##### Business Intent
-  - can be any - **business problem, high-level goal, feature or technical outcome**
-  - Key difference from a traditional Epic: an Epic describes _what_ to build (a solution the team already understands); by the time you discuss Epic you have full scope, stories, acceptance criteria and dependencies. **Epic focuses on decomposition**
-  - an Intent only describes the _why_ part - outcome you are going get AI to clarify and build. You purposfully make the Intent  ambiguous — it is deliberately vague so the **AI discovers scope through questions** rather than executing a pre-baked plan. **Intent focuses on discovery**
+  - can be any - **high-level business goal, feature or technical outcome**
+  - Key difference from a traditional Epic: an Epic describes _what_ to build by the time you are talking about Epic - scope of stories, acceptance criteria and dependencies. **Epic focuses on decomposition**
+  - an Intent only describes the _why_ part - you are going get AI to clarify outcomes and build it. You purposfully make the Intent - **ambiguous and vague**. 
+    - Reason is **AI discovers scope through questions** rather than executing a pre-baked plan. **Intent focuses on discovery**
   - There is no one replacement for Epic. AI-DLC distributes that across the repository: 
     - **Intent holds purpose**, **Unit decomposition holds scope**, **the Unit DAG holds dependencies**, **Knowledge Artifacts hold domain context**
   - Example: 
