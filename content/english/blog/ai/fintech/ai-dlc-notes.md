@@ -100,27 +100,20 @@ flowchart TD
   - can be any - **high-level business goal, feature or technical outcome**
   - Key difference from a traditional Epic: an Epic describes _what_ to build by the time you are talking about Epic - scope of stories, acceptance criteria and dependencies. **Epic focuses on decomposition**
   - an Intent only describes the _why_ part - you are going get AI to clarify outcomes and build it. You purposfully make the Intent - **ambiguous and vague**. 
-    - Reason is **AI discovers scope through questions** rather than executing a pre-baked plan. **Intent focuses on discovery**
-  - There is no one replacement for Epic. AI-DLC distributes that across the repository: 
-    - **Intent holds purpose**, **Unit decomposition holds scope**, **the Unit DAG holds dependencies**, **Knowledge Artifacts hold domain context**
   - Example: 
-    - Provide accurate, real-time balance visibility and control for telecom customers.
+    - I want to add a new payment method into my existing system.
     - I want to migrate a legacy system Flexy into microservice.
     - Reduce API latency by 50% for this endpoint.
     - Costing looks wrong in the current system. Help fix it without breaking the existing calculation.
+    - Reason is **AI discovers scope through questions** rather than executing a pre-baked plan. **Intent focuses on discovery**
   - References
     - [Matt Pocock's Grill me skill](https://www.aihero.dev/skills-grill-me)
     - [Matt Pocoks whole Playlist](https://www.youtube.com/watch?v=gaDdrDdczO4&list=PLH-fZ_5p3Lrc&index=1)
-    - [Einstellung effect](https://en.wikipedia.org/wiki/Einstellung_effect) the AI's training corpus is its mental set 
-      - **AI question bias risk**: . If the AI's questions frame the solution space toward familiar patterns, the answers will be too. For greenfield projects this risk is highest — no existing codebase, no Knowledge Artifacts, nothing domain-specific to ground the AI's questions
-  - The defence: context engineering (loading domain-specific knowledge into the window) and human oversight (the team validates or corrects)
     - [Socratic Questioning or Guided Discovery](https://en.wikipedia.org/wiki/Socratic_questioning)
 
 ##### Workspace Detection
   - The workflow branches on whether the project is greenfield or brownfield — (talking to aws folks part...).
   - **Templates**: Empty scaffolds the knowledge layer exists but enforces thought pattern/direction across Fintech.
-  - **Knowledge bootstrap**: the AI reads the codebase and produces structured knowledge (architecture, module boundaries, data flow, conventions) with confidence ratings
-
   - **Greenfield**
     - A greenfield project is a project that starts from scratch with no existing product, codebase, infrastructure, or legacy system to preserve.
     - Opportunity to start Top Down approach from Day 1. **Understand** else **Counter productive.**
@@ -158,6 +151,9 @@ flowchart TD
     - Claude Code can spawn subagents; 
     - Cursor/Copilot/VS Code can open a new chat or use a different model. 
     - CI/CD integration is the most portable approach
+    - [Einstellung effect](https://en.wikipedia.org/wiki/Einstellung_effect) the AI's training corpus is its mental set 
+      - **AI question bias risk**: . If the AI's questions frame the solution space toward familiar patterns, the answers will be too. For greenfield projects this risk is highest — no existing codebase, no Knowledge Artifacts, nothing domain-specific to ground the AI's questions
+  - The defence: context engineering (loading domain-specific knowledge into the window) and human oversight (the team validates or corrects)
 
 ##### Units of Work Planning (conditional)
   - Decomposes the intent into Units, each with a chosen operating mode (HITL, OHOTL, AHOTL) and completion criteria
