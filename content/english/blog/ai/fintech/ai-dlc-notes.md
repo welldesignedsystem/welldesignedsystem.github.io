@@ -15,18 +15,20 @@ In order to understand this its helpful to understand the trend of the industry.
 
 ### Things that are going to change 
 #### Bad
-- Today's roles — Product Owner, Scrum Master, Developer, QA and SRE — are all **built around a traditional SDLC** designed with only human in focus
-- Waterfall, Agile and Scrum assume iteration are expensive and long running.
+- Today's roles — Product Owner, Scrum Master, Developer, QA and SRE — are all **built around a SDLC** designed with only human in focus
+- Current (Waterfall, Agile and Scrum assume) iteration are expensive and long running.
 - lot of handoffs between roles - leading inter role dependencies
 - documents thrown at each other to transfer context
-- approval gates and cadence rituals like standups, sprints and story points. 
-Retrofitting AI only reinforces the old inefficiencies. Way I see it this will undergo a transformation. 
+- approval gates and cadence rituals (like standups, sprints and story points) are there which slows overall process. 
+- It has worked in the past. With AI we operate at a different scale and autonomy of the work. 
+- Retrofitting AI onto the old process only reinforces its inefficiencies. The process needs to be redesigned around what AI makes possible.
+
 #### Good
-  - Having said this People are going to be continue to get better at what they do currently.
+  - Earlier we had this clear cut role definitions/boundaries where we can function. What has changed now is what I like to call - Jack of all trades and master of One.
   - The catch here is word accountability. 
   - I would ask a junior software engineer to work on Fundamentals not your AI skills, work on building a solid foundation thats how you can increase your ability to be accountable. AI will suggest 9 good options - you should be able to pick the one best option from the 9 or suggest the 10th.
   - [The People say AI will replace them often assume work is going to be of same volume and be at better rate. What they dont realize is called - Jevons Paradox - as Efficiency increases More work gets created, not less.]((https://www.linkedin.com/posts/satyanadella_jevons-paradox-wikipedia-activity-7289521182721093633-5gJ5/))
-  - I did talk to 8 Managers who are upto date in  AI - I saw a common patter - They understand that their people are going to play an ever more significant role, the advice they give their folks is just continue to get better at what you do. Infact more not less people will be required. 
+  - I did talk to 8 Managers who are upto date in AI - I saw a common pattern - All 8 said told their people are going to play an ever more significant role, and all agreed that the people have to continue to get better at what you do. Infact as AI scales, more, not less people will be required. 
   - Unless you resist AI, AI will not replace people. I say resist - because the tools are getting more and more intuitive now a days - AI is attacking the learning curve. 
   - Imagine this you have to see a doctor. he has 85% success diagnosing a problem, you have AI which has 90% success. would you go to the doctor, AI or go to a doctor who uses AI? You get a combination of good judgement and accountability.
 
