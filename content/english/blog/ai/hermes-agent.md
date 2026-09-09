@@ -14,15 +14,6 @@ Official docs: [hermes-agent.nousresearch.com/docs](https://hermes-agent.nousres
 
 ---
 
-## Table of Contents
-
-1. [What Is Hermes Agent?](#what-is-hermes-agent)
-2. [Part 1 — Components and Architecture](#part-1--components-and-architecture)
-3. [Part 2 — Deep Dive, Beginner to Expert](#part-2--deep-dive-beginner-to-expert)
-4. [Part 3 — Sample Application: Telegram Personal Assistant](#part-3--sample-application-telegram-personal-assistant)
-
----
-
 ## What Is Hermes Agent?
 
 Hermes Agent is more than a chat wrapper around an LLM. It is a complete agent harness that combines:
@@ -47,39 +38,46 @@ The defining architectural idea: **one core agent that serves every surface**. T
 
 Hermes Agent is organized around a handful of entry points that all funnel into a single core agent:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        Entry Points                                  │
-│                                                                      │
-│  CLI (cli.py)    Gateway (gateway/run.py)    ACP (acp_adapter/)     │
-│  Batch Runner    API Server                  Python Library          │
-└──────────┬──────────────┬───────────────────────┬───────────────────┘
-           ▼              ▼                       ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                     AIAgent (run_agent.py)                          │
-│                                                                      │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐               │
-│  │ Prompt       │  │ Provider     │  │ Tool         │               │
-│  │ Builder      │  │ Resolution   │  │ Dispatch     │               │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘               │
-│         │                 │                 │                       │
-│  ┌──────┴───────┐         │                 │                       │
-│  │ Compression  │  ┌──────┴───────┐         │                       │
-│  │ & Caching    │  │ 3 API Modes  │  ┌──────┴───────┐               │
-│  │              │  │ chat_compl.  │  │ Tool Registry│               │
-│  │              │  │ codex_resp.  │  │ 70+ tools    │               │
-│  │              │  │ anthropic    │  │ 28 toolsets  │               │
-│  └──────────────┘  └──────────────┘  └──────────────┘               │
-└─────────┴─────────────────┴─────────────────┴───────────────────────┘
-           ▼                                    ▼
-┌───────────────────┐              ┌──────────────────────┐
-│ Session Storage   │              │ Tool Backends         │
-│ (SQLite + FTS5)   │              │ Terminal (7 backends) │
-│ hermes_state.py   │              │ Browser (5 backends)  │
-│ gateway/session.py│              │ Web (4 backends)      │
-└───────────────────┘              │ MCP (dynamic)         │
-                                   │ File, Vision, etc.    │
-                                   └──────────────────────┘
+```mermaid
+flowchart TB
+    subgraph Entry["Entry Points"]
+        CLI["CLI (cli.py)"]
+        GW["Gateway (gateway/run.py)"]
+        ACP["ACP (acp_adapter/)"]
+        BR["Batch Runner"]
+        APS["API Server"]
+        PYL["Python Library"]
+    end
+
+    subgraph Core["AIAgent (run_agent.py)"]
+        direction TB
+        PB["Prompt Builder"]
+        PR["Provider Resolution"]
+        TOOLDISP["Tool Dispatch"]
+        CC["Compression & Caching"]
+        AM["3 API Modes: chat_completions, codex_responses, anthropic"]
+        TR["Tool Registry: 70+ tools, 28 toolsets"]
+        PB -.-> CC
+        PR -.-> AM
+        TOOLDISP -.-> TR
+    end
+
+    subgraph Store["Session Storage"]
+        SS["SQLite + FTS5<br/>hermes_state.py, gateway/session.py"]
+    end
+
+    subgraph ToolBack["Tool Backends"]
+        TOOL["Terminal (7 backends)<br/>Browser (5 backends)<br/>Web (4 backends)<br/>MCP (dynamic)<br/>File, Vision, etc."]
+    end
+
+    CLI --> Core
+    GW --> Core
+    ACP --> Core
+    BR --> Core
+    APS --> Core
+    PYL --> Core
+    Core --> SS
+    Core --> TOOL
 ```
 
 ### Major Subsystems
