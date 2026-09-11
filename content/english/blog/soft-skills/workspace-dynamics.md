@@ -1,5 +1,5 @@
 +++
-date = '2026-09-12T09:10:00+05:30'
+date = '2026-09-12T09:11:00+05:30'
 draft = false
 title = "The Synthesizer's Advantage: Information Brokering, Boundary Spanning, and Who Gets Credit for Your Ideas"
 tags = ['Workplace Dynamics', 'Communication', 'Career Strategy', 'Organizational Behavior']
