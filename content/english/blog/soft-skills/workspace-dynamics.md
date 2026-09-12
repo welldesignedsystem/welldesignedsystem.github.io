@@ -1,7 +1,7 @@
 +++
-date = '2026-09-12T09:11:00+05:30'
+date = '2026-09-11T09:11:00+05:30'
 draft = false
-title = "The Synthesizer's Advantage: Information Brokering, Boundary Spanning, and Who Gets Credit for Your Ideas"
+title = "The Synthesizer Advantage"
 tags = ['Workplace Dynamics', 'Communication', 'Career Strategy', 'Organizational Behavior']
 summary = "Why the person who talks slowly and collects everyone's input often walks away with the credit — and the difference between smart synthesis and quiet idea theft."
 +++
@@ -16,7 +16,7 @@ Is this manipulation? Is it just good operating? The honest answer is: it's usua
 
 ### 1. Boundary spanning
 
-Organizational behavior research uses this term for people who sit at the intersection of multiple groups — different teams, different levels of hierarchy, different stakeholders — and move information between them. Boundary spanners become disproportionately valuable not because they generate more ideas, but because they're the only node in the network who sees the whole picture. Everyone else is heads-down in their own lane; the boundary spanner is the one who can say "actually, what design wants conflicts with what backend already built last sprint."
+Organizational behavior research uses this term for people who sit at the intersection of multiple groups — different teams, different levels of hierarchy, different stakeholders — and move information between them. Boundary spanners become disproportionately valuable not because they generate more ideas, but because they're the only node in the network who sees the whole picture. Everyone else is heads-down in their own lane; the boundary spanner is the one who can say "actually, the design team's proposal conflicts with what the backend team built last sprint."
 
 This is a real service. Organizations are chronically bad at internal information flow, and a person willing to do the unglamorous work of talking to everyone fills a genuine gap.
 

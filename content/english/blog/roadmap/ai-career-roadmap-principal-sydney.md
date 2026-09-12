@@ -6,27 +6,6 @@ tags = ['AI Career', 'Roadmap', 'Career Progression', 'Sydney', 'Agentic AI', 'S
 summary = "Roadmap from principal engineer to AI leadership in Sydney, with salaries."
 +++
 
-## Overview
-
-This roadmap is written for a **principal engineer in Sydney** who is strong on system design and has working AI breadth (agents, MCP, evals, context engineering, spec-driven development) but has not yet converted that breadth into an AI-focused seniority play. The goal is a deliberate, high-earning progression from principal engineer to AI platform owner, then to Head of AI, and optionally Chief AI Officer or a fractional/consulting track.
-
-The honest framing: title inflation means "principal" is priced differently everywhere. The same word is worth AUD 190-225k at employers where principal sits directly above senior, and AUD 220-260k at US-style ladders with a staff rung in between. Scope is what is priced, not the word. The fastest way to make money in this market is to stop being "a principal who does AI work" and become "the person who owns how an organisation ships reliable AI systems."
-
----
-
-## Where You Stand
-
-Your existing knowledge maps to the parts of the stack that carry the strongest 2026 premiums:
-
-- **Evals and quality gates** — the market now treats eval engineering as a distinct, well-paid discipline
-- **MCP and protocol engineering** — MCP is the USB-C of AI tooling, and MCP fluency is a measurable salary signal
-- **Context engineering and spec-driven development** — the "reliability layer" skills
-- **System design depth** — the thing most junior AI engineers lack and cannot fake
-
-What is missing is the production layer: observability of deployed agents, fine-tuning, inference cost control, multi-agent orchestration at scale, and the commercial ownership that turns engineering excellence into budget, headcount and revenue responsibility.
-
----
-
 ## The Market Shift (2026)
 
 Several verified signals shape this roadmap:
