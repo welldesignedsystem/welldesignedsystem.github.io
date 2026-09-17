@@ -90,7 +90,7 @@ The pipeline consumes three inputs, and their shape is the first thing the workf
 
 ## Evaluation Pyramid
 
-The report card's scores are built on the six-layer evaluation pyramid from the [reference appendix](#reference-appendix), and every layer maps to a box in the diagram above. Each layer gets a layer-by-layer deep dive in a dedicated post.
+The report card's scores are built on the six-layer evaluation pyramid from the [reference appendix](#reference-appendix), and every layer maps to a box in the diagram above. Each layer gets a deep dive as it is built; Layer 1 is documented in full below.
 
 ## Workflow Components
 
@@ -100,7 +100,7 @@ The source of truth the artifact is judged against. There are many shapes:
 
 | Type | Examples | What it enables |
 | ---- | -------- | --------------- |
-| Documents | Design docs, requirements, ADRs, markdown specs | Roundtrip-fidelity and requirement-coverage checks, via the pattern in the [evals roundtrip post](../ai/evals/) |
+| Documents | Design docs, requirements, ADRs, markdown specs | Roundtrip-fidelity and requirement-coverage checks, via the pattern in the [evals roundtrip post](../../ai/evals/) |
 | Code | Existing codebase, reference implementations | Signature matching, API-conformance, style-and-pattern norms |
 | JSON / Schemas | JSON Schema, OpenAPI, Swagger, typed configs | Structural validation, field presence, type and enum conformance |
 | Config / Infra | YAML, Terraform, docker, CI configs | Deterministic parse-and-verify against known-good defaults |
@@ -135,8 +135,8 @@ What the AI produced. The grader must normalise every shape into a common repres
 | Code | Compiles, lints, type checks, matches API contract, no banned imports |
 | Documentation | Required sections present, claims match source, no stale examples |
 | JSON / config | Valid against schema, no forbidden keys, values in enum sets |
-| Skills / hook files | Trigger contract, procedure adherence, boundary respect (the [skill checklist](../ai/evals/#part-4-testing-claude-code-skills-specific)) |
-| Agent trajectories | Tool-call correctness, step efficiency, recovery behaviour (the [trajectory pattern](../ai/evals/#part-3-evaluating-agents-specifically)) |
+| Skills / hook files | Trigger contract, procedure adherence, boundary respect (the [skill checklist](../../ai/evals/#part-4-testing-claude-code-skills-specific)) |
+| Agent trajectories | Tool-call correctness, step efficiency, recovery behaviour (the [trajectory pattern](../../ai/evals/#part-3-evaluating-agents-specifically)) |
 | Reports / prose | Length bounds, banned phrases, rubric-graded quality where semantics matter |
 
 ### 3. Evaluation Policy
@@ -165,6 +165,47 @@ Normalisation also decides which mode the pipeline runs in. If a criterion decla
 
 What this box does *not* do is create meaning. Two documents that say the same thing in different words normalise to different trees with no shared tokens. Normalisation changes the grade of parsing, not the meaning gap — which is exactly why Layer 2 exists for the semantic residue this box cannot bridge.
 
+## Layer 1: Deterministic & Structural Checks
+
+Layer 1 is the wide base of the pyramid. Every check that can be expressed as plain code lives here — no model call, no human glance. It runs immediately after Normalise & Parse, it is the cheapest check per unit in the whole pipeline, and it catches the 60-80% of failures that are expressible as code before any judge ever fires. Everything above it exists for the residue this layer cannot reach.
+
+### What Each Input Contributes
+
+A Layer 1 check is a plain-code assertion, but its *configuration* comes from all three inputs:
+
+| Input | Contribution |
+| ----- | ------------ |
+| Reference context | The **expected** side of a comparison. Sections, signatures, fields, values and bans that "correct" is measured against are extracted from here |
+| Candidate artifact | The **actual** side. The parsed tree of what was produced, mined into checkable facts |
+| Evaluation policy | The **gauge**. Which checks run, the thresholds and the per-check configuration — patterns, mandatory lists, ceilings, allowed and banned values |
+
+Together the three answer three questions: **what should it be** (reference), **what is it** (candidate) and **how carefully do we look** (policy).
+
+### The Normalise → Extract → Assert Flow
+
+Every deterministic check is built the same way:
+
+1. **Normalise** — the reference and the candidate both become node trees in one grammar
+2. **Extract** — pull the comparable facts out of each tree: headings, status codes, signatures, token counts
+3. **Assert** — run a plain-code comparison and record pass or fail with the evidence attached
+
+Say the candidate is a markdown report and the reference is a design doc. Normalisation turns both into heading trees. Extraction pulls the heading list and the documented status codes from each. The asserts run: every reference heading appears in the candidate in order; the status code the reference says is 201 shows up as 201 in the candidate; the candidate stays under the policy ceiling.
+
+When the check is standalone — no reference declared — the assert step grades the candidate against the policy alone: it compiles (policy says run `ruff`), it contains no banned phrase (the policy's banned list), it stays under the token ceiling (the policy's ceiling). Same flow, one input fewer.
+
+### The Per-Artifact Map
+
+| Artifact | Actual (candidate) | Expected (reference, comparative) | Gauge (policy) | Example Layer 1 checks |
+| -------- | ------------------ | --------------------------------- | -------------- | ---------------------- |
+| Code | Parsed tree of functions, imports, calls | API contract, design doc signatures | Lint rules, banned imports, boundaries | Compiles under `ruff`; every documented signature exists with the right parameter count; no banned import |
+| Documentation | Heading tree, frontmatter, links | Design doc or ADR | Mandatory sections, length ceiling, banned phrases | Parses as markdown; every reference heading present; no stale example claims |
+| JSON / config | Typed object, schema-aware | JSON Schema, OpenAPI | Required fields, enum sets, forbidden keys | Valid JSON; required fields present and correctly typed; values within the enum set; no forbidden key |
+| Skills / hooks | `SKILL.md` and the output files it produced | Declared contract: trigger, procedure, output promise | Working directory, boundary rules | Promised file exists at the promised path; hook returns the right decision; nothing written outside the declared scope |
+| Agent trajectories | Tool-call log: tool, args, order | Expected sequence, when specified | Tool whitelist, blacklist, efficiency ceiling | Right tool, right args, right order; the delete tool is never called; step count under the ceiling |
+| Prose / reports | Token and word counts | Extractable facts from the source | Ceiling, banned phrases | Under the token ceiling; every extractable fact present (status code, date, name); nothing on the banned list |
+
+The rule of thumb for the whole layer: **if you can express the check as plain code, it belongs here.** The gauge decides the rest — strict runs the full sweep, lenient runs the parse — and whatever Layer 1 cannot express falls to the judge in Layer 2.
+
 ## Built Slowly
 
 This is a vision post, not an implementation. The roadmap, in order, each piece getting its own post as it is built:
@@ -181,4 +222,4 @@ The entire design rests on one assumption: **an artifact is only as trustworthy 
 
 ## Reference Appendix
 
-- **Testing LLM Outputs: Evals for Models, Agents, and Skills** — the six-layer evaluation pyramid this design is built on, with the per-layer tool landscape, trajectory and skill testing, and a working CI harness: [../ai/evals/](../ai/evals/)
+- [**Testing LLM Outputs: Evals for Models, Agents, and Skills**](../../ai/evals/) — the six-layer evaluation pyramid this design is built on, with the per-layer tool landscape, trajectory and skill testing, and a working CI harness
