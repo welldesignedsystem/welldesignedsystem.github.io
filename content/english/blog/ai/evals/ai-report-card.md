@@ -1,6 +1,6 @@
 +++
 date = '2026-09-16T12:01:00+10:00'
-draft = true
+draft = false
 title = 'AI Artifact Report Cards: Grading What AI Builds'
 tags = ['AI', 'Evals', 'Evaluation', 'Reporting', 'Rubric', 'LLM', 'Product']
 summary = 'A high-level vision for a portal that grades AI-generated artifacts against reference context using configurable evaluation policies, and emits a report card with per-category scores and a thin human-review loop.'
@@ -100,7 +100,7 @@ The source of truth the artifact is judged against. There are many shapes:
 
 | Type | Examples | What it enables |
 | ---- | -------- | --------------- |
-| Documents | Design docs, requirements, ADRs, markdown specs | Roundtrip-fidelity and requirement-coverage checks, via the pattern in the [evals roundtrip post](../../ai/evals/) |
+| Documents | Design docs, requirements, ADRs, markdown specs | Roundtrip-fidelity and requirement-coverage checks, via the pattern in the [evals roundtrip post](../evals/) |
 | Code | Existing codebase, reference implementations | Signature matching, API-conformance, style-and-pattern norms |
 | JSON / Schemas | JSON Schema, OpenAPI, Swagger, typed configs | Structural validation, field presence, type and enum conformance |
 | Config / Infra | YAML, Terraform, docker, CI configs | Deterministic parse-and-verify against known-good defaults |
@@ -135,8 +135,8 @@ What the AI produced. The grader must normalise every shape into a common repres
 | Code | Compiles, lints, type checks, matches API contract, no banned imports |
 | Documentation | Required sections present, claims match source, no stale examples |
 | JSON / config | Valid against schema, no forbidden keys, values in enum sets |
-| Skills / hook files | Trigger contract, procedure adherence, boundary respect (the [skill checklist](../../ai/evals/#part-4-testing-claude-code-skills-specific)) |
-| Agent trajectories | Tool-call correctness, step efficiency, recovery behaviour (the [trajectory pattern](../../ai/evals/#part-3-evaluating-agents-specifically)) |
+| Skills / hook files | Trigger contract, procedure adherence, boundary respect (the [skill checklist](../evals/#part-4-testing-claude-code-skills-specific)) |
+| Agent trajectories | Tool-call correctness, step efficiency, recovery behaviour (the [trajectory pattern](../evals/#part-3-evaluating-agents-specifically)) |
 | Reports / prose | Length bounds, banned phrases, rubric-graded quality where semantics matter |
 
 ### 3. Evaluation Policy
@@ -206,9 +206,7 @@ When the check is standalone — no reference declared — the assert step grade
 
 The rule of thumb for the whole layer: **if you can express the check as plain code, it belongs here.** The gauge decides the rest — strict runs the full sweep, lenient runs the parse — and whatever Layer 1 cannot express falls to the judge in Layer 2.
 
-## Built Slowly
-
-This is a vision post, not an implementation. The roadmap, in order, each piece getting its own post as it is built:
+## Additional notes:
 
 1. **Input model** — lock the reference context types, candidate artifact types and policy schema
 2. **Normalisation layer** — parse the common types into one grammar so any check can run on any artifact
@@ -217,9 +215,15 @@ This is a vision post, not an implementation. The roadmap, in order, each piece 
 5. **Drill-down trace pages** — every score on the report card links to a detailed HTML page carrying the full reference traces: the check that fired, the exact string or token that triggered it, the judge reasoning, the source snippet it was compared against. Anyone with a doubt clicks through to the reasoning instead of re-reading the artifact
 6. **Doc-to-doc Layer 1 coverage** — dedicate a future post to how deterministic checks handle document-to-document comparison: structure (headings, sections, frontmatter, order), extractable facts (status codes, dates, field names, URLs pulled by regex and compared exactly), and format/lint (valid markdown, no dead links). The rule to land on: structured docs carry most of the load in Layer 1, free-form prose shifts weight to Layer 2. Purely prose-to-prose comparison is the one case where Layer 1 drops to near zero — which is precisely why high-strictness policies should require the reference side to be structured
 7. **Human-review queue** — flagged and low-confidence cases routed to a human, disagreements feeding back into the rubric
+8. Generally classify the usecases - like most common usecase would be to compare the document to code.
+   1. check if testcases are covered by 
+      1. deterministic checks (use conventions for testcases)
+      2. invarient testing is done properly.
+   2. 
+
 
 The entire design rests on one assumption: **an artifact is only as trustworthy as the checks that ran against it, and checks only scale if they are deterministic first and human-last.**
 
 ## Reference Appendix
 
-- [**Testing LLM Outputs: Evals for Models, Agents, and Skills**](../../ai/evals/) — the six-layer evaluation pyramid this design is built on, with the per-layer tool landscape, trajectory and skill testing, and a working CI harness
+- [**Testing LLM Outputs: Evals for Models, Agents, and Skills**](../evals/) — the six-layer evaluation pyramid this design is built on, with the per-layer tool landscape, trajectory and skill testing, and a working CI harness

@@ -85,7 +85,7 @@ Tools that implement this layer:
 
 - **[`pytest`](../pytest/) / `unittest`** — housing all deterministic checks in a standard CI runner alongside your regular test suite; zero infra overhead.
 - **`jsonschema` / `pydantic`** — validate that parsed JSON has the expected fields and types; catches missing keys, wrong types, extra fields the model invented.
-- **`mypy` / `pyright` / `ruff`** — run on any code the model generates (scripts, SQL, config files); catches syntax errors and type mismatches before the code executes.
+- **`mypy` / `pyright` / `ruff`** — run on Python code the model generates. `mypy` and `pyright` are static type checkers: they inspect the code without executing it and catch type mismatches early. `ruff` checks Python syntax, style and common errors. Use SQL linters and configuration validators for generated SQL or config files.
 - **[`toolcallcheck`](../toolcallcheck/)** — mocks an MCP server and asserts that the agent called the expected tools with the expected arguments in the expected order; runs fully offline, no model call.
 - **[`hypothesis`](../hypothesis/)** — generates edge-case inputs to feed the model and asserts structural properties hold across all of them; catches inputs that trigger malformed output.
 - **[`deepeval`](../deepeval/) (`TaskCompletionMetric`)** — agent-specific metric that scores whether each tool call in a trajectory was structurally correct (right tool, right args) without needing a judge model.
