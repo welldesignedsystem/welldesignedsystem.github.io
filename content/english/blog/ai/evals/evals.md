@@ -81,15 +81,18 @@ If you can express the check as code, do it. This layer should be the majority o
 
 Each scorer is a plain Python function — no LLM, no API call, no judge model. They are composable: a single golden case can combine `score_contains` + `score_max_words` + `score_excludes` and the overall score is simply the mean of the individual checks.
 
-Tools that implement this layer:
+The tools differ by language, but the categories are the same. The following table maps common Layer 1 checks to practical technologies:
 
-- **[`pytest`](../pytest/) / `unittest`** — housing all deterministic checks in a standard CI runner alongside your regular test suite; zero infra overhead.
-- **`jsonschema` / `pydantic`** — validate that parsed JSON has the expected fields and types; catches missing keys, wrong types, extra fields the model invented.
-- **`mypy` / `pyright` / `ruff`** — run on Python code the model generates. `mypy` and `pyright` are static type checkers: they inspect the code without executing it and catch type mismatches early. `ruff` checks Python syntax, style and common errors. Use SQL linters and configuration validators for generated SQL or config files.
-- **[`toolcallcheck`](../toolcallcheck/)** — mocks an MCP server and asserts that the agent called the expected tools with the expected arguments in the expected order; runs fully offline, no model call.
-- **[`hypothesis`](../hypothesis/)** — generates edge-case inputs to feed the model and asserts structural properties hold across all of them; catches inputs that trigger malformed output.
-- **[`deepeval`](../deepeval/) (`TaskCompletionMetric`)** — agent-specific metric that scores whether each tool call in a trajectory was structurally correct (right tool, right args) without needing a judge model.
-- **Plain `assert` + regex** — cheapest of all: check no secrets/PII in output, output length in bounds, known-good patterns present, known-bad patterns absent.
+| Category | Python | Node.js / TypeScript | Java |
+| --- | --- | --- | --- |
+| Test runner | [`pytest`](../pytest/) or `unittest` — runs deterministic assertions, fixtures and parametrized cases in CI. | `Vitest` or `Jest` — runs unit tests, assertions, mocks and snapshots for JavaScript or TypeScript. | `JUnit 5` — runs unit tests, assertions, parameterized tests and extensions through Maven or Gradle. |
+| Schema and data validation | [`pydantic`](../pydantic/) or `jsonschema` — validates parsed model output against typed Python models or JSON Schema. | `Zod`, `Ajv` or `TypeBox` — validates JSON at runtime and can connect schemas to TypeScript types. | Jackson plus `jakarta.validation` or a JSON Schema validator — parses JSON and checks fields, formats and constraints. |
+| Static analysis and type checking | `mypy` or `pyright` — static type checkers that inspect Python without executing it and catch incompatible arguments, returns and assignments. `ruff` adds fast syntax, lint and style checks. | `tsc --noEmit` — checks TypeScript types without emitting JavaScript. `ESLint` catches common errors and enforces code rules. | `javac` or the Maven/Gradle compiler — catches Java syntax and compile-time type errors. `Checkstyle` and `SpotBugs` add source and bytecode analysis. |
+| Property-based testing | [`hypothesis`](../hypothesis/) — generates many inputs, including edge cases, and shrinks failures to smaller examples. | `fast-check` — generates and shrinks values for property-based tests and works with Vitest, Jest or other runners. | `jqwik` — generates inputs and action sequences for JUnit Platform properties, then shrinks failing cases. |
+| Agent and tool-call checks | [`toolcallcheck`](../toolcallcheck/) or a mock MCP server — records tool calls and checks names, arguments, order and forbidden actions. | Mock tool handlers with `Vitest`, `Jest`, `MSW` or `nock` — verifies requests, arguments and response handling without live services. | `Mockito`, `WireMock` or a custom fake server — verifies collaborators, HTTP calls, arguments and failure recovery offline. |
+| Simple output invariants | Plain `assert`, regular expressions and standard-library parsers — checks length, banned strings, secret patterns and valid JSON. | `expect`, regular expressions and `JSON.parse` — checks required text, forbidden patterns, output bounds and parseability. | JUnit assertions, regular expressions and Jackson — checks required fields, forbidden patterns, output bounds and parseability. |
+
+These tools check the generated artifact after the model produces it. For example, an eval can ask a model to generate a Python script, run `mypy` and `ruff` against the saved script, then execute it only if those checks pass. The same workflow applies to generated TypeScript with `tsc --noEmit` or generated Java with the project compiler and static-analysis tools. SQL and configuration files need language-specific parsers, linters or validators rather than Python, Node.js or Java type checkers.
 
 ### Layer 2 — Model-Graded Evaluation (LLM-as-judge)
 
