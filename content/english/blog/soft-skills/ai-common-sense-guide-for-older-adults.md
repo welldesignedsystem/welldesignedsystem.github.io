@@ -26,6 +26,8 @@ This is a 30-minute, point-form talk for anyone who wants to use it with curiosi
 - Its like a music mixing console where you have faders, knobs, swtiches buttons similarly you have parameters here to name a few - parameters increase temperature AI become extrememly imaginative put the temperature to 0 it produces a better more consistent output - based on this you can use AI for creative writing or for drafting a legal document. 
 - Similarly you can do a role play with it - this is another way to influence how the AI responds to you.
 - Finally in the world before Chatgpt we used to have software code to do lots of things like making calls, converting audio to text etc... you may give AI access to these capabilities - as tools AI will be able to use it based on situation. 
+- If you ask me whats missing in AI is the concisousness. personally i see emotions, principles, culture etc associated with words, sentences and semantics, information which is missing in the training data. This is another dimension to the language which AI isn't aware of. e.g you could use abusive language on AI and it would always respond is a composed way - while this is the best way to respond, human often has various degrees of patience, culture and other things drive how a person responds to such situations.
+- this is good and bad because as human there is an element of humanity which we can't be 100% sure if it is built into the AI model or not.   
 
 ### A simple picture in your mind
 
