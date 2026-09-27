@@ -8,336 +8,477 @@ summary = "LLM outputs are non-deterministic, which breaks the assumptions most 
 
 ```mermaid
 classDiagram
+    %% ===== Core types =====
+    class ScoreType {
+        <<enumeration>>
+    }
+    class EvalCase {
+        +input
+        +expected
+        +metadata
+    }
+    class EvalResult {
+        +case_id
+        +scores
+        +passed
+        +latency
+    }
+    class EvalReport {
+        +results
+        +pass_rate
+        +__post_init__()
+        +summary()
+    }
+    class EvalConfig {
+        +ensure_dirs()
+    }
+    class Dataset {
+        +cases
+        +__len__()
+        +__iter__()
+        +__getitem__()
+        +filter_by_tag()
+        +sample()
+        +from_json()
+        +from_jsonl()
+        +to_json()
+        +stats()
+    }
+    class ScoreResult {
+        +name
+        +score
+        +passed
+        +reason
+    }
+    EvalReport o-- EvalResult
+    Dataset o-- EvalCase
 
-%% =========================
-%% Core Types
-%% =========================
+    %% ===== Scorers =====
+    class Scorer {
+        <<abstract>>
+        +name
+        +score_type
+        +threshold
+        +score(output, expected)*
+        +score_batch(cases)
+    }
+    class ExactMatch {
+        +score()
+    }
+    class Contains {
+        +score()
+    }
+    class RegexMatch {
+        +score()
+    }
+    class AllOf {
+        +score()
+    }
+    class AnyOf {
+        +score()
+    }
+    class ContainsAll {
+        +score()
+    }
+    class ContainsAny {
+        +score()
+    }
+    class JsonMatch {
+        +score()
+    }
+    class LevenshteinSimilarity {
+        +score()
+        -_levenshtein_distance()
+    }
+    class JsonSchemaValid {
+        +score()
+        -_validate()
+    }
+    class EmbeddingSimilarity {
+        +score()
+        +score_batch()
+        -_get_embeddings()
+        -_cosine_similarity()
+    }
+    class LengthRange {
+        +score()
+    }
+    class NoForbiddenContent {
+        +score()
+    }
+    class PythonSyntaxValid {
+        +score()
+        -_extract_python()
+    }
+    class SqlSyntaxValid {
+        +score()
+    }
+    class LLMJudge {
+        +score()
+        -_build_prompt()
+        -_parse_response()
+    }
+    class LengthNormalizedJudge {
+        +score()
+    }
+    class ConsensusJudge {
+        +score()
+    }
+    class ContextRelevance {
+        +score()
+        -_judge_chunk()
+    }
+    class Faithfulness {
+        +score()
+        -_extract_claims()
+        -_verify_claim()
+    }
+    class AnswerCompleteness {
+        +score()
+    }
+    class ContextRecall {
+        +score()
+        -_text_overlap()
+    }
+    class ToolCallCorrectness {
+        +score()
+        -_lcs_length()
+    }
+    class TrajectoryEfficiency {
+        +score()
+    }
+    class MultiTurnCoherence {
+        +score()
+    }
+    class TaskCompletion {
+        +score()
+    }
+    class CachedScorer {
+        +score()
+    }
+    class LangfuseScorer {
+        +score()
+    }
 
-class EvalCase {
-    +str input
-    +str expected
-    +dict metadata
-    +list tags
-}
+    Scorer <|-- ExactMatch
+    Scorer <|-- Contains
+    Scorer <|-- RegexMatch
+    Scorer <|-- AllOf
+    Scorer <|-- AnyOf
+    Scorer <|-- ContainsAll
+    Scorer <|-- ContainsAny
+    Scorer <|-- JsonMatch
+    Scorer <|-- LevenshteinSimilarity
+    Scorer <|-- JsonSchemaValid
+    Scorer <|-- EmbeddingSimilarity
+    Scorer <|-- LengthRange
+    Scorer <|-- NoForbiddenContent
+    Scorer <|-- PythonSyntaxValid
+    Scorer <|-- SqlSyntaxValid
+    Scorer <|-- LLMJudge
+    Scorer <|-- LengthNormalizedJudge
+    Scorer <|-- ConsensusJudge
+    Scorer <|-- ContextRelevance
+    Scorer <|-- Faithfulness
+    Scorer <|-- AnswerCompleteness
+    Scorer <|-- ContextRecall
+    Scorer <|-- ToolCallCorrectness
+    Scorer <|-- TrajectoryEfficiency
+    Scorer <|-- MultiTurnCoherence
+    Scorer <|-- TaskCompletion
+    Scorer <|-- CachedScorer
+    Scorer <|-- LangfuseScorer
 
-class EvalResult {
-    +EvalCase case
-    +str output
-    +dict scores
-    +bool passed
-    +float latency_ms
-    +str error
-}
+    class ScorerCache {
+        -_dir
+        -_hits
+        -_misses
+        -_key()
+        +get()
+        +set()
+        +hit_rate()
+    }
+    CachedScorer o-- Scorer : wraps
+    CachedScorer --> ScorerCache
 
-class EvalReport {
-    +str name
-    +List~EvalResult~ results
-    +int total
-    +int passed
-    +int failed
-    +float pass_rate
-    +dict avg_scores
-    +float avg_latency_ms
-    +summary()
-}
+    %% ===== Judge / calibration =====
+    class JudgeCriterion {
+        +name
+        +description
+    }
+    class JudgeConfig {
+        +criteria
+    }
+    class CalibrationCase {
+        +input
+        +human_score
+    }
+    LLMJudge --> JudgeConfig
+    JudgeConfig o-- JudgeCriterion
 
-class EvalConfig {
-    +str project_name
-    +Path datasets_dir
-    +Path results_dir
-    +Path golden_dir
-    +float pass_threshold
-    +ensure_dirs()
-}
+    %% ===== Guardrails =====
+    class Guardrail {
+        <<abstract>>
+        +check(text)*
+    }
+    class ProfanityGuardrail {
+        +check()
+    }
+    class LengthGuardrail {
+        +check()
+    }
+    class PIIGuardrail {
+        +check()
+    }
+    class GuardrailResult {
+        +passed
+        +reason
+    }
+    class GuardrailPipeline {
+        +run()
+    }
+    class PipelineResult {
+        +results
+        +passed
+    }
+    Guardrail <|-- ProfanityGuardrail
+    Guardrail <|-- LengthGuardrail
+    Guardrail <|-- PIIGuardrail
+    Guardrail --> GuardrailResult
+    GuardrailPipeline o-- Guardrail
+    GuardrailPipeline --> PipelineResult
 
-EvalReport --> EvalResult
-EvalResult --> EvalCase
+    %% ===== Execution / runners =====
+    class Runner {
+        +system
+        +scorers
+        +pass_threshold
+        +run_case(case)
+        +run(dataset)
+    }
+    class CostAwareRunner {
+        +budget
+        +cost_report
+        +run()
+    }
+    class TieredRunner {
+        +fast_scorers
+        +slow_scorers
+        +run_case()
+        +run()
+    }
+    class ConcurrentRunner {
+        +max_concurrency
+        +run()
+    }
+    class CostEntry {
+        +model
+        +tokens
+        +cost
+    }
+    class CostReport {
+        +total_cost()
+        +total_input_tokens()
+        +total_output_tokens()
+        +cost_by_scorer()
+        +cost_by_model()
+        +summary()
+        +estimate_cost()
+    }
+    Runner --> Dataset
+    Runner o-- Scorer
+    Runner --> EvalReport
+    CostAwareRunner o-- Scorer
+    CostAwareRunner --> CostReport
+    CostReport o-- CostEntry
+    TieredRunner o-- Scorer
+    ConcurrentRunner o-- Scorer
 
-%% =========================
-%% Dataset Layer
-%% =========================
+    %% ===== Datasets & versioning =====
+    class DatasetVersion {
+        +version
+        +checksum
+        +timestamp
+    }
+    class DatasetRegistry {
+        -_load_manifest()
+        -_save_manifest()
+        -_checksum()
+        +register()
+        +load()
+        +history()
+    }
+    class SyntheticGenerator {
+        +generate()
+    }
+    class ValidationIssue {
+        +severity
+        +message
+    }
+    DatasetRegistry o-- DatasetVersion
+    DatasetRegistry --> Dataset
+    SyntheticGenerator --> Dataset
 
-class Dataset {
-    +str name
-    +List~EvalCase~ cases
-    +filter_by_tag()
-    +sample()
-    +from_json()
-    +from_jsonl()
-    +to_json()
-    +stats()
-}
+    %% ===== Regression & prompts =====
+    class RegressionResult {
+        +metric
+        +delta
+        +regressed
+    }
+    class RegressionDetector {
+        +save_baseline()
+        +compare()
+        +format_report_markdown()
+        +run_ci_eval()
+    }
+    class PromptComparisonResult {
+        +prompt_a
+        +prompt_b
+        +winner
+    }
+    class PromptVersion {
+        +version
+        +text
+    }
+    class PromptRegistry {
+        -_load()
+        -_save()
+        +register()
+        +load()
+        +history()
+    }
+    RegressionDetector --> RegressionResult
+    PromptRegistry o-- PromptVersion
 
-class DatasetRegistry {
-    +register()
-    +load()
-    +history()
-}
+    %% ===== RAG =====
+    class RAGCase {
+        +query
+        +retrieved_chunks
+        +answer
+    }
 
-class DatasetVersion {
-    +str version
-    +str checksum
-    +str created_at
-}
+    %% ===== Agents =====
+    class ToolCall {
+        +name
+        +args
+        +result
+    }
+    class AgentStep {
+        +action
+        +observation
+    }
+    class AgentTrajectory {
+        +steps
+        +tool_calls()
+        +tool_names()
+        +tool_errors()
+        +to_text()
+    }
+    AgentTrajectory o-- AgentStep
+    AgentStep o-- ToolCall
 
-Dataset --> EvalCase
-DatasetRegistry --> Dataset
-DatasetRegistry --> DatasetVersion
+    %% ===== Human annotation =====
+    class Annotation {
+        +label
+        +annotator
+    }
+    class AnnotationTask {
+        +case
+        +annotations
+    }
+    class AnnotationBatch {
+        +tasks
+        +completion_rate()
+        +save()
+        +load()
+    }
+    class AgreementReport {
+        +kappa
+        +agreement_rate
+    }
+    AnnotationBatch o-- AnnotationTask
+    AnnotationTask o-- Annotation
 
-%% =========================
-%% Scoring Framework
-%% =========================
+    %% ===== Production monitoring =====
+    class SampledRequest {
+        +input
+        +output
+        +timestamp
+    }
+    class ProductionSampler {
+        +should_sample()
+        +evaluate_sample()
+        +flush()
+        +stats()
+    }
+    class QualityWindow {
+        +start
+        +end
+        +pass_rate
+    }
+    class QualityMonitor {
+        +process_window()
+        +trend()
+        +handle_request()
+    }
+    ProductionSampler --> SampledRequest
+    QualityMonitor o-- QualityWindow
 
-class ScoreResult {
-    +str name
-    +float score
-    +bool passed
-    +str reason
-    +Any raw_value
-}
+    %% ===== Integrations & misc =====
+    class EvalKitToDeepEvalMetric {
+        +__name__
+        +measure()
+        +is_successful()
+    }
+    class ExperimentRecord {
+        +config
+        +result
+        +timestamp
+    }
+    class EDDWorkflow {
+        -_load_history()
+        -_save_history()
+        +run_experiment()
+        +print_history()
+        +best_experiment()
+        +validate_migration()
+    }
+    class SupportBot {
+        +handle()
+        -_execute_tool()
+        +cmd_validate()
+        +cmd_run()
+        +cmd_compare()
+        +main()
+        +generate_html_dashboard()
+    }
 
-class Scorer {
-    <<abstract>>
-    +name
-    +score()
-    +score_batch()
-}
+    %% ===== Colour coding by area =====
+    classDef core fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef scorer fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef guardrail fill:#ffedd5,stroke:#ea580c,color:#7c2d12
+    classDef runner fill:#ede9fe,stroke:#7c3aed,color:#4c1d95
+    classDef dataset fill:#ccfbf1,stroke:#0d9488,color:#134e4a
+    classDef judge fill:#d1fae5,stroke:#059669,color:#064e3b
+    classDef regression fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    classDef rag fill:#fce7f3,stroke:#db2777,color:#831843
+    classDef agent fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+    classDef annotation fill:#e7e5e4,stroke:#78716c,color:#292524
+    classDef monitor fill:#cffafe,stroke:#0891b2,color:#164e63
+    classDef misc fill:#e5e7eb,stroke:#4b5563,color:#1f2937
 
-Scorer --> ScoreResult
-
-%% Deterministic
-class ExactMatch
-class Contains
-class RegexMatch
-class ContainsAll
-class ContainsAny
-class LevenshteinSimilarity
-class LengthRange
-class NoForbiddenContent
-class JsonMatch
-class JsonSchemaValid
-class EmbeddingSimilarity
-class PythonSyntaxValid
-class SqlSyntaxValid
-
-Scorer <|-- ExactMatch
-Scorer <|-- Contains
-Scorer <|-- RegexMatch
-Scorer <|-- ContainsAll
-Scorer <|-- ContainsAny
-Scorer <|-- LevenshteinSimilarity
-Scorer <|-- LengthRange
-Scorer <|-- NoForbiddenContent
-Scorer <|-- JsonMatch
-Scorer <|-- JsonSchemaValid
-Scorer <|-- EmbeddingSimilarity
-Scorer <|-- PythonSyntaxValid
-Scorer <|-- SqlSyntaxValid
-
-%% Composite
-class AllOf
-class AnyOf
-
-Scorer <|-- AllOf
-Scorer <|-- AnyOf
-
-AllOf --> Scorer
-AnyOf --> Scorer
-
-%% =========================
-%% LLM Judge Layer
-%% =========================
-
-class JudgeCriterion {
-    +str name
-    +str description
-    +float weight
-}
-
-class JudgeConfig {
-    +str model
-    +float pass_score
-    +List~JudgeCriterion~ criteria
-}
-
-class LLMJudge
-class ConsensusJudge
-class LengthNormalizedJudge
-
-Scorer <|-- LLMJudge
-Scorer <|-- ConsensusJudge
-Scorer <|-- LengthNormalizedJudge
-
-LLMJudge --> JudgeConfig
-JudgeConfig --> JudgeCriterion
-
-ConsensusJudge --> LLMJudge
-LengthNormalizedJudge --> LLMJudge
-
-%% =========================
-%% Runner Layer
-%% =========================
-
-class Runner {
-    +run_case()
-    +run()
-}
-
-class ConcurrentRunner
-class TieredRunner
-class CostAwareRunner
-
-Runner <|-- ConcurrentRunner
-Runner <|-- TieredRunner
-Runner <|-- CostAwareRunner
-
-Runner --> Dataset
-Runner --> Scorer
-Runner --> EvalReport
-
-%% =========================
-%% Cost Tracking
-%% =========================
-
-class CostEntry {
-    +str scorer_name
-    +str model
-    +int input_tokens
-    +int output_tokens
-    +float estimated_cost
-}
-
-class CostReport {
-    +total_cost
-    +cost_by_model
-    +cost_by_scorer
-    +summary()
-}
-
-CostReport --> CostEntry
-CostAwareRunner --> CostReport
-
-%% =========================
-%% Regression / CI
-%% =========================
-
-class RegressionDetector {
-    +save_baseline()
-    +compare()
-}
-
-class RegressionResult {
-    +bool is_regression
-    +float overall_delta
-    +dict metric_deltas
-    +List new_failures
-}
-
-RegressionDetector --> RegressionResult
-RegressionDetector --> EvalReport
-
-%% =========================
-%% RAG Evaluation
-%% =========================
-
-class RAGCase {
-    +query
-    +retrieved_contexts
-    +generated_answer
-    +expected_answer
-}
-
-class ContextRelevance
-class Faithfulness
-class AnswerCompleteness
-class ContextRecall
-
-Scorer <|-- ContextRelevance
-Scorer <|-- Faithfulness
-Scorer <|-- AnswerCompleteness
-Scorer <|-- ContextRecall
-
-%% =========================
-%% Agent Evaluation
-%% =========================
-
-class ToolCall {
-    +tool_name
-    +arguments
-    +result
-    +error
-}
-
-class AgentStep {
-    +step_type
-    +content
-}
-
-class AgentTrajectory {
-    +task
-    +steps
-    +final_answer
-    +tool_calls()
-}
-
-AgentTrajectory --> AgentStep
-AgentStep --> ToolCall
-
-class ToolCallCorrectness
-class TrajectoryEfficiency
-class MultiTurnCoherence
-class TaskCompletion
-
-Scorer <|-- ToolCallCorrectness
-Scorer <|-- TrajectoryEfficiency
-Scorer <|-- MultiTurnCoherence
-Scorer <|-- TaskCompletion
-
-%% =========================
-%% Annotation System
-%% =========================
-
-class Annotation {
-    +annotator
-    +score
-    +reasoning
-}
-
-class AnnotationTask {
-    +task_input
-    +system_output
-    +expected_output
-}
-
-class AnnotationBatch {
-    +tasks
-    +annotations
-    +completion_rate()
-}
-
-AnnotationBatch --> Annotation
-AnnotationBatch --> AnnotationTask
-
-%% =========================
-%% EDD Workflow
-%% =========================
-
-class ExperimentRecord {
-    +experiment_id
-    +pass_rate
-    +regression
-}
-
-class EDDWorkflow {
-    +run_experiment()
-    +best_experiment()
-    +print_history()
-}
-
-EDDWorkflow --> Dataset
-EDDWorkflow --> Scorer
-EDDWorkflow --> RegressionDetector
-EDDWorkflow --> ExperimentRecord
+    class ScoreType,EvalCase,EvalResult,EvalReport,EvalConfig,Dataset,ScoreResult core
+    class Scorer,ExactMatch,Contains,RegexMatch,AllOf,AnyOf,ContainsAll,ContainsAny,JsonMatch,LevenshteinSimilarity,JsonSchemaValid,EmbeddingSimilarity,LengthRange,NoForbiddenContent,PythonSyntaxValid,SqlSyntaxValid,ContextRelevance,Faithfulness,AnswerCompleteness,ContextRecall,ToolCallCorrectness,TrajectoryEfficiency,MultiTurnCoherence,TaskCompletion,CachedScorer,LangfuseScorer,ScorerCache scorer
+    class LLMJudge,LengthNormalizedJudge,ConsensusJudge,JudgeCriterion,JudgeConfig,CalibrationCase judge
+    class Guardrail,ProfanityGuardrail,LengthGuardrail,PIIGuardrail,GuardrailResult,GuardrailPipeline,PipelineResult guardrail
+    class Runner,CostAwareRunner,TieredRunner,ConcurrentRunner,CostEntry,CostReport runner
+    class DatasetVersion,DatasetRegistry,SyntheticGenerator,ValidationIssue dataset
+    class RegressionResult,RegressionDetector,PromptComparisonResult,PromptVersion,PromptRegistry regression
+    class RAGCase rag
+    class ToolCall,AgentStep,AgentTrajectory agent
+    class Annotation,AnnotationTask,AnnotationBatch,AgreementReport annotation
+    class SampledRequest,ProductionSampler,QualityWindow,QualityMonitor monitor
+    class EvalKitToDeepEvalMetric,ExperimentRecord,EDDWorkflow,SupportBot misc
 ```
 
 [Read Book here](https://drive.google.com/file/d/1ZcckmgQj2yYNYjJkC2ym5B0n9wobpUwO/view?usp=drive_link)
