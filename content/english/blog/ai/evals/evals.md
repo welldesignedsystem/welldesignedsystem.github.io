@@ -6,6 +6,340 @@ tags = ['Claude', 'LLM', 'Testing', 'Evals', 'Agents']
 summary = "LLM outputs are non-deterministic, which breaks the assumptions most of our testing tooling is built on. This document covers how to actually test model outputs, agent trajectories, and Claude Code-style skills — the layers of evaluation, the current 2026 tool landscape, and a working CI harness you can copy."
 +++
 
+```mermaid
+classDiagram
+
+%% =========================
+%% Core Types
+%% =========================
+
+class EvalCase {
+    +str input
+    +str expected
+    +dict metadata
+    +list tags
+}
+
+class EvalResult {
+    +EvalCase case
+    +str output
+    +dict scores
+    +bool passed
+    +float latency_ms
+    +str error
+}
+
+class EvalReport {
+    +str name
+    +List~EvalResult~ results
+    +int total
+    +int passed
+    +int failed
+    +float pass_rate
+    +dict avg_scores
+    +float avg_latency_ms
+    +summary()
+}
+
+class EvalConfig {
+    +str project_name
+    +Path datasets_dir
+    +Path results_dir
+    +Path golden_dir
+    +float pass_threshold
+    +ensure_dirs()
+}
+
+EvalReport --> EvalResult
+EvalResult --> EvalCase
+
+%% =========================
+%% Dataset Layer
+%% =========================
+
+class Dataset {
+    +str name
+    +List~EvalCase~ cases
+    +filter_by_tag()
+    +sample()
+    +from_json()
+    +from_jsonl()
+    +to_json()
+    +stats()
+}
+
+class DatasetRegistry {
+    +register()
+    +load()
+    +history()
+}
+
+class DatasetVersion {
+    +str version
+    +str checksum
+    +str created_at
+}
+
+Dataset --> EvalCase
+DatasetRegistry --> Dataset
+DatasetRegistry --> DatasetVersion
+
+%% =========================
+%% Scoring Framework
+%% =========================
+
+class ScoreResult {
+    +str name
+    +float score
+    +bool passed
+    +str reason
+    +Any raw_value
+}
+
+class Scorer {
+    <<abstract>>
+    +name
+    +score()
+    +score_batch()
+}
+
+Scorer --> ScoreResult
+
+%% Deterministic
+class ExactMatch
+class Contains
+class RegexMatch
+class ContainsAll
+class ContainsAny
+class LevenshteinSimilarity
+class LengthRange
+class NoForbiddenContent
+class JsonMatch
+class JsonSchemaValid
+class EmbeddingSimilarity
+class PythonSyntaxValid
+class SqlSyntaxValid
+
+Scorer <|-- ExactMatch
+Scorer <|-- Contains
+Scorer <|-- RegexMatch
+Scorer <|-- ContainsAll
+Scorer <|-- ContainsAny
+Scorer <|-- LevenshteinSimilarity
+Scorer <|-- LengthRange
+Scorer <|-- NoForbiddenContent
+Scorer <|-- JsonMatch
+Scorer <|-- JsonSchemaValid
+Scorer <|-- EmbeddingSimilarity
+Scorer <|-- PythonSyntaxValid
+Scorer <|-- SqlSyntaxValid
+
+%% Composite
+class AllOf
+class AnyOf
+
+Scorer <|-- AllOf
+Scorer <|-- AnyOf
+
+AllOf --> Scorer
+AnyOf --> Scorer
+
+%% =========================
+%% LLM Judge Layer
+%% =========================
+
+class JudgeCriterion {
+    +str name
+    +str description
+    +float weight
+}
+
+class JudgeConfig {
+    +str model
+    +float pass_score
+    +List~JudgeCriterion~ criteria
+}
+
+class LLMJudge
+class ConsensusJudge
+class LengthNormalizedJudge
+
+Scorer <|-- LLMJudge
+Scorer <|-- ConsensusJudge
+Scorer <|-- LengthNormalizedJudge
+
+LLMJudge --> JudgeConfig
+JudgeConfig --> JudgeCriterion
+
+ConsensusJudge --> LLMJudge
+LengthNormalizedJudge --> LLMJudge
+
+%% =========================
+%% Runner Layer
+%% =========================
+
+class Runner {
+    +run_case()
+    +run()
+}
+
+class ConcurrentRunner
+class TieredRunner
+class CostAwareRunner
+
+Runner <|-- ConcurrentRunner
+Runner <|-- TieredRunner
+Runner <|-- CostAwareRunner
+
+Runner --> Dataset
+Runner --> Scorer
+Runner --> EvalReport
+
+%% =========================
+%% Cost Tracking
+%% =========================
+
+class CostEntry {
+    +str scorer_name
+    +str model
+    +int input_tokens
+    +int output_tokens
+    +float estimated_cost
+}
+
+class CostReport {
+    +total_cost
+    +cost_by_model
+    +cost_by_scorer
+    +summary()
+}
+
+CostReport --> CostEntry
+CostAwareRunner --> CostReport
+
+%% =========================
+%% Regression / CI
+%% =========================
+
+class RegressionDetector {
+    +save_baseline()
+    +compare()
+}
+
+class RegressionResult {
+    +bool is_regression
+    +float overall_delta
+    +dict metric_deltas
+    +List new_failures
+}
+
+RegressionDetector --> RegressionResult
+RegressionDetector --> EvalReport
+
+%% =========================
+%% RAG Evaluation
+%% =========================
+
+class RAGCase {
+    +query
+    +retrieved_contexts
+    +generated_answer
+    +expected_answer
+}
+
+class ContextRelevance
+class Faithfulness
+class AnswerCompleteness
+class ContextRecall
+
+Scorer <|-- ContextRelevance
+Scorer <|-- Faithfulness
+Scorer <|-- AnswerCompleteness
+Scorer <|-- ContextRecall
+
+%% =========================
+%% Agent Evaluation
+%% =========================
+
+class ToolCall {
+    +tool_name
+    +arguments
+    +result
+    +error
+}
+
+class AgentStep {
+    +step_type
+    +content
+}
+
+class AgentTrajectory {
+    +task
+    +steps
+    +final_answer
+    +tool_calls()
+}
+
+AgentTrajectory --> AgentStep
+AgentStep --> ToolCall
+
+class ToolCallCorrectness
+class TrajectoryEfficiency
+class MultiTurnCoherence
+class TaskCompletion
+
+Scorer <|-- ToolCallCorrectness
+Scorer <|-- TrajectoryEfficiency
+Scorer <|-- MultiTurnCoherence
+Scorer <|-- TaskCompletion
+
+%% =========================
+%% Annotation System
+%% =========================
+
+class Annotation {
+    +annotator
+    +score
+    +reasoning
+}
+
+class AnnotationTask {
+    +task_input
+    +system_output
+    +expected_output
+}
+
+class AnnotationBatch {
+    +tasks
+    +annotations
+    +completion_rate()
+}
+
+AnnotationBatch --> Annotation
+AnnotationBatch --> AnnotationTask
+
+%% =========================
+%% EDD Workflow
+%% =========================
+
+class ExperimentRecord {
+    +experiment_id
+    +pass_rate
+    +regression
+}
+
+class EDDWorkflow {
+    +run_experiment()
+    +best_experiment()
+    +print_history()
+}
+
+EDDWorkflow --> Dataset
+EDDWorkflow --> Scorer
+EDDWorkflow --> RegressionDetector
+EDDWorkflow --> ExperimentRecord
+```
+
 ## Part 1: Why This Is a Different Testing Problem
 
 - **Traditional software testing** is based on **determinism** of systems - `assertEqual(f(x), y)` works because `f` is deterministic.
