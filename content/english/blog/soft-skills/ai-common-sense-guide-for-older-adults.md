@@ -1,6 +1,6 @@
 +++
 date = '2026-09-17T11:15:30+10:00'
-draft = true
+draft = false
 title = 'AI Without the Mystery: A Common-Sense Guide for Older Adults'
 tags = ['Artificial Intelligence', 'Digital Safety', 'Privacy', 'Soft Skills']
 summary = "A practical, safe and surprising introduction to using AI wisely."
