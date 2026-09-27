@@ -340,6 +340,8 @@ EDDWorkflow --> RegressionDetector
 EDDWorkflow --> ExperimentRecord
 ```
 
+[Read Book here](https://drive.google.com/file/d/1ZcckmgQj2yYNYjJkC2ym5B0n9wobpUwO/view?usp=drive_link)
+
 ## Part 1: Why This Is a Different Testing Problem
 
 - **Traditional software testing** is based on **determinism** of systems - `assertEqual(f(x), y)` works because `f` is deterministic.
