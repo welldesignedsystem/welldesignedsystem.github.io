@@ -6,7 +6,13 @@ tags = ['Artificial Intelligence', 'Digital Safety', 'Privacy', 'Soft Skills']
 summary = "A practical, safe and surprising introduction to using AI wisely."
 +++
 
-This is a 30-minute, point-form talk for anyone who wants to use it with curiosity and good judgement.
+AI can be helpful, surprising and sometimes very dangerous to use. You do not need to be a technology expert to use it wisely: here we discuss ways to Control AI using just curiosity and common sense.
+
+- **Understand** - what AI can do and where it falls short.
+- **AI's hallucinate** - how to identify and differentiate hallucination from useful info.
+- **Protect your privacy** - knowing what info keep out of a chatbot.
+- **Spot scams and fakes** - tips to spot AI scams that can look convincing.
+- **Check before you act** - when health, money or safety is at stake.
 
 ## 1. A quick welcome: what AI is and is not
 - **Artificial intelligence (AI)** is capability of a system to perform tasks typically associated with human intelligence: 
