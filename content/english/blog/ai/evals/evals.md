@@ -9,30 +9,30 @@ summary = "LLM outputs are non-deterministic, which breaks the assumptions most 
 ```mermaid
 classDiagram
     %% ===== Core types =====
-    class ScoreType {
+    class ScoreType:::core {
         <<enumeration>>
     }
-    class EvalCase {
+    class EvalCase:::core {
         +input
         +expected
         +metadata
     }
-    class EvalResult {
+    class EvalResult:::core {
         +case_id
         +scores
         +passed
         +latency
     }
-    class EvalReport {
+    class EvalReport:::core {
         +results
         +pass_rate
         +__post_init__()
         +summary()
     }
-    class EvalConfig {
+    class EvalConfig:::core {
         +ensure_dirs()
     }
-    class Dataset {
+    class Dataset:::core {
         +cases
         +__len__()
         +__iter__()
@@ -44,7 +44,7 @@ classDiagram
         +to_json()
         +stats()
     }
-    class ScoreResult {
+    class ScoreResult:::core {
         +name
         +score
         +passed
@@ -54,7 +54,7 @@ classDiagram
     Dataset o-- EvalCase
 
     %% ===== Scorers =====
-    class Scorer {
+    class Scorer:::scorer {
         <<abstract>>
         +name
         +score_type
@@ -62,101 +62,101 @@ classDiagram
         +score(output, expected)*
         +score_batch(cases)
     }
-    class ExactMatch {
+    class ExactMatch:::scorer {
         +score()
     }
-    class Contains {
+    class Contains:::scorer {
         +score()
     }
-    class RegexMatch {
+    class RegexMatch:::scorer {
         +score()
     }
-    class AllOf {
+    class AllOf:::scorer {
         +score()
     }
-    class AnyOf {
+    class AnyOf:::scorer {
         +score()
     }
-    class ContainsAll {
+    class ContainsAll:::scorer {
         +score()
     }
-    class ContainsAny {
+    class ContainsAny:::scorer {
         +score()
     }
-    class JsonMatch {
+    class JsonMatch:::scorer {
         +score()
     }
-    class LevenshteinSimilarity {
+    class LevenshteinSimilarity:::scorer {
         +score()
         -_levenshtein_distance()
     }
-    class JsonSchemaValid {
+    class JsonSchemaValid:::scorer {
         +score()
         -_validate()
     }
-    class EmbeddingSimilarity {
+    class EmbeddingSimilarity:::scorer {
         +score()
         +score_batch()
         -_get_embeddings()
         -_cosine_similarity()
     }
-    class LengthRange {
+    class LengthRange:::scorer {
         +score()
     }
-    class NoForbiddenContent {
+    class NoForbiddenContent:::scorer {
         +score()
     }
-    class PythonSyntaxValid {
+    class PythonSyntaxValid:::scorer {
         +score()
         -_extract_python()
     }
-    class SqlSyntaxValid {
+    class SqlSyntaxValid:::scorer {
         +score()
     }
-    class LLMJudge {
+    class LLMJudge:::judge {
         +score()
         -_build_prompt()
         -_parse_response()
     }
-    class LengthNormalizedJudge {
+    class LengthNormalizedJudge:::judge {
         +score()
     }
-    class ConsensusJudge {
+    class ConsensusJudge:::judge {
         +score()
     }
-    class ContextRelevance {
+    class ContextRelevance:::scorer {
         +score()
         -_judge_chunk()
     }
-    class Faithfulness {
+    class Faithfulness:::scorer {
         +score()
         -_extract_claims()
         -_verify_claim()
     }
-    class AnswerCompleteness {
+    class AnswerCompleteness:::scorer {
         +score()
     }
-    class ContextRecall {
+    class ContextRecall:::scorer {
         +score()
         -_text_overlap()
     }
-    class ToolCallCorrectness {
+    class ToolCallCorrectness:::scorer {
         +score()
         -_lcs_length()
     }
-    class TrajectoryEfficiency {
+    class TrajectoryEfficiency:::scorer {
         +score()
     }
-    class MultiTurnCoherence {
+    class MultiTurnCoherence:::scorer {
         +score()
     }
-    class TaskCompletion {
+    class TaskCompletion:::scorer {
         +score()
     }
-    class CachedScorer {
+    class CachedScorer:::scorer {
         +score()
     }
-    class LangfuseScorer {
+    class LangfuseScorer:::scorer {
         +score()
     }
 
@@ -189,7 +189,7 @@ classDiagram
     Scorer <|-- CachedScorer
     Scorer <|-- LangfuseScorer
 
-    class ScorerCache {
+    class ScorerCache:::scorer {
         -_dir
         -_hits
         -_misses
@@ -202,14 +202,14 @@ classDiagram
     CachedScorer --> ScorerCache
 
     %% ===== Judge / calibration =====
-    class JudgeCriterion {
+    class JudgeCriterion:::judge {
         +name
         +description
     }
-    class JudgeConfig {
+    class JudgeConfig:::judge {
         +criteria
     }
-    class CalibrationCase {
+    class CalibrationCase:::judge {
         +input
         +human_score
     }
@@ -217,27 +217,27 @@ classDiagram
     JudgeConfig o-- JudgeCriterion
 
     %% ===== Guardrails =====
-    class Guardrail {
+    class Guardrail:::guardrail {
         <<abstract>>
         +check(text)*
     }
-    class ProfanityGuardrail {
+    class ProfanityGuardrail:::guardrail {
         +check()
     }
-    class LengthGuardrail {
+    class LengthGuardrail:::guardrail {
         +check()
     }
-    class PIIGuardrail {
+    class PIIGuardrail:::guardrail {
         +check()
     }
-    class GuardrailResult {
+    class GuardrailResult:::guardrail {
         +passed
         +reason
     }
-    class GuardrailPipeline {
+    class GuardrailPipeline:::guardrail {
         +run()
     }
-    class PipelineResult {
+    class PipelineResult:::guardrail {
         +results
         +passed
     }
@@ -249,34 +249,34 @@ classDiagram
     GuardrailPipeline --> PipelineResult
 
     %% ===== Execution / runners =====
-    class Runner {
+    class Runner:::runner {
         +system
         +scorers
         +pass_threshold
         +run_case(case)
         +run(dataset)
     }
-    class CostAwareRunner {
+    class CostAwareRunner:::runner {
         +budget
         +cost_report
         +run()
     }
-    class TieredRunner {
+    class TieredRunner:::runner {
         +fast_scorers
         +slow_scorers
         +run_case()
         +run()
     }
-    class ConcurrentRunner {
+    class ConcurrentRunner:::runner {
         +max_concurrency
         +run()
     }
-    class CostEntry {
+    class CostEntry:::runner {
         +model
         +tokens
         +cost
     }
-    class CostReport {
+    class CostReport:::runner {
         +total_cost()
         +total_input_tokens()
         +total_output_tokens()
@@ -295,12 +295,12 @@ classDiagram
     ConcurrentRunner o-- Scorer
 
     %% ===== Datasets & versioning =====
-    class DatasetVersion {
+    class DatasetVersion:::dataset {
         +version
         +checksum
         +timestamp
     }
-    class DatasetRegistry {
+    class DatasetRegistry:::dataset {
         -_load_manifest()
         -_save_manifest()
         -_checksum()
@@ -308,10 +308,10 @@ classDiagram
         +load()
         +history()
     }
-    class SyntheticGenerator {
+    class SyntheticGenerator:::dataset {
         +generate()
     }
-    class ValidationIssue {
+    class ValidationIssue:::dataset {
         +severity
         +message
     }
@@ -320,27 +320,27 @@ classDiagram
     SyntheticGenerator --> Dataset
 
     %% ===== Regression & prompts =====
-    class RegressionResult {
+    class RegressionResult:::regression {
         +metric
         +delta
         +regressed
     }
-    class RegressionDetector {
+    class RegressionDetector:::regression {
         +save_baseline()
         +compare()
         +format_report_markdown()
         +run_ci_eval()
     }
-    class PromptComparisonResult {
+    class PromptComparisonResult:::regression {
         +prompt_a
         +prompt_b
         +winner
     }
-    class PromptVersion {
+    class PromptVersion:::regression {
         +version
         +text
     }
-    class PromptRegistry {
+    class PromptRegistry:::regression {
         -_load()
         -_save()
         +register()
@@ -351,23 +351,23 @@ classDiagram
     PromptRegistry o-- PromptVersion
 
     %% ===== RAG =====
-    class RAGCase {
+    class RAGCase:::rag {
         +query
         +retrieved_chunks
         +answer
     }
 
     %% ===== Agents =====
-    class ToolCall {
+    class ToolCall:::agent {
         +name
         +args
         +result
     }
-    class AgentStep {
+    class AgentStep:::agent {
         +action
         +observation
     }
-    class AgentTrajectory {
+    class AgentTrajectory:::agent {
         +steps
         +tool_calls()
         +tool_names()
@@ -378,21 +378,21 @@ classDiagram
     AgentStep o-- ToolCall
 
     %% ===== Human annotation =====
-    class Annotation {
+    class Annotation:::annotation {
         +label
         +annotator
     }
-    class AnnotationTask {
+    class AnnotationTask:::annotation {
         +case
         +annotations
     }
-    class AnnotationBatch {
+    class AnnotationBatch:::annotation {
         +tasks
         +completion_rate()
         +save()
         +load()
     }
-    class AgreementReport {
+    class AgreementReport:::annotation {
         +kappa
         +agreement_rate
     }
@@ -400,23 +400,23 @@ classDiagram
     AnnotationTask o-- Annotation
 
     %% ===== Production monitoring =====
-    class SampledRequest {
+    class SampledRequest:::monitor {
         +input
         +output
         +timestamp
     }
-    class ProductionSampler {
+    class ProductionSampler:::monitor {
         +should_sample()
         +evaluate_sample()
         +flush()
         +stats()
     }
-    class QualityWindow {
+    class QualityWindow:::monitor {
         +start
         +end
         +pass_rate
     }
-    class QualityMonitor {
+    class QualityMonitor:::monitor {
         +process_window()
         +trend()
         +handle_request()
@@ -425,17 +425,17 @@ classDiagram
     QualityMonitor o-- QualityWindow
 
     %% ===== Integrations & misc =====
-    class EvalKitToDeepEvalMetric {
+    class EvalKitToDeepEvalMetric:::misc {
         +__name__
         +measure()
         +is_successful()
     }
-    class ExperimentRecord {
+    class ExperimentRecord:::misc {
         +config
         +result
         +timestamp
     }
-    class EDDWorkflow {
+    class EDDWorkflow:::misc {
         -_load_history()
         -_save_history()
         +run_experiment()
@@ -443,7 +443,7 @@ classDiagram
         +best_experiment()
         +validate_migration()
     }
-    class SupportBot {
+    class SupportBot:::misc {
         +handle()
         -_execute_tool()
         +cmd_validate()
@@ -466,19 +466,6 @@ classDiagram
     classDef annotation fill:#e7e5e4,stroke:#78716c,color:#292524
     classDef monitor fill:#cffafe,stroke:#0891b2,color:#164e63
     classDef misc fill:#e5e7eb,stroke:#4b5563,color:#1f2937
-
-    class ScoreType,EvalCase,EvalResult,EvalReport,EvalConfig,Dataset,ScoreResult core
-    class Scorer,ExactMatch,Contains,RegexMatch,AllOf,AnyOf,ContainsAll,ContainsAny,JsonMatch,LevenshteinSimilarity,JsonSchemaValid,EmbeddingSimilarity,LengthRange,NoForbiddenContent,PythonSyntaxValid,SqlSyntaxValid,ContextRelevance,Faithfulness,AnswerCompleteness,ContextRecall,ToolCallCorrectness,TrajectoryEfficiency,MultiTurnCoherence,TaskCompletion,CachedScorer,LangfuseScorer,ScorerCache scorer
-    class LLMJudge,LengthNormalizedJudge,ConsensusJudge,JudgeCriterion,JudgeConfig,CalibrationCase judge
-    class Guardrail,ProfanityGuardrail,LengthGuardrail,PIIGuardrail,GuardrailResult,GuardrailPipeline,PipelineResult guardrail
-    class Runner,CostAwareRunner,TieredRunner,ConcurrentRunner,CostEntry,CostReport runner
-    class DatasetVersion,DatasetRegistry,SyntheticGenerator,ValidationIssue dataset
-    class RegressionResult,RegressionDetector,PromptComparisonResult,PromptVersion,PromptRegistry regression
-    class RAGCase rag
-    class ToolCall,AgentStep,AgentTrajectory agent
-    class Annotation,AnnotationTask,AnnotationBatch,AgreementReport annotation
-    class SampledRequest,ProductionSampler,QualityWindow,QualityMonitor monitor
-    class EvalKitToDeepEvalMetric,ExperimentRecord,EDDWorkflow,SupportBot misc
 ```
 
 [Read Book here](https://drive.google.com/file/d/1ZcckmgQj2yYNYjJkC2ym5B0n9wobpUwO/view?usp=drive_link)
