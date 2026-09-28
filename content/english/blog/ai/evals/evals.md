@@ -10,6 +10,148 @@ summary = "LLM outputs are non-deterministic, which breaks the assumptions most 
 
 [Read Book here](https://drive.google.com/file/d/1ZcckmgQj2yYNYjJkC2ym5B0n9wobpUwO/view?usp=drive_link)
 
+## Class Reference
+
+Every box in the diagram above, and what it does. The toolkit is a Python harness (`evalkit`) built up over the course of the book — a dataset to run, scorers to judge with, and a runner to tie them together. Everything below is either one of those three, or a supporting piece: caching, cost accounting, regression gating, human labelling and production monitoring.
+
+### Core types
+
+| Class | What it does |
+| --- | --- |
+| `ScoreType` | Enum classifying what a scorer emits: `binary`, `numeric`, `likert` or `categorical`. |
+| `EvalCase` | A single test case: the input, an optional expected output, plus metadata and tags. |
+| `EvalResult` | Outcome of one case: output, per-scorer scores, pass flag, latency and error. |
+| `EvalReport` | Aggregate of a run: totals, pass rate, average scores and average latency. |
+| `EvalConfig` | Global session settings: directories, provider and model, concurrency, thresholds. |
+| `Dataset` | Named collection of `EvalCase` with load, filter, sample and serialize helpers. |
+| `ScoreResult` | What a single scorer returns: normalized score, pass flag, reason and raw value. |
+
+### Scorers
+
+| Class | What it does |
+| --- | --- |
+| `Scorer` | Abstract base every scorer implements: `name`, `score_type`, `threshold` and `score()`. |
+| `ExactMatch` | 1.0 if the output matches the expected answer exactly. |
+| `Contains` | 1.0 if the output contains the expected substring. |
+| `RegexMatch` | 1.0 if the output matches a supplied regular expression. |
+| `AllOf` | Composite scorer: passes only when every child scorer passes. |
+| `AnyOf` | Composite scorer: passes when at least one child scorer passes. |
+| `ContainsAll` | Checks that every required phrase appears, with optional per-phrase weights. |
+| `ContainsAny` | Checks that at least one phrase from a set appears. |
+| `JsonMatch` | Deep-compares parsed JSON against the expected value, ignoring key order. |
+| `LevenshteinSimilarity` | Edit-distance similarity: 1.0 minus the normalized distance. |
+| `JsonSchemaValid` | Validates the output against a JSON Schema. |
+| `EmbeddingSimilarity` | Cosine similarity of embeddings, with a batched variant for throughput. |
+| `LengthRange` | Passes when the output length falls within the configured bounds. |
+| `NoForbiddenContent` | Fails if the output contains any banned string or pattern. |
+| `PythonSyntaxValid` | Extracts Python code blocks and checks that they compile. |
+| `SqlSyntaxValid` | Lightweight structural check on an SQL statement. |
+| `ContextRelevance` | An LLM judges each retrieved chunk against the query, then aggregates. |
+| `Faithfulness` | Extracts claims from the answer and verifies each against the retrieved context. |
+| `AnswerCompleteness` | Checks the answer addresses every part of the question. |
+| `ContextRecall` | Measures whether retrieval surfaced the ground-truth contexts. |
+| `ToolCallCorrectness` | Compares actual tool calls to expected ones using longest-common-subsequence overlap. |
+| `TrajectoryEfficiency` | Judges whether the path taken was efficient rather than wasteful. |
+| `MultiTurnCoherence` | Checks the conversation stays coherent and on-topic across turns. |
+| `TaskCompletion` | Judges whether the agent actually finished the assigned task. |
+| `CachedScorer` | Decorator that memoizes another scorer through a file-backed cache. |
+| `LangfuseScorer` | Wraps a scorer and mirrors its score onto a Langfuse trace. |
+| `ScorerCache` | SHA-256 keyed on-disk cache with hit and miss rate tracking. |
+
+### LLM-as-judge and calibration
+
+| Class | What it does |
+| --- | --- |
+| `JudgeCriterion` | One rubric line: name, description, weight and the 1-to-5 scale text. |
+| `JudgeConfig` | Judge settings: model, temperature, max tokens, criteria and pass score. |
+| `CalibrationCase` | A case carrying both a human score and a judge score, for agreement checks. |
+| `LLMJudge` | Scores an output against a weighted rubric with a structured LLM call. |
+| `LengthNormalizedJudge` | Wraps a judge and penalizes answers far longer than the reference. |
+| `ConsensusJudge` | Runs several judges and takes the median score for robustness. |
+
+### Guardrails
+
+| Class | What it does |
+| --- | --- |
+| `Guardrail` | Base synchronous output check returning an allow, block or modify action. |
+| `ProfanityGuardrail` | Blocks or masks profanity found in the output. |
+| `LengthGuardrail` | Blocks or truncates the output once it passes a length limit. |
+| `PIIGuardrail` | Detects and redacts emails, phone numbers, SSNs and similar patterns. |
+| `GuardrailResult` | Outcome of one guardrail: action taken, reason, latency and output. |
+| `GuardrailPipeline` | Runs guardrails in sequence, threading modified output through each. |
+| `PipelineResult` | Final output, blocked flag, per-guardrail results and total latency. |
+
+### Runners
+
+| Class | What it does |
+| --- | --- |
+| `Runner` | Executes the system over a dataset with every scorer and returns a report. |
+| `CostAwareRunner` | Runner that accrues token cost and stops once a budget is exhausted. |
+| `TieredRunner` | Runs cheap scorers first and skips slow ones on clear failures. |
+| `ConcurrentRunner` | Async runner using a semaphore to issue concurrent LLM scorer calls. |
+| `CostEntry` | One accounted call: model, input and output tokens, estimated cost, case id. |
+| `CostReport` | Aggregate cost and token totals, broken down by scorer and by model. |
+
+### Datasets and versioning
+
+| Class | What it does |
+| --- | --- |
+| `DatasetVersion` | Version metadata: name, case count, checksum, creation date and changelog. |
+| `DatasetRegistry` | Stores dataset versions with checksums and a queryable history. |
+| `SyntheticGenerator` | Generates LLM-written test cases at a chosen difficulty level. |
+| `ValidationIssue` | One dataset quality problem: severity, case index and message. |
+
+### Regression and prompt versioning
+
+| Class | What it does |
+| --- | --- |
+| `RegressionResult` | Baseline diff: regression flag, metric deltas, new failures and new passes. |
+| `RegressionDetector` | Saves a golden baseline and compares current reports against it. |
+| `PromptComparisonResult` | Side-by-side A/B outcome for two prompt variants over one dataset. |
+| `PromptVersion` | One prompt revision with author, changelog and measured pass rate. |
+| `PromptRegistry` | Versioned prompt store with history and the current revision. |
+
+### RAG
+
+| Class | What it does |
+| --- | --- |
+| `RAGCase` | A RAG eval case: query, retrieved contexts, generated answer and ground truth. |
+
+### Agents
+
+| Class | What it does |
+| --- | --- |
+| `ToolCall` | A single tool invocation: name, arguments, result, latency and error. |
+| `AgentStep` | One trajectory step: a thought, a tool call, a tool result or a response. |
+| `AgentTrajectory` | A full agent run: steps, final answer, tokens, latency and accessor helpers. |
+
+### Human annotation
+
+| Class | What it does |
+| --- | --- |
+| `Annotation` | A human label on a case: score, label, reasoning and who produced it. |
+| `AnnotationTask` | One case plus its surrounding context, queued for human scoring. |
+| `AnnotationBatch` | A batch of annotation tasks with status and a completion rate. |
+| `AgreementReport` | Inter-annotator metrics: exact and within-one rates, spread and Cohen's kappa. |
+
+### Production monitoring
+
+| Class | What it does |
+| --- | --- |
+| `SampledRequest` | A sampled production request together with the scores it received. |
+| `ProductionSampler` | Deterministically samples traffic and scores it off the hot path. |
+| `QualityWindow` | Scores and pass rate over a time window, with alert state. |
+| `QualityMonitor` | Aggregates windows and raises an alert when the pass rate drops. |
+
+### Integrations and workflows
+
+| Class | What it does |
+| --- | --- |
+| `EvalKitToDeepEvalMetric` | Adapter exposing an evalkit `Scorer` as a DeepEval metric. |
+| `ExperimentRecord` | One logged experiment: model, prompt version, pass rate and regression flag. |
+| `EDDWorkflow` | The eval-driven development loop: run, compare, record and pick a best. |
+| `SupportBot` | Case-study support agent with tools, iterated to 99% reliability. |
+
 ## Part 1: Why This Is a Different Testing Problem
 
 - **Traditional software testing** is based on **determinism** of systems - `assertEqual(f(x), y)` works because `f` is deterministic.
