@@ -18,7 +18,7 @@ Every box in the diagram above, and what it does. The toolkit is a Python harnes
 
 | Class | What it does |
 | --- | --- |
-| `ScoreType` | Enum classifying what a scorer emits: `binary`, `numeric`, `likert` or `categorical`. |
+| `ScoreType` | Enum classifying what a scorer emits:<br/>**`binary`** [pass/fail, resolves to 1.0 or 0.0]<br/>**`numeric`** [continuous score on a 0.0 to 1.0 scale]<br/>**`likert`** [ordinal 1 to 5 rating, from terrible to excellent. Ordinal, so averaging it as if it were a ratio is not meaningful]<br/>**`categorical`** [un-ordered labels such as good, bad or neutral] |
 | `EvalCase` | A single test case: the input, an optional expected output, plus metadata and tags. |
 | `EvalResult` | Outcome of one case: output, per-scorer scores, pass flag, latency and error. |
 | `EvalReport` | Aggregate of a run: totals, pass rate, average scores and average latency. |
