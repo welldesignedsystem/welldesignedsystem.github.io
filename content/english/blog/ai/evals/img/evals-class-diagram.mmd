@@ -7,23 +7,36 @@ class EvalCase:::core {
     +input
     +expected
     +metadata
+    +tags
 }
 class EvalResult:::core {
-    +case_id
+    +case
+    +output
     +scores
     +passed
-    +latency
+    +error
+    +latency_ms
 }
 class EvalReport:::core {
+    +name
     +results
+    +total
+    +passed
+    +failed
     +pass_rate
+    +avg_scores
+    +avg_latency_ms
     +__post_init__()
     +summary()
 }
 class EvalConfig:::core {
+    +project_name
+    +pass_threshold
+    +regression_tolerance
     +ensure_dirs()
 }
 class Dataset:::core {
+    +name
     +cases
     +__len__()
     +__iter__()
@@ -40,8 +53,10 @@ class ScoreResult:::core {
     +score
     +passed
     +reason
+    +raw_value
 }
 EvalReport o-- EvalResult
+EvalResult o-- EvalCase
 Dataset o-- EvalCase
 
 %% ===== Scorers =====
@@ -51,7 +66,7 @@ class Scorer:::scorer {
     +score_type
     +threshold
     +score(output, expected)*
-    +score_batch(cases)
+    +score_batch(outputs, expecteds)
 }
 class ExactMatch:::scorer {
     +score()
@@ -102,17 +117,6 @@ class PythonSyntaxValid:::scorer {
     -_extract_python()
 }
 class SqlSyntaxValid:::scorer {
-    +score()
-}
-class LLMJudge:::judge {
-    +score()
-    -_build_prompt()
-    -_parse_response()
-}
-class LengthNormalizedJudge:::judge {
-    +score()
-}
-class ConsensusJudge:::judge {
     +score()
 }
 class ContextRelevance:::scorer {
@@ -179,6 +183,8 @@ Scorer <|-- MultiTurnCoherence
 Scorer <|-- TaskCompletion
 Scorer <|-- CachedScorer
 Scorer <|-- LangfuseScorer
+Scorer ..> ScoreResult : returns
+Scorer ..> ScoreType : score_type
 
 class ScorerCache:::scorer {
     -_dir
@@ -191,26 +197,47 @@ class ScorerCache:::scorer {
 }
 CachedScorer o-- Scorer : wraps
 CachedScorer --> ScorerCache
+ScorerCache ..> ScoreResult
 
 %% ===== Judge / calibration =====
 class JudgeCriterion:::judge {
     +name
     +description
+    +weight
+    +scale
 }
 class JudgeConfig:::judge {
+    +model
+    +temperature
+    +max_tokens
     +criteria
+    +system_prompt
+    +pass_score
 }
 class CalibrationCase:::judge {
-    +input
+    +case_id
+    +task_input
     +human_score
+    +judge_score
+    +output
+}
+class LLMJudge:::judge {
+    +score()
+    -_build_prompt()
+    -_parse_response()
+}
+class LengthNormalizedJudge:::judge {
+    +score()
+}
+class ConsensusJudge:::judge {
+    +score()
 }
 LLMJudge --> JudgeConfig
 JudgeConfig o-- JudgeCriterion
 
 %% ===== Guardrails =====
 class Guardrail:::guardrail {
-    <<abstract>>
-    +check(text)*
+    +check(output)
 }
 class ProfanityGuardrail:::guardrail {
     +check()
@@ -223,21 +250,29 @@ class PIIGuardrail:::guardrail {
 }
 class GuardrailResult:::guardrail {
     +passed
+    +guardrail_name
+    +action
     +reason
+    +latency_ms
+    +original_output
+    +modified_output
 }
 class GuardrailPipeline:::guardrail {
     +run()
 }
 class PipelineResult:::guardrail {
-    +results
-    +passed
+    +final_output
+    +blocked
+    +guardrail_results
+    +total_latency_ms
 }
 Guardrail <|-- ProfanityGuardrail
 Guardrail <|-- LengthGuardrail
 Guardrail <|-- PIIGuardrail
-Guardrail --> GuardrailResult
+Guardrail ..> GuardrailResult : returns
 GuardrailPipeline o-- Guardrail
 GuardrailPipeline --> PipelineResult
+PipelineResult o-- GuardrailResult
 
 %% ===== Execution / runners =====
 class Runner:::runner {
@@ -255,6 +290,7 @@ class CostAwareRunner:::runner {
 class TieredRunner:::runner {
     +fast_scorers
     +slow_scorers
+    +fast_fail_threshold
     +run_case()
     +run()
 }
@@ -263,11 +299,15 @@ class ConcurrentRunner:::runner {
     +run()
 }
 class CostEntry:::runner {
+    +scorer_name
     +model
-    +tokens
-    +cost
+    +input_tokens
+    +output_tokens
+    +estimated_cost
+    +case_id
 }
 class CostReport:::runner {
+    +entries
     +total_cost()
     +total_input_tokens()
     +total_output_tokens()
@@ -279,6 +319,7 @@ class CostReport:::runner {
 Runner --> Dataset
 Runner o-- Scorer
 Runner --> EvalReport
+Runner ..> EvalResult : returns
 CostAwareRunner o-- Scorer
 CostAwareRunner --> CostReport
 CostReport o-- CostEntry
@@ -288,8 +329,11 @@ ConcurrentRunner o-- Scorer
 %% ===== Datasets & versioning =====
 class DatasetVersion:::dataset {
     +version
+    +name
+    +case_count
     +checksum
-    +timestamp
+    +created_at
+    +changelog
 }
 class DatasetRegistry:::dataset {
     -_load_manifest()
@@ -304,32 +348,42 @@ class SyntheticGenerator:::dataset {
 }
 class ValidationIssue:::dataset {
     +severity
+    +case_index
     +message
 }
 DatasetRegistry o-- DatasetVersion
 DatasetRegistry --> Dataset
-SyntheticGenerator --> Dataset
+SyntheticGenerator ..> EvalCase : generates
 
 %% ===== Regression & prompts =====
 class RegressionResult:::regression {
-    +metric
-    +delta
-    +regressed
+    +is_regression
+    +overall_delta
+    +metric_deltas
+    +new_failures
+    +new_passes
+    +message
 }
 class RegressionDetector:::regression {
+    +golden_path
+    +tolerance
     +save_baseline()
     +compare()
     +format_report_markdown()
     +run_ci_eval()
 }
 class PromptComparisonResult:::regression {
-    +prompt_a
-    +prompt_b
+    +prompt_a_name
+    +prompt_b_name
     +winner
+    +metrics_comparison
 }
 class PromptVersion:::regression {
     +version
-    +text
+    +content
+    +created_at
+    +author
+    +eval_pass_rate
 }
 class PromptRegistry:::regression {
     -_load()
@@ -339,27 +393,39 @@ class PromptRegistry:::regression {
     +history()
 }
 RegressionDetector --> RegressionResult
+RegressionDetector --> EvalReport
+PromptComparisonResult --> EvalReport
 PromptRegistry o-- PromptVersion
 
 %% ===== RAG =====
 class RAGCase:::rag {
     +query
-    +retrieved_chunks
-    +answer
+    +retrieved_contexts
+    +generated_answer
+    +expected_answer
+    +ground_truth_contexts
 }
 
 %% ===== Agents =====
 class ToolCall:::agent {
-    +name
-    +args
+    +tool_name
+    +arguments
     +result
+    +latency_ms
+    +error
 }
 class AgentStep:::agent {
-    +action
-    +observation
+    +step_type
+    +content
+    +tool_call
 }
 class AgentTrajectory:::agent {
+    +task
     +steps
+    +final_answer
+    +total_latency_ms
+    +total_tokens
+    +iterations
     +tool_calls()
     +tool_names()
     +tool_errors()
@@ -370,60 +436,90 @@ AgentStep o-- ToolCall
 
 %% ===== Human annotation =====
 class Annotation:::annotation {
-    +label
+    +case_id
     +annotator
+    +score
+    +label
+    +reasoning
 }
 class AnnotationTask:::annotation {
-    +case
-    +annotations
+    +case_id
+    +task_input
+    +system_output
+    +expected_output
+    +criteria
 }
 class AnnotationBatch:::annotation {
+    +batch_id
     +tasks
+    +criteria
+    +status
     +completion_rate()
     +save()
     +load()
 }
 class AgreementReport:::annotation {
-    +kappa
-    +agreement_rate
+    +num_annotators
+    +num_cases
+    +exact_agreement_rate
+    +within_one_agreement_rate
+    +mean_spread
+    +cohens_kappa
+    +problem_cases
 }
 AnnotationBatch o-- AnnotationTask
-AnnotationTask o-- Annotation
+AnnotationBatch o-- Annotation
 
 %% ===== Production monitoring =====
 class SampledRequest:::monitor {
+    +request_id
     +input
     +output
     +timestamp
+    +scores
 }
 class ProductionSampler:::monitor {
+    +sample_rate
     +should_sample()
     +evaluate_sample()
     +flush()
     +stats()
 }
 class QualityWindow:::monitor {
-    +start
-    +end
+    +window_start
+    +window_end
+    +sample_count
+    +avg_scores
     +pass_rate
+    +alert_triggered
+    +alert_message
 }
 class QualityMonitor:::monitor {
+    +alert_thresholds
+    +min_samples_for_alert
     +process_window()
     +trend()
     +handle_request()
 }
+ProductionSampler o-- Scorer
 ProductionSampler --> SampledRequest
 QualityMonitor o-- QualityWindow
+QualityMonitor --> SampledRequest
 
-%% ===== Integrations & misc =====
+%% ===== Integrations & workflows =====
 class EvalKitToDeepEvalMetric:::misc {
     +__name__
     +measure()
     +is_successful()
 }
 class ExperimentRecord:::misc {
-    +config
-    +result
+    +experiment_id
+    +description
+    +prompt_version
+    +model
+    +pass_rate
+    +avg_scores
+    +regression
     +timestamp
 }
 class EDDWorkflow:::misc {
@@ -435,14 +531,17 @@ class EDDWorkflow:::misc {
     +validate_migration()
 }
 class SupportBot:::misc {
+    +system_prompt
+    +model
     +handle()
     -_execute_tool()
-    +cmd_validate()
-    +cmd_run()
-    +cmd_compare()
-    +main()
-    +generate_html_dashboard()
 }
+EvalKitToDeepEvalMetric o-- Scorer : wraps
+LangfuseScorer o-- Scorer : wraps
+EDDWorkflow o-- Dataset
+EDDWorkflow o-- Scorer
+EDDWorkflow o-- RegressionDetector
+EDDWorkflow o-- ExperimentRecord
 
 %% ===== Colour coding by area =====
 classDef core fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
@@ -450,7 +549,7 @@ classDef scorer fill:#dcfce7,stroke:#16a34a,color:#14532d
 classDef guardrail fill:#ffedd5,stroke:#ea580c,color:#7c2d12
 classDef runner fill:#ede9fe,stroke:#7c3aed,color:#4c1d95
 classDef dataset fill:#ccfbf1,stroke:#0d9488,color:#134e4a
-classDef judge fill:#d1fae5,stroke:#059669,color:#064e3b
+classDef judge fill:#c7d2fe,stroke:#4f46e5,color:#312e81
 classDef regression fill:#fef9c3,stroke:#ca8a04,color:#713f12
 classDef rag fill:#fce7f3,stroke:#db2777,color:#831843
 classDef agent fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
