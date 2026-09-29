@@ -2,6 +2,10 @@ classDiagram
 %% ===== Core types =====
 class ScoreType:::core {
     <<enumeration>>
+    BINARY
+    NUMERIC
+    LIKERT
+    CATEGORICAL
 }
 class EvalCase:::core {
     +input
@@ -14,8 +18,9 @@ class EvalResult:::core {
     +output
     +scores
     +passed
-    +error
+    +metadata
     +latency_ms
+    +error
 }
 class EvalReport:::core {
     +name
@@ -183,6 +188,8 @@ Scorer <|-- MultiTurnCoherence
 Scorer <|-- TaskCompletion
 Scorer <|-- CachedScorer
 Scorer <|-- LangfuseScorer
+AllOf o-- Scorer : combines
+AnyOf o-- Scorer : combines
 Scorer ..> ScoreResult : returns
 Scorer ..> ScoreType : score_type
 
@@ -233,6 +240,9 @@ class ConsensusJudge:::judge {
     +score()
 }
 LLMJudge --> JudgeConfig
+LengthNormalizedJudge o-- LLMJudge : wraps
+ConsensusJudge *-- LLMJudge : builds one per config
+ConsensusJudge ..> JudgeConfig
 JudgeConfig o-- JudgeCriterion
 
 %% ===== Guardrails =====
@@ -283,20 +293,29 @@ class Runner:::runner {
     +run(dataset)
 }
 class CostAwareRunner:::runner {
+    +system
+    +scorers
     +budget
+    +pass_threshold
     +cost_report
     +run()
 }
 class TieredRunner:::runner {
+    +system
     +fast_scorers
     +slow_scorers
-    +fast_fail_threshold
+    -_threshold
     +run_case()
     +run()
 }
 class ConcurrentRunner:::runner {
-    +max_concurrency
+    +system
+    +scorers
+    +pass_threshold
+    -_semaphore_limit
+    -_run_case_async()
     +run()
+    -_run_all()
 }
 class CostEntry:::runner {
     +scorer_name
@@ -314,17 +333,19 @@ class CostReport:::runner {
     +cost_by_scorer()
     +cost_by_model()
     +summary()
-    +estimate_cost()
 }
 Runner --> Dataset
 Runner o-- Scorer
 Runner --> EvalReport
 Runner ..> EvalResult : returns
-CostAwareRunner o-- Scorer
+%% NOTE: inheritance below is NOT in the book's code (these are standalone classes there);
+%% shown here as the conceptual "extends Runner" relationship the book's prose describes.
+%% Scorer/Dataset/EvalReport links are inherited from Runner, so not repeated.
+Runner <|-- CostAwareRunner
+Runner <|-- TieredRunner
+Runner <|-- ConcurrentRunner
 CostAwareRunner --> CostReport
 CostReport o-- CostEntry
-TieredRunner o-- Scorer
-ConcurrentRunner o-- Scorer
 
 %% ===== Datasets & versioning =====
 class DatasetVersion:::dataset {
@@ -369,12 +390,12 @@ class RegressionDetector:::regression {
     +tolerance
     +save_baseline()
     +compare()
-    +format_report_markdown()
-    +run_ci_eval()
 }
 class PromptComparisonResult:::regression {
     +prompt_a_name
     +prompt_b_name
+    +report_a
+    +report_b
     +winner
     +metrics_comparison
 }
@@ -394,7 +415,7 @@ class PromptRegistry:::regression {
 }
 RegressionDetector --> RegressionResult
 RegressionDetector --> EvalReport
-PromptComparisonResult --> EvalReport
+PromptComparisonResult o-- EvalReport
 PromptRegistry o-- PromptVersion
 
 %% ===== RAG =====
@@ -441,6 +462,9 @@ class Annotation:::annotation {
     +score
     +label
     +reasoning
+    +criteria
+    +timestamp
+    +metadata
 }
 class AnnotationTask:::annotation {
     +case_id
@@ -448,11 +472,14 @@ class AnnotationTask:::annotation {
     +system_output
     +expected_output
     +criteria
+    +context
 }
 class AnnotationBatch:::annotation {
     +batch_id
     +tasks
     +criteria
+    +created_at
+    +annotations
     +status
     +completion_rate()
     +save()
@@ -479,7 +506,9 @@ class SampledRequest:::monitor {
     +scores
 }
 class ProductionSampler:::monitor {
-    +sample_rate
+    -_rate
+    -_scorers
+    -_buffer
     +should_sample()
     +evaluate_sample()
     +flush()
@@ -495,11 +524,11 @@ class QualityWindow:::monitor {
     +alert_message
 }
 class QualityMonitor:::monitor {
-    +alert_thresholds
-    +min_samples_for_alert
+    -_thresholds
+    -_min_samples
+    -_windows
     +process_window()
     +trend()
-    +handle_request()
 }
 ProductionSampler o-- Scorer
 ProductionSampler --> SampledRequest
@@ -523,12 +552,14 @@ class ExperimentRecord:::misc {
     +timestamp
 }
 class EDDWorkflow:::misc {
+    +dataset
+    +scorers
+    +detector
     -_load_history()
     -_save_history()
     +run_experiment()
     +print_history()
     +best_experiment()
-    +validate_migration()
 }
 class SupportBot:::misc {
     +system_prompt
@@ -540,7 +571,7 @@ EvalKitToDeepEvalMetric o-- Scorer : wraps
 LangfuseScorer o-- Scorer : wraps
 EDDWorkflow o-- Dataset
 EDDWorkflow o-- Scorer
-EDDWorkflow o-- RegressionDetector
+EDDWorkflow *-- RegressionDetector
 EDDWorkflow o-- ExperimentRecord
 
 %% ===== Colour coding by area =====
