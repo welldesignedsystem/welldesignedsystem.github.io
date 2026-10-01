@@ -1,9 +1,10 @@
 +++
-date = '2026-08-25T09:10:00+10:00'
+date = '2026-09-30T12:00:07+10:00'
 draft = false
-title = 'AI-Assisted Software Development and the AI-DLC'
+title = 'The AI-DLC Approach to Fintech Software Development'
 tags = ['AI-DLC','Agentic AI','Fintech','Process']
-summary = "The pillars of AI-assisted development and the AI-DLC method."
+summary = "How AI-DLC reshapes fintech software delivery, autonomy and accountability."
+aliases = ['/blog/ai/fintech/ai-dlc/','/blog/ai/fintech/ai-dlc-notes/']
 +++
 
 ### Two approaches to AI in software development
@@ -55,6 +56,20 @@ Dominant approaches to using AI in software development, they are the two ends o
 - [Bitloops: Spectrum from Autocomplete → Co-Developer → Supervised Agent → Autonomous Agent](https://bitloops.com/resources/ai-native-development/ai-as-co-developer-vs-autonomous-agent) .
 - Raja SP, [re:Invent 2025 DVT214](https://youtu.be/1HNUH6j5t4A) (transcribed [here](https://zenn.dev/kiiwami/articles/45a7ac851f2aeb27?locale=en));
 - [Azure Authority analysis](https://azureauthority.in/ai-dlc-the-ai-driven-development-life-cycle-that-replaces-sprints-with-bolts).
+
+### What Changes for People and Teams
+
+Today's product owners, Scrum masters, developers, QA engineers and SREs are organised around an SDLC designed for human-paced work. Waterfall and agile practices assume that iteration is expensive, so teams use handoffs, documents, approval gates and recurring ceremonies to coordinate. AI can change the cost and scale of iteration; adding AI to the old process without redesigning the workflow can preserve the overhead while only accelerating individual tasks.
+
+That does not make judgment or accountability less important. A useful comparison is a doctor with an 85% diagnostic success rate, an AI system with a 90% success rate and a doctor using AI: the combination keeps human judgment and accountability while using the model as an aid. In software, the same principle means engineers need enough fundamentals to evaluate AI's options. AI may suggest nine good options; the engineer should be able to choose the best one or propose a tenth. Generating a long document and asking someone else to take responsibility for it is not accountable use of AI.
+
+This points toward a **jack of all trades and master of one** shape: people need enough breadth to work across the lifecycle, alongside depth in an area that lets them judge its trade-offs.
+
+The roles can shift from producing and handing off artifacts toward setting intent, supplying domain context, validating decisions and owning outcomes. One practitioner observation behind this view was a discussion with eight managers who followed AI developments; all expected their people to remain significant and to keep improving as AI scaled. That is an anecdotal observation, not a workforce forecast.
+
+Jevons' paradox is another useful lens: efficiency gains can increase demand for the work rather than eliminate it. The claim that AI will replace people often assumes a fixed volume of work; if lower costs create more demand, the total amount of work can grow instead. See [Satya Nadella's post referencing Jevons' paradox](https://www.linkedin.com/posts/satyanadella_jevons-paradox-wikipedia-activity-7289521182721093633-5gJ5/).
+
+Resisting AI does not protect a role from change. As tools become more intuitive and reduce the learning curve, the practical response is to build the judgment needed to use and oversee them well.
 
 ## AI-Assisted Software Development and the AI-DLC
 
@@ -284,6 +299,22 @@ The personas in this post map onto the [fintech personas post](/blog/ai/fintech/
 | Solution Architect | Designer, Reviewer (architect lean)                              | Design gates, ADRs, trade-offs         | Design review against NFRs and domain knowledge      |
 | SRE                | Observer + scheduled/reactive operations                         | Operations, rollback, SLOs             | Runbooks, rollback readiness, SLO conformance        |
 | Chapter Lead       | Observer, Reviewer (standards)                                   | Method, people growth, knowledge layer | Standards conformance                                |
+
+The role names are not a one-to-one mapping to hats. A persona can combine hats according to the decisions and outcomes it owns, and a single person may work through different hats in different parts of a Unit. This gives a practical way to describe how familiar delivery roles can evolve:
+
+| Previous role grouping | Evolving responsibility |
+| ---------------------- | ----------------------- |
+| Product Owner / PM / Business Analyst / Scrum master / SME | **Intent owner.** Defines the outcome and success criteria, then validates the AI's discovery rather than owning a pre-decomposed Epic. Planner, Reviewer and Red / Blue hats may apply. |
+| UX / Product Designer / SME | **Designer across Inception and Construction.** Shapes requirements and per-Unit design, then guides implementation with user and aesthetic judgment. Designer, Builder and Reviewer hats may apply. |
+| Scrum Master / Delivery Manager | **Workflow composer.** Chooses which conditional stages apply and helps select each Unit's operating mode instead of relying on a fixed ceremony cadence. Planner, Integrator and Reviewer hats may apply. |
+| Solutions / Technical Architect | **Designer and curator.** Owns domain models and architecture boundaries that Construction realizes. Planner, Designer, Builder, Reviewer and Integrator hats may apply. |
+| Engineering Leader / DevSecOps Engineer | **Adversarial reviewer and gate curator.** Challenges designs and implementations, keeps attack and remediation perspectives distinct and maintains quality gates. Builder, Reviewer and Red / Blue hats may apply. |
+| Developer | **Builder.** Implements the agreed plan in small steps, writes tests and iterates against gate feedback. Planner, Builder and Reviewer hats may apply. |
+| QA / Tester | **Gate curator.** Defines precise completion criteria and maintains evidence-backed quality gates. Builder, Reviewer and Red / Blue hats may apply. |
+| Pipeline / Deployment Engineer | **Deployment automation owner.** Builds release orchestration, rollback and bounded agent-run operations. Builder, Integrator and Reviewer hats may apply. |
+| SRE / Operations Engineer | **Observability steward.** Owns monitoring, runbooks, SLOs and operational feedback into future Inception cycles. Builder, Reviewer and Integrator hats may apply. |
+
+These are possible responsibility shifts, not prescribed job titles. The hats remain reusable work modes; teams decide how to combine them based on their domain, governance and risk.
 
 The necessary caution is the **19-agent trap** already noted above: personas are compositions of a few hats inside a single bolt loop, not a licence to scaffold one full agent per job title. Complex swarms consistently underperform simple loops with rich relevant context, so the persona framing succeeds when it bundles _review and oversight_ hats around one build loop rather than spawning a dedicated agent per role.
 

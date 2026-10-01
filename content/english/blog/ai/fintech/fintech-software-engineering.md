@@ -595,7 +595,7 @@ This matrix maps every persona to the software development phases and describes 
 
 ### Personas and Operating Modes
 
-The matrix codes (O, R, C, A) describe involvement, but the AI-DLC adds a second dimension: how much autonomy each persona grants the AI. Mapping the codes to the HITL/OHOTL/AHOTL operating modes from the [AI-DLC post](/blog/ai/fintech/ai-dlc/) gives a rough pattern:
+The matrix codes (O, R, C, A) describe involvement, but the AI-DLC adds a second dimension: how much autonomy each persona grants the AI. Mapping the codes to the HITL/OHOTL/AHOTL operating modes from the [AI-DLC approach](/blog/ai/fintech/fintech-aidlc-approach/) gives a rough pattern:
 
 | Mode                              | Personas (by dominant involvement)                                                                               | Why                                                                                                                                                                                         |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -603,7 +603,7 @@ The matrix codes (O, R, C, A) describe involvement, but the AI-DLC adds a second
 | OHOTL — observe and redirect      | PM, PO, BA, Solution Architect, Data Architect, Tech Lead, UX Researcher, UX Designer, QA, SRE, Support Engineer | These personas review judgement-heavy output: requirements, designs, UX, test strategy and incidents. They want real-time visibility and the power to intervene without blocking everything |
 | AHOTL — autonomous within gates   | SWE, SDET, Data Engineer, Database Administrator, ML/AI Engineer, DevOps, Cloud Engineer                         | These personas produce and maintain mechanical, verifiable work. Precise completion criteria and quality gates let the agent iterate without hand-holding, and the human reviews the result |
 
-Two things matter here. First, the mode is a property of the work and its risk, not of the persona: a Software Engineer writing authentication is HITL, while the same engineer refactoring a well-tested utility is AHOTL. Second, autonomy is earned — teams move work from HITL to AHOTL only as requirements stabilise, quality gates prove themselves and trust is earned, which is exactly the escalation rule from the [AI-DLC post](/blog/ai/fintech/ai-dlc/).
+Two things matter here. First, the mode is a property of the work and its risk, not of the persona: a Software Engineer writing authentication is HITL, while the same engineer refactoring a well-tested utility is AHOTL. Second, autonomy is earned — teams move work from HITL to AHOTL only as requirements stabilise, quality gates prove themselves and trust is earned, which is exactly the escalation rule from the [AI-DLC approach](/blog/ai/fintech/fintech-aidlc-approach/).
 
 ## SDLC References
 
