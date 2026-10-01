@@ -1,5 +1,5 @@
 +++
-date = '2026-09-30T12:00:07+10:00'
+date = '2026-08-25T09:10:00+10:00'
 draft = false
 title = 'The AI-DLC Approach to Fintech Software Development'
 tags = ['AI-DLC','Agentic AI','Fintech','Process']
