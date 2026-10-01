@@ -18,6 +18,13 @@ Push to `main` → GitHub Actions (Node 24, Hugo latest) → GitHub Pages. CI bu
 
 **Tracked despite `.gitignore`** (CI needs them): `package-lock.json` and `hugo_stats.json` — do not delete. `hugo_stats.json` churns whenever content tags/classes change; commits routinely include it alongside content edits — that's expected, not drift.
 
+## Writing rules
+
+- **Never write ambiguous or unclear text.** Every sentence must have one unambiguous meaning. No hedging ("usually", "most of the time", "it depends"), no vague pronouns ("this", "that", "it") whose referent is unclear, no implied-but-unstated steps. State exactly what applies.
+- **Verify every fact before writing it.** Do not state anything you have not confirmed by reading the repo, running the command or checking the linked source. Verify tool flags, file paths, versions and config values against the actual source (`package.json`, `hugo.toml`, `config/_default/`, workflow files, the vendored theme) rather than from memory.
+- **Cite the source for external facts.** Whenever you reference documentation, a spec, a CVE, a version number or a claim about how a third-party tool behaves, include the URL. For repo-specific claims, reference the exact file path (and line number when useful).
+- **If you cannot verify it, say so.** Explicitly flag unverified claims as unverified instead of guessing. Never invent file paths, flags, config keys, dates or URLs.
+
 ## Content
 
 - **Frontmatter is TOML** (`+++`), never YAML.

@@ -8,50 +8,459 @@ summary = 'AI-DLC (AI-Driven Development Life Cycle) is a methodology and determ
 
 ## Introduction
 
-<!-- What AI-DLC is, who builds it, where it lives. One or two paragraphs. -->
+AI-DLC is presented as a workflow framework for AI-assisted software delivery. Its stated goal is to separate the execution path, governance rules and audit trail from the chat transcript so work can be resumed, reviewed and explained without reconstructing the whole conversation.
 
 - **Repository:** [github.com/awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows)
-- **Website / roadmap:** [awslabs.github.io/aidlc-workflows](https://awslabs.github.io/aidlc-workflows/roadmap.html)
+- **Documentation:** [awslabs.github.io/aidlc-workflows](https://awslabs.github.io/aidlc-workflows/)
 
 ## The Problem It Solves
 
-Ask a coding agent to "add OAuth login" and you get working code in minutes. The trouble starts with the questions that come afterwards: why is the token TTL 15 minutes, who approved the refresh flow, which requirement did that satisfy, what did the agent decide on its own, and can anyone reconstruct the same result six months later inside an audit? The answer is usually a scrollback.
+Imagine asking a coding agent to "add OAuth login". You often get working code quickly. The harder part is answering the follow-up questions: why is the token TTL set to 15 minutes, who approved the refresh flow, which requirement did that change satisfy, what did the agent decide on its own, and how can anyone reconstruct how that result came about during an audit? In practice, the answer is often a long scrollback through chat history. (The OAuth details here are a hypothetical illustration, not an example from the AI-DLC docs.)
 
-That is the core failure mode: **the conversation is the only place the process exists.** The route from request to production lived in chat turns, so everything that does not fit inside a chat turn was never recorded anywhere.
+The core problem is not that an agent produces code quickly. It is that the process often lives in a conversation that is hard to verify, resume or review. When a task is represented mainly as chat turns, decisions that exist only in the transcript are hard to recover later.
 
 ### Seven ways a chat-only workflow fails
 
-**1. Context is volatile.** Harnesses compact when the context window fills, summarizing earlier turns. The framework's own documentation is honest about the boundary — artifacts on disk, the state file and the audit shards survive, while in-memory discussion, work not yet written to files, task IDs and the loaded agent persona are lost. Long-running work is exactly the work that needs continuity, and continuity is exactly what compaction removes. AI-DLC answers this with a per-intent record directory on disk, a state file, and a recovery breadcrumb written _before_ compaction runs, so a resumed session reloads from state rather than from scrollback.
+**1. Context is volatile.** Model sessions often compact earlier turns when the context window fills. The result is that the chat history is not always a reliable source of truth for long-running work. Projects that rely on chat history alone can lose continuity between the request, the implementation and the review. AI-DLC addresses that by describing a persisted intent state and recovery mechanisms that are stored outside the live conversational thread.
 
-**2. The route is improvised.** With no declared path, the agent decides what to do next on every turn. It may skip requirements analysis for a change that needed it, or produce elaborate architecture for a one-line fix. Nothing records the decision, so the next session quietly makes a different one. The route becomes a decision rather than a preference when a deterministic engine owns the next stage, its scope and its gate.
+**2. The route is improvised.** Without a declared path, the agent may decide the next step differently from run to run. That can make the workflow feel inconsistent, especially when the same request needs a different amount of requirements analysis, design or verification depending on the context that survived into the session.
 
-**3. Rules are prose, and prose is not enforcement.** "Every migration ships a rollback script" in an instructions file is a request, not a constraint. Whether it was honoured depends on whether that file was read this session, how much context survived and how the model felt about it. A rule strong enough to fail a release cannot live only in a prompt, which is why AI-DLC resolves a five-layer rule chain — org, then team, then project, then phase, then stage — once at workflow start.
+**3. Rules are prose, and prose is not enforcement.** A rule in an instructions file is still a recommendation unless it is enforced in a process. If the rule is important enough to fail a release, it needs to be represented in a form the system can evaluate and track. This is one of the main reasons AI-DLC treats governance as structured data rather than only as a prompt.
 
-**4. Gates made of good intentions do not hold.** "Please run the tests before you say you are done" is advice. The agent weighs how urgent the tests are, and the pressure to declare completion is precisely the moment a check gets skipped. A gate that can be talked past is not a gate, so AI-DLC enforces 17 event hooks and 5 fences that refuse an out-of-order transition outright.
+**4. Gates made of good intentions do not hold.** "Please run the tests before you say you are done" is useful guidance, but it is still easy to skip under time pressure. A gate is more reliable when the workflow enforces ordering and records the reason for a transition or an exception.
 
-**5. Review arrives late, from the wrong vantage.** By the time code is handed over, the agent has already made hundreds of small design decisions inside the same context that wrote the code. A reviewer reading that diff inherits the author's assumptions along with the changes. AI-DLC dispatches two dedicated reviewer agents as separate subagents, before the gate opens, from a context that did not author the code.
+**5. Review arrives late, from the wrong vantage.** A reviewer often sees the finished diff after the author has already made many small design decisions inside the same context. That can make review more about explaining the work than checking it from a fresh vantage point.
 
-**6. Nothing answers "why".** Without a durable record, reconstructing what happened means re-reading a transcript and inferring. Fine for a prototype, useless in a regulated delivery. AI-DLC keeps an append-only audit trail covering 105 event types across 25 categories, so the reasoning survives the session that produced it.
+**6. Nothing answers "why".** If the process exists only in chat history, later reconstruction depends on inference. An audit trail or a durable state file makes it easier to explain not just what changed, but why it changed and which work item it belonged to.
 
-**7. Narrow specialists create handoffs.** This one is about process design rather than tooling. Give each discipline its own agent and you have rebuilt the waterfall — every handoff is a place where context drops and judgement gets deferred to someone who was never in the conversation. AI-DLC inverts this deliberately with 11 broadly capable agents instead of one narrow agent per discipline, each carrying context across several stages and phases.
+**7. Narrow specialists create handoffs.** When each discipline is owned by a separate agent, context can easily be lost at the seams between stages. A workflow that keeps more context across phases can reduce that churn, even if it still needs specialists for specific tasks.
 
-None of those mechanisms is a prompt. The route, the rules, the checks and the refusals are code or declared data, which is what separates an enforced workflow from a well-written set of instructions.
+The point is not that prompts are useless. It is that a workflow often needs explicit routing, state and checks so that the process can survive the limitations of a conversational interface.
 
 ## What Is AI-DLC
 
-AI-DLC — AI-Driven Development Life Cycle — turns a coding assistant into a software-delivery workflow with a declared route, resolved rules and refusals it cannot argue its way past. The name is the argument. Most "AI development" work treats the assistant as the process; AI-DLC treats it as an execution surface inside a process that was defined before the conversation started.
+AI-DLC (AI-Driven Development Life Cycle) is a methodology from AWS for structuring AI-assisted software development into repeatable, traceable phases. Humans decide and approve while the AI plans and executes. The open-source `awslabs/aidlc-workflows` repository implements it from one harness-neutral core that runs natively in Claude Code, Kiro CLI, Kiro IDE, Codex CLI, Cursor, opencode, and GitHub Copilot. You start a workflow with a single command, such as `/aidlc Build a REST API for inventory management`.
 
-Its unit of work is the **intent**: one piece of work, given its own record directory, run through five phases and 33 stages, producing artifacts that outlive the session that wrote them. Eleven workflow profiles decide which of those stages a given intent actually runs.
+A deterministic engine decides what happens next, moving through 33 stages across five phases: **Initialization, Ideation, Inception, Construction, and Operation**. Workflow profiles and depth levels adapt the path to the size of the work, **so a bug fix does not get the same ceremony as a new service**. **Fourteen agents** (11 domain experts, 2 reviewers, and a composer) carry out the stages. You approve the result at each approval gate, and progress and decisions are recorded in persistent state and an audit trail.
+
+### AI-DLC: Phases, Stages, and Agents
+
+AI-DLC has 5 phases, 33 stages, and 14 agents (11 domain experts, 2 reviewers, and 1 composer).
+
+Which stages actually run depends on the scope you choose.
+
+##### The 5 phases
+
+| # | Phase | Stages | Purpose |
+|---|---|---|---|
+| 0 | Initialization | 0.1–0.3 | Bootstrap the workspace (automatic, no approval gates) |
+| 1 | Ideation | 1.1–1.7 | Validate the initiative: intent, feasibility, scope, team, approval |
+| 2 | Inception | 2.1–2.9 | Elaborate requirements, design, and delivery plan |
+| 3 | Construction | 3.1–3.7 | Design, implement, and test in reviewable slices |
+| 4 | Operation | 4.1–4.7 | Deploy and operate, with a feedback loop back to Ideation |
+
+##### The 33 stages
+
+| # | Stage | Lead | Runs | Description |
+|---|---|---|---|---|
+| 0.1 | Workspace Scaffold | orchestrator | Always | Ensures the per-intent record and in-scope phase directories exist (idempotent) — [details](#ref-0-1) |
+| 0.2 | Workspace Detection | orchestrator | Always | Scans and classifies the workspace; auto-proceeds, no approval gate — [details](#ref-0-2) |
+| 0.3 | State Initialization | orchestrator | Always | Writes the fully populated state file and determines routing; auto-proceeds — [details](#ref-0-3) |
+| 1.1 | Intent Capture & Framing | aidlc-product-agent | Always | First stage of every workflow; captures the intent statement and stakeholder map — [details](#ref-1-1) |
+| 1.2 | Market Research | aidlc-product-agent | Conditional | Runs when the initiative has external market positioning or build-vs-buy considerations; skipped for internal tools, bug fixes and refactors — [details](#ref-1-2) |
+| 1.3 | Feasibility & Constraints | aidlc-architect-agent | Conditional | Runs when there are integration constraints, regulatory requirements or significant technical uncertainty; skipped for trivial changes — [details](#ref-1-3) |
+| 1.4 | Scope Definition | aidlc-product-agent | Always | Defines the scope boundary and the prioritized backlog — [details](#ref-1-4) |
+| 1.5 | Team Formation | aidlc-delivery-agent | Conditional | Runs when team composition, capacity or mob planning is relevant; skipped for solo or small-team projects — [details](#ref-1-5) |
+| 1.6 | Rough Mockups | aidlc-design-agent | Conditional | Runs when user-facing UI is part of the initiative (system interaction diagrams for API/backend otherwise); skipped for API-only and infrastructure-only work — [details](#ref-1-6) |
+| 1.7 | Approval & Handoff | aidlc-delivery-agent | Always | Compiles all Ideation artifacts into the initiative brief for approval — [details](#ref-1-7) |
+| 2.1 | Reverse Engineering | aidlc-developer-agent (then aidlc-architect-agent) | Brownfield projects | Scans a brownfield codebase into the 9-artifact code knowledge base; skipped for greenfield — [details](#ref-2-1) |
+| 2.2 | Practices Discovery | aidlc-pipeline-deploy-agent | Conditional | Discovers team practices; brownfield derives from evidence and reverse-engineering artifacts, greenfield elicits via structured questions — [details](#ref-2-2) |
+| 2.3 | Requirements Analysis | aidlc-product-agent | Always | Elaborates requirements to a depth that scales with project complexity — [details](#ref-2-3) |
+| 2.4 | User Stories | aidlc-product-agent | User-facing features | Runs when user-facing features, multiple personas, complex business logic or cross-team work is involved; skipped for refactors, isolated bug fixes and infrastructure-only changes — [details](#ref-2-4) |
+| 2.5 | Refined Mockups | aidlc-design-agent | UI projects | Runs when user-facing UI exists and rough mockups were produced in Ideation (refines interaction diagrams for APIs) — [details](#ref-2-5) |
+| 2.6 | Domain Design | aidlc-architect-agent | Per execution plan | Runs when new components or logical building blocks are needed; skipped for modifications to existing components only — [details](#ref-2-6) |
+| 2.7 | Units Generation | aidlc-architect-agent | Always | Produces the units of work and the dependency DAG that Delivery Planning consumes for sequencing — [details](#ref-2-7) |
+| 2.8 | Contract Design | aidlc-architect-agent | Conditional | Runs when the system has a formal contract to pin down — an inter-unit boundary or an API consumed outside the system; skipped for a single self-contained unit — [details](#ref-2-8) |
+| 2.9 | Delivery Planning | aidlc-delivery-agent | Always | Capstone Inception stage; produces the detailed execution plan for Construction and Operation — [details](#ref-2-9) |
+| 3.1 | Functional Design | aidlc-architect-agent | Per Unit (conditional) | Designs new data models, complex business logic and business rules per unit; skipped for simple logic changes — [details](#ref-3-1) |
+| 3.2 | NFR Requirements | aidlc-architect-agent | Per Unit (conditional) | Gathers performance, security, scalability, reliability and observability requirements plus tech-stack selection per unit; skipped when none remain and the stack is fixed — [details](#ref-3-2) |
+| 3.3 | NFR Design | aidlc-architect-agent | Per Unit (conditional) | Designs NFR patterns per unit; skipped when NFR Requirements was skipped — [details](#ref-3-3) |
+| 3.4 | Infrastructure Design | aidlc-aws-platform-agent | Per Unit (conditional) | Maps infrastructure services and cloud resources per unit; skipped when there are no infrastructure changes and infrastructure is already defined — [details](#ref-3-4) |
+| 3.5 | Code Generation | aidlc-developer-agent | Per Unit (always) | Generates application code and its documentation for every unit in the execution plan — [details](#ref-3-5) |
+| 3.6 | Build and Test | aidlc-quality-agent | Always, once at end | Builds and tests everything once after all per-unit stages finish — [details](#ref-3-6) |
+| 3.7 | CI Pipeline | aidlc-pipeline-deploy-agent | Conditional, once at end | Runs once at the end when the CI pipeline needs creation or significant modification — [details](#ref-3-7) |
+| 4.1 | Deployment Pipeline | aidlc-pipeline-deploy-agent | Conditional | Runs when the CD pipeline needs creation or significant modification — [details](#ref-4-1) |
+| 4.2 | Environment Provisioning | aidlc-aws-platform-agent | Conditional | Provisions or validates AWS environments — [details](#ref-4-2) |
+| 4.3 | Deployment Execution | aidlc-pipeline-deploy-agent | Conditional | Runs the deployment after the pipeline and environment are ready — [details](#ref-4-3) |
+| 4.4 | Observability Setup | aidlc-operations-agent | Conditional | Configures monitoring, dashboards, alarms and tracing — [details](#ref-4-4) |
+| 4.5 | Incident Response | aidlc-operations-agent | Conditional | Builds runbooks and incident response procedures — [details](#ref-4-5) |
+| 4.6 | Performance Validation | aidlc-quality-agent | Conditional | Validates NFR performance targets under load — [details](#ref-4-6) |
+| 4.7 | Feedback & Optimization | aidlc-operations-agent | Conditional | Runs when ongoing monitoring and optimization are needed; feeds findings back to Ideation — [details](#ref-4-7) |
+
+##### The 14 agents
+
+###### 11 domain experts
+
+| # | Agent | Domain |
+|---|---|---|
+| 1 | `aidlc-product-agent` | Requirements, scope, user stories, market research |
+| 2 | `aidlc-design-agent` | UX/UI, wireframes, interaction design, accessibility |
+| 3 | `aidlc-delivery-agent` | Team formation, capacity planning, delivery sequencing |
+| 4 | `aidlc-architect-agent` | Application design, domain modelling, NFRs, decomposition |
+| 5 | `aidlc-aws-platform-agent` | AWS infrastructure, IaC, FinOps, environment provisioning |
+| 6 | `aidlc-compliance-agent` | GRC, regulatory mapping, data classification, risk |
+| 7 | `aidlc-devsecops-agent` | Threat modelling, security pipeline, secure design review |
+| 8 | `aidlc-developer-agent` | Code generation, reverse engineering, implementation guidance |
+| 9 | `aidlc-quality-agent` | Test strategy, acceptance criteria, performance validation |
+| 10 | `aidlc-pipeline-deploy-agent` | CI/CD pipelines, deployment strategy, release execution |
+| 11 | `aidlc-operations-agent` | Observability, incident response, feedback loops |
+
+###### 2 reviewer agents
+
+| Agent | Reviews |
+|---|---|
+| `aidlc-product-lead-agent` | Requirements, user stories, and UX/mockup artifacts |
+| `aidlc-architecture-reviewer-agent` | Technical design artifacts, including domain design, units generation, functional design, NFR requirements, NFR design, infrastructure design, and code generation |
+
+###### 1 composer agent
+
+| Agent | Role |
+|---|---|
+| `aidlc-composer-agent` | Proposes tailored stage plans and reshapes pending stages |
+
+##### The 33 stages by lead agent
+
+Each stage sits inside its phase box, is filled with its lead agent's colour, and labels it with the lead agent's ID in square brackets beneath the stage name. The arrows chain the 33 stages in run order; a scope executes a subset of this chain in the same numbered order — skipped stages are left out of that run, not reordered.
+
+```mermaid
+flowchart TD
+    subgraph INIT["Phase 0 — Initialization"]
+        direction LR
+        S01["0.1<br/>Workspace Scaffold<br/><sub>[orchestrator]</sub>"]:::orchestrator
+        S02["0.2<br/>Workspace Detection<br/><sub>[orchestrator]</sub>"]:::orchestrator
+        S03["0.3<br/>State Initialization<br/><sub>[orchestrator]</sub>"]:::orchestrator
+        S01 --> S02 --> S03
+    end
+    subgraph IDEA["Phase 1 — Ideation"]
+        direction LR
+        S11["1.1<br/>Intent Capture & Framing<br/><sub>[aidlc-product-agent]</sub>"]:::product
+        S12["1.2<br/>Market Research<br/><sub>[aidlc-product-agent]</sub>"]:::product
+        S13["1.3<br/>Feasibility & Constraints<br/><sub>[aidlc-architect-agent]</sub>"]:::architect
+        S14["1.4<br/>Scope Definition<br/><sub>[aidlc-product-agent]</sub>"]:::product
+        S15["1.5<br/>Team Formation<br/><sub>[aidlc-delivery-agent]</sub>"]:::delivery
+        S16["1.6<br/>Rough Mockups<br/><sub>[aidlc-design-agent]</sub>"]:::design
+        S17["1.7<br/>Approval & Handoff<br/><sub>[aidlc-delivery-agent]</sub>"]:::delivery
+        S11 --> S12 --> S13 --> S14 --> S15 --> S16 --> S17
+    end
+    subgraph INCP["Phase 2 — Inception"]
+        direction LR
+        S21["2.1<br/>Reverse Engineering<br/><sub>[aidlc-developer-agent]</sub>"]:::developer
+        S22["2.2<br/>Practices Discovery<br/><sub>[aidlc-pipeline-deploy-agent]</sub>"]:::pipelinedeploy
+        S23["2.3<br/>Requirements Analysis<br/><sub>[aidlc-product-agent]</sub>"]:::product
+        S24["2.4<br/>User Stories<br/><sub>[aidlc-product-agent]</sub>"]:::product
+        S25["2.5<br/>Refined Mockups<br/><sub>[aidlc-design-agent]</sub>"]:::design
+        S26["2.6<br/>Domain Design<br/><sub>[aidlc-architect-agent]</sub>"]:::architect
+        S27["2.7<br/>Units Generation<br/><sub>[aidlc-architect-agent]</sub>"]:::architect
+        S28["2.8<br/>Contract Design<br/><sub>[aidlc-architect-agent]</sub>"]:::architect
+        S29["2.9<br/>Delivery Planning<br/><sub>[aidlc-delivery-agent]</sub>"]:::delivery
+        S21 --> S22 --> S23 --> S24 --> S25 --> S26 --> S27 --> S28 --> S29
+    end
+    subgraph CONS["Phase 3 — Construction"]
+        direction LR
+        S31["3.1<br/>Functional Design<br/><sub>[aidlc-architect-agent]</sub>"]:::architect
+        S32["3.2<br/>NFR Requirements<br/><sub>[aidlc-architect-agent]</sub>"]:::architect
+        S33["3.3<br/>NFR Design<br/><sub>[aidlc-architect-agent]</sub>"]:::architect
+        S34["3.4<br/>Infrastructure Design<br/><sub>[aidlc-aws-platform-agent]</sub>"]:::awsplatform
+        S35["3.5<br/>Code Generation<br/><sub>[aidlc-developer-agent]</sub>"]:::developer
+        S36["3.6<br/>Build and Test<br/><sub>[aidlc-quality-agent]</sub>"]:::quality
+        S37["3.7<br/>CI Pipeline<br/><sub>[aidlc-pipeline-deploy-agent]</sub>"]:::pipelinedeploy
+        S31 --> S32 --> S33 --> S34 --> S35 --> S36 --> S37
+    end
+    subgraph OPER["Phase 4 — Operation"]
+        direction LR
+        S41["4.1<br/>Deployment Pipeline<br/><sub>[aidlc-pipeline-deploy-agent]</sub>"]:::pipelinedeploy
+        S42["4.2<br/>Environment Provisioning<br/><sub>[aidlc-aws-platform-agent]</sub>"]:::awsplatform
+        S43["4.3<br/>Deployment Execution<br/><sub>[aidlc-pipeline-deploy-agent]</sub>"]:::pipelinedeploy
+        S44["4.4<br/>Observability Setup<br/><sub>[aidlc-operations-agent]</sub>"]:::operations
+        S45["4.5<br/>Incident Response<br/><sub>[aidlc-operations-agent]</sub>"]:::operations
+        S46["4.6<br/>Performance Validation<br/><sub>[aidlc-quality-agent]</sub>"]:::quality
+        S47["4.7<br/>Feedback & Optimization<br/><sub>[aidlc-operations-agent]</sub>"]:::operations
+        S41 --> S42 --> S43 --> S44 --> S45 --> S46 --> S47
+    end
+
+    VG1{{"Verification Gate 1"}}
+    VG2{{"Verification Gate 2"}}
+    VG3{{"Verification Gate 3"}}
+
+    S03 -.->|auto-proceeds| S11
+    S17 --> VG1
+    VG1 --> S21
+    S29 --> VG2
+    VG2 --> S31
+    S37 --> VG3
+    VG3 --> S41
+    S47 -.->|feedback loop| S11
+
+    classDef orchestrator fill:#9e9e9e,stroke:#616161,color:#000,stroke-width:1px
+    classDef product fill:#2196f3,stroke:#1565c0,color:#fff,stroke-width:1px
+    classDef architect fill:#9c27b0,stroke:#6a1b9a,color:#fff,stroke-width:1px
+    classDef delivery fill:#ff9800,stroke:#e65100,color:#000,stroke-width:1px
+    classDef design fill:#e91e63,stroke:#ad1457,color:#fff,stroke-width:1px
+    classDef developer fill:#4caf50,stroke:#2e7d32,color:#fff,stroke-width:1px
+    classDef pipelinedeploy fill:#00bcd4,stroke:#00838f,color:#000,stroke-width:1px
+    classDef quality fill:#ffc107,stroke:#f9a825,color:#000,stroke-width:1px
+    classDef awsplatform fill:#f44336,stroke:#c62828,color:#fff,stroke-width:1px
+    classDef operations fill:#795548,stroke:#4e342e,color:#fff,stroke-width:1px
+
+    style VG1 fill:#ef9a9a,stroke:#c62828,color:#000
+    style VG2 fill:#ef9a9a,stroke:#c62828,color:#000
+    style VG3 fill:#ef9a9a,stroke:#c62828,color:#000
+    style INIT fill:#f3f5f7,stroke:#9c27b0
+    style IDEA fill:#f3f5f7,stroke:#4caf50
+    style INCP fill:#f3f5f7,stroke:#2196f3
+    style CONS fill:#f3f5f7,stroke:#ff9800
+    style OPER fill:#f3f5f7,stroke:#e91e63
+```
+
+##### Stage reference
+
+What each stage does in detail, with the same numbering as the table above. Stages run in this order within a phase; whether a specific stage runs depends on the scope and the conditions below.
+
+###### Phase 0 — Initialization
+
+<a id="ref-0-1"></a>
+**0.1 Workspace Scaffold** 
+— runs deterministically inside:
+  - `aidlc-utility` is the deterministic CLI behind the engine: it performs rule-based mutations like intent creation, state, scope, doctor and recompose — no LLM, no agent prose, so the same arguments always produce the same files. In a harness it runs as `<harness-dir>/tools/aidlc-utility.ts`.
+  - `intent-create` is the sub command that creates an intent: it creates the record directory, appends the registry row, sets the active-intent cursor and runs all three Initialization stages (0.1, 0.2, 0.3) in one call, usually under a second. It is auto-invoked on your first `/aidlc "<what to build>"` or `/aidlc-init`; you do not type it.
+- A phase the scope excludes gets no folder, so the record never implies work that was planned and skipped.
+- Idempotent: creates what is missing, skips what exists. No approval gate; auto-proceeds.
+- Per-stage folders are not created here — a stage's folder appears when the stage first writes an artifact. No git work happens in this stage.
+
+The record tree that results for a scope that runs every phase looks like this:
+
+```text
+intents/260930-checkout-api/   ← one record directory per piece of work: `aidlc/spaces/<space>/intents/<YYMMDD>-<label>/`
+├── aidlc-state.md       ← the state file stage 0.3 writes
+├── initialization/      ← created; stages 0.1-0.3 always run
+├── ideation/            ← created only if the scope runs >= 1 Ideation stage
+├── inception/           ← same rule
+├── construction/        ← same rule
+├── operation/           ← same rule
+├── verification/        ← always, scope-independent
+└── audit/               ← committed event shards, written as stages run
+```
+
+`intents/260930-checkout-api/` abbreviates the full path `aidlc/spaces/<space>/intents/<YYMMDD>-<label>/`. A stage folder like `ideation/intent-capture/` only appears once that stage writes its first artifact.
+
+<a id="ref-0-2"></a>
+**0.2 Workspace Detection** — runs deterministically inside `aidlc-utility init`.
+
+- Deterministic scanner classifies the workspace as brownfield or greenfield from signal files: source code, framework config, package manifests, source directories, parseable `.gitmodules`.
+- Scans top-level files plus known source directories and skips the harness directories, `aidlc/`, `node_modules/`, `.git/`, `dist/`, `build/` and similar.
+- When no top-level signal fires, a nested fallback walks container directories up to three levels below the root and re-applies the same signals, so `services/api/src/main.py` still counts as brownfield.
+- Records the detected languages, frameworks and build system into the state file.
+- If it finds uninitialized submodules it relays an advisory telling you to run `git submodule update --init --recursive` because reverse engineering needs the code on disk. It never runs git itself.
+- No approval gate; auto-proceeds.
+
+<a id="ref-0-3"></a>
+**0.3 State Initialization** — runs deterministically inside `aidlc-utility init`.
+
+- Overwrites `<record>/aidlc-state.md` with a fully populated version generated from the compiled stage graph and the scope grid: project description, project type, workspace state, start date, scope configuration, and progress checkboxes for every stage.
+- Determines routing by project type: brownfield starts Inception with reverse-engineering, greenfield starts with requirements-analysis and marks reverse-engineering as skip.
+- Writes `Stages to Execute` and `Stages to Skip` per scope plus project type. If invoked from `--init` it stops at "workspace initialized"; if invoked from a workflow start it moves to the first post-initialization stage.
+- No approval gate; auto-proceeds.
+
+###### Phase 1 — Ideation
+
+<a id="ref-1-1"></a>
+**1.1 Intent Capture & Framing** — the first stage of every workflow. Runs inline with the `aidlc-product-agent` as lead and the architect as support.
+
+- Permitted sources are strict: the original description, confirmed `[Q<n>]` answers, the workflow-selected scope, and registered memory rules. Every substantive claim carries an inline source tag; nothing is invented.
+- Content inside a `<document>...</document>` block is treated as untrusted data, not instructions.
+- Writes `intent-statement.md` (problem, customer, success metrics, trigger, scope signal) and `stakeholder-map.md`. Any unresolved field is labelled `Unknown (open question)` or `[assumption]`, never silently filled.
+- The `aidlc-product-lead-agent` reviews the artifacts.
+
+<a id="ref-1-2"></a>
+**1.2 Market Research** — conditional. Runs when the initiative has external market positioning or build-vs-buy considerations. Skipped for internal tools, bug fixes and refactors.
+
+- Produces `competitive-analysis.md`, `market-trends.md` and `build-vs-buy.md` from confirmed answers only.
+
+<a id="ref-1-3"></a>
+**1.3 Feasibility & Constraints** — conditional. Runs when there are integration constraints, regulatory requirements or significant technical uncertainty; skipped for trivial changes with no technical risk.
+
+- The architect leads with the AWS platform and compliance agents as support.
+- Produces `feasibility-assessment.md`, `constraint-register.md` and `raid-log.md`.
+
+<a id="ref-1-4"></a>
+**1.4 Scope Definition** — always, inline, product lead with delivery support.
+
+- Defines the scope boundary and the prioritized backlog as `scope.md` and `intent-backlog.md`.
+- Validates scope against the timeline and runs contradiction analysis on the answers.
+
+<a id="ref-1-5"></a>
+**1.5 Team Formation** — conditional. Runs when team composition, capacity or mob planning is relevant; skipped for solo or small-team projects.
+
+- Produces `team-assessment.md`, `skill-matrix.md` and `mob-composition.md`, with a gap analysis between required and available skills.
+
+<a id="ref-1-6"></a>
+**1.6 Rough Mockups** — conditional. Runs when user-facing UI is part of the initiative; for API/backend work the design agent produces system interaction diagrams instead. Skipped for non-UI, API-only or infrastructure-only initiatives.
+
+- Produces `wireframes.md` and `user-flow.md`, and runs contradiction analysis between UX expectations and scope constraints.
+
+<a id="ref-1-7"></a>
+**1.7 Approval & Handoff** — always, inline, delivery lead with product support. The Ideation approval gate.
+
+- Compiles every Ideation artifact into the initiative brief and writes `decision-log.md`, a record of all decisions made during the phase.
+- Presents the brief for approval; approving it hands off to Inception.
+
+###### Phase 2 — Inception
+
+<a id="ref-2-1"></a>
+**2.1 Reverse Engineering** — conditional, brownfield only.
+
+- Runs as a two-link pipeline: the developer scans the codebase and returns structured results, then the architect synthesizes the 9 artifacts (`business-overview.md`, `architecture.md`, `code-structure.md`, `api-documentation.md`, `component-inventory.md`, `technology-stack.md`, `dependencies.md`, `code-quality-assessment.md`, `reverse-engineering-timestamp.md`).
+- Writes to the space-level store `aidlc/spaces/<space>/codekb/<repo>/`, shared across intents, not into the intent record.
+- A freshness guard checks the existing store first: the human chooses reuse, full rescan or focused merge per repository.
+- Multi-repo intents run one complete chain per registered repository.
+
+<a id="ref-2-2"></a>
+**2.2 Practices Discovery** — conditional, runs as a hub-and-spoke ensemble with the pipeline-deploy agent leading and quality, developer and devsecops inspecting the draft independently.
+
+- Brownfield discovers practices from evidence plus reverse-engineering artifacts; greenfield elicits them via structured questions using `org.md` defaults.
+- Affirmed practices are promoted into the space's method at `memory/`; the rest stay out.
+
+<a id="ref-2-3"></a>
+**2.3 Requirements Analysis** — always, inline, product lead.
+
+- Elaborates `requirements.md` to a depth that scales with project complexity.
+
+<a id="ref-2-4"></a>
+**2.4 User Stories** — conditional, runs as a mob with the product agent leading and design, developer and quality contributing in parallel.
+
+- Runs when user-facing features, multiple personas, complex business logic or cross-team work is involved; skipped for pure refactoring, isolated bug fixes, infrastructure-only changes and developer tooling.
+- Produces `stories.md` and `personas.md`.
+
+<a id="ref-2-5"></a>
+**2.5 Refined Mockups** — conditional, inline, design lead with product support.
+
+- Runs when user-facing UI exists and rough mockups were produced in Ideation. Classic scope skips rough mockups by design, so when the wireframe inputs are absent the stage designs from the user stories and requirements directly.
+- Produces hi-fi mockups, `interaction-spec.md`, `design-system-mapping.md` and `accessibility-checklist.md`.
+
+<a id="ref-2-6"></a>
+**2.6 Domain Design** — conditional, inline, architect lead.
+
+- Runs when new components or logical building blocks are needed; skipped when changes only modify existing components.
+- Produces `components.md` and `decisions.md` (ADR-style records). It does not decide deployment topology — monolith, microservices or serverless is Units Generation's call.
+
+<a id="ref-2-7"></a>
+**2.7 Units Generation** — always, inline, architect lead with delivery support.
+
+- Produces `unit-of-work.md`, the dependency DAG and the story map that Delivery Planning consumes for sequencing.
+- When the skeleton check is enabled, the first unit in DAG order is shaped as the smallest working integrated slice so it can be approved against a real command before later units start.
+- In the compiled scope grid, 2.7 and 2.9 travel together — both execute or both skip per scope.
+
+<a id="ref-2-8"></a>
+**2.8 Contract Design** — conditional, inline, architect lead with AWS platform support.
+
+- Runs when the system has a formal contract to pin down: an inter-unit boundary where more than one unit must integrate, or a unit that exposes an API consumed outside the system. Skipped only for a single self-contained unit.
+- Runs once per workflow, not per unit: it maps the whole set of boundaries at once using the dependency DAG from Units Generation.
+- Produces `contract-summary.md`.
+
+<a id="ref-2-9"></a>
+**2.9 Delivery Planning** — always, inline, delivery lead with architect support. The capstone Inception stage.
+
+- Produces `bolt-plan.md`, team allocation, sequencing rationale and an external dependency map, using the affirmed practices from Practices Discovery.
+
+###### Phase 3 — Construction
+
+<a id="ref-3-1"></a>
+**3.1 Functional Design** — conditional, runs once per unit in DAG order, architect lead with developer support.
+
+- Runs when new data models, complex business logic or business rules need design; skipped for simple logic changes with no new business logic.
+- Produces `entities.md`, `rules.md` and `functional-spec.md` at design level — not implementation-ready code.
+
+<a id="ref-3-2"></a>
+**3.2 NFR Requirements** — conditional, runs once per unit, architect lead with devsecops, compliance and quality support.
+
+- Runs when performance, security, scalability, reliability or observability requirements are needed, or a tech-stack selection is needed; skipped when none remain and the stack is determined.
+- Collects the requirement categories through structured questions and returns control to the orchestrator.
+
+<a id="ref-3-3"></a>
+**3.3 NFR Design** — conditional, runs once per unit, architect lead.
+
+- Designs the patterns behind the NFR categories (`performance-design.md`, `security-design.md`, `scalability-design.md`, `reliability-design.md`, `observability-design.md`, `logical-components.md`).
+- Skipped when NFR Requirements was skipped.
+
+<a id="ref-3-4"></a>
+**3.4 Infrastructure Design** — conditional, runs once per unit, AWS platform lead with devsecops and compliance support.
+
+- Runs when infrastructure services need mapping or cloud resources are needed; skipped when there are no infrastructure changes and infrastructure is already defined.
+- Produces `infrastructure-specification.md`, `monitoring-design.md` and `cicd-pipeline.md` as design, not completed IaC.
+
+<a id="ref-3-5"></a>
+**3.5 Code Generation** — always, runs once per unit, developer lead, dispatched as a subagent.
+
+- Produces `code-generation-plan.md`, `unit-test-instructions.md` and `code-summary.md`.
+- Contract coverage floors from design are inputs, not suggestions: the stage never lowers or disables a defined target.
+
+<a id="ref-3-6"></a>
+**3.6 Build and Test** — always, runs once after every per-unit stage finishes, quality lead with devsecops support.
+
+- Produces build instructions, integration, performance and security test instructions, `build-test-results.md` and cross-unit traceability.
+
+<a id="ref-3-7"></a>
+**3.7 CI Pipeline** — conditional, runs once at the end, pipeline-deploy lead.
+
+- Runs when the CI pipeline needs creation or significant modification; skipped if CI already exists and is adequate.
+- Produces `ci-config.md` and `quality-gates.md`. Incremental scopes like `infra` skip code generation and build-and-test, so the pipeline stages are based on the workspace's existing build and test setup.
+
+###### Phase 4 — Operation
+
+<a id="ref-4-1"></a>
+**4.1 Deployment Pipeline** — conditional, pipeline-deploy lead.
+
+- Runs when the CD pipeline needs creation or significant modification. Produces `cd-config.md`, `deployment-strategy.md` and `rollback-runbook.md`.
+
+<a id="ref-4-2"></a>
+**4.2 Environment Provisioning** — conditional, AWS platform lead with devsecops and compliance support.
+
+- Provisions or validates target AWS environments using the Infrastructure Design outputs. Produces `environment-inventory.md` and `validation-report.md`.
+
+<a id="ref-4-3"></a>
+**4.3 Deployment Execution** — conditional, pipeline-deploy lead with developer support.
+
+- Runs after the pipeline and environment are ready. Produces `deployment-log.md`, `smoke-test-results.md` and `health-check-report.md`.
+
+<a id="ref-4-4"></a>
+**4.4 Observability Setup** — conditional, operations lead.
+
+- Configures dashboards, alarms, SLO configuration, log queries, tracing and anomaly configuration. When express scope skipped NFR design and infrastructure design, the minimum observable surface is derived from the approved artifacts.
+
+<a id="ref-4-5"></a>
+**4.5 Incident Response** — conditional, operations lead.
+
+- Produces an SSM Automation runbook library, an incident response plan integrated with AWS Incident Manager and an escalation matrix.
+
+<a id="ref-4-6"></a>
+**4.6 Performance Validation** — conditional, quality lead.
+
+- Designs a load test plan, executes performance tests against production-like environments and validates NFR performance targets using CloudWatch and X-Ray evidence. Produces the `nfr-validation-matrix.md`.
+
+<a id="ref-4-7"></a>
+**4.7 Feedback & Optimization** — conditional, operations lead with AWS platform support.
+
+- Runs when ongoing monitoring and optimization are needed. Produces an SLO report, an AWS Cost Explorer cost analysis, an AWS Config drift report and the feedback-loop document that opens the next Ideation intent.
 
 ### Methodology plus a deterministic engine
 
-The framework is two halves that meet at a typed contract.
+The framework is presented as two connected halves.
 
-The **methodology** is declarative data — 33 stage definitions, 14 agent personas, workflow scopes, rules, sensors and a two-tier knowledge reference. It is readable, reviewable and versionable, and it describes what should happen without implementing anything.
+The **methodology** is the declarative layer: stage definitions, agent personas, workflow scopes, rules, sensors and knowledge references. In project terms, this is the part that is meant to be readable, reviewable and versioned.
 
-The **engine** is code, and it owns exactly one question: what happens next. Given the intent's state file and the compiled stage graph, it resolves scope and position and emits **one** typed directive — a JSON contract that is validated before it is printed, so a malformed directive fails loudly rather than becoming an instruction the conductor would act on. It exposes six subcommands: `next` to route, `report` to commit a transition, `park` to pause at a clean boundary, `team-board`, `wait` and an internal `continue`.
+The **engine** is the runtime layer that decides the next transition based on state and the current stage graph. The project describes it as emitting a validated directive rather than leaving route selection to model prose alone.
 
-The **conductor** is the thin layer that acts on that directive: framing the persona, asking the questions worth asking, keeping the stage diary and surfacing judgement to a human at the gates. The division is deliberate, and the reason is the whole thesis. Routing lives in a tool, never in model prose — handing route-building to a language model would invert the argument this framework exists to make.
+The **conductor** is the thin orchestration layer that interprets that directive, keeps the stage diary and surfaces approval points to a human. The separation is meant to keep routing, state and enforcement outside the agent's improvisational behavior.
 
 ### One core, many harnesses
 
@@ -63,13 +472,13 @@ That split exists because harnesses genuinely disagree about how agents, hooks a
 
 Not every stage deserves a subagent. Stages that need a human — a clarifying question, an approval gate — run inline, in conversation, where a person can answer. Stages that produce a well-defined artifact run as autonomous subagents and return structured summaries. The framework decides which, per stage, and the distinction is why a gate still feels like a gate.
 
-Everything around that is instrumented rather than trusted: hooks emit audit events and validate state before compaction, fences refuse out-of-order transitions outright, and the append-only trail records 105 event types across 25 categories. Corrections feed back the other way too — when a human overrules the agent, that correction can be promoted into a persistent rule in the team's own method, scoped at org, team, project, phase or stage level, so the framework gets stricter rather than merely longer.
+Everything around that is instrumented rather than trusted: hooks emit audit events and validate state before compaction, fences refuse out-of-order transitions outright, and the append-only trail records 107 event types. Corrections feed back the other way too — when a human overrules the agent, that correction can be promoted into a persistent rule in the team's own method, scoped at org, team, project, phase or stage level, so the framework gets stricter rather than merely longer.
 
 What emerges is not autonomy or a chat window. It is a delivery process whose route, rules, checks and refusals are all things you can read, diff and hold someone to.
 
 ## Lifecycle: 5 Phases and 33 Stages
 
-The lifecycle is the framework's spine. Five phases run in order, holding 33 stages between them, and every stage has one job, one lead agent and a declared set of artifacts on disk. Three of the four phase boundaries are protected by verification gates; the fourth closes a feedback loop. Nothing in the sequence is decided at conversation time — the route was compiled before you asked for anything.
+The lifecycle is the framework's spine. Five phases run in order, holding 33 stages between them, and every stage has one job, one lead agent and a declared set of artifacts on disk. Three phase boundaries are protected by verification gates, one auto-proceeds, and the last closes a feedback loop. Nothing in the sequence is decided at conversation time — the route was compiled before you asked for anything.
 
 ```mermaid
 graph LR
@@ -168,55 +577,77 @@ Purpose: ship it and keep it. Every stage here is conditional, because a library
 
 Stage 4.7 is where the loop closes. Its findings feed back into Ideation as a new intent, which is how a framework that treats delivery as a lifecycle stays one: the thing you learn operating the system becomes the next piece of work.
 
-<!-- Initialization, Ideation, Inception, Construction, Operation. Approval gates and feedback loop. -->
-
 ## Agents
 
-<!-- 14 agents: 11 domain experts, 2 reviewers, 1 adaptive composer. -->
+AI-DLC ships 14 agents: **11 domain experts, 2 reviewers and 1 adaptive composer**. The domain experts are the product, design, delivery, architect, AWS platform, compliance, DevSecOps, developer, quality, pipeline-deploy and operations agents. Each stage names one lead agent, which you can see in the lifecycle tables above.
+
+The two reviewers are review-only agents, so the agent that wrote an artifact is not the one judging it. That addresses the "review arrives late, from the wrong vantage" failure described earlier. The adaptive composer builds a custom execute-or-skip plan for work that no stock profile fits (the `/aidlc compose "<task>"` command).
+
+Each agent is a persona with domain expertise, a tool profile and a model or operating context, defined in files you can read and change. The docs include a deep-dive page for every agent.
 
 ## Workflow Profiles
 
-<!-- 11 profiles: Classic, Express, features, bug fixes, infrastructure, security, PoCs, enterprise. -->
+Not every task needs all 33 stages. AI-DLC ships **11 workflow profiles** (called scopes in the engine) that decide which stages run for a given intent. They cover features, bug fixes, infrastructure, security, proofs of concept, enterprise delivery and other common work. The stage counts below come from the compiled scope grid.
+
+| Profile    | Stages that run |
+| ---------- | --------------- |
+| `poc`      | 8 of 33         |
+| `bugfix`   | 9 of 33         |
+| `classic`  | 18 of 33        |
+| `mvp`      | 23 of 33        |
+| `workshop` | 26 of 33        |
+| `feature`  | 33 of 33        |
+| `enterprise` | 33 of 33      |
+
+Other profiles include `express` and `security-patch`. The Workflow Profiles guide in the docs describes the full set. You can name a profile (`/aidlc bugfix`) or let AI-DLC infer one from your description. It then prints the route and the number of approval gates and waits for your confirmation before anything runs.
 
 ## What Harness Engineering Actually Means
 
-A **harness** is one command-line agent that the same methodology runs on: Claude Code, Kiro CLI, Kiro IDE, Codex CLI, Cursor, opencode, GitHub Copilot. The stages, agents, scopes and approval gates are identical on every one of them. What changes is the shell — where the config lives, which session events fire, how gates render.
+A **harness** is the interface layer that runs the same workflow on different agent environments, such as Claude Code, Kiro CLI, Kiro IDE, Codex CLI, Cursor, opencode and GitHub Copilot. The project describes the workflow itself as consistent across those environments, while the shell and configuration details differ.
 
-**Harness engineering** is the job of reshaping how AI-DLC behaves for your team. Which stages exist, what each one produces, who leads it, which stages a given piece of work actually runs, which rules hold and which checks verify them. The framework's own design principle is that none of this requires code. You write Markdown with YAML frontmatter and JSON config, and the framework reads it at runtime. Adding a stage, adding an agent, defining a scope: no TypeScript edits anywhere. The moment a change means editing the orchestrator, a hook or a CLI tool, you have crossed into framework development, which is a different job.
+**Harness engineering** is the work of shaping how the workflow behaves for a team: which stages exist, which artifacts they produce, who leads them, which rules apply and how verification is enforced. The project presents this as a configuration and process design task rather than a pure prompt-writing exercise.
 
-The useful mental model is that **stages are what and agents are who**. A stage is a unit of work — it declares the artifacts it consumes and produces, and names the agent that leads it. An agent is a persona — a domain expertise, a tool allowlist, a model. A stage names its lead agent; an agent never names its stages. That asymmetry is on purpose, because it lets you move work around without rewriting the worker, and add a worker without disturbing the workflow until some stage opts to use it.
+A useful mental model is that **stages define what work happens and agents define who performs it**. A stage is a unit of work with inputs, outputs and a lead. An agent is a persona with domain expertise, a tool profile and a model or operating context. The workflow can then be adjusted by changing scopes and rules without redefining the entire job in natural language each time.
 
 Everything you shape hangs off five things:
 
-- **Stages** — the units of work and the nodes of the workflow graph.
-- **Agents** — the personas loaded into those stages.
-- **Scopes** — which stages run for a given kind of work. A bug fix runs 9 of 33; an enterprise feature runs all of them.
-- **Rules** — standing decisions that travel into every workflow. Your team's "always do it this way."
-- **Sensors** — deterministic checks bound to stages, fired on matching writes or at a gate. A binding is either advisory or blocking.
+- **Stages** — the units of work and the nodes in the workflow graph.
+- **Agents** — the personas assigned to those stages.
+- **Scopes** — which stages run for a given type of work.
+- **Rules** — decisions that persist across workflows.
+- **Sensors** — checks bound to stages or gates that can be advisory or blocking.
 
-Two more knobs sit alongside these. **Knowledge** is the domain context agents load before working. **Depth** changes how much detail a stage produces, never which stages run.
+Two additional levers sit alongside these. **Knowledge** is the background context the agents load before work. **Depth** affects how much detail a stage produces, not which stages are selected.
 
-This is where harness engineering earns its keep against plain prompt engineering. A prompt is a request, and whether it holds depends on whether the file got read this session, how much context survived the last compaction and how the model happened to feel about it. A stage file is an input to a route that was compiled before you typed anything. The difference shows up in the awkward cases: a conditional stage cannot simply be skipped with a shrug, because the engine refuses the report unless it names the currently active stage and carries a nonblank reason, and records the skip as an audited `[S]`. "Run the tests before you say you are done" is advice. A completion claim without test evidence is a transition the engine will not grant.
-
-One naming trap, if you go read the framework's own docs. _Harness_ carries four senses in that repository: a CLI distribution (the one that matters here), the rule-plus-sensor control loop that was once also called a harness, the `harness/<name>/` source directory, and the `tests/harness/` test helpers. "Harness engineering" is the reshaping activity, not adding a new CLI.
+This is where workflow design becomes more than prompt engineering. A prompt is a request. A stage file, a rule set or a gate is a durable process input. That distinction matters when the work must be resumed, audited or operated under explicit controls.
 
 ## Harness Support
 
-<!-- Claude Code, Kiro CLI/IDE, Codex CLI, Cursor, opencode, GitHub Copilot. -->
+AI-DLC runs natively in seven harnesses. Minimum versions below are from the repository README.
 
-| Harness                        | Configure                         | Invoke   |
-| ------------------------------ | --------------------------------- | -------- |
-| Claude Code                    | `aidlc config --harness claude`   | `/aidlc` |
-| Kiro CLI                       | `aidlc config --harness kiro`     | `/aidlc` |
-| Kiro IDE                       | `aidlc config --harness kiro-ide` | `/aidlc` |
-| Codex CLI                      | `aidlc config --harness codex`    | `$aidlc` |
-| Cursor (IDE and CLI)           | `aidlc config --harness cursor`   | `/aidlc` |
-| opencode                       | `aidlc config --harness opencode` | `/aidlc` |
-| GitHub Copilot (CLI + VS Code) | `aidlc config --harness copilot`  | `/aidlc` |
+| Harness                        | Configure                         | Invoke   | Minimum version                 |
+| ------------------------------ | --------------------------------- | -------- | ------------------------------- |
+| Claude Code                    | `aidlc config --harness claude`   | `/aidlc` | —                               |
+| Kiro CLI                       | `aidlc config --harness kiro`     | `/aidlc` | Kiro CLI 2.6 or later           |
+| Kiro IDE                       | `aidlc config --harness kiro-ide` | `/aidlc` | Kiro IDE 1.x / Kiro CLI v3      |
+| Codex CLI                      | `aidlc config --harness codex`    | `$aidlc` | 0.145.0 or later                |
+| Cursor (IDE and CLI)           | `aidlc config --harness cursor`   | `/aidlc` | —                               |
+| opencode                       | `aidlc config --harness opencode` | `/aidlc` | 1.17 or later                   |
+| GitHub Copilot (CLI + VS Code) | `aidlc config --harness copilot`  | `/aidlc` | CLI 1.0.74 / VS Code 1.130      |
 
 ## Repository Layout
 
-<!-- core/ as source of truth, harness/ projections, dist* generated. Edit core/, never dist*. -->
+The repository separates hand-authored source from generated output:
+
+- `core/` — the hand-authored, harness-neutral methodology and engine (including `core/tools/`, the engine and authoring tools)
+- `harness/<name>/` — thin, harness-specific manifests and integrations
+- `plugins/<name>/` — optional AI-DLC plugins (the repo ships an example, `test-pro`)
+- `scripts/` — packaging, binary, installer and release tooling
+- `tests/` — smoke, unit, integration and end-to-end tests
+- `docs/` — user, harness-engineering and developer documentation
+- `dist/` and `dist-release/` — generated, ignored local outputs
+
+The rule is simple: edit `core/` or `harness/<name>/`, never the generated `dist*` output.
 
 ## Getting Started
 
@@ -235,7 +666,7 @@ aidlc config --harness claude    # or kiro, kiro-ide, codex, cursor, opencode, c
 aidlc doctor                     # health check
 ```
 
-`aidlc config` writes that harness's native shell into the project and records the engine tree at `.aidlc/`. Model provider setup stays where it belongs — with your harness — because shipped configuration preserves the provider and model you already chose.
+`aidlc config` writes that harness's native shell into the project and records the engine tree at `.aidlc/`. Model provider setup stays where it belongs — with your harness — because shipped configuration preserves the provider and model you already chose. The README currently recommends Claude Opus 4.8 as the model, though the methodology itself is provider-independent.
 
 Finally, open the harness in that project and describe the work:
 
@@ -301,11 +732,33 @@ These are native binaries rather than slash commands, and they run in a terminal
 
 ## Development
 
-<!-- bun-based toolchain: package, check, tests. -->
+If you want to contribute or build from source, the toolchain is Bun-based. Install dependencies and generate every harness:
+
+```bash
+bun install --frozen-lockfile
+bun scripts/package.ts
+```
+
+Useful commands:
+
+```bash
+bun scripts/package.ts <name>     # generate one harness
+bun scripts/package.ts --check    # determinism guard
+bun tests/run-tests.ts --ci       # smoke, unit, and integration
+bun tests/run-tests.ts --release  # full release acceptance
+```
+
+Remember to edit `core/` or `harness/<name>/`, never generated `dist*` output. See the Contributing Guide in the docs for the full workflow.
 
 ## Takeaways
 
-<!-- Key points to remember. -->
+- Chat history is a weak system of record. AI-DLC moves the process into persisted state, artifacts and an audit trail so work survives compaction and handoffs.
+- The route is compiled data, not improvisation: 5 phases, 33 stages, and profiles that choose which ones run. You see the route and the number of approval gates before anything starts.
+- Human approval gates and a 107-event audit trail make decisions attributable and reviewable.
+- Corrections can be promoted into persistent rules, so the framework gets stricter over time.
+- One harness-neutral core runs in seven harnesses, so you are not locked into a single tool.
+- The honest claim is workflow continuity, not conversational continuity. You can always resume and re-read every artifact, but the nuance of a discussion that never reached a file is gone.
+- Generative AI can make mistakes, so review generated output and costs before acting on them.
 
 ## FAQ
 
@@ -386,7 +839,7 @@ With a single repository you run `aidlc config` at the project root, so `aidlc/`
 
 With several repositories the shape changes. Your code repositories do not nest inside each other or inside `aidlc/`; they become siblings of it under a container directory:
 
-```
+```text
 platform/                    the workspace — the only new repository you create
 ├── aidlc/                   committed: method, knowledge, intents, audit
 ├── repos.json               declares which repositories belong
@@ -398,6 +851,8 @@ platform/                    the workspace — the only new repository you creat
 This is the opposite of a monorepo. Every child keeps its own `.git` and its own remote, and the workspace's `.gitignore` carries a managed block with one `/{name}/` line per repository, so the container explicitly excludes them from its own tracking. Nothing is committed across repositories — you get four repositories, one of which contains no code at all, and the workspace pull requests only ever carry `aidlc/` metadata diffs, which means they cannot conflict on code.
 
 The mechanism is a manifest plus a sync tool rather than git submodules. `repos.json` records the expected set, and `aidlc system workspace-sync` reconciles the workspace against it: it clones any declared repository missing on disk from `git@github.com:<org>/<name>.git` (or a per-entry `url` override, so you can mix hosts and forks), rewrites that managed ignore block, and writes an `aidlc.code-workspace` file for opening all of them in an editor. It is idempotent — repositories already on disk are never re-cloned or switched, so a branch mismatch stays advisory rather than failing the run. The manifest never overrides disk either, which means a repository works the moment you clone it, declared or not.
+
+Cloning never happens inside the Initialization phase. Workspace Scaffold, Workspace Detection and State Initialization only create directories and write state — none of them runs git (`core/aidlc-common/stages/initialization/`). The sync is a deliberate, separate step: run `aidlc system workspace-sync` after `aidlc config --harness <name>`.
 
 The part that answers "in the same context" is how an intent spans them. The repository set is captured when the intent is created, either from `--repos a,b` or by auto-discovering every immediate child holding a `.git`, and stored in the intent's row in `intents.json`. During Construction each git operation is anchored to the right repository, and one intent that changes service and infrastructure produces two commits, two branches and two pull requests that share one audit trail in the workspace. Reverse Engineering runs a complete pipeline chain per registered repository rather than one chain across all of them. If you want to narrow an intent to the repositories it actually touches, pass `--repos` at creation instead of accepting the whole sibling set.
 
@@ -414,5 +869,6 @@ The per-repository knowledge that reverse engineering produces is stored separat
 ## References
 
 - [AI-DLC Workflows repository](https://github.com/awslabs/aidlc-workflows)
+- [AI-DLC Workflows documentation](https://awslabs.github.io/aidlc-workflows/)
 - [AWS AI-DLC blog post](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)
-- [AI-DLC Method Definition Paper](https://prod.d13rkk8cj2z0.amplifyapp.com/)
+- [AI-DLC Method Definition Paper](https://prod.d13rzhkk8cj2z0.amplifyapp.com/)
