@@ -13,27 +13,30 @@ AI can be helpful, surprising and sometimes very dangerous to use. You do not ne
 - **Protect your privacy** - knowing what info keep out of a chatbot.
 - **Spot scams and fakes** - tips to spot AI scams that can look convincing.
 - **Check before you act** - when health, money or safety is at stake.
-+
+
+*
+
 ## 1. A quick welcome: what AI is and is not
-- **Artificial intelligence (AI)** is capability of a system to perform tasks typically associated with human intelligence: 
-  - recognising patterns 
+
+- **Artificial intelligence (AI)** is capability of a system to perform tasks typically associated with human intelligence:
+  - recognising patterns
   - comprehending text or generating language
-  - making predictions  
+  - making predictions
   - taking decisions based on reasoning from choices.
 - to be on the same page - when most of us say **Artificial intelligence**, we mean - ChatGPT, Claude etc is a specific - a chatbot that can produce words, pictures, sound or computer code from a request.
-- Relity is most of us have used AI for decades without knowing it which is fairly recent offering. 
+- Relity is most of us have used AI for decades without knowing it which is fairly recent offering.
 - This what we call AI is actually a very specific subclass of AI also known as **Generative AI** or **Predicitive AI**.
-- For a simple starting picture, think of a like your mobile-phone keyboard autocomplete, only much more capable. It builds an answer one small piece at a time by predicting what is likely to come next. 
-- What you call as AI and it's application an extension of this ability that lets it do anything from: 
+- For a simple starting picture, think of a like your mobile-phone keyboard autocomplete, only much more capable. It builds an answer one small piece at a time by predicting what is likely to come next.
+- What you call as AI and it's application an extension of this ability that lets it do anything from:
   - Answer questions in ChatGPT, draft emails, translate language and assist with complex tasks.
-  - It can take decision based and make machinery respond based on sensor information. 
+  - It can take decision based and make machinery respond based on sensor information.
   - Even take complex areas like medicines and weaponary very comparable to what a human can do sometimes even better and faster.
-- if you see carefully the AI Chatbots (in whats called a streaming mode) you can see it generating a part of a word at a time, its called a token. For simplicity of calculation for 1 token is about 75% of an word in English.  
-- Its like a music mixing console where you have faders, knobs, swtiches buttons similarly you have parameters here to name a few - parameters increase temperature AI become extrememly imaginative put the temperature to 0 it produces a better more consistent output - based on this you can use AI for creative writing or for drafting a legal document. 
+- if you see carefully the AI Chatbots (in whats called a streaming mode) you can see it generating a part of a word at a time, its called a token. For simplicity of calculation for 1 token is about 75% of an word in English.
+- Its like a music mixing console where you have faders, knobs, swtiches buttons similarly you have parameters here to name a few - parameters increase temperature AI become extrememly imaginative put the temperature to 0 it produces a better more consistent output - based on this you can use AI for creative writing or for drafting a legal document.
 - Similarly you can do a role play with it - this is another way to influence how the AI responds to you.
-- Finally in the world before Chatgpt we used to have software code to do lots of things like making calls, converting audio to text etc... you may give AI access to these capabilities - as tools AI will be able to use it based on situation. 
+- Finally in the world before Chatgpt we used to have software code to do lots of things like making calls, converting audio to text etc... you may give AI access to these capabilities - as tools AI will be able to use it based on situation.
 - If you ask me whats missing in AI is the concisousness. personally i see emotions, principles, culture etc associated with words, sentences and semantics, information which is missing in the training data. This is another dimension to the language which AI isn't aware of. e.g you could use abusive language on AI and it would always respond is a composed way - while this is the best way to respond, human often has various degrees of patience, culture and other things drive how a person responds to such situations.
-- this is good and bad because as human there is an element of humanity which we can't be 100% sure if it is built into the AI model or not.   
+- this is good and bad because as human there is an element of humanity which we can't be 100% sure if it is built into the AI model or not.
 
 ### A simple picture in your mind
 

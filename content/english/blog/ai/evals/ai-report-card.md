@@ -98,13 +98,13 @@ The report card's scores are built on the six-layer evaluation pyramid from the 
 
 The source of truth the artifact is judged against. There are many shapes:
 
-| Type | Examples | What it enables |
-| ---- | -------- | --------------- |
-| Documents | Design docs, requirements, ADRs, markdown specs | Roundtrip-fidelity and requirement-coverage checks, via the pattern in the [evals roundtrip post](../evals/) |
-| Code | Existing codebase, reference implementations | Signature matching, API-conformance, style-and-pattern norms |
-| JSON / Schemas | JSON Schema, OpenAPI, Swagger, typed configs | Structural validation, field presence, type and enum conformance |
-| Config / Infra | YAML, Terraform, docker, CI configs | Deterministic parse-and-verify against known-good defaults |
-| Policies | Security policies, PII rules, compliance lists | Invariant checks: watcher lists, banned patterns, mandatory fields |
+| Type           | Examples                                        | What it enables                                                                                              |
+| -------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Documents      | Design docs, requirements, ADRs, markdown specs | Roundtrip-fidelity and requirement-coverage checks, via the pattern in the [evals roundtrip post](../evals/) |
+| Code           | Existing codebase, reference implementations    | Signature matching, API-conformance, style-and-pattern norms                                                 |
+| JSON / Schemas | JSON Schema, OpenAPI, Swagger, typed configs    | Structural validation, field presence, type and enum conformance                                             |
+| Config / Infra | YAML, Terraform, docker, CI configs             | Deterministic parse-and-verify against known-good defaults                                                   |
+| Policies       | Security policies, PII rules, compliance lists  | Invariant checks: watcher lists, banned patterns, mandatory fields                                           |
 
 Reference context is optional per check. Some criteria grade standalone (formatting, security posture) and need no reference at all. Some criteria are comparative (does the artifact match the spec) and are meaningless without one.
 
@@ -130,14 +130,14 @@ The pipeline therefore treats reference context as a list that may be empty: a p
 
 What the AI produced. The grader must normalise every shape into a common representation before it can run a check:
 
-| Type | What gets checked |
-| ---- | ----------------- |
-| Code | Compiles, lints, type checks, matches API contract, no banned imports |
-| Documentation | Required sections present, claims match source, no stale examples |
-| JSON / config | Valid against schema, no forbidden keys, values in enum sets |
-| Skills / hook files | Trigger contract, procedure adherence, boundary respect (the [skill checklist](../evals/#part-4-testing-claude-code-skills-specific)) |
-| Agent trajectories | Tool-call correctness, step efficiency, recovery behaviour (the [trajectory pattern](../evals/#part-3-evaluating-agents-specifically)) |
-| Reports / prose | Length bounds, banned phrases, rubric-graded quality where semantics matter |
+| Type                | What gets checked                                                                                                                      |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Code                | Compiles, lints, type checks, matches API contract, no banned imports                                                                  |
+| Documentation       | Required sections present, claims match source, no stale examples                                                                      |
+| JSON / config       | Valid against schema, no forbidden keys, values in enum sets                                                                           |
+| Skills / hook files | Trigger contract, procedure adherence, boundary respect (the [skill checklist](../evals/#part-4-testing-claude-code-skills-specific))  |
+| Agent trajectories  | Tool-call correctness, step efficiency, recovery behaviour (the [trajectory pattern](../evals/#part-3-evaluating-agents-specifically)) |
+| Reports / prose     | Length bounds, banned phrases, rubric-graded quality where semantics matter                                                            |
 
 ### 3. Evaluation Policy
 
@@ -163,7 +163,7 @@ This is the enabler of document-to-document Layer 1 grading: the dependency chai
 
 Normalisation also decides which mode the pipeline runs in. If a criterion declares a dependency on the reference context, normalisation pairs the two trees for comparative grading. If not, the candidate tree is graded standalone.
 
-What this box does *not* do is create meaning. Two documents that say the same thing in different words normalise to different trees with no shared tokens. Normalisation changes the grade of parsing, not the meaning gap — which is exactly why Layer 2 exists for the semantic residue this box cannot bridge.
+What this box does _not_ do is create meaning. Two documents that say the same thing in different words normalise to different trees with no shared tokens. Normalisation changes the grade of parsing, not the meaning gap — which is exactly why Layer 2 exists for the semantic residue this box cannot bridge.
 
 ## Layer 1: Deterministic & Structural Checks
 
@@ -171,13 +171,13 @@ Layer 1 is the wide base of the pyramid. Every check that can be expressed as pl
 
 ### What Each Input Contributes
 
-A Layer 1 check is a plain-code assertion, but its *configuration* comes from all three inputs:
+A Layer 1 check is a plain-code assertion, but its _configuration_ comes from all three inputs:
 
-| Input | Contribution |
-| ----- | ------------ |
-| Reference context | The **expected** side of a comparison. Sections, signatures, fields, values and bans that "correct" is measured against are extracted from here |
-| Candidate artifact | The **actual** side. The parsed tree of what was produced, mined into checkable facts |
-| Evaluation policy | The **gauge**. Which checks run, the thresholds and the per-check configuration — patterns, mandatory lists, ceilings, allowed and banned values |
+| Input              | Contribution                                                                                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Reference context  | The **expected** side of a comparison. Sections, signatures, fields, values and bans that "correct" is measured against are extracted from here  |
+| Candidate artifact | The **actual** side. The parsed tree of what was produced, mined into checkable facts                                                            |
+| Evaluation policy  | The **gauge**. Which checks run, the thresholds and the per-check configuration — patterns, mandatory lists, ceilings, allowed and banned values |
 
 Together the three answer three questions: **what should it be** (reference), **what is it** (candidate) and **how carefully do we look** (policy).
 
@@ -195,14 +195,14 @@ When the check is standalone — no reference declared — the assert step grade
 
 ### The Per-Artifact Map
 
-| Artifact | Actual (candidate) | Expected (reference, comparative) | Gauge (policy) | Example Layer 1 checks |
-| -------- | ------------------ | --------------------------------- | -------------- | ---------------------- |
-| Code | Parsed tree of functions, imports, calls | API contract, design doc signatures | Lint rules, banned imports, boundaries | Compiles under `ruff`; every documented signature exists with the right parameter count; no banned import |
-| Documentation | Heading tree, frontmatter, links | Design doc or ADR | Mandatory sections, length ceiling, banned phrases | Parses as markdown; every reference heading present; no stale example claims |
-| JSON / config | Typed object, schema-aware | JSON Schema, OpenAPI | Required fields, enum sets, forbidden keys | Valid JSON; required fields present and correctly typed; values within the enum set; no forbidden key |
-| Skills / hooks | `SKILL.md` and the output files it produced | Declared contract: trigger, procedure, output promise | Working directory, boundary rules | Promised file exists at the promised path; hook returns the right decision; nothing written outside the declared scope |
-| Agent trajectories | Tool-call log: tool, args, order | Expected sequence, when specified | Tool whitelist, blacklist, efficiency ceiling | Right tool, right args, right order; the delete tool is never called; step count under the ceiling |
-| Prose / reports | Token and word counts | Extractable facts from the source | Ceiling, banned phrases | Under the token ceiling; every extractable fact present (status code, date, name); nothing on the banned list |
+| Artifact           | Actual (candidate)                          | Expected (reference, comparative)                     | Gauge (policy)                                     | Example Layer 1 checks                                                                                                 |
+| ------------------ | ------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Code               | Parsed tree of functions, imports, calls    | API contract, design doc signatures                   | Lint rules, banned imports, boundaries             | Compiles under `ruff`; every documented signature exists with the right parameter count; no banned import              |
+| Documentation      | Heading tree, frontmatter, links            | Design doc or ADR                                     | Mandatory sections, length ceiling, banned phrases | Parses as markdown; every reference heading present; no stale example claims                                           |
+| JSON / config      | Typed object, schema-aware                  | JSON Schema, OpenAPI                                  | Required fields, enum sets, forbidden keys         | Valid JSON; required fields present and correctly typed; values within the enum set; no forbidden key                  |
+| Skills / hooks     | `SKILL.md` and the output files it produced | Declared contract: trigger, procedure, output promise | Working directory, boundary rules                  | Promised file exists at the promised path; hook returns the right decision; nothing written outside the declared scope |
+| Agent trajectories | Tool-call log: tool, args, order            | Expected sequence, when specified                     | Tool whitelist, blacklist, efficiency ceiling      | Right tool, right args, right order; the delete tool is never called; step count under the ceiling                     |
+| Prose / reports    | Token and word counts                       | Extractable facts from the source                     | Ceiling, banned phrases                            | Under the token ceiling; every extractable fact present (status code, date, name); nothing on the banned list          |
 
 The rule of thumb for the whole layer: **if you can express the check as plain code, it belongs here.** The gauge decides the rest — strict runs the full sweep, lenient runs the parse — and whatever Layer 1 cannot express falls to the judge in Layer 2.
 
@@ -216,11 +216,10 @@ The rule of thumb for the whole layer: **if you can express the check as plain c
 6. **Doc-to-doc Layer 1 coverage** — dedicate a future post to how deterministic checks handle document-to-document comparison: structure (headings, sections, frontmatter, order), extractable facts (status codes, dates, field names, URLs pulled by regex and compared exactly), and format/lint (valid markdown, no dead links). The rule to land on: structured docs carry most of the load in Layer 1, free-form prose shifts weight to Layer 2. Purely prose-to-prose comparison is the one case where Layer 1 drops to near zero — which is precisely why high-strictness policies should require the reference side to be structured
 7. **Human-review queue** — flagged and low-confidence cases routed to a human, disagreements feeding back into the rubric
 8. Generally classify the usecases - like most common usecase would be to compare the document to code.
-   1. check if testcases are covered by 
+   1. check if testcases are covered by
       1. deterministic checks (use conventions for testcases)
       2. invarient testing is done properly.
-   2. 
-
+   2.
 
 The entire design rests on one assumption: **an artifact is only as trustworthy as the checks that ran against it, and checks only scale if they are deterministic first and human-last.**
 

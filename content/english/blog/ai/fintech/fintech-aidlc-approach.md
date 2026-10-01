@@ -302,17 +302,17 @@ The personas in this post map onto the [fintech personas post](/blog/ai/fintech/
 
 The role names are not a one-to-one mapping to hats. A persona can combine hats according to the decisions and outcomes it owns, and a single person may work through different hats in different parts of a Unit. This gives a practical way to describe how familiar delivery roles can evolve:
 
-| Previous role grouping | Evolving responsibility |
-| ---------------------- | ----------------------- |
-| Product Owner / PM / Business Analyst / Scrum master / SME | **Intent owner.** Defines the outcome and success criteria, then validates the AI's discovery rather than owning a pre-decomposed Epic. Planner, Reviewer and Red / Blue hats may apply. |
-| UX / Product Designer / SME | **Designer across Inception and Construction.** Shapes requirements and per-Unit design, then guides implementation with user and aesthetic judgment. Designer, Builder and Reviewer hats may apply. |
-| Scrum Master / Delivery Manager | **Workflow composer.** Chooses which conditional stages apply and helps select each Unit's operating mode instead of relying on a fixed ceremony cadence. Planner, Integrator and Reviewer hats may apply. |
-| Solutions / Technical Architect | **Designer and curator.** Owns domain models and architecture boundaries that Construction realizes. Planner, Designer, Builder, Reviewer and Integrator hats may apply. |
-| Engineering Leader / DevSecOps Engineer | **Adversarial reviewer and gate curator.** Challenges designs and implementations, keeps attack and remediation perspectives distinct and maintains quality gates. Builder, Reviewer and Red / Blue hats may apply. |
-| Developer | **Builder.** Implements the agreed plan in small steps, writes tests and iterates against gate feedback. Planner, Builder and Reviewer hats may apply. |
-| QA / Tester | **Gate curator.** Defines precise completion criteria and maintains evidence-backed quality gates. Builder, Reviewer and Red / Blue hats may apply. |
-| Pipeline / Deployment Engineer | **Deployment automation owner.** Builds release orchestration, rollback and bounded agent-run operations. Builder, Integrator and Reviewer hats may apply. |
-| SRE / Operations Engineer | **Observability steward.** Owns monitoring, runbooks, SLOs and operational feedback into future Inception cycles. Builder, Reviewer and Integrator hats may apply. |
+| Previous role grouping                                     | Evolving responsibility                                                                                                                                                                                             |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Product Owner / PM / Business Analyst / Scrum master / SME | **Intent owner.** Defines the outcome and success criteria, then validates the AI's discovery rather than owning a pre-decomposed Epic. Planner, Reviewer and Red / Blue hats may apply.                            |
+| UX / Product Designer / SME                                | **Designer across Inception and Construction.** Shapes requirements and per-Unit design, then guides implementation with user and aesthetic judgment. Designer, Builder and Reviewer hats may apply.                |
+| Scrum Master / Delivery Manager                            | **Workflow composer.** Chooses which conditional stages apply and helps select each Unit's operating mode instead of relying on a fixed ceremony cadence. Planner, Integrator and Reviewer hats may apply.          |
+| Solutions / Technical Architect                            | **Designer and curator.** Owns domain models and architecture boundaries that Construction realizes. Planner, Designer, Builder, Reviewer and Integrator hats may apply.                                            |
+| Engineering Leader / DevSecOps Engineer                    | **Adversarial reviewer and gate curator.** Challenges designs and implementations, keeps attack and remediation perspectives distinct and maintains quality gates. Builder, Reviewer and Red / Blue hats may apply. |
+| Developer                                                  | **Builder.** Implements the agreed plan in small steps, writes tests and iterates against gate feedback. Planner, Builder and Reviewer hats may apply.                                                              |
+| QA / Tester                                                | **Gate curator.** Defines precise completion criteria and maintains evidence-backed quality gates. Builder, Reviewer and Red / Blue hats may apply.                                                                 |
+| Pipeline / Deployment Engineer                             | **Deployment automation owner.** Builds release orchestration, rollback and bounded agent-run operations. Builder, Integrator and Reviewer hats may apply.                                                          |
+| SRE / Operations Engineer                                  | **Observability steward.** Owns monitoring, runbooks, SLOs and operational feedback into future Inception cycles. Builder, Reviewer and Integrator hats may apply.                                                  |
 
 These are possible responsibility shifts, not prescribed job titles. The hats remain reusable work modes; teams decide how to combine them based on their domain, governance and risk.
 

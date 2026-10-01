@@ -74,10 +74,22 @@ The lifecycle is the framework's spine. Five phases run in order, holding 33 sta
 ```mermaid
 graph LR
     Z["Initialization<br/>3 stages"] -->|"auto-proceeds"| I["Ideation<br/>7 stages"]
-    I -->|"Verification Gate 1"| N["Inception<br/>9 stages"]
-    N -->|"Verification Gate 2"| C["Construction<br/>7 stages"]
-    C -->|"Verification Gate 3"| O["Operation<br/>7 stages"]
+    I --> VG1{{"Verification Gate 1"}}
+    VG1 --> N["Inception<br/>9 stages"]
+    N --> VG2{{"Verification Gate 2"}}
+    VG2 --> C["Construction<br/>7 stages"]
+    C --> VG3{{"Verification Gate 3"}}
+    VG3 --> O["Operation<br/>7 stages"]
     O -.->|"feedback loop"| I
+
+    style Z fill:#f3e5f5,stroke:#9c27b0,color:#000
+    style I fill:#e8f5e9,stroke:#4caf50,color:#000
+    style N fill:#e3f2fd,stroke:#2196f3,color:#000
+    style C fill:#fff3e0,stroke:#ff9800,color:#000
+    style O fill:#fce4ec,stroke:#e91e63,color:#000
+    style VG1 fill:#ef9a9a,stroke:#c62828,color:#000
+    style VG2 fill:#ef9a9a,stroke:#c62828,color:#000
+    style VG3 fill:#ef9a9a,stroke:#c62828,color:#000
 ```
 
 ### Phase 0 — Initialization
@@ -166,6 +178,28 @@ Stage 4.7 is where the loop closes. Its findings feed back into Ideation as a ne
 
 <!-- 11 profiles: Classic, Express, features, bug fixes, infrastructure, security, PoCs, enterprise. -->
 
+## What Harness Engineering Actually Means
+
+A **harness** is one command-line agent that the same methodology runs on: Claude Code, Kiro CLI, Kiro IDE, Codex CLI, Cursor, opencode, GitHub Copilot. The stages, agents, scopes and approval gates are identical on every one of them. What changes is the shell — where the config lives, which session events fire, how gates render.
+
+**Harness engineering** is the job of reshaping how AI-DLC behaves for your team. Which stages exist, what each one produces, who leads it, which stages a given piece of work actually runs, which rules hold and which checks verify them. The framework's own design principle is that none of this requires code. You write Markdown with YAML frontmatter and JSON config, and the framework reads it at runtime. Adding a stage, adding an agent, defining a scope: no TypeScript edits anywhere. The moment a change means editing the orchestrator, a hook or a CLI tool, you have crossed into framework development, which is a different job.
+
+The useful mental model is that **stages are what and agents are who**. A stage is a unit of work — it declares the artifacts it consumes and produces, and names the agent that leads it. An agent is a persona — a domain expertise, a tool allowlist, a model. A stage names its lead agent; an agent never names its stages. That asymmetry is on purpose, because it lets you move work around without rewriting the worker, and add a worker without disturbing the workflow until some stage opts to use it.
+
+Everything you shape hangs off five things:
+
+- **Stages** — the units of work and the nodes of the workflow graph.
+- **Agents** — the personas loaded into those stages.
+- **Scopes** — which stages run for a given kind of work. A bug fix runs 9 of 33; an enterprise feature runs all of them.
+- **Rules** — standing decisions that travel into every workflow. Your team's "always do it this way."
+- **Sensors** — deterministic checks bound to stages, fired on matching writes or at a gate. A binding is either advisory or blocking.
+
+Two more knobs sit alongside these. **Knowledge** is the domain context agents load before working. **Depth** changes how much detail a stage produces, never which stages run.
+
+This is where harness engineering earns its keep against plain prompt engineering. A prompt is a request, and whether it holds depends on whether the file got read this session, how much context survived the last compaction and how the model happened to feel about it. A stage file is an input to a route that was compiled before you typed anything. The difference shows up in the awkward cases: a conditional stage cannot simply be skipped with a shrug, because the engine refuses the report unless it names the currently active stage and carries a nonblank reason, and records the skip as an audited `[S]`. "Run the tests before you say you are done" is advice. A completion claim without test evidence is a transition the engine will not grant.
+
+One naming trap, if you go read the framework's own docs. _Harness_ carries four senses in that repository: a CLI distribution (the one that matters here), the rule-plus-sensor control loop that was once also called a harness, the `harness/<name>/` source directory, and the `tests/harness/` test helpers. "Harness engineering" is the reshaping activity, not adding a new CLI.
+
 ## Harness Support
 
 <!-- Claude Code, Kiro CLI/IDE, Codex CLI, Cursor, opencode, GitHub Copilot. -->
@@ -186,7 +220,84 @@ Stage 4.7 is where the loop closes. Its findings feed back into Ideation as a ne
 
 ## Getting Started
 
-<!-- Install, configure a project, start a workflow. -->
+Installation is one command, and it deliberately does not ask you to install a language runtime first. On macOS, Linux or WSL:
+
+```bash
+curl -fsSL https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.sh | sh
+```
+
+On Windows PowerShell, `irm https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.ps1 | iex` does the same and registers the binary directory in your user `PATH`. The installer drops a checksum-verified `aidlc` command plus a version-matched runtime for every supported harness. Bun and Node.js are not required. If you cannot install a native executable, the fallback is to install Bun, download the `aidlc-copy-runtime-X.Y.Z.tar.gz` release asset and copy its `runtime/<harness>/` directory into your project by hand — that path needs no native binary at all.
+
+Then configure the project, from its root:
+
+```bash
+aidlc config --harness claude    # or kiro, kiro-ide, codex, cursor, opencode, copilot
+aidlc doctor                     # health check
+```
+
+`aidlc config` writes that harness's native shell into the project and records the engine tree at `.aidlc/`. Model provider setup stays where it belongs — with your harness — because shipped configuration preserves the provider and model you already chose.
+
+Finally, open the harness in that project and describe the work:
+
+```text
+/aidlc Build a REST API for inventory management
+```
+
+On Codex CLI the same command is `$aidlc`. In Kiro IDE you pick **aidlc** in the chat panel's agent picker first. From that prompt AI-DLC selects a workflow profile from your description, asks for any decision it cannot infer, and stops at approval gates before moving on. Bare `/aidlc` with no description resumes the active workflow instead of starting a new one.
+
+## Commands
+
+Everything after that happens through `/aidlc` in your harness, so the command surface is grouped here by what you are trying to do rather than listed exhaustively. The complete reference is `docs/guide/12-cli-commands.md`.
+
+### Starting and steering a run
+
+| Goal                                  | Command                                           |
+| ------------------------------------- | ------------------------------------------------- |
+| Start with an explicit scope          | `/aidlc <scope>`                                  |
+| Start and let the scope be inferred   | `/aidlc <description>`                            |
+| Force a tailored execute-or-skip plan | `/aidlc compose "<task>"`                         |
+| Resume the active workflow            | `/aidlc`                                          |
+| Pause at a clean stage boundary       | `/aidlc park`                                     |
+| Jump to a stage or a phase            | `/aidlc --stage <slug>` · `/aidlc --phase <name>` |
+| Run one stage without advancing       | `/aidlc --stage <slug> --single`                  |
+
+### Navigating workspaces
+
+| Goal                                 | Command                                                   |
+| ------------------------------------ | --------------------------------------------------------- |
+| List or switch intents               | `/aidlc intent [name]`                                    |
+| Retire an intent without deleting it | `/aidlc intent archive <name>`                            |
+| List or switch spaces                | `/aidlc space [name]`                                     |
+| Create a space from the baseline     | `/aidlc space-create <name>`                              |
+| Read-only status                     | `/aidlc --status`                                         |
+| Team Construction board              | `/aidlc team-board`                                       |
+| Claim, publish and land a unit       | `/aidlc unit claim` · `publish` · `pin` · `gate` · `land` |
+
+### Documents and knowledge
+
+| Goal                                        | Command                                                                                       |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Index your own documents and read them back | `/aidlc knowledge onboard` · `sync` · `list` · `show <id>` · `associate <id> --intent <slug>` |
+
+### Tuning this run
+
+| Goal                                               | Command                                                                |
+| -------------------------------------------------- | ---------------------------------------------------------------------- |
+| Change scope, depth, test strategy or review class | `/aidlc --scope` · `--depth` · `--test-strategy` · `--review`          |
+| Read or change a workflow setting                  | `/aidlc config get <key>` · `config set <key> <value>` · `config list` |
+| Health check                                       | `/aidlc --doctor`                                                      |
+| Shareable diagnostic report                        | `/aidlc --doctor --export`                                             |
+
+### Outside the session
+
+These are native binaries rather than slash commands, and they run in a terminal rather than in your harness.
+
+| Goal                                    | Command                                            |
+| --------------------------------------- | -------------------------------------------------- |
+| Reproduce a declared multi-repo set     | `aidlc system workspace-sync [--force]`            |
+| Drive Construction approvals and swarms | `aidlc engine bolt …` · `aidlc engine swarm …`     |
+| Recover or purge set-aside worktrees    | `aidlc engine worktree restore` · `purge`          |
+| Pin the engine version for a project    | commit `.aidlc-version`, then `aidlc config --pin` |
 
 ## Development
 
@@ -198,15 +309,11 @@ Stage 4.7 is where the loop closes. Its findings feed back into Ideation as a ne
 
 ## FAQ
 
-**Q1. Is Copilot chat in VS Code a harness in itself?**
-
-No. The harness is `copilot`, and a single install serves both Copilot surfaces: the standalone Copilot CLI and VS Code agent mode. GitHub converged the two on the same project discovery paths (`.github/skills/`, `.github/agents/`, `.github/hooks/` and the root `AGENTS.md`), so one generated tree satisfies both. What still differs is implementation detail inside that one harness, not methodology: the CLI reads `~/.copilot/mcp-config.json` while VS Code reads `.vscode/mcp.json`, VS Code has no documented `SessionEnd` event so that hook is CLI-only, and VS Code agent hooks are still a Preview feature (the supported floors are Copilot CLI ≥ 1.0.74 and VS Code ≥ 1.130). Note also that an untrusted folder makes every repo hook silently no-op — which is exactly what `aidlc doctor` exists to catch.
-
-**Q2. So how many harnesses are there?**
+**Q1. So how many harnesses are there?**
 
 Seven authored distributions — `claude`, `kiro`, `kiro-ide`, `codex`, `cursor`, `opencode`, `copilot` — serving more surfaces than that. Copilot covers CLI plus VS Code from one tree; Cursor covers the IDE plus the `agent` CLI from one tree. Kiro is the counter-example: it ships as two distributions because the two cannot share the `.kiro/` engine directory (a project may install both without them colliding) and their activation shells differ — CLI resources versus IDE steering. The glossary is explicit that the set is open: adding another harness is mostly writing one `manifest.ts`.
 
-**Q3. The harness compacts the conversation, so what does AI-DLC actually keep across a compaction?**
+**Q2. The harness compacts the conversation, so what does AI-DLC actually keep across a compaction?**
 
 The compaction itself is entirely the harness's — Claude Code summarises earlier turns when the context window fills and AI-DLC has no say in it. What AI-DLC adds is the durability layer that makes the loss survivable. Crucially, it does **not** transcribe your chat turns. It externalises the workflow's ground truth and treats the conversation as a cache: stage artifacts (`requirements.md`, `code-summary.md`, …), the state file's six-state per-stage checkboxes, the `audit/` event shards, a per-stage `memory.md` diary of interpretations/deviations/tradeoffs/open questions, and a recovery breadcrumb written _before_ compaction.
 
@@ -214,7 +321,7 @@ Two details clarify the boundary. First, the breadcrumb is the only compaction-s
 
 So the honest claim is **workflow continuity, not conversational continuity**. After a compaction you can always resume, know exactly which stage you are in, and re-read every artifact — but the nuance of the discussion is gone, any in-flight reasoning that never reached a file is gone, task IDs are rebuilt from state, and the agent persona is reloaded from its file. The framework documents that preserved-vs-lost table rather than papering over it.
 
-**Q4. How does AI-DLC decide which of the 33 stages to run and which to skip?**
+**Q3. How does AI-DLC decide which of the 33 stages to run and which to skip?**
 
 In four layers, and only the last one is a judgement call.
 
@@ -227,13 +334,13 @@ Three things that look like inclusion decisions but are separate axes: whether a
 
 The practical difference from an improvised route: here you can read the whole path before you start, and the only place judgement enters is a refused-unless-reasoned, audited skip of a stage explicitly marked conditional.
 
-**Q5. I already have domain and architecture documents in a separate folder. Do I have to retype them?**
+**Q4. I already have domain and architecture documents in a separate folder. Do I have to retype them?**
 
 No — but every intake path is project-root relative. The workflow does not read outside the project and does not follow symlinks, so a folder that lives outside the repository has to come inside first. Which route you want depends on what the documents are.
 
 **Curated Markdown → Tier 2 knowledge.** For distilled material you want in context at every stage — a domain glossary, architecture principles, standards. Drop `.md` files in `aidlc/spaces/<space>/knowledge/aidlc-shared/` and every agent loads them, or in `aidlc/spaces/<space>/knowledge/aidlc-<role>-agent/` and only that agent loads them. The directory name must match the agent slug exactly (`aidlc-architect-agent/`, not `architect/`) or it is silently ignored. There is no registration step: the file's presence is the registration. Keep each file short and single-topic, because agents load the content literally at every stage start. Do not edit `.claude/knowledge/` to add your own context — that is framework material, overwritten on every upgrade.
 
-**Existing files as-is → the DocumentKB catalog.** For PDFs, Word files and anything too large to preload, copy the files into `aidlc/spaces/<space>/knowledge/documents/` (organised however you like) and run `/aidlc knowledge onboard` to sweep the folder, or `onboard <path>` for one file. The constraint worth knowing up front: `onboard` **refuses** a path that lands outside `documents/` — it will not copy an external file in for you. A `linked` source kind exists for corpora that live outside the repo, resolving through a gitignored `knowledge/.sources.local.json` alias map, but no command creates such a row yet, so today you copy the files in. Once indexed, the tool writes a derived catalog under `knowledge/documentkb/` holding extracted text, a digest per revision, and optionally an LLM-authored summary plus tags — summaries are revision-bound, so after editing an original a `sync` marks the old summary invalidated and withholds it rather than serving stale text. Then `sync` to reconcile, `list` to see every row and its state, `show <id>` to pull one document's text on demand, and `associate <id> --intent <slug>` to scope a document to a single workflow. This is the path that keeps big documents _out_ of the context window: text is retrieved when needed and a summary lets an agent cite the gist without re-reading. Limits worth knowing: 32 MiB per document, a sweep budget of 20 new-or-changed documents or 256 MiB, extraction capped at 50 PDF pages and 200,000 characters with the row flagged `truncated` (so "the document doesn't mention X" is not a safe conclusion), scanned PDFs come back `no_extractable_text` because OCR is out of scope, and `.docx` needs an external extractor. Document text and even filenames are treated as untrusted data, so an imperative sentence inside a vendor contract can never redirect the workflow.
+**Existing files as-is → the DocumentKB catalog.** For PDFs, Word files and anything too large to preload, copy the files into `aidlc/spaces/<space>/knowledge/documents/` (organised however you like) and run `/aidlc knowledge onboard` to sweep the folder, or `onboard <path>` for one file. The constraint worth knowing up front: `onboard` **refuses** a path that lands outside `documents/` — it will not copy an external file in for you. A `linked` source kind exists for corpora that live outside the repo, resolving through a gitignored `knowledge/.sources.local.json` alias map, but no command creates such a row yet, so today you copy the files in. Once indexed, the tool writes a derived catalog under `knowledge/documentkb/` holding extracted text, a digest per revision, and optionally an LLM-authored summary plus tags — summaries are revision-bound, so after editing an original a `sync` marks the old summary invalidated and withholds it rather than serving stale text. Then `sync` reconciles, and `list`, `show <id>` and `associate <id> --intent <slug>` read a document back or scope one to a single workflow — the [commands](#documents-and-knowledge) section lists the full verb set. This is the path that keeps big documents _out_ of the context window: text is retrieved when needed and a summary lets an agent cite the gist without re-reading. Limits worth knowing: 32 MiB per document, a sweep budget of 20 new-or-changed documents or 256 MiB, extraction capped at 50 PDF pages and 200,000 characters with the row flagged `truncated` (so "the document doesn't mention X" is not a safe conclusion), scanned PDFs come back `no_extractable_text` because OCR is out of scope, and `.docx` needs an external extractor. Document text and even filenames are treated as untrusted data, so an imperative sentence inside a vendor contract can never redirect the workflow.
 
 **One-off input, without cataloguing anything.** Name one exact path in your first request — `/aidlc Read ./vision.md and build what it describes` — or paste the content inside a `<document>` … `</document>` block, which the workflow reads as data rather than as instructions to itself. A direct read handles text and Markdown; PDFs and Word files go through the catalog above.
 
@@ -241,7 +348,7 @@ No — but every intake path is project-root relative. The workflow does not rea
 
 One distinction decides everything else. If a human reviewer would **reject** a stage's output when the guidance is violated, it belongs in the **rules** layer (`aidlc/spaces/<space>/memory/`, resolved through the org → team → project → phase → stage chain): "never ship a migration without a rollback script". If they would merely use it as background while reviewing, it is **knowledge**: "all new HTTP APIs use API Gateway with a Lambda authorizer in front of every route".
 
-**Q6. My knowledge base is its own repository with a generated hierarchy. Where does that fit?**
+**Q5. My knowledge base is its own repository with a generated hierarchy. Where does that fit?**
 
 It fits well, with one constraint that shapes everything. There is no setting that points team knowledge at an external root — the stage protocol hardcodes exactly two paths, `aidlc/spaces/<active-space>/knowledge/aidlc-shared/` and `aidlc/spaces/<active-space>/knowledge/<agent-name>/`.
 
@@ -259,19 +366,19 @@ Two practical notes. First, there is a `linked` source kind designed for exactly
 
 Two things to avoid. Do not mirror your organisation chart in the directory layout: split by _consumer_ instead, with cross-cutting material in `aidlc-shared/` and only genuinely role-specific content in an agent directory. And do not reach for a symlink at `aidlc/spaces/<space>/knowledge/aidlc-shared` — it would probably work, since the orchestrator simply reads those paths, but nothing documents or tests it and the catalog tooling deliberately refuses symlinks for containment reasons. Unsupported is not the same as forbidden, but it is not something to build on.
 
-**Q7. I cloned the repository. Is the `aidlc` command on my PATH running my code?**
+**Q6. I cloned the repository. Is the `aidlc` command on my PATH running my code?**
 
 No. `aidlc` is a separately installed, versioned native binary, and it keeps running its released version until you reinstall it. To exercise your own tree, invoke the authored entry point directly — `bun core/tools/aidlc.ts` or the projected `bun dist/<harness>/<harnessDir>/tools/aidlc.ts`. Everything in this repository runs on **bun**; Node and npm cannot substitute for the packager, the tools, the hooks or the test runner.
 
-**Q8. Do the "hats" and "personas" from the community AI-DLC plugins exist here?**
+**Q7. Do the "hats" and "personas" from the community AI-DLC plugins exist here?**
 
 No. That vocabulary belongs to the community implementations, not this repository. The official framework ships 14 agents — 11 broadly capable domain experts, 2 review-only agents and the adaptive composer — plus 33 stages, 11 workflow profiles and a rule/sensor control loop. The [fintech approach post](/blog/ai/fintech/fintech-aidlc-approach/) maps personas and hats onto the methodology as a forward-looking framing; the mapping is a useful lens, but the executable artefacts here are stages, agents, scopes, rules and sensors.
 
-**Q9. What do I actually need installed?**
+**Q8. What do I actually need installed?**
 
 End users need neither Bun nor Node.js — the native installer drops a checksum-verified `aidlc` binary plus version-matched harness runtimes, and you finish with `aidlc config --harness <name>` and `aidlc doctor`. Bun is needed for the manual copy channel (the `aidlc-copy-runtime-X.Y.Z.tar.gz` release asset) and for anyone building from source.
 
-**Q10. I have several separate repositories — service, infrastructure, documentation. Does each one get an `aidlc/` folder, and does that turn my setup into a monorepo?**
+**Q9. I have several separate repositories — service, infrastructure, documentation. Does each one get an `aidlc/` folder, and does that turn my setup into a monorepo?**
 
 No to both. `aidlc/` never contains source code — it holds workflow metadata only: the method, the knowledge, the per-intent records and the audit trail. Where it goes depends on whether you have one repo or several.
 
@@ -296,7 +403,7 @@ The part that answers "in the same context" is how an intent spans them. The rep
 
 Two limits are worth knowing before you commit to a layout. Discovery only looks at immediate children, one level deep, so you cannot group repositories under a `repos/` subdirectory, and each on-disk directory name must be the single safe path segment recorded as its name. And committing `aidlc/` is what makes the method, the state and the audit trail shareable — leave it uncommitted and the workflow still runs, but each developer's copy diverges silently and nothing carries over.
 
-**Q11. My knowledge base, my code and my infrastructure are separate repositories. Does the framework treat them as one unit?**
+**Q10. My knowledge base, my code and my infrastructure are separate repositories. Does the framework treat them as one unit?**
 
 It treats them as one workspace with three separate repositories — see the previous answer for the layout, the manifest and the sync tool. The distinction that matters is which ones an intent may _write_ to, because the recorded repository set is a write scope rather than a general association. Source code and infrastructure belong in it, since both change during a run and their changes have to stay ordered with respect to each other. Documentation that ships alongside the change, such as a README or a runbook, belongs in it too.
 
