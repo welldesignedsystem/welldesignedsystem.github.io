@@ -69,6 +69,93 @@ What emerges is not autonomy or a chat window. It is a delivery process whose ro
 
 ## Lifecycle: 5 Phases and 33 Stages
 
+The lifecycle is the framework's spine. Five phases run in order, holding 33 stages between them, and every stage has one job, one lead agent and a declared set of artifacts on disk. Three of the four phase boundaries are protected by verification gates; the fourth closes a feedback loop. Nothing in the sequence is decided at conversation time — the route was compiled before you asked for anything.
+
+```mermaid
+graph LR
+    Z["Initialization<br/>3 stages"] -->|"auto-proceeds"| I["Ideation<br/>7 stages"]
+    I -->|"Verification Gate 1"| N["Inception<br/>9 stages"]
+    N -->|"Verification Gate 2"| C["Construction<br/>7 stages"]
+    C -->|"Verification Gate 3"| O["Operation<br/>7 stages"]
+    O -.->|"feedback loop"| I
+```
+
+### Phase 0 — Initialization
+
+Purpose: bootstrap the workspace. Scaffold the record directory, scan the codebase and initialise state. All three stages run automatically inside a single deterministic tool call — no subagent, no prompt, no approval gate.
+
+| #   | Stage                | Lead         | Key artifacts                         |
+| --- | -------------------- | ------------ | ------------------------------------- |
+| 0.1 | Workspace Scaffold   | orchestrator | The first intent's record directory   |
+| 0.2 | Workspace Detection  | orchestrator | Detected languages, frameworks, build |
+| 0.3 | State Initialization | orchestrator | `aidlc-state.md`, `audit/` shards     |
+
+Stage 0.3 is also where the brownfield-or-greenfield verdict is recorded, and that single fact determines whether the next phase opens with reverse engineering.
+
+### Phase 1 — Ideation
+
+Purpose: decide whether this is worth doing and what it is. Stages 1.1, 1.4 and 1.7 always run; the rest are conditional on scope, so a bug fix skips market research while a greenfield feature does not.
+
+| #   | Stage                     | Lead      | Key artifacts                               |
+| --- | ------------------------- | --------- | ------------------------------------------- |
+| 1.1 | Intent Capture & Framing  | product   | Intent statement, stakeholder map           |
+| 1.2 | Market Research           | product   | Competitive analysis, build-vs-buy          |
+| 1.3 | Feasibility & Constraints | architect | Feasibility assessment, constraint register |
+| 1.4 | Scope Definition          | product   | Scope definition, intent backlog            |
+| 1.5 | Team Formation            | delivery  | Team assessment, mob composition plan       |
+| 1.6 | Rough Mockups             | design    | Wireframes, user flows, concept deck        |
+| 1.7 | Approval & Handoff        | delivery  | Initiative brief, decision log              |
+
+### Phase 2 — Inception
+
+Purpose: elaborate that decision into something buildable. This is the longest phase and the one where existing code gets read properly, which is why it carries the most interesting execution topologies.
+
+| #   | Stage                 | Lead            | Key artifacts                                                         |
+| --- | --------------------- | --------------- | --------------------------------------------------------------------- |
+| 2.1 | Reverse Engineering   | developer       | 9 artefacts: architecture, component inventory, data flow, risks      |
+| 2.2 | Practices Discovery   | pipeline-deploy | `team-practices.md`, promoted to the space's `memory/` on affirmation |
+| 2.3 | Requirements Analysis | product         | `requirements.md`                                                     |
+| 2.4 | User Stories          | product         | `stories.md`, `personas.md`                                           |
+| 2.5 | Refined Mockups       | design          | Hi-fi mockups, interaction spec                                       |
+| 2.6 | Domain Design         | architect       | `components.md`, `decisions.md` (ADRs)                                |
+| 2.7 | Units Generation      | architect       | `unit-of-work.md`, the dependency DAG, story map                      |
+| 2.8 | Contract Design       | architect       | `contract-summary.md`                                                 |
+| 2.9 | Delivery Planning     | delivery        | `bolt-plan.md`, team allocation, sequencing rationale                 |
+
+Three stages here do not run like ordinary stages, and the difference is the point. Reverse Engineering is a **two-link pipeline** — a developer scans the code, an architect synthesises and writes — and multi-repo work needs one complete chain per repository before it can be approved. Practices Discovery is a **hub-and-spoke**: the lead drafts, quality, developer and devsecops inspect the draft independently without seeing each other's comments, a human closes the gaps, and only affirmed practices are promoted into the space's method. User Stories run as a **mob**, with design, developer and quality contributing in parallel.
+
+### Phase 3 — Construction
+
+Purpose: build, in reviewable slices. Stages 3.1 to 3.5 run once per unit of work in dependency order; 3.6 and 3.7 run a single time after every unit has converged.
+
+| #   | Stage                 | Lead            | Key artifacts                                   |
+| --- | --------------------- | --------------- | ----------------------------------------------- |
+| 3.1 | Functional Design     | architect       | `entities.md`, `rules.md`, `functional-spec.md` |
+| 3.2 | NFR Requirements      | architect       | Performance, security, scalability NFRs         |
+| 3.3 | NFR Design            | architect       | NFR design specifications                       |
+| 3.4 | Infrastructure Design | aws-platform    | Infrastructure specs, IaC designs               |
+| 3.5 | Code Generation       | developer       | Application code and its documentation          |
+| 3.6 | Build and Test        | quality         | Test results, quality report                    |
+| 3.7 | CI Pipeline           | pipeline-deploy | CI configuration, quality gates                 |
+
+The ordering is unit-major and serial by default: each unit finishes its design stages and code generation before the next begins, following the DAG from 2.7. The first unit in that DAG is a deliberately small working slice, and you approve it against a real end-to-end command before later units start — a design review passing is not a skeleton running. Parallel execution is available as dependency-ready batches, but the skeleton checkpoint still comes first.
+
+### Phase 4 — Operation
+
+Purpose: ship it and keep it. Every stage here is conditional, because a library, an internal tool and a customer-facing service have very different operational needs.
+
+| #   | Stage                    | Lead            | Key artifacts                                    |
+| --- | ------------------------ | --------------- | ------------------------------------------------ |
+| 4.1 | Deployment Pipeline      | pipeline-deploy | CD config, deployment strategy, rollback runbook |
+| 4.2 | Environment Provisioning | aws-platform    | Environment inventory, validation report         |
+| 4.3 | Deployment Execution     | pipeline-deploy | Deployment log, smoke tests, health checks       |
+| 4.4 | Observability Setup      | operations      | Dashboards, alarms, SLO configuration            |
+| 4.5 | Incident Response        | operations      | SSM runbooks, incident plan, escalation matrix   |
+| 4.6 | Performance Validation   | quality         | Load test results, NFR validation matrix         |
+| 4.7 | Feedback & Optimization  | operations      | SLO report, cost analysis, feedback loop doc     |
+
+Stage 4.7 is where the loop closes. Its findings feed back into Ideation as a new intent, which is how a framework that treats delivery as a lifecycle stays one: the thing you learn operating the system becomes the next piece of work.
+
 <!-- Initialization, Ideation, Inception, Construction, Operation. Approval gates and feedback loop. -->
 
 ## Agents
