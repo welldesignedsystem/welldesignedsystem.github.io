@@ -61,41 +61,43 @@ Which stages actually run depends on the scope you choose.
 
 ##### The 33 stages
 
-| # | Stage | Lead | Runs | Description |
+| # | Stage | Lead | Runs | Artifacts |
 |---|---|---|---|---|
-| 0.1 | Workspace Scaffold | orchestrator | Always | Ensures the per-intent record and in-scope phase directories exist (idempotent) — [details](#ref-0-1) |
-| 0.2 | Workspace Detection | orchestrator | Always | Scans and classifies the workspace; auto-proceeds, no approval gate — [details](#ref-0-2) |
-| 0.3 | State Initialization | orchestrator | Always | Writes the fully populated state file and determines routing; auto-proceeds — [details](#ref-0-3) |
-| 1.1 | Intent Capture & Framing | aidlc-product-agent | Always | First stage of every workflow; captures the intent statement and stakeholder map — [details](#ref-1-1) |
-| 1.2 | Market Research | aidlc-product-agent | Conditional | Runs when the initiative has external market positioning or build-vs-buy considerations; skipped for internal tools, bug fixes and refactors — [details](#ref-1-2) |
-| 1.3 | Feasibility & Constraints | aidlc-architect-agent | Conditional | Runs when there are integration constraints, regulatory requirements or significant technical uncertainty; skipped for trivial changes — [details](#ref-1-3) |
-| 1.4 | Scope Definition | aidlc-product-agent | Always | Defines the scope boundary and the prioritized backlog — [details](#ref-1-4) |
-| 1.5 | Team Formation | aidlc-delivery-agent | Conditional | Runs when team composition, capacity or mob planning is relevant; skipped for solo or small-team projects — [details](#ref-1-5) |
-| 1.6 | Rough Mockups | aidlc-design-agent | Conditional | Runs when user-facing UI is part of the initiative (system interaction diagrams for API/backend otherwise); skipped for API-only and infrastructure-only work — [details](#ref-1-6) |
-| 1.7 | Approval & Handoff | aidlc-delivery-agent | Always | Compiles all Ideation artifacts into the initiative brief for approval — [details](#ref-1-7) |
-| 2.1 | Reverse Engineering | aidlc-developer-agent (then aidlc-architect-agent) | Brownfield projects | Scans a brownfield codebase into the 9-artifact code knowledge base; skipped for greenfield — [details](#ref-2-1) |
-| 2.2 | Practices Discovery | aidlc-pipeline-deploy-agent | Conditional | Discovers team practices; brownfield derives from evidence and reverse-engineering artifacts, greenfield elicits via structured questions — [details](#ref-2-2) |
-| 2.3 | Requirements Analysis | aidlc-product-agent | Always | Elaborates requirements to a depth that scales with project complexity — [details](#ref-2-3) |
-| 2.4 | User Stories | aidlc-product-agent | User-facing features | Runs when user-facing features, multiple personas, complex business logic or cross-team work is involved; skipped for refactors, isolated bug fixes and infrastructure-only changes — [details](#ref-2-4) |
-| 2.5 | Refined Mockups | aidlc-design-agent | UI projects | Runs when user-facing UI exists and rough mockups were produced in Ideation (refines interaction diagrams for APIs) — [details](#ref-2-5) |
-| 2.6 | Domain Design | aidlc-architect-agent | Per execution plan | Runs when new components or logical building blocks are needed; skipped for modifications to existing components only — [details](#ref-2-6) |
-| 2.7 | Units Generation | aidlc-architect-agent | Always | Produces the units of work and the dependency DAG that Delivery Planning consumes for sequencing — [details](#ref-2-7) |
-| 2.8 | Contract Design | aidlc-architect-agent | Conditional | Runs when the system has a formal contract to pin down — an inter-unit boundary or an API consumed outside the system; skipped for a single self-contained unit — [details](#ref-2-8) |
-| 2.9 | Delivery Planning | aidlc-delivery-agent | Always | Capstone Inception stage; produces the detailed execution plan for Construction and Operation — [details](#ref-2-9) |
-| 3.1 | Functional Design | aidlc-architect-agent | Per Unit (conditional) | Designs new data models, complex business logic and business rules per unit; skipped for simple logic changes — [details](#ref-3-1) |
-| 3.2 | NFR Requirements | aidlc-architect-agent | Per Unit (conditional) | Gathers performance, security, scalability, reliability and observability requirements plus tech-stack selection per unit; skipped when none remain and the stack is fixed — [details](#ref-3-2) |
-| 3.3 | NFR Design | aidlc-architect-agent | Per Unit (conditional) | Designs NFR patterns per unit; skipped when NFR Requirements was skipped — [details](#ref-3-3) |
-| 3.4 | Infrastructure Design | aidlc-aws-platform-agent | Per Unit (conditional) | Maps infrastructure services and cloud resources per unit; skipped when there are no infrastructure changes and infrastructure is already defined — [details](#ref-3-4) |
-| 3.5 | Code Generation | aidlc-developer-agent | Per Unit (always) | Generates application code and its documentation for every unit in the execution plan — [details](#ref-3-5) |
-| 3.6 | Build and Test | aidlc-quality-agent | Always, once at end | Builds and tests everything once after all per-unit stages finish — [details](#ref-3-6) |
-| 3.7 | CI Pipeline | aidlc-pipeline-deploy-agent | Conditional, once at end | Runs once at the end when the CI pipeline needs creation or significant modification — [details](#ref-3-7) |
-| 4.1 | Deployment Pipeline | aidlc-pipeline-deploy-agent | Conditional | Runs when the CD pipeline needs creation or significant modification — [details](#ref-4-1) |
-| 4.2 | Environment Provisioning | aidlc-aws-platform-agent | Conditional | Provisions or validates AWS environments — [details](#ref-4-2) |
-| 4.3 | Deployment Execution | aidlc-pipeline-deploy-agent | Conditional | Runs the deployment after the pipeline and environment are ready — [details](#ref-4-3) |
-| 4.4 | Observability Setup | aidlc-operations-agent | Conditional | Configures monitoring, dashboards, alarms and tracing — [details](#ref-4-4) |
-| 4.5 | Incident Response | aidlc-operations-agent | Conditional | Builds runbooks and incident response procedures — [details](#ref-4-5) |
-| 4.6 | Performance Validation | aidlc-quality-agent | Conditional | Validates NFR performance targets under load — [details](#ref-4-6) |
-| 4.7 | Feedback & Optimization | aidlc-operations-agent | Conditional | Runs when ongoing monitoring and optimization are needed; feeds findings back to Ideation — [details](#ref-4-7) |
+| 0.1 | [Workspace Scaffold](#ref-0-1) | orchestrator | Always | - `scaffold-report.md` |
+| 0.2 | [Workspace Detection](#ref-0-2) | orchestrator | Always | - `workspace-findings.md`<br>- updated `aidlc-state.md` |
+| 0.3 | [State Initialization](#ref-0-3) | orchestrator | Always | - `state-init-summary.md`<br>- populated `aidlc-state.md` |
+| 1.1 | [Intent Capture & Framing](#ref-1-1) | aidlc-product-agent | Always | - `intent-capture-questions.md`<br>- `intent-statement.md`<br>- `stakeholder-map.md` |
+| 1.2 | [Market Research](#ref-1-2) | aidlc-product-agent | Conditional | - `competitive-analysis.md`<br>- `build-vs-buy.md` |
+| 1.3 | [Feasibility & Constraints](#ref-1-3) | aidlc-architect-agent | Conditional | - `feasibility-assessment.md`<br>- `constraint-register.md`<br>- `raid-log.md` |
+| 1.4 | [Scope Definition](#ref-1-4) | aidlc-product-agent | Always | - `scope-document.md`<br>- `intent-backlog.md` |
+| 1.5 | [Team Formation](#ref-1-5) | aidlc-delivery-agent | Conditional | - `team-assessment.md`<br>- `mob-composition.md` |
+| 1.6 | [Rough Mockups](#ref-1-6) | aidlc-design-agent | Conditional | - `wireframes.md`<br>- `user-flow.md` |
+| 1.7 | [Approval & Handoff](#ref-1-7) | aidlc-delivery-agent | Always | - `initiative-brief.md`<br>- `decision-log.md` |
+| 2.1 | [Reverse Engineering](#ref-2-1) | aidlc-developer-agent (then aidlc-architect-agent) | Brownfield projects | 9 files to `aidlc/spaces/<space>/codekb/<repo>/`:<br>- `business-overview.md`<br>- `architecture.md`<br>- `code-structure.md`<br>- `api-documentation.md`<br>- `component-inventory.md`<br>- `technology-stack.md`<br>- `dependencies.md`<br>- `code-quality-assessment.md`<br>- `reverse-engineering-timestamp.md` |
+| 2.2 | [Practices Discovery](#ref-2-2) | aidlc-pipeline-deploy-agent | Conditional | - `team-practices.md`<br>- `discovered-rules.md`<br>- `evidence.md`<br>- `practices-discovery-timestamp.md`<br>- promoted to `memory/team.md` and `project.md` |
+| 2.3 | [Requirements Analysis](#ref-2-3) | aidlc-product-agent | Always | - `requirements.md` |
+| 2.4 | [User Stories](#ref-2-4) | aidlc-product-agent | User-facing features | - `stories.md`<br>- `personas.md`<br>- `user-stories-assessment.md`<br>- `traceability.json` |
+| 2.5 | [Refined Mockups](#ref-2-5) | aidlc-design-agent | UI projects | - `mockups.md`<br>- `interaction-spec.md`<br>- `design-system-mapping.md`<br>- `accessibility-checklist.md` |
+| 2.6 | [Domain Design](#ref-2-6) | aidlc-architect-agent | Per execution plan | - `components.md`<br>- `decisions.md` (ADR log)<br>- `traceability.json` |
+| 2.7 | [Units Generation](#ref-2-7) | aidlc-architect-agent | Always | - `unit-of-work.md`<br>- `unit-of-work-dependency.md`<br>- `unit-of-work-story-map.md`<br>- `traceability.json` |
+| 2.8 | [Contract Design](#ref-2-8) | aidlc-architect-agent | Conditional | - `contract-summary.md` |
+| 2.9 | [Delivery Planning](#ref-2-9) | aidlc-delivery-agent | Always | - `bolt-plan.md`<br>- `team-allocation.md`<br>- `risk-and-sequencing-rationale.md`<br>- `external-dependency-map.md` |
+| 3.1 | [Functional Design](#ref-3-1) | aidlc-architect-agent | Per Unit (conditional) | - `entities.md`<br>- `rules.md`<br>- `functional-spec.md`<br>- `traceability.json` |
+| 3.2 | [NFR Requirements](#ref-3-2) | aidlc-architect-agent | Per Unit (conditional) | - `security-requirements.md`<br>- `performance-requirements.md`<br>- `scalability-requirements.md`<br>- `reliability-requirements.md`<br>- `observability-requirements.md`<br>- `tech-stack-decisions.md`<br>- `traceability.json` |
+| 3.3 | [NFR Design](#ref-3-3) | aidlc-architect-agent | Per Unit (conditional) | - `security-design.md`<br>- `performance-design.md`<br>- `scalability-design.md`<br>- `reliability-design.md`<br>- `observability-design.md`<br>- `logical-components.md`<br>- `traceability.json` |
+| 3.4 | [Infrastructure Design](#ref-3-4) | aidlc-aws-platform-agent | Per Unit (conditional) | - `infrastructure-specification.md`<br>- `monitoring-design.md`<br>- `cicd-pipeline.md` |
+| 3.5 | [Code Generation](#ref-3-5) | aidlc-developer-agent | Per Unit (always) | - `code-generation-plan.md`<br>- `code-generation-questions.md`<br>- `unit-test-instructions.md`<br>- `code-summary.md`<br>- `traceability.json`<br>- `source-manifest.json`<br>- application code to the workspace repos |
+| 3.6 | [Build and Test](#ref-3-6) | aidlc-quality-agent | Always, once at end | - `build-instructions.md`<br>- `test-results.md` |
+| 3.7 | [CI Pipeline](#ref-3-7) | aidlc-pipeline-deploy-agent | Conditional, once at end | - `ci-config.md`<br>- `quality-gates.md` |
+| 4.1 | [Deployment Pipeline](#ref-4-1) | aidlc-pipeline-deploy-agent | Conditional | - `cd-config.md`<br>- `deployment-strategy.md`<br>- `rollback-runbook.md` |
+| 4.2 | [Environment Provisioning](#ref-4-2) | aidlc-aws-platform-agent | Conditional | - `environment-inventory.md`<br>- `validation-report.md` |
+| 4.3 | [Deployment Execution](#ref-4-3) | aidlc-pipeline-deploy-agent | Conditional | - `deployment-log.md`<br>- `smoke-test-results.md` |
+| 4.4 | [Observability Setup](#ref-4-4) | aidlc-operations-agent | Conditional | - `dashboards.md`<br>- `alarms.md`<br>- `slo-config.md` |
+| 4.5 | [Incident Response](#ref-4-5) | aidlc-operations-agent | Conditional | - `runbooks.md`<br>- `incident-plan.md`<br>- `escalation-matrix.md` |
+| 4.6 | [Performance Validation](#ref-4-6) | aidlc-quality-agent | Conditional | - `load-test-plan.md`<br>- `nfr-validation-matrix.md` |
+| 4.7 | [Feedback & Optimization](#ref-4-7) | aidlc-operations-agent | Conditional | - `slo-report.md`<br>- `cost-analysis.md`<br>- `feedback-loop.md` |
+
+Every stage that collects input also writes its `{stage}-questions.md` beside its artifacts (e.g. `intent-capture-questions.md`), and every executed stage keeps a `memory.md` diary when the learnings ritual is on. Construction stages 3.1–3.5 repeat per unit of work, writing under `construction/{unit-name}/`, and per-unit artifacts are pruned to the unit's kind (`service`, `spec`, `ui`, `packaging`, or `library`). Reverse Engineering's 9 files are the only stage artifacts that land outside the record dir, in the per-repo CodeKB.
 
 ##### The 14 agents
 
