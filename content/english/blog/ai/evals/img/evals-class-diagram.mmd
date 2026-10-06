@@ -1,4 +1,18 @@
 classDiagram
+%% Types below are Python annotations written for this diagram. The evalkit
+%% source itself is not in this repository, so member names and relationships
+%% come from the class reference in evals.md and the types are annotations added
+%% here, not a transcription of shipped code.
+%%
+%% Dunder members use markdown escapes (+\_\_len\_\_) because mermaid runs
+%% class labels through markdown: unescaped __name__ renders as bold "name"
+%% with both underscore pairs eaten.
+%%
+%% Render: npx -p @mermaid-js/mermaid-cli mmdc -i <this file> -o <file>.png \
+%%   -b white --scale 16
+%% Scale 16, not the documented default 8: this diagram is twice as wide as the
+%% untyped one, so scale 8 renders at 0.37 px/unit against the 0.77 px/unit of
+%% the previously committed PNG and halves label size.
 %% ===== Core types =====
 class ScoreType:::core {
     <<enumeration>>
@@ -8,57 +22,57 @@ class ScoreType:::core {
     CATEGORICAL
 }
 class EvalCase:::core {
-    +input
-    +expected
-    +metadata
-    +tags
+    +input: str
+    +expected: str | None
+    +metadata: dict[str, str]
+    +tags: list[str]
 }
 class EvalResult:::core {
-    +case
-    +output
-    +scores
-    +passed
-    +metadata
-    +latency_ms
-    +error
+    +case: EvalCase
+    +output: str
+    +scores: list[ScoreResult]
+    +passed: bool
+    +metadata: dict[str, Any]
+    +latency_ms: float
+    +error: str | None
 }
 class EvalReport:::core {
-    +name
-    +results
-    +total
-    +passed
-    +failed
-    +pass_rate
-    +avg_scores
-    +avg_latency_ms
-    +__post_init__()
-    +summary()
+    +name: str
+    +results: list[EvalResult]
+    +total: int
+    +passed: int
+    +failed: int
+    +pass_rate: float
+    +avg_scores: dict[str, float]
+    +avg_latency_ms: float
+    +\_\_post_init\_\_() None
+    +summary() str
 }
 class EvalConfig:::core {
-    +project_name
-    +pass_threshold
-    +regression_tolerance
-    +ensure_dirs()
+    +project_name: str
+    +pass_threshold: float
+    +regression_tolerance: float
+    +ensure_dirs() None
 }
 class Dataset:::core {
-    +name
-    +cases
-    +__len__()
-    +__iter__()
-    +__getitem__()
-    +filter_by_tag()
-    +sample()
-    +from_json()
-    +from_jsonl()
-    +to_json()
-    +stats()
+    +name: str
+    +cases: list[EvalCase]
+    +\_\_len\_\_() int
+    +\_\_iter\_\_() Iterator[EvalCase]
+    +\_\_getitem\_\_(index: int) EvalCase
+    +filter_by_tag(tag: str) Dataset
+    +sample(n: int, seed: int | None) Dataset
+    +from_json(path: str) Dataset
+    +from_jsonl(path: str) Dataset
+    +to_json(path: str | None) str
+    +stats() dict[str, Any]
 }
 class ScoreResult:::core {
-    +name
-    +score
-    +passed
-    +reason
-    +raw_value
+    +name: str
+    +score: float
+    +passed: bool
+    +reason: str
+    +raw_value: Any
 }
 EvalReport o-- EvalResult
 EvalResult o-- EvalCase
@@ -67,97 +81,97 @@ Dataset o-- EvalCase
 %% ===== Scorers =====
 class Scorer:::scorer {
     <<abstract>>
-    +name
-    +score_type
-    +threshold
-    +score(output, expected)*
-    +score_batch(outputs, expecteds)
+    +name: str
+    +score_type: ScoreType
+    +threshold: float
+    +score(output: str, expected: str | None) ScoreResult
+    +score_batch(outputs: list[str], expecteds: list[str]) list[ScoreResult]
 }
 class ExactMatch:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class Contains:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class RegexMatch:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class AllOf:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class AnyOf:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class ContainsAll:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class ContainsAny:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class JsonMatch:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class LevenshteinSimilarity:::scorer {
-    +score()
-    -_levenshtein_distance()
+    +score(output: str, expected: str | None) ScoreResult
+    -_levenshtein_distance(a: str, b: str) int
 }
 class JsonSchemaValid:::scorer {
-    +score()
-    -_validate()
+    +score(output: str, expected: str | None) ScoreResult
+    -_validate(instance: Any, schema: dict[str, Any]) bool
 }
 class EmbeddingSimilarity:::scorer {
-    +score()
-    +score_batch()
-    -_get_embeddings()
-    -_cosine_similarity()
+    +score(output: str, expected: str | None) ScoreResult
+    +score_batch(outputs: list[str], expecteds: list[str]) list[ScoreResult]
+    -_get_embeddings(texts: list[str]) list[list[float]]
+    -_cosine_similarity(a: list[float], b: list[float]) float
 }
 class LengthRange:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class NoForbiddenContent:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class PythonSyntaxValid:::scorer {
-    +score()
-    -_extract_python()
+    +score(output: str, expected: str | None) ScoreResult
+    -_extract_python(text: str) str
 }
 class SqlSyntaxValid:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class ContextRelevance:::scorer {
-    +score()
-    -_judge_chunk()
+    +score(output: str, expected: str | None) ScoreResult
+    -_judge_chunk(query: str, chunk: str) ScoreResult
 }
 class Faithfulness:::scorer {
-    +score()
-    -_extract_claims()
-    -_verify_claim()
+    +score(output: str, expected: str | None) ScoreResult
+    -_extract_claims(answer: str) list[str]
+    -_verify_claim(claim: str, contexts: list[str]) bool
 }
 class AnswerCompleteness:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class ContextRecall:::scorer {
-    +score()
-    -_text_overlap()
+    +score(output: str, expected: str | None) ScoreResult
+    -_text_overlap(answer: str, contexts: list[str]) float
 }
 class ToolCallCorrectness:::scorer {
-    +score()
-    -_lcs_length()
+    +score(output: str, expected: str | None) ScoreResult
+    -_lcs_length(actual: list[str], expected: list[str]) int
 }
 class TrajectoryEfficiency:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class MultiTurnCoherence:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class TaskCompletion:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class CachedScorer:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class LangfuseScorer:::scorer {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 
 Scorer <|-- ExactMatch
@@ -194,13 +208,13 @@ Scorer ..> ScoreResult : returns
 Scorer ..> ScoreType : score_type
 
 class ScorerCache:::scorer {
-    -_dir
-    -_hits
-    -_misses
-    -_key()
-    +get()
-    +set()
-    +hit_rate()
+    -_dir: Path
+    -_hits: int
+    -_misses: int
+    -_key(scorer_name: str, payload: str) str
+    +get(key: str) ScoreResult | None
+    +set(key: str, value: ScoreResult) None
+    +hit_rate() float
 }
 CachedScorer o-- Scorer : wraps
 CachedScorer --> ScorerCache
@@ -208,36 +222,36 @@ ScorerCache ..> ScoreResult
 
 %% ===== Judge / calibration =====
 class JudgeCriterion:::judge {
-    +name
-    +description
-    +weight
-    +scale
+    +name: str
+    +description: str
+    +weight: float
+    +scale: str
 }
 class JudgeConfig:::judge {
-    +model
-    +temperature
-    +max_tokens
-    +criteria
-    +system_prompt
-    +pass_score
+    +model: str
+    +temperature: float
+    +max_tokens: int
+    +criteria: list[JudgeCriterion]
+    +system_prompt: str
+    +pass_score: float
 }
 class CalibrationCase:::judge {
-    +case_id
-    +task_input
-    +human_score
-    +judge_score
-    +output
+    +case_id: str
+    +task_input: str
+    +human_score: float
+    +judge_score: float
+    +output: str
 }
 class LLMJudge:::judge {
-    +score()
-    -_build_prompt()
-    -_parse_response()
+    +score(output: str, expected: str | None) ScoreResult
+    -_build_prompt(output: str, expected: str | None) str
+    -_parse_response(response: str) ScoreResult
 }
 class LengthNormalizedJudge:::judge {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 class ConsensusJudge:::judge {
-    +score()
+    +score(output: str, expected: str | None) ScoreResult
 }
 LLMJudge --> JudgeConfig
 LengthNormalizedJudge o-- LLMJudge : wraps
@@ -247,34 +261,34 @@ JudgeConfig o-- JudgeCriterion
 
 %% ===== Guardrails =====
 class Guardrail:::guardrail {
-    +check(output)
+    +check(output: str) GuardrailResult
 }
 class ProfanityGuardrail:::guardrail {
-    +check()
+    +check(output: str) GuardrailResult
 }
 class LengthGuardrail:::guardrail {
-    +check()
+    +check(output: str) GuardrailResult
 }
 class PIIGuardrail:::guardrail {
-    +check()
+    +check(output: str) GuardrailResult
 }
 class GuardrailResult:::guardrail {
-    +passed
-    +guardrail_name
-    +action
-    +reason
-    +latency_ms
-    +original_output
-    +modified_output
+    +passed: bool
+    +guardrail_name: str
+    +action: str
+    +reason: str
+    +latency_ms: float
+    +original_output: str
+    +modified_output: str
 }
 class GuardrailPipeline:::guardrail {
-    +run()
+    +run(output: str) PipelineResult
 }
 class PipelineResult:::guardrail {
-    +final_output
-    +blocked
-    +guardrail_results
-    +total_latency_ms
+    +final_output: str
+    +blocked: bool
+    +guardrail_results: list[GuardrailResult]
+    +total_latency_ms: float
 }
 Guardrail <|-- ProfanityGuardrail
 Guardrail <|-- LengthGuardrail
@@ -286,53 +300,53 @@ PipelineResult o-- GuardrailResult
 
 %% ===== Execution / runners =====
 class Runner:::runner {
-    +system
-    +scorers
-    +pass_threshold
-    +run_case(case)
-    +run(dataset)
+    +system: Callable
+    +scorers: list[Scorer]
+    +pass_threshold: float
+    +run_case(case: EvalCase) EvalResult
+    +run(dataset: Dataset) EvalReport
 }
 class CostAwareRunner:::runner {
-    +system
-    +scorers
-    +budget
-    +pass_threshold
-    +cost_report
-    +run()
+    +system: Callable
+    +scorers: list[Scorer]
+    +budget: float
+    +pass_threshold: float
+    +cost_report: CostReport
+    +run(dataset: Dataset) EvalReport
 }
 class TieredRunner:::runner {
-    +system
-    +fast_scorers
-    +slow_scorers
-    -_threshold
-    +run_case()
-    +run()
+    +system: Callable
+    +fast_scorers: list[Scorer]
+    +slow_scorers: list[Scorer]
+    -_threshold: float
+    +run_case(case: EvalCase) EvalResult
+    +run(dataset: Dataset) EvalReport
 }
 class ConcurrentRunner:::runner {
-    +system
-    +scorers
-    +pass_threshold
-    -_semaphore_limit
-    -_run_case_async()
-    +run()
-    -_run_all()
+    +system: Callable
+    +scorers: list[Scorer]
+    +pass_threshold: float
+    -_semaphore_limit: int
+    -_run_case_async(case: EvalCase) EvalResult
+    +run(dataset: Dataset) EvalReport
+    -_run_all(cases: list[EvalCase]) list[EvalResult]
 }
 class CostEntry:::runner {
-    +scorer_name
-    +model
-    +input_tokens
-    +output_tokens
-    +estimated_cost
-    +case_id
+    +scorer_name: str
+    +model: str
+    +input_tokens: int
+    +output_tokens: int
+    +estimated_cost: float
+    +case_id: str
 }
 class CostReport:::runner {
-    +entries
-    +total_cost()
-    +total_input_tokens()
-    +total_output_tokens()
-    +cost_by_scorer()
-    +cost_by_model()
-    +summary()
+    +entries: list[CostEntry]
+    +total_cost() float
+    +total_input_tokens() int
+    +total_output_tokens() int
+    +cost_by_scorer() dict[str, float]
+    +cost_by_model() dict[str, float]
+    +summary() str
 }
 Runner --> Dataset
 Runner o-- Scorer
@@ -349,28 +363,28 @@ CostReport o-- CostEntry
 
 %% ===== Datasets & versioning =====
 class DatasetVersion:::dataset {
-    +version
-    +name
-    +case_count
-    +checksum
-    +created_at
-    +changelog
+    +version: str
+    +name: str
+    +case_count: int
+    +checksum: str
+    +created_at: datetime
+    +changelog: str
 }
 class DatasetRegistry:::dataset {
-    -_load_manifest()
-    -_save_manifest()
-    -_checksum()
-    +register()
-    +load()
-    +history()
+    -_load_manifest() dict[str, Any]
+    -_save_manifest(manifest: dict[str, Any]) None
+    -_checksum(cases: list[EvalCase]) str
+    +register(dataset: Dataset, changelog: str) DatasetVersion
+    +load(name: str) Dataset
+    +history(name: str) list[DatasetVersion]
 }
 class SyntheticGenerator:::dataset {
-    +generate()
+    +generate(count: int, difficulty: str) Dataset
 }
 class ValidationIssue:::dataset {
-    +severity
-    +case_index
-    +message
+    +severity: str
+    +case_index: int
+    +message: str
 }
 DatasetRegistry o-- DatasetVersion
 DatasetRegistry --> Dataset
@@ -378,40 +392,40 @@ SyntheticGenerator ..> EvalCase : generates
 
 %% ===== Regression & prompts =====
 class RegressionResult:::regression {
-    +is_regression
-    +overall_delta
-    +metric_deltas
-    +new_failures
-    +new_passes
-    +message
+    +is_regression: bool
+    +overall_delta: float
+    +metric_deltas: dict[str, float]
+    +new_failures: list[str]
+    +new_passes: list[str]
+    +message: str
 }
 class RegressionDetector:::regression {
-    +golden_path
-    +tolerance
-    +save_baseline()
-    +compare()
+    +golden_path: Path
+    +tolerance: float
+    +save_baseline(report: EvalReport) Path
+    +compare(current: EvalReport) RegressionResult
 }
 class PromptComparisonResult:::regression {
-    +prompt_a_name
-    +prompt_b_name
-    +report_a
-    +report_b
-    +winner
-    +metrics_comparison
+    +prompt_a_name: str
+    +prompt_b_name: str
+    +report_a: EvalReport
+    +report_b: EvalReport
+    +winner: str
+    +metrics_comparison: dict[str, Any]
 }
 class PromptVersion:::regression {
-    +version
-    +content
-    +created_at
-    +author
-    +eval_pass_rate
+    +version: str
+    +content: str
+    +created_at: datetime
+    +author: str
+    +eval_pass_rate: float
 }
 class PromptRegistry:::regression {
-    -_load()
-    -_save()
-    +register()
-    +load()
-    +history()
+    -_load() dict[str, PromptVersion]
+    -_save(versions: dict[str, PromptVersion]) None
+    +register(content: str, author: str) PromptVersion
+    +load(name: str | None) PromptVersion
+    +history() list[PromptVersion]
 }
 RegressionDetector --> RegressionResult
 RegressionDetector --> EvalReport
@@ -420,115 +434,115 @@ PromptRegistry o-- PromptVersion
 
 %% ===== RAG =====
 class RAGCase:::rag {
-    +query
-    +retrieved_contexts
-    +generated_answer
-    +expected_answer
-    +ground_truth_contexts
+    +query: str
+    +retrieved_contexts: list[str]
+    +generated_answer: str
+    +expected_answer: str
+    +ground_truth_contexts: list[str]
 }
 
 %% ===== Agents =====
 class ToolCall:::agent {
-    +tool_name
-    +arguments
-    +result
-    +latency_ms
-    +error
+    +tool_name: str
+    +arguments: dict[str, Any]
+    +result: str
+    +latency_ms: float
+    +error: str | None
 }
 class AgentStep:::agent {
-    +step_type
-    +content
-    +tool_call
+    +step_type: str
+    +content: str
+    +tool_call: ToolCall
 }
 class AgentTrajectory:::agent {
-    +task
-    +steps
-    +final_answer
-    +total_latency_ms
-    +total_tokens
-    +iterations
-    +tool_calls()
-    +tool_names()
-    +tool_errors()
-    +to_text()
+    +task: str
+    +steps: list[AgentStep]
+    +final_answer: str
+    +total_latency_ms: float
+    +total_tokens: int
+    +iterations: int
+    +tool_calls() list[ToolCall]
+    +tool_names() list[str]
+    +tool_errors() list[ToolCall]
+    +to_text() str
 }
 AgentTrajectory o-- AgentStep
 AgentStep o-- ToolCall
 
 %% ===== Human annotation =====
 class Annotation:::annotation {
-    +case_id
-    +annotator
-    +score
-    +label
-    +reasoning
-    +criteria
-    +timestamp
-    +metadata
+    +case_id: str
+    +annotator: str
+    +score: float
+    +label: str
+    +reasoning: str
+    +criteria: list[str]
+    +timestamp: datetime
+    +metadata: dict[str, Any]
 }
 class AnnotationTask:::annotation {
-    +case_id
-    +task_input
-    +system_output
-    +expected_output
-    +criteria
-    +context
+    +case_id: str
+    +task_input: str
+    +system_output: str
+    +expected_output: str
+    +criteria: list[str]
+    +context: str
 }
 class AnnotationBatch:::annotation {
-    +batch_id
-    +tasks
-    +criteria
-    +created_at
-    +annotations
-    +status
-    +completion_rate()
-    +save()
-    +load()
+    +batch_id: str
+    +tasks: list[AnnotationTask]
+    +criteria: list[str]
+    +created_at: datetime
+    +annotations: list[Annotation]
+    +status: str
+    +completion_rate() float
+    +save(path: Path) Path
+    +load(path: Path) AnnotationBatch
 }
 class AgreementReport:::annotation {
-    +num_annotators
-    +num_cases
-    +exact_agreement_rate
-    +within_one_agreement_rate
-    +mean_spread
-    +cohens_kappa
-    +problem_cases
+    +num_annotators: int
+    +num_cases: int
+    +exact_agreement_rate: float
+    +within_one_agreement_rate: float
+    +mean_spread: float
+    +cohens_kappa: float
+    +problem_cases: list[str]
 }
 AnnotationBatch o-- AnnotationTask
 AnnotationBatch o-- Annotation
 
 %% ===== Production monitoring =====
 class SampledRequest:::monitor {
-    +request_id
-    +input
-    +output
-    +timestamp
-    +scores
+    +request_id: str
+    +input: str
+    +output: str
+    +timestamp: datetime
+    +scores: list[ScoreResult]
 }
 class ProductionSampler:::monitor {
-    -_rate
-    -_scorers
-    -_buffer
-    +should_sample()
-    +evaluate_sample()
-    +flush()
-    +stats()
+    -_rate: float
+    -_scorers: list[Scorer]
+    -_buffer: list[SampledRequest]
+    +should_sample() bool
+    +evaluate_sample(request: SampledRequest) SampledRequest
+    +flush() list[SampledRequest]
+    +stats() dict[str, Any]
 }
 class QualityWindow:::monitor {
-    +window_start
-    +window_end
-    +sample_count
-    +avg_scores
-    +pass_rate
-    +alert_triggered
-    +alert_message
+    +window_start: datetime
+    +window_end: datetime
+    +sample_count: int
+    +avg_scores: dict[str, float]
+    +pass_rate: float
+    +alert_triggered: bool
+    +alert_message: str
 }
 class QualityMonitor:::monitor {
-    -_thresholds
-    -_min_samples
-    -_windows
-    +process_window()
-    +trend()
+    -_thresholds: dict[str, float]
+    -_min_samples: int
+    -_windows: list[QualityWindow]
+    +process_window(samples: list[SampledRequest]) QualityWindow
+    +trend() dict[str, float]
 }
 ProductionSampler o-- Scorer
 ProductionSampler --> SampledRequest
@@ -537,35 +551,35 @@ QualityMonitor --> SampledRequest
 
 %% ===== Integrations & workflows =====
 class EvalKitToDeepEvalMetric:::misc {
-    +__name__
-    +measure()
-    +is_successful()
+    +\_\_name\_\_: str
+    +measure(test_case: Any) float
+    +is_successful() bool
 }
 class ExperimentRecord:::misc {
-    +experiment_id
-    +description
-    +prompt_version
-    +model
-    +pass_rate
-    +avg_scores
-    +regression
-    +timestamp
+    +experiment_id: str
+    +description: str
+    +prompt_version: str
+    +model: str
+    +pass_rate: float
+    +avg_scores: dict[str, float]
+    +regression: RegressionResult
+    +timestamp: datetime
 }
 class EDDWorkflow:::misc {
-    +dataset
-    +scorers
-    +detector
-    -_load_history()
-    -_save_history()
-    +run_experiment()
-    +print_history()
-    +best_experiment()
+    +dataset: Dataset
+    +scorers: list[Scorer]
+    +detector: RegressionDetector
+    -_load_history() list[ExperimentRecord]
+    -_save_history(history: list[ExperimentRecord]) None
+    +run_experiment(model: str, prompt_version: str) ExperimentRecord
+    +print_history() None
+    +best_experiment() ExperimentRecord
 }
 class SupportBot:::misc {
-    +system_prompt
-    +model
-    +handle()
-    -_execute_tool()
+    +system_prompt: str
+    +model: str
+    +handle(message: str) str
+    -_execute_tool(name: str, arguments: dict[str, Any]) str
 }
 EvalKitToDeepEvalMetric o-- Scorer : wraps
 LangfuseScorer o-- Scorer : wraps
